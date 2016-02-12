@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "modules": {}
+  },
+	"paths": {
+		"public": "client",
+		"views": "client"
+	}
+}
