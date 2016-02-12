@@ -1,0 +1,8 @@
+* text=auto
+
+*.js text
+*.ejs text
+*.less text
+
+*.png binary
+*.jpg binary
