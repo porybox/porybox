@@ -27,6 +27,7 @@ process.chdir(__dirname);
 (function() {
   require('babel-register')();
   require('babel-polyfill');
+  global.Promise = require('bluebird');
   let sails;
   try {
     sails = require('sails');
