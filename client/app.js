@@ -1,8 +1,12 @@
+// Import libraries
 const ng = require('angular');
-require('./home/home.module');
+require('material-design-lite');
+
+// Import modules
+require('./login/login.module.js');
 
 ng.module('porybox', [
-  'porybox.home'
+  'porybox.login'
 ]);
 
 ng.bootstrap(document, ['porybox']);

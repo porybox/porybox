@@ -1,0 +1,19 @@
+<header class="mdl-layout__header">
+  <div class="mdl-layout__header-row">
+    <!-- Title -->
+    <span class="mdl-layout-title">
+      PoryBox
+    </span>
+    <!-- Add spacer, to align navigation to the right -->
+    <div class="mdl-layout-spacer"></div>
+    <!-- Navigation. We hide it in small screens. -->
+    <nav class="mdl-navigation mdl-layout--large-screen-only">
+      <% if (typeof user !== 'undefined') {%>
+        <a class="mdl-navigation__link"><%= user.username %></a>
+        <a class="mdl-navigation__link" href="/logout">Logout</a>
+      <% } else { %>
+        <a class="mdl-navigation__link" href="/login">Login/Register</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
