@@ -27,4 +27,5 @@ nbproject
 
 # Built client file
 client/bundle.js
+client/bundle.css
 client/bundle.js.map

@@ -5,10 +5,20 @@
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="bundle.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
   </head>
 
   <body>
-    <%- body %>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <%- include header.ejs %>
+      <main class="mdl-layout__content">
+        <div class="page-content">
+          <%- body %>
+        </div>
+      </main>
+    </div>
     <script src="bundle.js"></script>
   </body>
 </html>
