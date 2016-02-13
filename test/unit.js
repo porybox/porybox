@@ -1,6 +1,6 @@
 'use strict';
 require('babel-polyfill');
-const Promise = require('bluebird');
+global.Promise = require('bluebird');
 const expect = require('chai').expect;
 let sailsRequest;
 
