@@ -1,0 +1,62 @@
+{
+  "parser": "babel-eslint",
+  'env': {
+    'es6': true
+  },
+  'ecmaFeatures': {
+    'arrowFunctions': true,
+    'blockBindings': true,
+    'classes': true,
+    'defaultParams': true,
+    'destructuring': false,
+    'forOf': true,
+    'generators': false,
+    'modules': true,
+    'objectLiteralComputedProperties': true,
+    'objectLiteralDuplicateProperties': false,
+    'objectLiteralShorthandMethods': true,
+    'objectLiteralShorthandProperties': true,
+    'restParams': false,
+    'spread': false,
+    'superInFunctions': true,
+    'templateStrings': true,
+    'jsx': true
+  },
+  'rules': {
+    "indent": [2, 2],
+    // disallow modifying variables that are declared using const
+    'no-const-assign': 2,
+    // require let or const instead of var
+    'no-var': 2,
+    // suggest using of const declaration for variables that are never modified after declared
+    'prefer-const': 1,
+    // enforce one true brace style
+    'brace-style': [2, '1tbs', {'allowSingleLine': true }],
+    // require camel case names
+    'camelcase': [2, {'properties': 'never'}],
+    // enforce one true comma style
+    'comma-style': [2, 'last'],
+    // enforce newline at the end of file, with no multiple empty lines
+    'eol-last': 2,
+    // enforces spacing between keys and values in object literal properties
+    'key-spacing': [2, {'beforeColon': false, 'afterColon': true}],
+    // require a capital letter for constructors
+    'new-cap': [2, {'newIsCap': true}],
+    // disallow mixed spaces and tabs for indentation
+    'no-mixed-spaces-and-tabs': 2,
+    // disallow trailing whitespace at the end of lines
+    'no-trailing-spaces': 2,
+    // disallow declaration of variables that are not used in the code
+    'no-unused-vars': [2, {'vars': 'local', 'args': 'none'}],
+    // specify whether double or single quotes should be used
+    'quotes': [2, 'single', 'avoid-escape'],
+    // enforce spacing before and after semicolons
+    'semi-spacing': [2, {'before': false, 'after': true}],
+    // require spaces around operators
+    'space-infix-ops': 2,
+    // require spaces following keywords
+    'keyword-spacing': 2,
+    // warn when line length is greater than 80 characters
+    'max-len': [1, 100, 2, { 'ignoreComments': true, 'ignoreUrls': true }]
+  }
+}

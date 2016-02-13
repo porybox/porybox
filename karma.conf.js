@@ -15,10 +15,10 @@ module.exports = function(config) {
     exclude: [
     ],
     preprocessors: {
-			'client/**/*.spec.js': ['browserify']
+      'client/**/*.spec.js': ['browserify']
     },
 
-		browserify: {
+    browserify: {
       debug: true,
       transform: [
         ['babelify']

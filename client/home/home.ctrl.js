@@ -3,8 +3,8 @@
  * @return {function} A controller that contains 2 test elements
  */
 module.exports = function() {
-	this.test = "test";
-	this.test2 = function() {
-		return this.test + "2";
-	};
+  this.test = 'test';
+  this.test2 = function() {
+    return this.test + '2';
+  };
 }

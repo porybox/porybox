@@ -1,5 +1,5 @@
-var ng = require('angular');
-var controller = require('./home.ctrl');
+const ng = require('angular');
+const controller = require('./home.ctrl');
 
 /**
  * [module description]
@@ -8,9 +8,10 @@ var controller = require('./home.ctrl');
  * @return {[type]}                [description]
  */
 ng.module('porybox.home', [])
-.component('homeTest', {
-	bindings: {},
-	templateUrl: 'home/home.view.html',
-	controller: controller,
-	controllerAs: 'home'
-});
+	.component('homeTest',
+  {
+    bindings: {},
+    templateUrl: 'home/home.view.html',
+    controller: controller,
+    controllerAs: 'home'
+  });
