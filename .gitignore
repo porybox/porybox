@@ -22,3 +22,9 @@ node_modules
 nbproject
 .idea
 .node_history
+
+# Project specific stuff
+
+# Built client file
+client/bundle.js
+client/bundle.js.map
