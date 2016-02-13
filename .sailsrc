@@ -1,9 +1,12 @@
 {
-  "generators": {
-    "modules": {}
-  },
+	"generators": {
+		"modules": {}
+	},
 	"paths": {
 		"public": "client",
 		"views": "client"
+	},
+	"hooks": {
+		"grunt": false
 	}
 }
