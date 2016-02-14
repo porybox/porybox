@@ -35,4 +35,11 @@ module.exports.session = {
     maxAge: 24 * 60 * 60 * 1000
   },
 
+
+  adapter: 'mongo',
+  host: 'localhost',
+  port: 27017,
+  db: 'fapp',
+  collection: 'sessions'
+
 };

@@ -16,6 +16,7 @@
     "bluebird": "3.3.0",
     "browserify": "13.0.0",
     "concurrently": "^1.0.0",
+    "connect-mongo": "^0.8.2",
     "ejs": "2.3.4",
     "eslint": "^2.0.0",
     "grunt": "0.4.5",
