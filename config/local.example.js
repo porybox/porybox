@@ -15,8 +15,8 @@ module.exports = {
       adapter: 'sails-mongo',
       host: 'localhost',
       port: 27017,
-      user: 'porybox',
-      password: 'password',
+      user: '',
+      password: '',
       database: 'porybox'
     }
   },
@@ -26,8 +26,8 @@ module.exports = {
     host: 'localhost',
     port: 27017,
     db: 'porybox',
-    username: 'porybox',
-    password: 'password',
+    username: '',
+    password: '',
     collection: 'sessions'
   }
 
