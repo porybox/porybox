@@ -8,7 +8,14 @@
 module.exports = {
 
   index: async function (req, res) {
-    res.view('home/view');
+    const boxes = await Box.find({'user': req.user.username}).then(function (test) {
+      return test;
+    });
+    console.log(boxes);
+    res.view(
+      'home/view',
+      {boxes: boxes}
+    );
   },
 
 };
