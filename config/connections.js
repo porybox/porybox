@@ -21,4 +21,15 @@
 
 module.exports.connections = {
 
+
+  default: 'mongo',
+  mongo: {
+    adapter: 'sails-mongo',
+    host: 'localhost',
+    port: 27017,
+    user: '',
+    password: '',
+    database: 'porybox'
+  }
+
 };
