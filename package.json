@@ -34,6 +34,7 @@
     "sinon": "^1.17.3",
     "socket.io-browserify": "^0.9.6",
     "socket.io-client": "^1.4.5",
+    "supertest": "^1.2.0",
     "validator": "^4.8.0",
     "watchify": "^3.7.0"
   },
@@ -44,7 +45,7 @@
     "less": "lessc client/styles/importer.less client/bundle.css",
     "lint": "eslint ./",
     "start": "npm run bundle && node app.js --prod",
-    "test": "npm run lint && mocha --compilers js:babel-core/register && karma start --single-run",
+    "test": "npm run lint && mocha --timeout 5000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js && karma start --single-run",
     "testwatch": "concurrent 'mocha -w --compilers js:babel-core/register' 'karma start'"
   },
   "main": "app.js",
@@ -63,6 +64,7 @@
     "karma-mocha": "^0.2.1",
     "karma-phantomjs-launcher": "^1.0.0",
     "mocha": "^2.4.5",
-    "phantomjs-prebuilt": "^2.1.4"
+    "phantomjs-prebuilt": "^2.1.4",
+    "sails-memory": "^0.10.6"
   }
 }
