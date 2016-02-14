@@ -35,6 +35,8 @@ module.exports.session = {
     maxAge: 24 * 60 * 60 * 1000
   },
 
+  autoReconnect: true,
+
 
   adapter: 'mongo',
   host: 'localhost',
