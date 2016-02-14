@@ -120,7 +120,7 @@ passport.connect = function (req, query, profile, next) {
             return next(err);
           }
 
-          query.user = user.id;
+          query.user = user.username;
 
           Passport.create(query, function (err, passport) {
             // If a passport wasn't created, bail out
@@ -147,7 +147,7 @@ passport.connect = function (req, query, profile, next) {
           }
 
           // Fetch the user associated with the Passport
-          User.findOne(passport.user.id, next);
+          User.findOne(passport.user.username, next);
         });
       }
     } else {
@@ -155,7 +155,7 @@ passport.connect = function (req, query, profile, next) {
       //           passport.
       // Action:   Create and assign a new passport to the user.
       if (!passport) {
-        query.user = req.user.id;
+        query.user = req.user.username;
 
         Passport.create(query, function (err, passport) {
           // If a passport wasn't created, bail out
@@ -341,7 +341,7 @@ passport.disconnect = function (req, res, next) {
     provider = req.param('provider', 'local'),
     query    = {};
 
-  query.user = user.id;
+  query.user = user.username;
   query[provider === 'local' ? 'protocol' : 'provider'] = provider;
 
   Passport.findOne(query, function (err, passport) {
@@ -360,7 +360,7 @@ passport.disconnect = function (req, res, next) {
 };
 
 passport.serializeUser(function (user, next) {
-  next(null, user.id);
+  next(null, user.username);
 });
 
 passport.deserializeUser(function (id, next) {

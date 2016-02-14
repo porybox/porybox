@@ -54,8 +54,9 @@ exports.register = function (req, res, next) {
         } else {
           req.flash('error', 'Error.Passport.User.Exists');
         }
+      } else {
+        req.flash('error', 'Error.Passport.User.Exists');
       }
-
       return next(err);
     }
 
@@ -65,7 +66,7 @@ exports.register = function (req, res, next) {
     Passport.create({
       protocol: 'local',
       password: password,
-      user: user.id,
+      user: user.username,
       accessToken: token
     }, function (err, passport) {
       if (err) {
@@ -100,7 +101,7 @@ exports.connect = function (req, res, next) {
 
   Passport.findOne({
     protocol: 'local',
-    user: user.id
+    user: user.username
   }, function (err, passport) {
     if (err) {
       return next(err);
@@ -110,7 +111,7 @@ exports.connect = function (req, res, next) {
       Passport.create({
         protocol: 'local',
         password: password,
-        user: user.id
+        user: user.username
       }, function (err, passport) {
         next(err, user);
       });
@@ -159,7 +160,7 @@ exports.login = function (req, identifier, password, next) {
 
     Passport.findOne({
       protocol: 'local',
-      user: user.id
+      user: user.username
     }, function (err, passport) {
       if (passport) {
         passport.validatePassword(password, function (err, res) {
