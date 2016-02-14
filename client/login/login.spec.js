@@ -1,6 +1,6 @@
-const homeCtrl = require('./home.ctrl');
+const loginCtrl = require('./login.ctrl');
 
-describe('HomeCtrl', function() {
+describe('LoginCtrl', function() {
   // beforeEach(module('porygon'));
 
   let $controller;
@@ -12,19 +12,19 @@ describe('HomeCtrl', function() {
 
   describe('controller.test', function() {
     it('is instansiated correctly', function() {
-      const controller = $controller(homeCtrl);
+      const controller = $controller(loginCtrl);
       expect(controller.test).to.equal('test');
     });
   });
 
   describe('controller.test2', function() {
     it('is instansiated correctly', function() {
-      const controller = $controller(homeCtrl);
+      const controller = $controller(loginCtrl);
       expect(controller.test2()).to.equal('test2');
     });
 
     it('changes with test', function() {
-      const controller = $controller(homeCtrl);
+      const controller = $controller(loginCtrl);
       controller.test = 'something';
       expect(controller.test2()).to.equal('something2');
     });

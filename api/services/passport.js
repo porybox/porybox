@@ -1,6 +1,5 @@
-var path     = require('path')
-  , url      = require('url')
-  , passport = require('passport');
+const url = require('url'),
+  passport = require('passport');
 
 /**
  * Passport Service
@@ -63,15 +62,14 @@ passport.protocols = require('./protocols');
  * @param {Function} next
  */
 passport.connect = function (req, query, profile, next) {
-  var user = {}
-    , provider;
+  const user = {};
 
   // Get the authentication provider from the query.
   query.provider = req.param('provider');
 
   // Use profile.provider or fallback to the query.provider if it is undefined
   // as is the case for OpenID, for example
-  provider = profile.provider || query.provider;
+  const provider = profile.provider || query.provider;
 
   // If the provider cannot be identified we cannot match it to a passport so
   // throw an error and let whoever's next in line take care of it.
@@ -97,8 +95,8 @@ passport.connect = function (req, query, profile, next) {
   }
 
   Passport.findOne({
-    provider   : provider
-  , identifier : query.identifier.toString()
+    provider: provider,
+    identifier: query.identifier.toString()
   }, function (err, passport) {
     if (err) {
       return next(err);
@@ -114,8 +112,7 @@ passport.connect = function (req, query, profile, next) {
             if (err.code === 'E_VALIDATION') {
               if (err.invalidAttributes.email) {
                 req.flash('error', 'Error.Passport.Email.Exists');
-              }
-              else {
+              } else {
                 req.flash('error', 'Error.Passport.User.Exists');
               }
             }
@@ -134,11 +131,10 @@ passport.connect = function (req, query, profile, next) {
             next(err, user);
           });
         });
-      }
-      // Scenario: An existing user is trying to log in using an already
-      //           connected passport.
-      // Action:   Get the user associated with the passport.
-      else {
+      } else {
+        // Scenario: An existing user is trying to log in using an already
+        //           connected passport.
+        // Action:   Get the user associated with the passport.
         // If the tokens have changed since the last session, update them
         if (query.hasOwnProperty('tokens') && query.tokens !== passport.tokens) {
           passport.tokens = query.tokens;
@@ -169,10 +165,9 @@ passport.connect = function (req, query, profile, next) {
 
           next(err, req.user);
         });
-      }
-      // Scenario: The user is a nutjob or spammed the back-button.
-      // Action:   Simply pass along the already established session.
-      else {
+      } else {
+        // Scenario: The user is a nutjob or spammed the back-button.
+        // Action:   Simply pass along the already established session.
         next(null, req.user);
       }
     }
@@ -189,9 +184,9 @@ passport.connect = function (req, query, profile, next) {
  * @param  {Object} res
  */
 passport.endpoint = function (req, res) {
-  var strategies = sails.config.passport
-    , provider   = req.param('provider')
-    , options    = {};
+  const strategies = sails.config.passport,
+    provider   = req.param('provider'),
+    options    = {};
 
   // If a provider doesn't exist for this endpoint, send the user back to the
   // login page
@@ -221,27 +216,24 @@ passport.endpoint = function (req, res) {
  * @param {Function} next
  */
 passport.callback = function (req, res, next) {
-  var provider = req.param('provider', 'local')
-    , action   = req.param('action');
+  const provider = req.param('provider', 'local'),
+    action   = req.param('action');
 
   // Passport.js wasn't really built for local user registration, but it's nice
   // having it tied into everything else.
   if (provider === 'local' && action !== undefined) {
     if (action === 'register' && !req.user) {
       this.protocols.local.register(req, res, next);
-    }
-    else if (action === 'connect' && req.user) {
+    } else if (action === 'connect' && req.user) {
       this.protocols.local.connect(req, res, next);
-    }
-    else if (action === 'disconnect' && req.user) {
+    } else if (action === 'disconnect' && req.user) {
       this.disconnect(req, res, next);
-    }
-    else {
+    } else {
       next(new Error('Invalid action'));
     }
   } else {
     if (action === 'disconnect' && req.user) {
-      this.disconnect(req, res, next) ;
+      this.disconnect(req, res, next);
     } else {
       // The provider will redirect the user to this URL after approval. Finish
       // the authentication process by attempting to obtain an access token. If
@@ -275,11 +267,12 @@ passport.callback = function (req, res, next) {
  *
  */
 passport.loadStrategies = function () {
-  var self       = this
-    , strategies = sails.config.passport;
+  const self       = this,
+    strategies = sails.config.passport;
 
   Object.keys(strategies).forEach(function (key) {
-    var options = { passReqToCallback: true }, Strategy;
+    const options = { passReqToCallback: true };
+    let Strategy;
 
     if (key === 'local') {
       // Since we need to allow users to login using both usernames as well as
@@ -303,8 +296,8 @@ passport.loadStrategies = function () {
       }
 
     } else {
-      var protocol = strategies[key].protocol
-        , callback = strategies[key].callback;
+      const protocol = strategies[key].protocol;
+      let callback = strategies[key].callback;
 
       if (!callback) {
         callback = 'auth/' + key + '/callback';
@@ -312,19 +305,19 @@ passport.loadStrategies = function () {
 
       Strategy = strategies[key].strategy;
 
-      var baseUrl = sails.getBaseurl();
+      const baseUrl = sails.getBaseurl();
 
       switch (protocol) {
-        case 'oauth':
-        case 'oauth2':
-          options.callbackURL = url.resolve(baseUrl, callback);
-          break;
+      case 'oauth':
+      case 'oauth2':
+        options.callbackURL = url.resolve(baseUrl, callback);
+        break;
 
-        case 'openid':
-          options.returnURL = url.resolve(baseUrl, callback);
-          options.realm     = baseUrl;
-          options.profile   = true;
-          break;
+      case 'openid':
+        options.returnURL = url.resolve(baseUrl, callback);
+        options.realm     = baseUrl;
+        options.profile   = true;
+        break;
       }
 
       // Merge the default options with any options defined in the config. All
@@ -344,9 +337,9 @@ passport.loadStrategies = function () {
  * @param  {Object} res
  */
 passport.disconnect = function (req, res, next) {
-  var user     = req.user
-    , provider = req.param('provider', 'local')
-    , query    = {};
+  const user     = req.user,
+    provider = req.param('provider', 'local'),
+    query    = {};
 
   query.user = user.id;
   query[provider === 'local' ? 'protocol' : 'provider'] = provider;
@@ -358,7 +351,7 @@ passport.disconnect = function (req, res, next) {
 
     Passport.destroy(passport.id, function (error) {
       if (err) {
-          return next(err);
+        return next(err);
       }
 
       next(null, user);

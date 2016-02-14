@@ -9,7 +9,7 @@
  */
 
 exports.authorize = function(token, done) {
-  
+
   Passport.findOne({ accessToken: token }, function(err, passport) {
     if (err) { return done(err); }
     if (!passport) { return done(null, false); }
@@ -19,5 +19,5 @@ exports.authorize = function(token, done) {
       return done(null, user, { scope: 'all' });
     });
   });
-  
+
 };
