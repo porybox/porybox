@@ -10,6 +10,29 @@
 </div>
 <div class="mdl-grid">
   <div class="mdl-layout-spacer"></div>
+  <div class="mdl-cell mdl-cell--4-col">
+    <span>
+      <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+        <% if (errors[0] === 'Error.Passport.Password.Wrong' || errors[0] === 'Error.Passport.Username.NotFound') { %>
+          Wrong username or password
+        <% } %>
+        <% if (errors[0] === 'Error.Passport.Password.Invalid') { %>
+          Password must be at least 8 characters long
+        <% } %>
+        <% if (errors[0] === 'Error.Passport.User.Exists') { %>
+          User already exists
+        <% } %>
+        <% if (errors[0] === 'Error.Passport.Email.Exists') { %>
+          Email address already registered
+        <% } %>
+        <% console.log(errors) %>
+      <% } %>
+    </span>
+  </div>
+  <div class="mdl-layout-spacer"></div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
   <div class="mdl-cell mdl-cell--3-col">
     <login-form></login-form>
   </div>

@@ -5,7 +5,9 @@ module.exports =  {
   attributes: {
     username: {
       type: 'string',
-      unique: true
+      columnName: 'id',
+      unique: true,
+      primaryKey: true
     },
     email: {
       type: 'email',
