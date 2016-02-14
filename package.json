@@ -33,7 +33,7 @@
     "watchify": "^3.7.0"
   },
   "scripts": {
-    "bundle": "browserify client/app.js -o client/bundle.js -t babelify -d",
+    "bundle": "lessc client/styles/importer.less client/bundle.css && browserify client/app.js -o client/bundle.js -t babelify -d",
     "watchbundle": "watchify client/app.js -o client/bundle.js -t babelify -d -v",
     "dev": "concurrent 'npm run watchbundle' 'node app.js'",
     "lint": "eslint ./",
