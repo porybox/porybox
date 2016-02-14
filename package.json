@@ -38,7 +38,7 @@
     "watchbundle": "watchify client/app.js -o client/bundle.js -t babelify -d -v",
     "dev": "concurrent 'npm run watchbundle' 'node app.js'",
     "lint": "eslint ./",
-    "start": "npm run bundle && node app.js",
+    "start": "npm run bundle && node app.js --prod",
     "test": "npm run lint && mocha --compilers js:babel-core/register && karma start --single-run",
     "testwatch": "concurrent 'mocha -w --compilers js:babel-core/register' 'karma start'"
   },
