@@ -24,6 +24,12 @@ module.exports.routes = {
 
   '/': 'HomeController.index',
 
+  // Boxes
+
+  'post /box': 'BoxController.add',
+
+  // Authentication
+
   'get /login': 'AuthController.login',
   'get /logout': 'AuthController.logout',
   'get /register': 'AuthController.register',
