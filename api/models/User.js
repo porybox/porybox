@@ -16,6 +16,10 @@ module.exports =  {
     passports: {
       collection: 'Passport',
       via: 'user'
+    },
+    boxes: {
+      collection: 'Box',
+      via: 'user'
     }
   }
 };
