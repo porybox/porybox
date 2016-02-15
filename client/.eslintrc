@@ -1,0 +1,12 @@
+{
+  'env': {
+    'es6': true,
+    'node': true,
+    'browser': true
+  },
+  'globals': {
+    'sails': false,
+    'inject': true,
+    'expect': true
+  }
+}

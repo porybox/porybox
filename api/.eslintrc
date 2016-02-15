@@ -1,0 +1,9 @@
+{
+  'globals': {
+    '_': true,
+    'passport': true,
+    'Passport': true,
+    'User': true,
+    'Box': true
+  }
+}

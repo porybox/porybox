@@ -1,7 +1,8 @@
 {
   "parser": "babel-eslint",
   'env': {
-    'es6': true
+    'es6': true,
+    'node': true
   },
   'ecmaFeatures': {
     'arrowFunctions': true,
@@ -48,6 +49,8 @@
     'no-trailing-spaces': 2,
     // disallow declaration of variables that are not used in the code
     'no-unused-vars': [2, {'vars': 'local', 'args': 'none'}],
+    // require all variables to be defined
+    'no-undef': 2,
     // specify whether double or single quotes should be used
     'quotes': [2, 'single', 'avoid-escape'],
     // enforce spacing before and after semicolons
@@ -58,5 +61,14 @@
     'keyword-spacing': 2,
     // warn when line length is greater than 80 characters
     'max-len': [1, 100, 2, { 'ignoreComments': true, 'ignoreUrls': true }]
+  },
+  'globals': {
+    'sails': true,
+    'describe': true,
+    'it': true,
+    'before': true,
+    'beforeEach': true,
+    'after': true,
+    'afterEach': true
   }
 }
