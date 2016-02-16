@@ -28,6 +28,7 @@
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
+    "pk6parse": "^0.3.5",
     "rc": "1.0.1",
     "sails": "0.12.0",
     "sails-disk": "0.10.9",
@@ -46,7 +47,7 @@
     "dev": "concurrent 'npm run less' 'npm run watchbundle' 'node app.js'",
     "less": "lessc client/styles/importer.less client/bundle.css",
     "lint": "eslint ./",
-    "start": "npm run bundle && node app.js --prod",
+    "start": "npm run bundle && node app.js",
     "test": "npm run lint && mocha --timeout 5000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js && karma start --single-run",
     "testwatch": "concurrent 'mocha -w --compilers js:babel-core/register' 'karma start'"
   },

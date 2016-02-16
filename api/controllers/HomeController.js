@@ -17,4 +17,7 @@ module.exports = {
     );
   },
 
+  uploadpk6: (req, res) => {
+    return res.view('home/uploadpk6');
+  }
 };
