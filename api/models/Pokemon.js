@@ -128,7 +128,7 @@ attributes.isStaticPidEvent = function () {
 attributes.omitPrivateData = function () {
   /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
   it's possible to brute-force the PID. */
-  const secretProperties = ['pid', 'cloneHash'];
+  const secretProperties = ['pid', 'cloneHash', 'rawPk6'];
   if (this.isStaticPidEvent()) {
     secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
   }
