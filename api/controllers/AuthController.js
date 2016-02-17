@@ -145,7 +145,7 @@ module.exports = {
 
       switch (action) {
       case 'register':
-        res.ok(err);
+        res.redirect('/register');
         break;
       case 'disconnect':
         res.redirect('back');
