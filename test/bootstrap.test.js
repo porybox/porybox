@@ -10,12 +10,24 @@ before(function(done) {
   global.Promise = require('bluebird');
 
   sails.lift({
+    environment: 'test',
+    port: 1337,
     connections: {
-      default: 'memory',
+      default: 'testDB',
       testDB: {
-        adapter: 'sails-memory'
-      }
+        adapter: 'sails-mongo',
+        host: 'localhost',
+        port: 27017,
+        user: '',
+        password: '',
+        database: 'porybox-test'
+      },
     },
+    models: {
+      connection: 'testDB',
+      migrate: 'drop'
+    },
+    connection: 'testDB',
     paths: { public: 'client', views: 'client' }
   }, function(err, server) {
     if (err) return done(err);
