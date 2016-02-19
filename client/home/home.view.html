@@ -1,10 +1,5 @@
-<div class="mdl-grid">
-  <div class="mdl-cell mdl-cell--3-col" ng-repeat="box in home.boxes">
+<div layout="row">
+  <div flex="20" ng-repeat="box in home.boxes">
     <box-card box="box"></box-card>
   </div>
 </div>
-
-<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored add-button"
-  ng-click="home.addBox()">
-  <i class="material-icons">add</i>
-</button>

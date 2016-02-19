@@ -10,15 +10,12 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
   </head>
 
-  <body>
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-      <%- include header.ejs %>
-      <main class="mdl-layout__content">
-        <div class="page-content">
-          <%- body %>
-        </div>
-      </main>
-    </div>
+  <body layout="column" ng-controller="MainCtrl as main" ng-cloak
+    ng-init="main.init({boxes: <%=(typeof boxes !== 'undefined' ? JSON.stringify(boxes) : '')%>})">
+    <%- include header.ejs %>
+    <main flex layout="column">
+      <%- body %>
+    </main>
     <script src="bundle.js"></script>
   </body>
 </html>

@@ -14,6 +14,6 @@ ng.module('porybox.home', ['porybox.box'])
       boxes: '='
     },
     templateUrl: 'home/home.view.html',
-    controller: ['$scope', 'io', controller],
+    controller: controller,
     controllerAs: 'home'
   });

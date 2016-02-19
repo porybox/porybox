@@ -6,6 +6,9 @@
   "keywords": [],
   "dependencies": {
     "angular": "1.5.0",
+    "angular-animate": "^1.5.0",
+    "angular-aria": "^1.5.0",
+    "angular-material": "^1.0.5",
     "babel-core": "^6.5.2",
     "babel-eslint": "^4.1.8",
     "babel-plugin-transform-async-to-generator": "^6.5.0",
@@ -22,7 +25,6 @@
     "grunt": "0.4.5",
     "include-all": "0.1.6",
     "less": "^2.6.0",
-    "material-design-lite": "^1.1.1",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
