@@ -1,0 +1,22 @@
+
+<md-menu md-position-mode="target-right target">
+  <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+    <i class="material-icons">add</i>
+  </md-button>
+  <md-menu-content width="4">
+    <md-menu-item>
+      <md-button ng-click="add.box()">
+          <div layout="row">
+            <p flex="">Add Box</p>
+          </div>
+      </md-button>
+    </md-menu-item>
+    <md-menu-item>
+      <md-button ng-click="addPokemon()">
+          <div layout="row">
+            <p flex="">Add Pokemon</p>
+          </div>
+      </md-button>
+    </md-menu-item>
+  </md-menu-content>
+</md-menu>

@@ -1,10 +1,13 @@
-<div class="mdl-card  mdl-card mdl-shadow--2dp">
-  <div class="mdl-card__title">
-    <h2 class="mdl-card__title-text">{{box.name}}</h2>
-  </div>
-  <div class="mdl-card__supporting-text">
-    {{box.description}}
-  </div>
-  <div class="mdl-card__actions">
-  </div>
-</div>
+<md-card>
+  <md-card-title>
+    <md-card-title-text>
+      <span class="md-headline">{{box.name}}</span>
+      <span class="md-subhead">{{box.description}}</span>
+    </md-card-title-text>
+    <md-card-title-media>
+      <div class="md-media-lg card-media"></div>
+    </md-card-title-media>
+  </md-card-title>
+  <md-card-actions layout="row" layout-align="end center">
+  </md-card-actions>
+</md-card>

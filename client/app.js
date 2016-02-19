@@ -1,16 +1,31 @@
 // Import libraries
 const ng = require('angular');
-require('material-design-lite');
+require('angular-material');
 
 // Import modules
 require('./login/login.module.js');
 require('./home/home.module.js');
 require('./box/box.module.js');
+require('./add/add.module.js');
+require('./userMenu/user.module.js');
 
 const porybox = ng.module('porybox', [
+  // Porybox modules
   'porybox.login',
-  'porybox.home'
+  'porybox.home',
+  'porybox.add',
+  'porybox.userMenu',
+
+  // Third party
+  'ngMaterial'
 ]);
+
+porybox.controller('MainCtrl', function () {
+  this.boxes = [];
+  this.init = function ({boxes}) {
+    this.boxes = boxes;
+  }
+});
 
 porybox.service('io', function () {
   const socket = require('socket.io-client');

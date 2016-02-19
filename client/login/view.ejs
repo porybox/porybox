@@ -1,16 +1,13 @@
 
-<div class="mdl-grid">
-  <div class="mdl-layout-spacer"></div>
-  <div class="mdl-cell mdl-cell--4-col">
+<div layout="row" layout-align="center center">
+  <div flex="30">
     <span>
       Welcome to Porybox. Please Register or login to continue.
     </span>
   </div>
-  <div class="mdl-layout-spacer"></div>
 </div>
-<div class="mdl-grid">
-  <div class="mdl-layout-spacer"></div>
-  <div class="mdl-cell mdl-cell--4-col">
+<div layout="row">
+  <div flex>
     <span>
       <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
         <% if (errors[0] === 'Error.Passport.Password.Wrong' || errors[0] === 'Error.Passport.Username.NotFound') { %>
@@ -29,15 +26,12 @@
       <% } %>
     </span>
   </div>
-  <div class="mdl-layout-spacer"></div>
 </div>
-<div class="mdl-grid">
-  <div class="mdl-layout-spacer"></div>
-  <div class="mdl-cell mdl-cell--3-col">
+<div layout="row">
+  <div flex="25" flex-offset="25">
     <login-form></login-form>
   </div>
-  <div class="mdl-cell mdl-cell--3-col">
+  <div flex="25">
     <registration-form></registration-form>
   </div>
-  <div class="mdl-layout-spacer"></div>
 </div>
