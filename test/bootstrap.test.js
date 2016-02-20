@@ -11,7 +11,7 @@ before(function(done) {
 
   sails.lift({
     environment: 'test',
-    port: 1337,
+    port: 1234,
     connections: {
       default: 'testDB',
       testDB: {

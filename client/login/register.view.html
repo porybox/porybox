@@ -1,22 +1,28 @@
-<div class="mdl-card  mdl-card mdl-shadow--2dp">
-  <div class="mdl-card__title">
-    <h2 class="mdl-card__title-text">Register</h2>
-  </div>
-  <div class="mdl-card__supporting-text">
-    <form role="form" action="/auth/local/register" method="post">
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" name="username" id="usernameregister">
-        <label class="mdl-textfield__label" for="usernameregister">Username</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="email" name="email" id="emailregister">
-        <label class="mdl-textfield__label" for="emailregister">Email</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" name="password" id="passwordregister">
-        <label class="mdl-textfield__label" for="passwordregister">Password</label>
-      </div>
-      <button type="submit" class="mdl-button mdl-js-button mdl-button--raised">Sign up</button>
-    </form>
-  </div>
-</div>
+<md-card>
+  <md-card-title>
+    <md-card-title-text>
+      <span class="md-headline">Register</span>
+    </md-card-title-text>
+  </md-card-title>
+  <md-card-content>
+    <div layout="column" layout-padding>
+      <md-content class="autoscroll">
+        <form role="form" action="/auth/local/register" method="post">
+          <md-input-container class="md-block">
+            <input type="text" name="username">
+            <label>Username</label>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <input type="email" name="email" >
+            <label>Email</label>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <input type="password" name="password" >
+            <label>Password</label>
+          </md-input-container>
+          <md-button type="submit"  class="md-raised">Sign up</md-button>
+        </form>
+      </md-content>
+    </div>
+  </md-card-content>
+</md-card>

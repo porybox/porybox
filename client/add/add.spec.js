@@ -1,10 +1,13 @@
-const ctrlTest = require('./home.ctrl');
+const ctrlTest = require('./add.ctrl');
 const sinon = require('sinon');
 
-describe('HomeCtrl', function() {
+describe('AddCtrl', function() {
   // beforeEach(module('porygon'));
 
-  let $scope, io, $controller, tested, postSpy;
+  let $scope = {},
+    io = {},
+    $controller = {},
+    tested, postSpy;
 
   beforeEach(inject(function(_$controller_){
     $scope = {
@@ -30,17 +33,17 @@ describe('HomeCtrl', function() {
 
   describe('controller.addBox', function() {
     it('calls io.socket.post', function() {
-      tested.addBox();
+      tested.box();
       expect(postSpy.called).to.equal(true);
     });
 
     it('increments count', function() {
-      tested.addBox();
+      tested.box();
       expect(tested.count).to.equal(1);
     });
 
     it('adds to boxes', function() {
-      tested.addBox();
+      tested.box();
       expect(tested.boxes.length).to.equal(1);
     });
   });

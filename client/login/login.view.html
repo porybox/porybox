@@ -1,22 +1,20 @@
-<div class="mdl-card  mdl-card mdl-shadow--2dp">
-  <div class="mdl-card__title">
-    <h2 class="mdl-card__title-text">Login</h2>
-  </div>
-  <div class="mdl-card__supporting-text">
+<md-card>
+  <md-card-title>
+    <md-card-title-text>
+      <span class="md-headline">Login</span>
+    </md-card-title-text>
+  </md-card-title>
+  <md-card-content>
     <form role="form" action="/auth/local" method="post">
-      <div class="mdl-textfield mdl-js-textfield">
-        <input class="mdl-textfield__input" type="text" name="identifier" id="usernamelogin">
-        <label class="mdl-textfield__label" for="usernamelogin">Username</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield">
-        <input class="mdl-textfield__input" type="password" name="password" id="passwordlogin">
-        <label class="mdl-textfield__label" for="sample1">Password</label>
-      </div>
-      <button type="submit" class="mdl-button mdl-js-button mdl-button--raised">
-        Sign in
-      </button>
+      <md-input-container class="md-block">
+        <input type="text" name="identifier">
+        <label>Username</label>
+      </md-input-container>
+      <md-input-container class="md-block">
+        <input type="password" name="password" >
+        <label>Password</label>
+      </md-input-container>
+      <md-button type="submit"  class="md-raised">Sign in</md-button>
     </form>
-  </div>
-  <div class="mdl-card__actions">
-  </div>
-</div>
+  </md-card-content>
+</md-card>

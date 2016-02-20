@@ -3,5 +3,4 @@
  * @return {function} A controller that contains 2 test elements
  */
 module.exports = function() {
-
 }
