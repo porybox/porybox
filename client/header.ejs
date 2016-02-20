@@ -1,19 +1,17 @@
-<header class="mdl-layout__header">
-  <div class="mdl-layout__header-row">
-    <!-- Title -->
-    <span class="mdl-layout-title">
-      PoryBox
-    </span>
-    <!-- Add spacer, to align navigation to the right -->
-    <div class="mdl-layout-spacer"></div>
-    <!-- Navigation. We hide it in small screens. -->
-    <nav class="mdl-navigation mdl-layout--large-screen-only">
-      <% if (typeof user !== 'undefined') {%>
-        <a class="mdl-navigation__link"><%= user.username %></a>
-        <a class="mdl-navigation__link" href="/logout">Logout</a>
-      <% } else { %>
-        <a class="mdl-navigation__link" href="/login">Login/Register</a>
-      <% } %>
-    </nav>
+<md-toolbar>
+  <div class="md-toolbar-tools">
+
+    <h2>
+      <span>PoryBox</span>
+    </h2>
+
+    <span flex></span>
+
+    <% if (typeof user !== 'undefined') {%>
+      <add-menu boxes="main.boxes"></add-menu>
+      <user-menu name="'<%= user.username %>'"></user-menu>
+    <% } else { %>
+      <a class="mdl-navigation__link" href="/login">Login/Register</a>
+    <% } %>
   </div>
-</header>
+</md-toolbar>
