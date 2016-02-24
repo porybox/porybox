@@ -104,10 +104,8 @@ const attributes = {
 
 _.forEach(attributes, attr => {
   // i.e. by default all of the above properties must be integers and are required, unless specified otherwise
-  if (typeof attr === 'object') {
-    attr.required = attr.required !== undefined ? attr.required : true;
-    attr.type = attr.type || 'int';
-  }
+  attr.required = attr.required !== undefined ? attr.required : true;
+  attr.type = attr.type || 'float';
 });
 
 attributes.tsv = function () {

@@ -10,11 +10,15 @@ exports.computeCloneHash = pkmn => {
   buf.writeUInt16LE(pkmn.sid, 30); // 2 bytes
   buf.writeUInt32LE(pkmn.pid, 32); // 4 bytes
   buf.writeUInt16LE(pk6parse.getPokemonData(pkmn.dexNo).first_evolution_id, 36); // 2 bytes
-  let compactIvs = 0;
-  [pkmn.ivHp, pkmn.ivAtk, pkmn.ivDef, pkmn.ivSpe, pkmn.ivSpAtk, pkmn.ivSpDef].forEach(value => {
-    compactIvs = compactIvs << 5 | value;
-  });
-  buf.writeUInt32LE(compactIvs >>> 0, 38); // (5 bits per IV) * (6 IVs) + (2 blank bits) = 32 bits = 4 bytes
-  // Total: 42 bytes (initialized in buffer above)
+  if (exports.isStaticPidEvent(pkmn)) {
+    let compactIvs = 0;
+    [pkmn.ivHp, pkmn.ivAtk, pkmn.ivDef, pkmn.ivSpe, pkmn.ivSpAtk, pkmn.ivSpDef].forEach(value => {
+      compactIvs = compactIvs << 5 | value;
+    });
+    buf.writeUInt32LE(compactIvs >>> 0, 38); // (5 bits per IV) * (6 IVs) + (2 blank bits) = 32 bits = 4 bytes
+    // Total: 42 bytes (initialized in buffer above)
+  }
   return require('crypto').createHash('sha256').update(buf).digest('base64');
 };
+
+exports.isStaticPidEvent = pokemonData => false; // TODO: Implement this
