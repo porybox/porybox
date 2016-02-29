@@ -42,6 +42,8 @@ module.exports.routes = {
   'get /auth/:provider/:action': 'AuthController.callback',
 
   'get /uploadpk6': 'HomeController.uploadpk6',
-  'post /uploadpk6': 'PokemonController.uploadpk6'
+  'post /uploadpk6': 'PokemonController.uploadpk6',
+
+  'get /pokemon/:id': 'PokemonController.get'
 
 };
