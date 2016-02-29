@@ -69,6 +69,6 @@
     "mocha": "^2.4.5",
     "phantomjs-prebuilt": "^2.1.4",
     "sails-memory": "^0.10.6",
-    "supertest": "^1.2.0"
+    "supertest-as-promised": "^3.0.0"
   }
 }

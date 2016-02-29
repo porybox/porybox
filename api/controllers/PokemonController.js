@@ -6,7 +6,12 @@ exports.uploadpk6 = async (req, res) => {
         err ? reject(err) : resolve(pk6parse.parseFile(files[0].fd))
       ));
     });
+    const visibility = req.param('visibility');
+    if (visibility && !_.includes(['private', 'public', 'readonly'], visibility)) {
+      return res.badRequest();
+    }
     parsed.owner = req.user.username;
+    parsed.visibility = visibility;
     parsed.cloneHash = PokemonHandler.computeCloneHash(parsed);
     parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
