@@ -98,8 +98,11 @@ const attributes = {
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
   rawPk6: {type: 'string'},
+
   cloneHash: {type: 'string'},
-  ownerUsername: {type: 'string'},
+  owner: {type: 'string'},
+  id: {type: 'string', unique: true, primaryKey: true},
+  visibility: {type: 'string', enum: ['private', 'public', 'readonly'], defaultsTo: 'readonly'}
 };
 
 _.forEach(attributes, attr => {

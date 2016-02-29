@@ -17,7 +17,7 @@ describe('pokemon handling', () => {
       .expect(201)
       .end((err, res) => {
         expect(res.body.dexNo).to.equal(279);
-        expect(res.body.ownerUsername).to.equal('pk6tester');
+        expect(res.body.owner).to.equal('pk6tester');
         done(err);
       });
   });
