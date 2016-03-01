@@ -1,4 +1,5 @@
 const supertest = require('supertest-as-promised');
+const _ = require('lodash');
 const expect = require('chai').expect;
 describe('pokemon handling', () => {
   let agent, otherAgent;
@@ -31,10 +32,10 @@ describe('pokemon handling', () => {
     it('should identify uploaded things as clones', async () => {
       const res1 = await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6');
       expect(res1.statusCode).to.equal(201);
-      expect(res1.body.__isUnique__).to.be.true;
+      expect(res1.body.isUnique).to.be.true;
       const res2 = await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6');
       expect(res2.statusCode).to.equal(201);
-      expect(res2.body.__isUnique__).to.be.false;
+      expect(res2.body.isUnique).to.be.false;
     });
   });
   describe('getting a pokemon by ID', () => {
@@ -45,29 +46,33 @@ describe('pokemon handling', () => {
       ).map(response => response.body.id);
     });
     it('allows third parties to view all the data on a public pokemon', async () => {
-      const res = await otherAgent.get(`/pokemon/${publicId}`);
+      const res = await otherAgent.get(`/p/${publicId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
     })
     it('allows the uploader to view all the data on a readonly pokemon', async () => {
-      const res = await agent.get(`/pokemon/${readOnlyId}`);
+      const res = await agent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
     })
     it('allows third parties to view only public data on a readonly pokemon', async () => {
-      const res = await otherAgent.get(`/pokemon/${readOnlyId}`);
+      const res = await otherAgent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.not.exist;
     });
     it('allows the uploader to view all the data on a private pokemon', async () => {
-      const res = await agent.get(`/pokemon/${privateId}`);
+      const res = await agent.get(`/p/${privateId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
     });
     it('does not allow third parties to view a private pokemon', async () => {
-      const res = await otherAgent.get(`/pokemon/${privateId}`);
+      const res = await otherAgent.get(`/p/${privateId}`);
       expect(res.statusCode).to.equal(403);
+    });
+    it("can return a list of all the requester's pokemon", async () => {
+      const res = await agent.get('/pokemon/mine');
+      expect(_.map(res.body, 'id')).to.include(privateId);
     });
   });
 
@@ -76,17 +81,18 @@ describe('pokemon handling', () => {
     before(async () => {
       pokemon1Id = (await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn1.pk6')).body.id;
       pokemon2Id = (await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6')).body.id;
+      await otherAgent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn1.pk6')
     });
     it('allows the owner of a pokemon to delete it', async () => {
-      const res = await agent.del(`/pokemon/${pokemon1Id}`);
+      const res = await agent.del(`/p/${pokemon1Id}`);
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/pokemon/${pokemon1Id}`);
+      const res2 = await agent.get(`/p/${pokemon1Id}`);
       expect(res2.statusCode).to.equal(404);
     });
     it("does not allow a third party to delete someone else's pokemon", async () => {
-      const res = await otherAgent.del(`/pokemon/${pokemon2Id}`);
+      const res = await otherAgent.del(`/p/${pokemon2Id}`);
       expect(res.statusCode).to.equal(403);
-      const res2 = await otherAgent.get(`/pokemon/${pokemon2Id}`);
+      const res2 = await otherAgent.get(`/p/${pokemon2Id}`);
       expect(res2.statusCode).to.not.equal(404);
     });
   });

@@ -15,10 +15,7 @@ exports.uploadpk6 = async (req, res) => {
     parsed.cloneHash = PokemonHandler.computeCloneHash(parsed);
     parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
-    result.__isUnique__ = await result.isUnique(); // These won't get saved to the database, just used for testing
-    result.__tsv__ = result.tsv();
-    result.__esv__ = result.esv();
-    result.__isShiny__ = result.isShiny();
+    result.isUnique = await result.checkIfUnique();
     return res.send(201, result);
   } catch (err) {
     return res.serverError(err);
@@ -31,6 +28,7 @@ exports.get = async (req, res) => {
     if (!pokemon) {
       return res.notFound();
     }
+    pokemon.isUnique = await pokemon.checkIfUnique();
     if (req.user && req.user.username === pokemon.owner || pokemon.visibility === 'public') {
       return res.ok(pokemon);
     }
@@ -58,3 +56,15 @@ exports.delete = async (req, res) => {
     return res.serverError(err);
   }
 };
+
+exports.mine = async (req, res) => {
+  try {
+    const myPokemon = await Pokemon.find({owner: req.user.username});
+    await Promise.map(myPokemon, async pkmn => {
+      pkmn.isUnique = await pkmn.checkIfUnique();
+    });
+    return res.ok(myPokemon);
+  } catch (err) {
+    return res.serverError(err);
+  }
+}

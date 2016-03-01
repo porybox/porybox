@@ -120,8 +120,8 @@ attributes.esv = function () {
 attributes.isShiny = function () {
   return this.tsv() === this.esv();
 }
-attributes.isUnique = async function () {
-  return (await Pokemon.find({cloneHash: this.cloneHash})).length === 1;
+attributes.checkIfUnique = async function () {
+  return (await Pokemon.find({cloneHash: this.cloneHash}).limit(2)).length === 1;
 }
 attributes.isStaticPidEvent = function () {
   return false; // TODO: Make this identify static PID events
