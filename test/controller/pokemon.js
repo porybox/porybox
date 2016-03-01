@@ -12,6 +12,14 @@ describe('pokemon handling', () => {
     });
     expect(res.statusCode).to.equal(302);
     expect(res.header.location).to.equal('/');
+
+    const res2 = await otherAgent.post('/auth/local/register').send({
+      username: 'EXPLOUD_BOT',
+      password: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      email: 'AAAAAAAA@AAAAAAAA.com'
+    });
+    expect(res2.statusCode).to.equal(302);
+    expect(res.header.location).to.equal('/');
   });
   describe('upload', () => {
     it('should be able to upload a pk6 file and receive a parsed version', async () => {
@@ -60,6 +68,26 @@ describe('pokemon handling', () => {
     it('does not allow third parties to view a private pokemon', async () => {
       const res = await otherAgent.get(`/pokemon/${privateId}`);
       expect(res.statusCode).to.equal(403);
+    });
+  });
+
+  describe('deleting a pokemon', async () => {
+    let pokemon1Id, pokemon2Id;
+    before(async () => {
+      pokemon1Id = (await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn1.pk6')).body.id;
+      pokemon2Id = (await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6')).body.id;
+    });
+    it('allows the owner of a pokemon to delete it', async () => {
+      const res = await agent.del(`/pokemon/${pokemon1Id}`);
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/pokemon/${pokemon1Id}`);
+      expect(res2.statusCode).to.equal(404);
+    });
+    it("does not allow a third party to delete someone else's pokemon", async () => {
+      const res = await otherAgent.del(`/pokemon/${pokemon2Id}`);
+      expect(res.statusCode).to.equal(403);
+      const res2 = await otherAgent.get(`/pokemon/${pokemon2Id}`);
+      expect(res2.statusCode).to.not.equal(404);
     });
   });
 });

@@ -44,6 +44,6 @@ module.exports.routes = {
   'get /uploadpk6': 'HomeController.uploadpk6',
   'post /uploadpk6': 'PokemonController.uploadpk6',
 
-  'get /pokemon/:id': 'PokemonController.get'
-
+  'get /pokemon/:id': 'PokemonController.get',
+  'delete /pokemon/:id': 'PokemonController.delete'
 };

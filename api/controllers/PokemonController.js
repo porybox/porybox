@@ -42,3 +42,19 @@ exports.get = async (req, res) => {
     return res.serverError(err);
   }
 };
+
+exports.delete = async (req, res) => {
+  try {
+    const pokemon = await Pokemon.findOne({id: req.param('id')});
+    if (!pokemon) {
+      return res.notFound();
+    }
+    if (pokemon.owner !== req.user.username) {
+      return res.forbidden();
+    }
+    await Pokemon.destroy({id: req.param('id')});
+    return res.ok();
+  } catch (err) {
+    return res.serverError(err);
+  }
+};
