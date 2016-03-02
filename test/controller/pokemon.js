@@ -7,7 +7,7 @@ describe('pokemon handling', () => {
     agent = supertest.agent(sails.hooks.http.app);
     otherAgent = supertest.agent(sails.hooks.http.app);
     const res = await agent.post('/auth/local/register').send({
-      username: 'pk6tester',
+      name: 'pk6tester',
       password: '********',
       email: 'pk6tester@pk6testing.com'
     });
@@ -15,7 +15,7 @@ describe('pokemon handling', () => {
     expect(res.header.location).to.equal('/');
 
     const res2 = await otherAgent.post('/auth/local/register').send({
-      username: 'EXPLOUD_BOT',
+      name: 'EXPLOUD_BOT',
       password: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
       email: 'AAAAAAAA@AAAAAAAA.com'
     });

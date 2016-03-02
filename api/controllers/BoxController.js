@@ -7,13 +7,14 @@
 
 module.exports = {
 
-  add: async function (req, res) {
+  add: function (req, res) {
     const params = req.allParams();
 
     Box.create({
       name: params.name,
-      user: req.user.username,
-      description: params.description
+      user: req.user.name,
+      description: params.description,
+      id: require('crypto').randomBytes(16).toString('hex')
     }, function (err, box) {
       if (err) {
         return res.badRequest();
@@ -21,6 +22,5 @@ module.exports = {
         return res.ok(box);
       }
     })
-  },
-
+  }
 };
