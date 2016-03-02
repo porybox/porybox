@@ -4,6 +4,8 @@
     'passport': true,
     'Passport': true,
     'User': true,
-    'Box': true
+    'Box': true,
+    'Pokemon': true,
+    'PokemonHandler': true
   }
 }
