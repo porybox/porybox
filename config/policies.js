@@ -16,13 +16,20 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.policies.html
  */
 
+const anyone = ['passport'];
+const user = ['passport', 'sessionAuth'];
 
 module.exports.policies = {
 
-  '*': ['passport', 'sessionAuth'],
+  '*': user,
 
   'AuthController': {
-    '*': ['passport']
+    '*': anyone
+  },
+
+  PokemonController: {
+    '*': user,
+    get: anyone
   }
 
 };
