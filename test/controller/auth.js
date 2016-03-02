@@ -20,7 +20,7 @@ describe('AuthController', function() {
 
     it('should be able to register an account', async () => {
       const res = await agent.post('/auth/local/register').send({
-        username: 'testuser1',
+        name: 'testuser1',
         password: 'hunter22',
         email: 'testuser1@gmail.com'
       });
@@ -32,9 +32,9 @@ describe('AuthController', function() {
       expect((await agent.get('/')).statusCode).to.equal(200);
     });
 
-    it("shouldn't register an account with an already-existing username", async () => {
+    it("shouldn't register an account with an already-existing name", async () => {
       const res = await otherAgent.post('/auth/local/register').send({
-        username: 'testuser1',
+        name: 'testuser1',
         password: 'beepboop',
         email: 'testuser1spoof@gmail.com'
       });
@@ -44,7 +44,7 @@ describe('AuthController', function() {
 
     it("shouldn't register an account with an already-existing email", async () => {
       const res = await otherAgent.post('/auth/local/register').send({
-        username: 'testuser2',
+        name: 'testuser2',
         password: 'beepboop',
         email: 'testuser1@gmail.com'
       });
@@ -54,7 +54,7 @@ describe('AuthController', function() {
 
     it("shouldn't register an account with a password less than 8 characters", async () => {
       const res = await otherAgent.post('/auth/local/register').send({
-        username: 'testuser2',
+        name: 'testuser2',
         password: 'one',
         email: 'testuser2@gmail.com'
       });
@@ -64,7 +64,7 @@ describe('AuthController', function() {
 
     it('should not allow logins with invalid passwords', async () => {
       const res = await otherAgent.post('/auth/local/login').send({
-        username: 'testuser1',
+        name: 'testuser1',
         password: 'not_the_correct_password'
       });
       expect(res.statusCode).to.equal(302);
@@ -73,7 +73,7 @@ describe('AuthController', function() {
 
     it('should not allow logins with invalid user but the password of another', async () => {
       const res = await otherAgent.post('/auth/local/login').send({
-        username: 'testuser2',
+        name: 'testuser2',
         password: 'hunter22'
       });
       expect(res.statusCode).to.equal(302);

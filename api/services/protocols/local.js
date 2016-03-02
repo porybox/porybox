@@ -25,7 +25,7 @@ const crypto    = require('crypto');
  */
 exports.register = function (req, res, next) {
   const email    = req.param('email'),
-    username = req.param('username'),
+    name = req.param('name'),
     password = req.param('password');
 
   if (!email) {
@@ -33,7 +33,7 @@ exports.register = function (req, res, next) {
     return next(new Error('No email was entered.'));
   }
 
-  if (!username) {
+  if (!name) {
     req.flash('error', 'Error.Passport.Username.Missing');
     return next(new Error('No username was entered.'));
   }
@@ -44,7 +44,7 @@ exports.register = function (req, res, next) {
   }
 
   User.create({
-    username: username,
+    name: name,
     email: email
   }, function (err, user) {
     if (err) {
@@ -66,7 +66,7 @@ exports.register = function (req, res, next) {
     Passport.create({
       protocol: 'local',
       password: password,
-      user: user.username,
+      user: user.name,
       accessToken: token
     }, function (err, passport) {
       if (err) {
@@ -101,7 +101,7 @@ exports.connect = function (req, res, next) {
 
   Passport.findOne({
     protocol: 'local',
-    user: user.username
+    user: user.name
   }, function (err, passport) {
     if (err) {
       return next(err);
@@ -111,7 +111,7 @@ exports.connect = function (req, res, next) {
       Passport.create({
         protocol: 'local',
         password: password,
-        user: user.username
+        user: user.name
       }, function (err, passport) {
         next(err, user);
       });
@@ -140,7 +140,7 @@ exports.login = function (req, identifier, password, next) {
   if (isEmail) {
     query.email = identifier;
   } else {
-    query.username = identifier;
+    query.name = identifier;
   }
 
   User.findOne(query, function (err, user) {
@@ -160,7 +160,7 @@ exports.login = function (req, identifier, password, next) {
 
     Passport.findOne({
       protocol: 'local',
-      user: user.username
+      user: user.name
     }, function (err, passport) {
       if (passport) {
         passport.validatePassword(password, function (err, res) {

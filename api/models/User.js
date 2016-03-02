@@ -3,7 +3,7 @@ module.exports =  {
   schema: true,
 
   attributes: {
-    username: {
+    name: {
       type: 'string',
       columnName: 'id',
       unique: true,
