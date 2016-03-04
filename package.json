@@ -25,6 +25,7 @@
     "grunt": "0.4.5",
     "include-all": "0.1.6",
     "less": "^2.6.0",
+    "moment": "^2.11.2",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",

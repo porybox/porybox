@@ -27,6 +27,8 @@ module.exports.routes = {
   // Boxes
 
   'post /box': 'BoxController.add',
+  'get /b/:id': 'BoxController.get',
+  'get /boxes/mine': 'BoxController.mine',
 
   // Authentication
 
@@ -48,5 +50,9 @@ module.exports.routes = {
 
   'get /p/:id': 'PokemonController.get',
   'delete /p/:id': 'PokemonController.delete',
-  'get /pokemon/mine': 'PokemonController.mine'
+  'get /pokemon/mine': 'PokemonController.mine',
+
+  // Users
+  'get /user/:name/boxes': 'UserController.boxes'
+
 };
