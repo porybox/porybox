@@ -18,8 +18,8 @@ module.exports =  {
       via: 'user'
     },
     boxes: {
-      collection: 'Box',
-      via: 'user'
+      collection: 'box',
+      via: 'owner'
     }
   }
 };

@@ -100,7 +100,8 @@ const attributes = {
   rawPk6: {type: 'string'},
 
   cloneHash: {type: 'string'},
-  owner: {type: 'string'},
+  owner: {model: 'user', type: 'string'},
+  box: {model: 'box'},
   id: {type: 'string', unique: true, primaryKey: true},
   visibility: {type: 'string', enum: ['private', 'public', 'readonly'], defaultsTo: 'readonly'}
 };
@@ -110,6 +111,8 @@ _.forEach(attributes, attr => {
   attr.required = attr.required !== undefined ? attr.required : true;
   attr.type = attr.type || 'float';
 });
+
+attributes.box = {model: 'box'};
 
 attributes.tsv = function () {
   return (this.tid ^ this.sid) >>> 4;
@@ -123,14 +126,11 @@ attributes.isShiny = function () {
 attributes.checkIfUnique = async function () {
   return (await Pokemon.find({cloneHash: this.cloneHash}).limit(2)).length === 1;
 }
-attributes.isStaticPidEvent = function () {
-  return false; // TODO: Make this identify static PID events
-}
 attributes.omitPrivateData = function () {
   /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
   it's possible to brute-force the PID. */
   const secretProperties = ['pid', 'cloneHash', 'rawPk6'];
-  if (this.isStaticPidEvent()) {
+  if (PokemonHandler.isStaticPidEvent(this)) {
     secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
   }
   return _.omit(this, secretProperties);
