@@ -1,16 +1,17 @@
 const pk6parse = require('pk6parse');
 exports.uploadpk6 = async (req, res) => {
   try {
+    const params = req.allParams();
     const parsed = await new Promise((resolve, reject) => {
       req.file('pk6').upload((err, files) => (
         err ? reject(err) : resolve(pk6parse.parseFile(files[0].fd))
       ));
     });
-    const visibility = req.param('visibility');
+    const visibility = params.visibility;
     if (visibility && !_.includes(['private', 'public', 'readonly'], visibility)) {
       return res.badRequest();
     }
-    parsed.owner = req.user.username;
+    parsed.owner = req.user.name;
     parsed.visibility = visibility;
     parsed.cloneHash = PokemonHandler.computeCloneHash(parsed);
     parsed.id = require('crypto').randomBytes(16).toString('hex');
@@ -29,7 +30,7 @@ exports.get = async (req, res) => {
       return res.notFound();
     }
     pokemon.isUnique = await pokemon.checkIfUnique();
-    if (req.user && req.user.username === pokemon.owner || pokemon.visibility === 'public') {
+    if (req.user && req.user.name === pokemon.owner || pokemon.visibility === 'public') {
       return res.ok(pokemon);
     }
     if (pokemon.visibility === 'private') {
@@ -47,7 +48,7 @@ exports.delete = async (req, res) => {
     if (!pokemon) {
       return res.notFound();
     }
-    if (pokemon.owner !== req.user.username) {
+    if (pokemon.owner !== req.user.name) {
       return res.forbidden();
     }
     await Pokemon.destroy({id: req.param('id')});
@@ -59,7 +60,7 @@ exports.delete = async (req, res) => {
 
 exports.mine = async (req, res) => {
   try {
-    const myPokemon = await Pokemon.find({owner: req.user.username});
+    const myPokemon = await Pokemon.find({owner: req.user.name});
     await Promise.map(myPokemon, async pkmn => {
       pkmn.isUnique = await pkmn.checkIfUnique();
     });
