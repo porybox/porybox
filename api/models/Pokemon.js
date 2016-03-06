@@ -103,7 +103,7 @@ const attributes = {
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
   id: {type: 'string', unique: true, primaryKey: true},
-  visibility: {type: 'string', enum: ['private', 'public', 'readonly'], defaultsTo: 'readonly'}
+  visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES}
 };
 
 _.forEach(attributes, attr => {
