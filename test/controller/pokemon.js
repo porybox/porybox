@@ -7,7 +7,7 @@ describe('pokemon handling', () => {
     agent = supertest.agent(sails.hooks.http.app);
     otherAgent = supertest.agent(sails.hooks.http.app);
     const res = await agent.post('/auth/local/register').send({
-      username: 'pk6tester',
+      name: 'pk6tester',
       password: '********',
       email: 'pk6tester@pk6testing.com'
     });
@@ -15,7 +15,7 @@ describe('pokemon handling', () => {
     expect(res.header.location).to.equal('/');
 
     const res2 = await otherAgent.post('/auth/local/register').send({
-      username: 'EXPLOUD_BOT',
+      name: 'EXPLOUD_BOT',
       password: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
       email: 'AAAAAAAA@AAAAAAAA.com'
     });
@@ -36,6 +36,10 @@ describe('pokemon handling', () => {
       const res2 = await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6');
       expect(res2.statusCode).to.equal(201);
       expect(res2.body.isUnique).to.be.false;
+    });
+    it("should reject uploads that aren't pk6 files", async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/not_a_pk6_file.txt`);
+      expect(res.statusCode).to.equal(400);
     });
   });
   describe('getting a pokemon by ID', () => {

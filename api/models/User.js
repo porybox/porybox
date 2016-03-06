@@ -3,7 +3,7 @@ module.exports =  {
   schema: true,
 
   attributes: {
-    username: {
+    name: {
       type: 'string',
       columnName: 'id',
       unique: true,
@@ -18,8 +18,8 @@ module.exports =  {
       via: 'user'
     },
     boxes: {
-      collection: 'Box',
-      via: 'user'
+      collection: 'box',
+      via: 'owner'
     }
   }
 };
