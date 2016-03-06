@@ -10,18 +10,26 @@ module.exports = {
   async add (req, res) {
     try {
       const params = req.allParams();
-      const visibilities = ['listed', 'unlisted'];
-      if (!params.name || params.visibility && !_.includes(visibilities, params.visibility)) {
-        return res.badRequest();
+      if (!params.name) {
+        return res.badRequest('Missing box name');
+      }
+      let visibility;
+      if (params.visibility) {
+        if (!Constants.BOX_VISIBILITIES.includes(params.visibility)) {
+          return res.badRequest('Invalid visibility setting');
+        }
+        visibility = params.visibility;
+      } else {
+        visibility = (await UserPreferences.findOne({user: req.user.name})).defaultBoxVisibility;
       }
       const box = await Box.create({
         name: params.name,
         owner: req.user.name,
         description: params.description,
-        visibility: params.visibility,
+        visibility,
         id: require('crypto').randomBytes(16).toString('hex')
       });
-      return res.ok(box);
+      return res.status(201).json(box);
     } catch (err) {
       return res.serverError(err);
     }

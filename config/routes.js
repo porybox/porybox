@@ -53,6 +53,8 @@ module.exports.routes = {
   'get /pokemon/mine': 'PokemonController.mine',
 
   // Users
-  'get /user/:name/boxes': 'UserController.boxes'
-
+  'get /user/:name/boxes': 'UserController.boxes',
+  'get /api/v1/me': 'UserController.me',
+  'get /preferences': 'UserController.getPreferences',
+  'post /preferences/edit': 'UserController.editPreferences'
 };

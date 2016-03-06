@@ -3,9 +3,14 @@ const moment = require('moment');
 exports.uploadpk6 = async (req, res) => {
   try {
     const params = req.allParams();
-    const visibility = params.visibility;
-    if (visibility && !_.includes(['private', 'public', 'readonly'], visibility)) {
-      return res.status(400).json('Invalid visibility setting');
+    let visibility;
+    if (params.visibility) {
+      if (!Constants.POKEMON_VISIBILITIES.includes(params.visibility)) {
+        return res.status(400).json('Invalid visibility setting');
+      }
+      visibility = params.visibility;
+    } else {
+      visibility = (await UserPreferences.findOne({user: req.user.name})).defaultPokemonVisibility;
     }
     const files = await new Promise((resolve, reject) => {
       req.file('pk6').upload((err, files) => err ? reject(err) : resolve(files));

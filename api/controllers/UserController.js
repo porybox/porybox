@@ -15,5 +15,24 @@ module.exports = {
     } catch (err) {
       return res.serverError(err);
     }
+  },
+  me (req, res) {
+    return User.findOne({name: req.user.name}).then(res.ok).catch(res.serverError);
+  },
+  getPreferences (req, res) {
+    return UserPreferences.findOne({user: req.user.name}).then(res.ok).catch(res.serverError);
+  },
+  async editPreferences (req, res) {
+    try {
+      // Only allow users to change the preferences that have been explicitly marked as modifiable
+      const filteredParams = _.pick(req.allParams(), _.keys(Constants.CHANGEABLE_PREFERENCES));
+      if (_.isEmpty(filteredParams)) {
+        return res.badRequest('No valid preferences specified');
+      }
+      const updated = await UserPreferences.update({user: req.user.name}, filteredParams);
+      return res.ok(updated[0]);
+    } catch (err) {
+      return res.serverError(err);
+    }
   }
 };

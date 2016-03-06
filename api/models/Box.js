@@ -15,7 +15,7 @@ module.exports =  {
       defaultsTo: ''
     },
     visibility: {
-      enum: ['listed', 'unlisted'],
+      enum: Constants.BOX_VISIBILITIES,
       defaultsTo: 'listed'
     },
     contents: {

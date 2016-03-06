@@ -23,7 +23,7 @@ const crypto    = require('crypto');
  * @param {Object}   res
  * @param {Function} next
  */
-exports.register = function (req, res, next) {
+exports.register = async function (req, res, next) {
   const email    = req.param('email'),
     name = req.param('name'),
     password = req.param('password');
@@ -42,46 +42,45 @@ exports.register = function (req, res, next) {
     req.flash('error', 'Error.Passport.Password.Missing');
     return next(new Error('No password was entered.'));
   }
-
-  User.create({
-    name: name,
-    email: email
-  }, function (err, user) {
-    if (err) {
-      if (err.code === 'E_VALIDATION') {
-        if (err.invalidAttributes.email) {
-          req.flash('error', 'Error.Passport.Email.Exists');
-        } else {
-          req.flash('error', 'Error.Passport.User.Exists');
-        }
+  let user, token;
+  try {
+    user = await User.create({name, email});
+    token = crypto.randomBytes(48).toString('base64');
+  } catch (err) {
+    if (err.code === 'E_VALIDATION') {
+      if (err.invalidAttributes.email) {
+        req.flash('error', 'Error.Passport.Email.Exists');
       } else {
         req.flash('error', 'Error.Passport.User.Exists');
       }
-      return next(err);
+    } else {
+      req.flash('error', 'Error.Passport.User.Exists');
     }
+    return next(err);
+  }
 
-    // Generating accessToken for API authentication
-    const token = crypto.randomBytes(48).toString('base64');
-
-    Passport.create({
+  try {
+    await Passport.create({
       protocol: 'local',
-      password: password,
+      password,
       user: user.name,
       accessToken: token
-    }, function (err, passport) {
-      if (err) {
-        if (err.code === 'E_VALIDATION') {
-          req.flash('error', 'Error.Passport.Password.Invalid');
-        }
-
-        return user.destroy(function (destroyErr) {
-          next(destroyErr || err);
-        });
-      }
-
-      next(null, user);
     });
-  });
+  } catch (err) {
+    if (err.code === 'E_VALIDATION') {
+      req.flash('error', 'Error.Passport.Password.Invalid');
+    }
+    return user.destroy(function (destroyErr) {
+      next(destroyErr || err);
+    });
+  }
+
+  try {
+    await UserPreferences.create({user});
+  } catch (err) {
+    return next(err);
+  }
+  next(null, user);
 };
 
 /**
