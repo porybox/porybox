@@ -1,7 +1,8 @@
 const supertest = require('supertest-as-promised');
 const expect = require('chai').expect;
 const _ = require('lodash');
-describe('box handling', () => {
+const Promise = require('bluebird');
+describe('BoxController', () => {
   let agent, otherAgent;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
@@ -43,7 +44,7 @@ describe('box handling', () => {
           .field('box', box1Id)
           .field('visibility', visibility);
       });
-    })
+    });
     it('allows a user to view the contents of their box by ID', async () => {
       const box1 = (await agent.get(`/b/${box1Id}`)).body;
       expect(box1.id).to.equal(box1Id);
@@ -62,7 +63,10 @@ describe('box handling', () => {
       expect(box1.contents[2]).to.not.exist;
     });
     it('allows a user to get their own boxes', async () => {
-      const boxNames = _.map((await agent.get('/boxes/mine')).body, 'name');
+      const res = await agent.get('/boxes/mine');
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/user/boxtester/boxes');
+      const boxNames = _.map((await agent.get('/user/boxtester/boxes')).body, 'name');
       expect(boxNames).to.include('Jukebox');
       expect(boxNames).to.include('Sandbox');
       expect(boxNames).to.include('Penalty Box');
@@ -73,6 +77,110 @@ describe('box handling', () => {
       expect(listedBoxNames).to.include('Jukebox');
       expect(listedBoxNames).to.include('Sandbox');
       expect(listedBoxNames).to.not.include('Penalty Box');
+    });
+    it('does not leak internal properties of a box to the client', async () => {
+      const box = (await agent.get(`/b/${box1Id}`)).body;
+      expect(box._markedForDeletion).to.not.exist;
+    });
+  });
+  describe('deleting a box', function () {
+    this.timeout(5000);
+    let previousDeletionDelay, box, pkmn;
+    before(() => {
+      /* Normally this is 5 minutes, but it's annoying for the unit tests to take that long.
+      So for these tests it's set to 2 seconds instead. */
+      previousDeletionDelay = sails.services.constants.BOX_DELETION_DELAY;
+      sails.services.constants.BOX_DELETION_DELAY = 2000;
+    });
+    beforeEach(async () => {
+      const res = await agent.post('/box').send({name: 'Boombox'});
+      expect(res.statusCode).to.equal(201);
+      box = res.body;
+      const res2 = await agent.post('/uploadpk6')
+        .field('box', box.id)
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res2.statusCode).to.equal(201);
+      pkmn = res2.body;
+    });
+    it('does not allow users to delete boxes that belong to other users', async () => {
+      const res = await otherAgent.del(`/b/${box.id}`);
+      expect(res.statusCode).to.equal(403);
+    });
+    it('returns a 404 error after fetching a deleted box', async () => {
+      const res = await agent.del(`/b/${box.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.statusCode).to.equal(404);
+    });
+    it('also deletes all Pokemon contents when a box is deleted', async () => {
+      await agent.del(`/b/${box.id}`);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(res2.statusCode).to.equal(404);
+      await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
+      const res3 = await agent.get(`/p/${pkmn.id}`);
+      expect(res3.statusCode).to.equal(404);
+    });
+    it('allows deleted boxes to be undeleted shortly afterwards', async () => {
+      await agent.del(`/b/${box.id}`);
+      const res = await agent.post(`/b/${box.id}/undelete`);
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.id).to.equal(box.id);
+      await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
+      const res3 = await agent.get(`/b/${box.id}`);
+      expect(res3.statusCode).to.equal(200);
+      expect(res3.body.id).to.equal(box.id);
+    });
+    it('does not allow boxes to be undeleted once some time has elapsed', async () => {
+      await agent.del(`/b/${box.id}`);
+      await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
+      const res = await agent.post(`/b/${box.id}/undelete`);
+      expect(res.statusCode).to.equal(404);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.statusCode).to.equal(404);
+    });
+    it('does not allow users to undelete boxes that belong to other users', async () => {
+      await agent.del(`/b/${box.id}`);
+      const res = await otherAgent.post(`/b/${box.id}/undelete`);
+      expect(res.statusCode).to.equal(404);
+    });
+    it("restores a box's contents after undeleting it", async () => {
+      await agent.del(`/b/${box.id}`);
+      const res = await agent.get(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(404);
+      await agent.post(`/b/${box.id}/undelete`);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.id).to.equal(pkmn.id);
+    });
+    it('deletes a box immediately if the `immediately` parameter is set to true', async () => {
+      await agent.del(`/b/${box.id}`).send({immediately: true});
+      const res = await agent.post(`/b/${box.id}/undelete`);
+      expect(res.statusCode).to.equal(404);
+    });
+    it('does not hang the server while waiting for a box to be fully deleted', async () => {
+      await agent.del(`/b/${box.id}`);
+      const timer = Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
+      await agent.get('/');
+      expect(timer.isFulfilled()).to.be.false;
+    });
+    it('does not show deleted boxes in box listings', async () => {
+      const res = await agent.get('/user/boxtester/boxes');
+      expect(_.map(res.body, 'id')).to.include(box.id);
+      await agent.del(`/b/${box.id}`);
+      const res2 = await agent.get('/user/boxtester/boxes');
+      expect(_.map(res2.body, 'id')).to.not.include(box.id);
+    });
+    it('does not show pokemon from deleted boxes in the "my pokemon" listing', async () => {
+      const res = await agent.get('/pokemon/mine');
+      expect(_.map(res.body, 'id')).to.include(pkmn.id);
+      await agent.del(`/b/${box.id}`);
+      const res2 = await agent.get('/pokemon/mine');
+      expect(_.map(res2.body, 'id')).to.not.include(pkmn.id);
+    });
+    after(() => {
+      sails.services.constants.BOX_DELETION_DELAY = previousDeletionDelay;
     });
   });
 });

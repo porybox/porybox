@@ -38,18 +38,66 @@ module.exports = {
   async get (req, res) {
     try {
       const params = req.allParams();
-      const box = await Box.findOne({id: params.id}).populate('contents');
+      const box = await Box.findOne({
+        id: params.id,
+        _markedForDeletion: false
+      }).populate('contents');
       if (!box) {
         return res.notFound();
       }
-      return res.ok(box.owner === req.user.name ? box : box.omitPrivateContents());
+      return res.ok(
+        box.owner === req.user.name ? box.omitDeletedContents() : box.omitPrivateContents()
+      );
     } catch (err) {
       return res.serverError(err);
     }
   },
 
   mine (req, res) {
-    Box.find({owner: req.user.name}).populate('contents').then(res.ok).catch(res.serverError);
-  }
+    return res.redirect(`/user/${req.user.name}/boxes`);
+  },
 
+  async delete (req, res) {
+    try {
+      const id = req.param('id');
+      let box = await Box.findOne({id});
+      if (!box || box._markedForDeletion) {
+        return res.notFound();
+      }
+      if (box.owner !== req.user.name) {
+        return res.forbidden();
+      }
+      await box.markForDeletion();
+      res.send(202);
+      await Promise.delay(req.param('immediately') ? 0 : Constants.BOX_DELETION_DELAY);
+      box = await Box.findOne({id});
+      if (box._markedForDeletion) {
+        await box.destroy();
+      }
+    } catch (err) {
+      if (res.finished) {
+        sails.log.error(err);
+      } else {
+        return res.serverError(err);
+      }
+    }
+  },
+
+  async undelete (req, res) {
+    try {
+      const box = await Box.findOne({id: req.param('id')}).populate('contents');
+      if (!box) {
+        return res.notFound();
+      }
+      if (box.owner !== req.user.name) {
+        /* If anyone other than the owner tries to undelete the box, return a 404 error.
+        That way, the server doesn't leak information on whether a box with the given ID ever existed. */
+        return box._markedForDeletion ? res.notFound() : res.forbidden();
+      }
+      await box.unmarkForDeletion();
+      return res.ok();
+    } catch (err) {
+      return res.serverError(err);
+    }
+  }
 };
