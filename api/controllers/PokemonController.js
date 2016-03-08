@@ -53,7 +53,7 @@ exports.uploadpk6 = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const pokemon = await Pokemon.findOne({id: req.param('id')});
+    const pokemon = await Pokemon.findOne({id: req.param('id'), _markedForDeletion: false});
     if (!pokemon) {
       return res.notFound();
     }
@@ -72,14 +72,42 @@ exports.get = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    const pokemon = await Pokemon.findOne({id: req.param('id')});
+    const id = req.param('id');
+    let pokemon = await Pokemon.findOne({id});
     if (!pokemon) {
       return res.notFound();
     }
     if (pokemon.owner !== req.user.name) {
       return res.forbidden();
     }
-    await Pokemon.destroy({id: req.param('id')});
+    await pokemon.markForDeletion();
+    res.send(202);
+    await Promise.delay(req.param('immediately') ? 0 : Constants.POKEMON_DELETION_DELAY);
+    pokemon = await Pokemon.findOne({id});
+    if (pokemon._markedForDeletion) {
+      await pokemon.destroy();
+    }
+  } catch (err) {
+    if (res.finished) {
+      sails.log.error(err);
+    } else {
+      return res.serverError(err);
+    }
+  }
+};
+
+exports.undelete = async (req, res) => {
+  try {
+    const pokemon = await Pokemon.findOne({id: req.param('id')});
+    if (!pokemon) {
+      return res.notFound();
+    }
+    if (pokemon.owner !== req.user.name) {
+      /* If anyone other than the owner tries to undelete the pokemon, return a 404 error.
+      That way, the server doesn't leak information on whether a pokemon with the given ID ever existed. */
+      return pokemon._markedForDeletion ? res.notFound() : res.forbidden();
+    }
+    await pokemon.unmarkForDeletion();
     return res.ok();
   } catch (err) {
     return res.serverError(err);
@@ -88,7 +116,7 @@ exports.delete = async (req, res) => {
 
 exports.mine = async (req, res) => {
   try {
-    const myPokemon = await Pokemon.find({owner: req.user.name});
+    const myPokemon = await Pokemon.find({owner: req.user.name, _markedForDeletion: false});
     await Promise.map(myPokemon, async pkmn => {
       pkmn.isUnique = await pkmn.checkIfUnique();
     });
@@ -96,4 +124,4 @@ exports.mine = async (req, res) => {
   } catch (err) {
     return res.serverError(err);
   }
-}
+};

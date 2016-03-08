@@ -5,7 +5,7 @@ module.exports = {
       if (!user) {
         return res.notFound();
       }
-      const boxes = user.boxes;
+      const boxes = _.filter(user.boxes, box => !box._markedForDeletion);
       if (req.user.name === user.name) {
         return res.ok(boxes);
       }

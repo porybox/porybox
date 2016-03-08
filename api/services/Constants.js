@@ -17,3 +17,7 @@ exports.CHANGEABLE_PREFERENCES = {
     defaultsTo: exports.DEFAULT_POKEMON_VISIBILITY_SETTING
   }
 };
+
+// The number of milliseconds for which deleted boxes/pokemon should be cached before they are permanently deleted.
+exports.BOX_DELETION_DELAY = 300000; // (i.e. 5 minutes)
+exports.POKEMON_DELETION_DELAY = 300000;

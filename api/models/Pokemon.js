@@ -97,13 +97,14 @@ const attributes = {
   regionId: {},
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
-  rawPk6: {type: 'string'},
+  _rawPk6: {type: 'string'},
 
   cloneHash: {type: 'string'},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
   id: {type: 'string', unique: true, primaryKey: true},
-  visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES}
+  visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
+  _markedForDeletion: {type: 'boolean', defaultsTo: false}
 };
 
 _.forEach(attributes, attr => {
@@ -116,24 +117,48 @@ attributes.box = {model: 'box'};
 
 attributes.tsv = function () {
   return (this.tid ^ this.sid) >>> 4;
-}
+};
 attributes.esv = function () {
   return ((this.pid & 0xffff) ^ (this.pid >>> 16)) >>> 4;
-}
+};
 attributes.isShiny = function () {
   return this.tsv() === this.esv();
-}
+};
 attributes.checkIfUnique = async function () {
-  return (await Pokemon.find({cloneHash: this.cloneHash}).limit(2)).length === 1;
-}
+  return (await Pokemon.find({
+    cloneHash: this.cloneHash,
+    _markedForDeletion: false
+  }).limit(2)).length === 1;
+};
 attributes.omitPrivateData = function () {
   /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
   it's possible to brute-force the PID. */
-  const secretProperties = ['pid', 'cloneHash', 'rawPk6'];
+  const secretProperties = ['pid', 'cloneHash', '_rawPk6'];
   if (PokemonHandler.isStaticPidEvent(this)) {
     secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
   }
   return _.omit(this, secretProperties);
+};
+
+attributes.markForDeletion = function () {
+  this._markedForDeletion = true;
+  return this.save();
+};
+
+attributes.unmarkForDeletion = function () {
+  this._markedForDeletion = false;
+  return this.save();
+};
+
+attributes.destroy = function () {
+  return Pokemon.destroy({id: this.id});
+};
+
+/* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
+Conveniently, this means that the internal properties are never sent to the client.
+(Not to be confused with the omitPrivateData function, which removes *confidential* data.) */
+attributes.toJSON = function () {
+  return _.omit(this, (value, key) => key.startsWith('_'));
 };
 
 module.exports = {schema: true, attributes};

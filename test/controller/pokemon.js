@@ -1,7 +1,8 @@
 const supertest = require('supertest-as-promised');
 const _ = require('lodash');
 const expect = require('chai').expect;
-describe('pokemon handling', () => {
+const Promise = require('bluebird');
+describe('PokemonController', () => {
   let agent, otherAgent;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
@@ -53,12 +54,12 @@ describe('pokemon handling', () => {
       const res = await otherAgent.get(`/p/${publicId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
-    })
+    });
     it('allows the uploader to view all the data on a readonly pokemon', async () => {
       const res = await agent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
-    })
+    });
     it('allows third parties to view only public data on a readonly pokemon', async () => {
       const res = await otherAgent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
@@ -78,26 +79,85 @@ describe('pokemon handling', () => {
       const res = await agent.get('/pokemon/mine');
       expect(_.map(res.body, 'id')).to.include(privateId);
     });
+    it('does not leak internal properties of a a pokemon to the client', async () => {
+      const pkmn = (await agent.get(`/pokemon/${publicId}`)).body;
+      expect(pkmn._markedForDeletion).to.not.exist;
+    });
   });
 
   describe('deleting a pokemon', async () => {
-    let pokemon1Id, pokemon2Id;
-    before(async () => {
-      pokemon1Id = (await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn1.pk6')).body.id;
-      pokemon2Id = (await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6')).body.id;
-      await otherAgent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn1.pk6')
+    let previousDeletionDelay, pkmn;
+    before(() => {
+      /* Normally this is 5 minutes, but it's annoying for the unit tests to take that long.
+      So for these tests it's set to 2 seconds instead. */
+      previousDeletionDelay = sails.services.constants.POKEMON_DELETION_DELAY;
+      sails.services.constants.POKEMON_DELETION_DELAY = 2000;
+    });
+    beforeEach(async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      pkmn = res.body;
     });
     it('allows the owner of a pokemon to delete it', async () => {
-      const res = await agent.del(`/p/${pokemon1Id}`);
-      expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/p/${pokemon1Id}`);
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
       expect(res2.statusCode).to.equal(404);
     });
     it("does not allow a third party to delete someone else's pokemon", async () => {
-      const res = await otherAgent.del(`/p/${pokemon2Id}`);
+      const res = await otherAgent.del(`/p/${pkmn.id}`);
       expect(res.statusCode).to.equal(403);
-      const res2 = await otherAgent.get(`/p/${pokemon2Id}`);
+      const res2 = await otherAgent.get(`/p/${pkmn.id}`);
       expect(res2.statusCode).to.not.equal(404);
+    });
+    it('allows a deleted pokemon to be undeleted shortly afterwards', async () => {
+      await agent.del(`/p/${pkmn.id}`);
+      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(404);
+      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      expect(res.statusCode).to.equal(200);
+      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(200);
+      await Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
+      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(200);
+    });
+    it('does not allow a pokemon to be undeleted once some time has elapsed', async () => {
+      await agent.del(`/p/${pkmn.id}`);
+      await Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
+      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      expect(res.statusCode).to.equal(404);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(res2.statusCode).to.equal(404);
+    });
+    it("does not allow a third party to undelete someone else's pokemon", async () => {
+      await agent.del(`/p/${pkmn.id}`);
+      expect((await otherAgent.post(`/p/${pkmn.id}/undelete`)).statusCode).to.equal(404);
+    });
+    it('deletes a pokemon immediately if the `immediately` parameter is set to true', async () => {
+      await agent.del(`/p/${pkmn.id}`).send({immediately: true});
+      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      expect(res.statusCode).to.equal(404);
+    });
+    it('does not hang the server while waiting for a pokemon to be fully deleted', async () => {
+      await agent.del(`/p/${pkmn.id}`);
+      const timer = Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
+      await agent.get('/');
+      expect(timer.isFulfilled()).to.be.false;
+    });
+    it('does not show a deleted pokemon in the "my pokemon" listing', async () => {
+      const res = await agent.get('/pokemon/mine');
+      expect(_.map(res.body, 'id')).to.include(pkmn.id);
+      await agent.del(`/p/${pkmn.id}`);
+      const res2 = await agent.get('/pokemon/mine');
+      expect(_.map(res2.body, 'id')).to.not.include(pkmn.id);
+    });
+    it('does not show deleted contents when a box is retrieved', async () => {
+      const res = await agent.get(`/b/${pkmn.box}`);
+      expect(_.map(res.body.contents, 'id')).to.include(pkmn.id);
+      await agent.del(`/p/${pkmn.id}`);
+      const res2 = await agent.get(`/b/${pkmn.box}`);
+      expect(_.map(res2.body.contents, 'id')).to.not.include(pkmn.id);
+    });
+    after(() => {
+      sails.services.constants.POKEMON_DELETION_DELAY = previousDeletionDelay;
     });
   });
 });
