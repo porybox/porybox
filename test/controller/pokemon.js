@@ -3,10 +3,11 @@ const _ = require('lodash');
 const expect = require('chai').expect;
 const Promise = require('bluebird');
 describe('PokemonController', () => {
-  let agent, otherAgent;
+  let agent, otherAgent, noAuthAgent;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
     otherAgent = supertest.agent(sails.hooks.http.app);
+    noAuthAgent = supertest.agent(sails.hooks.http.app);
     const res = await agent.post('/auth/local/register').send({
       name: 'pk6tester',
       password: '********',
@@ -158,6 +159,50 @@ describe('PokemonController', () => {
     });
     after(() => {
       sails.services.constants.POKEMON_DELETION_DELAY = previousDeletionDelay;
+    });
+  });
+  describe('downloading a pokemon', () => {
+    let publicPkmn, readonlyPkmn, rawPk6;
+    before(async () => {
+      const res = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('visibility', 'public');
+      expect(res.statusCode).to.equal(201);
+      publicPkmn = res.body;
+      const res2 = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res2.statusCode).to.equal(201);
+      readonlyPkmn = res2.body;
+      rawPk6 = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`).toString('base64');
+    });
+    it('allows a user to download their own public pokemon', async () => {
+      const res = await agent.get(`/p/${publicPkmn.id}/download`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.equal(rawPk6);
+    });
+    it('allows a user to download their own readonly pokemon', async () => {
+      const res = await agent.get(`/p/${readonlyPkmn.id}/download`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.equal(rawPk6);
+    });
+    it("allows any other user to download someone's public pokemon", async () => {
+      const res = await otherAgent.get(`/p/${publicPkmn.id}/download`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.equal(rawPk6);
+    });
+    it("does not allow other users to download someone's readonly pokemon", async () => {
+      const res = await otherAgent.get(`/p/${readonlyPkmn.id}/download`);
+      expect(res.statusCode).to.equal(403);
+      expect(res.body).to.not.equal(rawPk6);
+    });
+    it('allows an unauthenticated user to download a public pokemon', async () => {
+      const res = await noAuthAgent.get(`/p/${publicPkmn.id}/download`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.equal(rawPk6);
+    });
+    it('does not allow an unauthenticated user to download a readonly pokemon', async () => {
+      const res = await noAuthAgent.get(`/p/${readonlyPkmn.id}/download`);
+      expect(res.statusCode).to.equal(403);
+      expect(res.body).to.not.equal(rawPk6);
     });
   });
 });

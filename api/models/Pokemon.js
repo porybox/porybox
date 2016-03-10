@@ -104,7 +104,8 @@ const attributes = {
   box: {model: 'box'},
   id: {type: 'string', unique: true, primaryKey: true},
   visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
-  _markedForDeletion: {type: 'boolean', defaultsTo: false}
+  _markedForDeletion: {type: 'boolean', defaultsTo: false},
+  downloadCount: {defaultsTo: 0}
 };
 
 _.forEach(attributes, attr => {

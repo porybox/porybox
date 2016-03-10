@@ -125,3 +125,23 @@ exports.mine = async (req, res) => {
     return res.serverError(err);
   }
 };
+
+exports.download = async (req, res) => {
+  try {
+    const pokemon = await Pokemon.findOne({id: req.param('id'), _markedForDeletion: false});
+    if (!pokemon) {
+      return res.notFound();
+    }
+    const userIsOwner = !!req.user && req.user.name === pokemon.owner;
+    if (pokemon.visibility !== 'public' && !userIsOwner) {
+      return res.forbidden();
+    }
+    res.status(200).json(pokemon._rawPk6);
+    if (!userIsOwner) {
+      pokemon.downloadCount++;
+      await pokemon.save();
+    }
+  } catch (err) {
+    return res.serverError(err);
+  }
+};
