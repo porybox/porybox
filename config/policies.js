@@ -29,7 +29,8 @@ module.exports.policies = {
 
   PokemonController: {
     '*': user,
-    get: anyone
+    get: anyone,
+    download: anyone
   },
 
   BoxController: {
