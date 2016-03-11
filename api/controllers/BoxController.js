@@ -45,9 +45,10 @@ module.exports = {
       if (!box) {
         return res.notFound();
       }
-      return res.ok(
-        box.owner === req.user.name ? box.omitDeletedContents() : box.omitPrivateContents()
-      );
+      if (req.user && box.owner === req.user.name) {
+        return res.ok(box.omitDeletedContents());
+      }
+      return res.ok(box.omitPrivateContents());
     } catch (err) {
       return res.serverError(err);
     }

@@ -3,10 +3,11 @@ const expect = require('chai').expect;
 const _ = require('lodash');
 const Promise = require('bluebird');
 describe('BoxController', () => {
-  let agent, otherAgent;
+  let agent, otherAgent, noAuthAgent;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
     otherAgent = supertest.agent(sails.hooks.http.app);
+    noAuthAgent = supertest.agent(sails.hooks.http.app);
     const res = await agent.post('/auth/local/register').send({
       name: 'boxtester',
       password: '********',
@@ -62,6 +63,17 @@ describe('BoxController', () => {
       expect(box1.contents[1].pid).to.exist;
       expect(box1.contents[2]).to.not.exist;
     });
+    it('allows an unauthenticated user to view a box by ID', async () => {
+      const res = await noAuthAgent.get(`/b/${box1Id}`);
+      expect(res.statusCode).to.equal(200);
+      const box1 = res.body;
+      expect(box1.id).to.equal(box1Id);
+      expect(box1.contents[0].visibility).to.equal('readonly');
+      expect(box1.contents[0].pid).to.not.exist;
+      expect(box1.contents[1].visibility).to.equal('public');
+      expect(box1.contents[1].visibility).to.exist;
+      expect(box1.contents[2]).to.not.exist;
+    });
     it('allows a user to get their own boxes', async () => {
       const res = await agent.get('/boxes/mine');
       expect(res.statusCode).to.equal(302);
@@ -78,13 +90,18 @@ describe('BoxController', () => {
       expect(listedBoxNames).to.include('Sandbox');
       expect(listedBoxNames).to.not.include('Penalty Box');
     });
+    it("allows an unauthenticated user to get a user's listed boxes", async () => {
+      const listedBoxNames = _.map((await noAuthAgent.get('/user/boxtester/boxes')).body, 'name');
+      expect(listedBoxNames).to.include('Jukebox');
+      expect(listedBoxNames).to.include('Sandbox');
+      expect(listedBoxNames).to.not.include('Penalty Box');
+    });
     it('does not leak internal properties of a box to the client', async () => {
       const box = (await agent.get(`/b/${box1Id}`)).body;
       expect(box._markedForDeletion).to.not.exist;
     });
   });
   describe('deleting a box', function () {
-    this.timeout(5000);
     let previousDeletionDelay, box, pkmn;
     before(() => {
       /* Normally this is 5 minutes, but it's annoying for the unit tests to take that long.
