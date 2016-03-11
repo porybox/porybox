@@ -23,13 +23,23 @@ module.exports.policies = {
 
   '*': user,
 
-  'AuthController': {
+  AuthController: {
     '*': anyone
   },
 
   PokemonController: {
     '*': user,
     get: anyone
+  },
+
+  BoxController: {
+    '*': user,
+    get: anyone
+  },
+
+  UserController: {
+    '*': user,
+    boxes: anyone
   }
 
 };
