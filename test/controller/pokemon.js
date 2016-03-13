@@ -204,6 +204,24 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(403);
       expect(res.body).to.not.equal(rawPk6);
     });
+    it('increases the download count with downloads by third parties', async () => {
+      const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      await otherAgent.get(`/p/${publicPkmn.id}/download`);
+      const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      expect(newCount).to.equal(initialCount + 1);
+    });
+    it('increases the download count with downloads by unauthenticated users', async () => {
+      const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      await noAuthAgent.get(`/p/${publicPkmn.id}/download`);
+      const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      expect(newCount).to.equal(initialCount + 1);
+    });
+    it("does not increase the download count with downloads by a pokemon's owner", async () => {
+      const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      await agent.get(`/p/${publicPkmn.id}/download`);
+      const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      expect(newCount).to.equal(initialCount);
+    });
   });
   describe('moving a pokemon', async () => {
     let pkmn, someoneElsesPkmn, box1, box2, someoneElsesBox;
