@@ -55,6 +55,7 @@ module.exports.routes = {
   'delete /p/:id': 'PokemonController.delete',
   'post /p/:id/undelete': 'PokemonController.undelete',
   'get /pokemon/mine': 'PokemonController.mine',
+  'post /p/:id/move': 'PokemonController.move',
 
   // Users
   'get /user/:name/boxes': 'UserController.boxes',

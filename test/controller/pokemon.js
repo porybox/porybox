@@ -205,4 +205,56 @@ describe('PokemonController', () => {
       expect(res.body).to.not.equal(rawPk6);
     });
   });
+  describe('moving a pokemon', async () => {
+    let pkmn, someoneElsesPkmn, box1, box2, someoneElsesBox;
+    beforeEach(async () => {
+      box1 = (await agent.post('/box').send({name: 'Shoebox'})).body;
+      box2 = (await agent.post('/box').send({name: 'Lunchbox'})).body;
+      pkmn = (await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', box1.id)).body;
+      someoneElsesBox = (await otherAgent.post('/box').send({name: 'Mailbox'})).body;
+      someoneElsesPkmn = (await otherAgent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', someoneElsesBox.id)).body;
+    });
+    it('allows a user to move their own pokemon to a different box', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      expect(res.statusCode).to.equal(200);
+      expect((await agent.get(`/p/${pkmn.id}`)).body.box).to.equal(box2.id);
+      expect((await agent.get(`/b/${box1.id}`)).body.contents).to.be.empty;
+      expect((await agent.get(`/b/${box2.id}`)).body.contents[0].id).to.equal(pkmn.id);
+    });
+    it("does not allow a third party to move someone's else pokemon", async () => {
+      const res = await otherAgent.post(`/p/${pkmn.id}/move`).send({box: someoneElsesBox.id});
+      expect(res.statusCode).to.equal(403);
+      const res2 = await otherAgent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      expect(res2.statusCode).to.equal(403);
+    });
+    it("does not allow a third party to move their pokemon into someone else's box", async () => {
+      const res = await otherAgent.post(`/p/${someoneElsesPkmn.id}/move`).send({box: box1.id});
+      expect(res.statusCode).to.equal(403);
+    });
+    it('returns a 404 error if an invalid pokemon ID is included', async () => {
+      expect((await agent.post('/p/aaa/move').send({box: box2.id})).statusCode).to.equal(404);
+    });
+    it('returns a 404 error if an invalid box ID is included', async () => {
+      expect((await agent.post(`/p/${pkmn.id}/move`).send({box: 'a'})).statusCode).to.equal(404);
+    });
+    it('returns a 400 error if no box ID is included', async () => {
+      expect((await agent.post(`/p/${pkmn.id}/move`)).statusCode).to.equal(400);
+    });
+    it("does not allow a pokemon to be moved if it's marked for deletion", async () => {
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      expect(res2.statusCode).to.equal(404);
+    });
+    it("does not allow a pokemon to be moved to a box that's marked for deletion", async () => {
+      const res = await agent.del(`/b/${box2.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      expect(res2.statusCode).to.equal(404);
+    });
+  });
 });
