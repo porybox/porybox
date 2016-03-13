@@ -45,7 +45,7 @@ exports.uploadpk6 = async (req, res) => {
     parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
-    return res.status(201).json(result);
+    return res.created(result);
   } catch (err) {
     return res.serverError(err);
   }
