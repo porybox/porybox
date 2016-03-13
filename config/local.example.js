@@ -7,7 +7,7 @@
  */
 module.exports = {
 
-  port: 8080,
+  port: 1337,
 
   connections: {
     default: 'mongo',
