@@ -145,3 +145,33 @@ exports.download = async (req, res) => {
     return res.serverError(err);
   }
 };
+
+exports.move = async (req, res) => {
+  try {
+    if (!req.param('id')) {
+      return res.badRequest('No pokemon specified');
+    }
+    if (!req.param('box')) {
+      return res.badRequest('No box specified');
+    }
+    const pokemon = await Pokemon.findOne({id: req.param('id'), _markedForDeletion: false});
+    if (!pokemon) {
+      return res.notFound();
+    }
+    if (pokemon.owner !== req.user.name) {
+      return res.forbidden();
+    }
+    const newBox = await Box.findOne({id: req.param('box'), _markedForDeletion: false});
+    if (!newBox) {
+      return res.notFound();
+    }
+    if (newBox.owner !== req.user.name) {
+      return res.forbidden();
+    }
+    pokemon.box = newBox.id;
+    await pokemon.save();
+    return res.ok();
+  } catch (err) {
+    return res.serverError(err);
+  }
+};
