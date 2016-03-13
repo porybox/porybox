@@ -1,7 +1,7 @@
 const supertest = require('supertest-as-promised');
 const expect = require('chai').expect;
 describe('UserController', () => {
-  let agent;
+  let agent, adminAgent, noAuthAgent;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
     const res = await agent.post('/auth/local/register').send({
@@ -11,10 +11,55 @@ describe('UserController', () => {
     });
     expect(res.statusCode).to.equal(302);
     expect(res.header.location).to.equal('/');
+    adminAgent = supertest.agent(sails.hooks.http.app);
+    const res2 = await adminAgent.post('/auth/local/register').send({
+      name: 'I_AM_AN_ADMIN_FEAR_ME',
+      password: '*********************************************************************************',
+      email: 'admin@porybox.com'
+    });
+    expect(res2.statusCode).to.equal(302);
+    expect(res2.header.location).to.equal('/');
+    await sails.models.user.update({name: 'I_AM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
+    noAuthAgent = supertest.agent(sails.hooks.http.app);
   });
-  it("can get information on a user's profile", async () => {
+  it('can redirect users to information about their own profile', async () => {
     const res = await agent.get('/api/v1/me');
-    expect(res.body.name).to.equal('usertester');
+    expect(res.statusCode).to.equal(302);
+    expect(res.header.location).to.equal('/user/usertester');
+  });
+  describe('getting a user profile', () => {
+    it('returns full information when a user gets their own profile', async () => {
+      const res = await agent.get('/user/usertester');
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.name).to.equal('usertester');
+      expect(res.body.isAdmin).to.be.false;
+      expect(res.body.email).to.equal('usertester@usertesting.com');
+      expect(res.body.preferences).to.exist;
+    });
+    it("omits private information when a user gets someone else's profile", async () => {
+      const res = await agent.get('/user/I_AM_AN_ADMIN_FEAR_ME');
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.name).to.equal('I_AM_AN_ADMIN_FEAR_ME');
+      expect(res.body.isAdmin).to.be.true;
+      expect(res.body.email).to.not.exist;
+      expect(res.body.preferences).to.not.exist;
+    });
+    it("returns full information when an admin gets someone else's profile", async () => {
+      const res = await adminAgent.get('/user/usertester');
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.name).to.equal('usertester');
+      expect(res.body.isAdmin).to.be.false;
+      expect(res.body.email).to.equal('usertester@usertesting.com');
+      expect(res.body.preferences).to.exist;
+    });
+    it('omits private information when an unauthenticated user gets a profile', async () => {
+      const res = await noAuthAgent.get('/user/usertester');
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.name).to.equal('usertester');
+      expect(res.body.isAdmin).to.be.false;
+      expect(res.body.email).to.not.exist;
+      expect(res.body.preferences).to.not.exist;
+    });
   });
   describe('preferences', () => {
     it("can get a user's preferences", async () => {
@@ -83,6 +128,34 @@ describe('UserController', () => {
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
         expect(res2.body.visibility).to.equal('public');
       });
+    });
+    describe('granting/revoking admin status', () => {
+      beforeEach(async () => {
+        await sails.models.user.update({name: 'I_AM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
+        await sails.models.user.update({name: {not: 'I_AM_AN_ADMIN_FEAR_ME'}}, {isAdmin: false});
+      });
+      it('allows admins to grant/revoke admin status to other users', async () => {
+        const res = await adminAgent.post('/user/usertester/grantAdminStatus');
+        expect(res.statusCode).to.equal(200);
+        expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.true;
+        const res2 = await adminAgent.post('/user/usertester/revokeAdminStatus');
+        expect(res2.statusCode).to.equal(200);
+        expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+      });
+      it('does not allow non-admins to grant/revoke admin status', async () => {
+        const res = await agent.post('/user/usertester/grantAdminStatus');
+        expect(res.statusCode).to.equal(403);
+        expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+        const res2 = await agent.post('/user/I_AM_AN_ADMIN_FEAR_ME/revokeAdminStatus');
+        expect(res2.statusCode).to.equal(403);
+        expect((await noAuthAgent.get('/user/I_AM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true;
+      });
+      it('returns a 404 error if the specified user does not exist', async () => {
+        const res = await adminAgent.post('/user/nonexistent_username/grantAdminStatus');
+        expect(res.statusCode).to.equal(404);
+        const res2 = await adminAgent.post('/user/nonexistent_username/revokeAdminStatus');
+        expect(res2.statusCode).to.equal(404);
+      })
     });
   });
 });

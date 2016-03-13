@@ -31,6 +31,13 @@ module.exports =  {
     preferences: {
       collection: 'UserPreferences',
       via: 'user'
+    },
+    isAdmin: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    omitPrivateInformation () {
+      return _.omit(this, ['passports', 'email', 'preferences', 'updatedAt']);
     }
   }
 };

@@ -45,7 +45,7 @@ module.exports = {
       if (!box) {
         return res.notFound();
       }
-      if (req.user && box.owner === req.user.name) {
+      if (req.user && (box.owner === req.user.name || req.user.isAdmin)) {
         return res.ok(box.omitDeletedContents());
       }
       return res.ok(box.omitPrivateContents());
@@ -65,7 +65,7 @@ module.exports = {
       if (!box || box._markedForDeletion) {
         return res.notFound();
       }
-      if (box.owner !== req.user.name) {
+      if (box.owner !== req.user.name && !req.user.isAdmin) {
         return res.forbidden();
       }
       await box.markForDeletion();
@@ -90,7 +90,7 @@ module.exports = {
       if (!box) {
         return res.notFound();
       }
-      if (box.owner !== req.user.name) {
+      if (box.owner !== req.user.name && !req.user.isAdmin) {
         /* If anyone other than the owner tries to undelete the box, return a 404 error.
         That way, the server doesn't leak information on whether a box with the given ID ever existed. */
         return box._markedForDeletion ? res.notFound() : res.forbidden();

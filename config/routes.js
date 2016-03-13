@@ -58,8 +58,11 @@ module.exports.routes = {
   'post /p/:id/move': 'PokemonController.move',
 
   // Users
+  'get /user/:name': 'UserController.get',
   'get /user/:name/boxes': 'UserController.boxes',
   'get /api/v1/me': 'UserController.me',
   'get /preferences': 'UserController.getPreferences',
-  'post /preferences/edit': 'UserController.editPreferences'
+  'post /preferences/edit': 'UserController.editPreferences',
+  'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
+  'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus'
 };
