@@ -29,7 +29,7 @@ module.exports = {
         visibility,
         id: require('crypto').randomBytes(16).toString('hex')
       });
-      return res.status(201).json(box);
+      return res.created(box);
     } catch (err) {
       return res.serverError(err);
     }
