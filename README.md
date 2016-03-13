@@ -1,22 +1,37 @@
 # porybox
 
-2 years ago, we heard that pokecheck was getting gen 6 support at the #endofthemonth.
-6 months later, it shut down for good.
-
-We are a team of people trying to change this. We are making a replacement.
-
-We are Porygon Co.
-
 Porybox is a platform that allows users to manage their Pokémon to easily
 display their collections and make more informed trade decisions.
 
-## Installation
-
-TODO
-
 ## Usage
 
-TODO
+### Installation
+
+```bash
+git clone https://github.com/porygonco/porybox.git
+cd porybox
+npm install
+```
+
+### Setting up a local database
+
+To run Porybox locally, you will need to connect to a MongoDB instance somewhere. This section will walk you through how to set up a local MongoDB instance. You can skip the first two steps if you plan to connect to a remote MongoDB instance.
+
+1. Follow the instructions [here](https://docs.mongodb.org/manual/installation/) to install MongoDB.
+1. Run `sudo mongod` in another terminal window.
+
+To enter private config information (a remote database URL, or a database password):
+
+```bash
+cp config/local.example.js config/local.js
+# (enter your config information into config/local.js)
+```
+
+### Running Porybox
+
+Once you have a database running, use `npm start` to run Porybox on a local server. You can now interact with it by going to `http://localhost:1337`.
+
+To run the unit tests, use `npm test`.
 
 ## Contributing
 
