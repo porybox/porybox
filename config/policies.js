@@ -18,29 +18,50 @@
 
 const anyone = ['passport'];
 const user = ['passport', 'sessionAuth'];
+const admin = ['passport', 'sessionAuth', 'isAdmin'];
 
 module.exports.policies = {
 
-  '*': user,
+  '*': admin,
 
   AuthController: {
-    '*': anyone
+    login: anyone,
+    logout: anyone,
+    register: anyone,
+    provider: anyone,
+    callback: anyone,
+    disconnect: anyone
+  },
+
+  HomeController: {
+    index: user,
+    uploadpk6: user
   },
 
   PokemonController: {
-    '*': user,
+    uploadpk6: user,
     get: anyone,
-    download: anyone
+    delete: user,
+    undelete: user,
+    mine: user,
+    download: anyone,
+    move: user
   },
 
   BoxController: {
-    '*': user,
-    get: anyone
+    add: user,
+    get: anyone,
+    mine: user,
+    delete: user,
+    undelete: user
   },
 
   UserController: {
-    '*': user,
-    boxes: anyone
+    get: anyone,
+    boxes: anyone,
+    me: user,
+    getPreferences: user,
+    editPreferences: user
   }
 
 };

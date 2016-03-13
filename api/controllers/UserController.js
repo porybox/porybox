@@ -1,12 +1,33 @@
 module.exports = {
-  async boxes (req, res) {
+  async get (req, res) {
     try {
-      const user = await User.findOne({id: req.param('name')}).populate('boxes');
+      const params = req.allParams();
+      if (!params.name) {
+        return res.badRequest();
+      }
+      const user = await User.findOne({name: params.name}).populate('preferences');
       if (!user) {
         return res.notFound();
       }
-      const boxes = _.filter(user.boxes, box => !box._markedForDeletion);
-      if (req.user && req.user.name === user.name) {
+      if (req.user && (req.user.name === user.name || req.user.isAdmin)) {
+        return res.ok(user);
+      }
+      return res.ok(user.omitPrivateInformation());
+    } catch (err) {
+      return res.serverError(err);
+    }
+  },
+  async boxes (req, res) {
+    try {
+      const user = await User.findOne({id: req.param('name')});
+      if (!user) {
+        return res.notFound();
+      }
+      const boxes = await Box.find({
+        owner: req.param('name'),
+        _markedForDeletion: false
+      }).populate('contents');
+      if (req.user && (req.user.name === user.name || req.user.isAdmin)) {
         return res.ok(boxes);
       }
       return res.ok(
@@ -17,7 +38,7 @@ module.exports = {
     }
   },
   me (req, res) {
-    return User.findOne({name: req.user.name}).then(res.ok).catch(res.serverError);
+    return res.redirect(`/user/${req.user.name}`);
   },
   getPreferences (req, res) {
     return UserPreferences.findOne({user: req.user.name}).then(res.ok).catch(res.serverError);
@@ -31,6 +52,32 @@ module.exports = {
       }
       const updated = await UserPreferences.update({user: req.user.name}, filteredParams);
       return res.ok(updated[0]);
+    } catch (err) {
+      return res.serverError(err);
+    }
+  },
+  async grantAdminStatus (req, res) {
+    try {
+      const user = await User.findOne({name: req.param('name')});
+      if (!user) {
+        return res.notFound();
+      }
+      user.isAdmin = true;
+      await user.save();
+      return res.ok();
+    } catch (err) {
+      return res.serverError(err);
+    }
+  },
+  async revokeAdminStatus (req, res) {
+    try {
+      const user = await User.findOne({name: req.param('name')});
+      if (!user) {
+        return res.notFound();
+      }
+      user.isAdmin = false;
+      await user.save();
+      return res.ok();
     } catch (err) {
       return res.serverError(err);
     }

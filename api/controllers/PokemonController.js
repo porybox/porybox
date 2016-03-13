@@ -58,7 +58,10 @@ exports.get = async (req, res) => {
       return res.notFound();
     }
     pokemon.isUnique = await pokemon.checkIfUnique();
-    if (req.user && req.user.name === pokemon.owner || pokemon.visibility === 'public') {
+    const pokemonIsPublic = pokemon.visibility === 'public';
+    const userIsOwner = !!req.user && req.user.name === pokemon.owner;
+    const userIsAdmin = !!req.user && req.user.isAdmin;
+    if (pokemonIsPublic || userIsOwner || userIsAdmin) {
       return res.ok(pokemon);
     }
     if (pokemon.visibility === 'private') {
@@ -77,7 +80,7 @@ exports.delete = async (req, res) => {
     if (!pokemon) {
       return res.notFound();
     }
-    if (pokemon.owner !== req.user.name) {
+    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
       return res.forbidden();
     }
     await pokemon.markForDeletion();
@@ -102,7 +105,7 @@ exports.undelete = async (req, res) => {
     if (!pokemon) {
       return res.notFound();
     }
-    if (pokemon.owner !== req.user.name) {
+    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
       /* If anyone other than the owner tries to undelete the pokemon, return a 404 error.
       That way, the server doesn't leak information on whether a pokemon with the given ID ever existed. */
       return pokemon._markedForDeletion ? res.notFound() : res.forbidden();
@@ -133,11 +136,12 @@ exports.download = async (req, res) => {
       return res.notFound();
     }
     const userIsOwner = !!req.user && req.user.name === pokemon.owner;
-    if (pokemon.visibility !== 'public' && !userIsOwner) {
+    const userIsAdmin = !!req.user && req.user.isAdmin;
+    if (pokemon.visibility !== 'public' && !userIsOwner && !userIsAdmin) {
       return res.forbidden();
     }
     res.status(200).json(pokemon._rawPk6);
-    if (!userIsOwner) {
+    if (!userIsOwner && pokemon.visibility === 'public') {
       pokemon.downloadCount++;
       await pokemon.save();
     }
@@ -158,14 +162,11 @@ exports.move = async (req, res) => {
     if (!pokemon) {
       return res.notFound();
     }
-    if (pokemon.owner !== req.user.name) {
-      return res.forbidden();
-    }
     const newBox = await Box.findOne({id: req.param('box'), _markedForDeletion: false});
     if (!newBox) {
       return res.notFound();
     }
-    if (newBox.owner !== req.user.name) {
+    if (pokemon.owner !== newBox.owner || pokemon.owner !== req.user.name && !req.user.isAdmin) {
       return res.forbidden();
     }
     pokemon.box = newBox.id;
