@@ -9,5 +9,6 @@
     'PokemonHandler': true,
     'Constants': true,
     'UserPreferences': true,
+    'PokemonNote': true
   }
 }
