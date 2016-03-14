@@ -9,7 +9,7 @@
 
     <% if (typeof user !== 'undefined') {%>
       <add-menu boxes="main.boxes"></add-menu>
-      <user-menu name="'<%= user.username %>'"></user-menu>
+      <user-menu name="'<%= user.name %>'"></user-menu>
     <% } else { %>
       <a class="mdl-navigation__link" href="/login">Login/Register</a>
     <% } %>

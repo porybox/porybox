@@ -97,12 +97,58 @@ const attributes = {
   regionId: {},
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
-  rawPk6: {type: 'string'},
-
+  _rawPk6: {type: 'string'},
   cloneHash: {type: 'string'},
-  owner: {type: 'string'},
+  owner: {model: 'user', type: 'string'},
+  box: {model: 'box'},
   id: {type: 'string', unique: true, primaryKey: true},
-  visibility: {type: 'string', enum: ['private', 'public', 'readonly'], defaultsTo: 'readonly'}
+  visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
+  _markedForDeletion: {type: 'boolean', defaultsTo: false},
+  downloadCount: {defaultsTo: 0},
+  tsv () {
+    return (this.tid ^ this.sid) >>> 4;
+  },
+  esv () {
+    return ((this.pid & 0xffff) ^ (this.pid >>> 16)) >>> 4;
+  },
+  isShiny () {
+    return this.tsv() === this.esv();
+  },
+  async checkIfUnique () {
+    return (await Pokemon.find({
+      cloneHash: this.cloneHash,
+      _markedForDeletion: false
+    }).limit(2)).length === 1;
+  },
+  omitPrivateData () {
+    /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
+    it's possible to brute-force the PID. */
+    const secretProperties = ['pid', 'encryptionConstant', 'cloneHash', '_rawPk6'];
+    if (PokemonHandler.isStaticPidEvent(this)) {
+      secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
+    }
+    const filteredNotes = _.filter(this.notes, note => note.visibility === 'public');
+    return _(this).omit(secretProperties).assign({notes: filteredNotes}).value();
+  },
+  markForDeletion () {
+    this._markedForDeletion = true;
+    return this.save();
+  },
+  unmarkForDeletion () {
+    this._markedForDeletion = false;
+    return this.save();
+  },
+  async destroy () {
+    const notes = (await Pokemon.findOne({id: this.id}).populate('notes')).notes;
+    await Promise.each(notes, note => note.destroy());
+    return await Pokemon.destroy({id: this.id});
+  },
+  toJSON () {
+    /* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
+    Conveniently, this means that the internal properties are never sent to the client.
+    (Not to be confused with the omitPrivateData function, which removes *confidential* data.) */
+    return _.omit(this, (value, key) => key.startsWith('_'));
+  }
 };
 
 _.forEach(attributes, attr => {
@@ -111,29 +157,7 @@ _.forEach(attributes, attr => {
   attr.type = attr.type || 'float';
 });
 
-attributes.tsv = function () {
-  return (this.tid ^ this.sid) >>> 4;
-}
-attributes.esv = function () {
-  return ((this.pid & 0xffff) ^ (this.pid >>> 16)) >>> 4;
-}
-attributes.isShiny = function () {
-  return this.tsv() === this.esv();
-}
-attributes.checkIfUnique = async function () {
-  return (await Pokemon.find({cloneHash: this.cloneHash}).limit(2)).length === 1;
-}
-attributes.isStaticPidEvent = function () {
-  return false; // TODO: Make this identify static PID events
-}
-attributes.omitPrivateData = function () {
-  /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
-  it's possible to brute-force the PID. */
-  const secretProperties = ['pid', 'cloneHash', 'rawPk6'];
-  if (this.isStaticPidEvent()) {
-    secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
-  }
-  return _.omit(this, secretProperties);
-};
+attributes.box = {model: 'box'};
+attributes.notes = {collection: 'PokemonNote', via: 'pokemon', defaultsTo: []};
 
 module.exports = {schema: true, attributes};
