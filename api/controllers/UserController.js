@@ -50,6 +50,11 @@ module.exports = {
       if (_.isEmpty(filteredParams)) {
         return res.badRequest('No valid preferences specified');
       }
+      for (const i of _.keys(filteredParams)) {
+        if (!Constants.CHANGEABLE_PREFERENCES[i].enum.includes(filteredParams[i])) {
+          return res.badRequest(`Invalid value for preference '${i}'`);
+        }
+      }
       const updated = await UserPreferences.update({user: req.user.name}, filteredParams);
       return res.ok(updated[0]);
     } catch (err) {

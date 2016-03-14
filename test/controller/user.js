@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const supertest = require('supertest-as-promised');
 const expect = require('chai').expect;
 describe('UserController', () => {
@@ -82,6 +83,10 @@ describe('UserController', () => {
         const res = await agent.post('/preferences/edit').send({user: 'someone_else'});
         expect(res.statusCode).to.equal(400);
       });
+      it('returns a 400 error when sent invalid preference values', async () => {
+        const res = await agent.post('/preferences/edit').send({defaultBoxVisibility: 'invalid'});
+        expect(res.statusCode).to.equal(400);
+      });
     });
     describe('defaultBoxVisibility', () => {
       it('sets the default visibility of uploaded boxes', async () => {
@@ -129,33 +134,61 @@ describe('UserController', () => {
         expect(res2.body.visibility).to.equal('public');
       });
     });
-    describe('granting/revoking admin status', () => {
-      beforeEach(async () => {
-        await sails.models.user.update({name: 'I_AM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
-        await sails.models.user.update({name: {not: 'I_AM_AN_ADMIN_FEAR_ME'}}, {isAdmin: false});
+    describe('defaultPokemonNoteVisibility', () => {
+      let pkmn;
+      before(async () => {
+        const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+        expect(res.statusCode).to.equal(201);
+        pkmn = res.body;
       });
-      it('allows admins to grant/revoke admin status to other users', async () => {
-        const res = await adminAgent.post('/user/usertester/grantAdminStatus');
-        expect(res.statusCode).to.equal(200);
-        expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.true;
-        const res2 = await adminAgent.post('/user/usertester/revokeAdminStatus');
-        expect(res2.statusCode).to.equal(200);
-        expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+      it('sets the default visibility of uploaded pokemon notes', async () => {
+        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'public'});
+        await agent.post(`/p/${pkmn.id}/note`).send({text: 'aaa'});
+        const notes = (await agent.get(`/p/${pkmn.id}`)).body.notes;
+        expect(_.last(notes).visibility).to.equal('public');
+        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'private'});
+        await agent.post(`/p/${pkmn.id}/note`).send({text: 'aaa'});
+        const notes2 = (await agent.get(`/p/${pkmn.id}`)).body.notes;
+        expect(_.last(notes2).visibility).to.equal('private');
       });
-      it('does not allow non-admins to grant/revoke admin status', async () => {
-        const res = await agent.post('/user/usertester/grantAdminStatus');
-        expect(res.statusCode).to.equal(403);
-        expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
-        const res2 = await agent.post('/user/I_AM_AN_ADMIN_FEAR_ME/revokeAdminStatus');
-        expect(res2.statusCode).to.equal(403);
-        expect((await noAuthAgent.get('/user/I_AM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true;
+      it('can be overridden by specifying a visibility while creating a note', async () => {
+        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'public'});
+        await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'private', text: 'aaa'});
+        const notes = (await agent.get(`/p/${pkmn.id}`)).body.notes;
+        expect(_.last(notes).visibility).to.equal('private');
+        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'private'});
+        await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'public', text: 'aaa'});
+        const notes2 = (await agent.get(`/p/${pkmn.id}`)).body.notes;
+        expect(_.last(notes2).visibility).to.equal('public');
       });
-      it('returns a 404 error if the specified user does not exist', async () => {
-        const res = await adminAgent.post('/user/nonexistent_username/grantAdminStatus');
-        expect(res.statusCode).to.equal(404);
-        const res2 = await adminAgent.post('/user/nonexistent_username/revokeAdminStatus');
-        expect(res2.statusCode).to.equal(404);
-      })
+    });
+  });
+  describe('granting/revoking admin status', () => {
+    beforeEach(async () => {
+      await sails.models.user.update({name: 'I_AM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
+      await sails.models.user.update({name: {not: 'I_AM_AN_ADMIN_FEAR_ME'}}, {isAdmin: false});
+    });
+    it('allows admins to grant/revoke admin status to other users', async () => {
+      const res = await adminAgent.post('/user/usertester/grantAdminStatus');
+      expect(res.statusCode).to.equal(200);
+      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.true;
+      const res2 = await adminAgent.post('/user/usertester/revokeAdminStatus');
+      expect(res2.statusCode).to.equal(200);
+      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+    });
+    it('does not allow non-admins to grant/revoke admin status', async () => {
+      const res = await agent.post('/user/usertester/grantAdminStatus');
+      expect(res.statusCode).to.equal(403);
+      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+      const res2 = await agent.post('/user/I_AM_AN_ADMIN_FEAR_ME/revokeAdminStatus');
+      expect(res2.statusCode).to.equal(403);
+      expect((await noAuthAgent.get('/user/I_AM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true;
+    });
+    it('returns a 404 error if the specified user does not exist', async () => {
+      const res = await adminAgent.post('/user/nonexistent_username/grantAdminStatus');
+      expect(res.statusCode).to.equal(404);
+      const res2 = await adminAgent.post('/user/nonexistent_username/revokeAdminStatus');
+      expect(res2.statusCode).to.equal(404);
     });
   });
 });

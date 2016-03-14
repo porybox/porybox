@@ -45,7 +45,10 @@ module.exports.policies = {
     undelete: user,
     mine: user,
     download: anyone,
-    move: user
+    move: user,
+    addNote: user,
+    deleteNote: user,
+    editNote: user
   },
 
   BoxController: {

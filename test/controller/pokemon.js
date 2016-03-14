@@ -372,4 +372,185 @@ describe('PokemonController', () => {
       expect(res2.statusCode).to.equal(404);
     });
   });
+  describe('adding notes', async () => {
+    let pkmn;
+    beforeEach(async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      pkmn = res.body;
+    });
+    it('allows users to add notes on their own pokemon', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'b'});
+      expect(res.statusCode).to.equal(201);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.notes).to.be.an.instanceof(Array);
+      expect(res2.body.notes).to.not.be.empty;
+      expect(_.last(res2.body.notes)).to.eql(res.body);
+    });
+    it('allows users to set the visibility of their notes when uploading', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'c', visibility: 'private'});
+      expect(res.statusCode).to.equal(201);
+      expect(res.body.visibility).to.equal('private');
+      const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'd', visibility: 'public'});
+      expect(res2.body.visibility).to.equal('public');
+    });
+    it('returns a 400 error if a note with an invalid visibility is sent', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'e', visibility: 'meh'});
+      expect(res.statusCode).to.equal(400);
+    });
+    it('returns a 400 error if a note with no text is sent', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'public'});
+      expect(res.statusCode).to.equal(400);
+    });
+    it("does not allow users to add notes on other peoples' pokemon", async () => {
+      const res = await otherAgent.post(`/p/${pkmn.id}/note`).send({text: 'f'});
+      expect(res.statusCode).to.equal(403);
+    });
+  });
+  describe('deleting notes', async () => {
+    let pkmn, note;
+    beforeEach(async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      pkmn = res.body;
+      const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'a'});
+      expect(res2.statusCode).to.equal(201);
+      note = res2.body;
+    });
+    it('allows a user to delete a note on their pokemon', async () => {
+      const res = await agent.get(`/p/${pkmn.id}`);
+      expect(_.map(res.body.notes, 'id')).to.include(note.id);
+      const res2 = await agent.del(`/p/${pkmn.id}/n/${note.id}`);
+      expect(res2.statusCode).to.equal(200);
+      const res3 = await agent.get(`/p/${pkmn.id}`);
+      expect(_.map(res3.body.notes), 'id').to.not.include(note.id);
+    });
+    it("does not allow a user to delete a note on someone else's pokemon", async () => {
+      const res = await otherAgent.del(`/p/${pkmn.id}/n/${note.id}`);
+      expect(res.statusCode).to.equal(403);
+    });
+    it("allows an admin to delete a note on anyone's pokemon", async () => {
+      const res = await adminAgent.del(`/p/${pkmn.id}/n/${note.id}`);
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(_.map(res2.body.notes), 'id').to.not.include(note.id);
+    });
+    it('does not allow a note to be deleted if its parent is marked for deletion', async () => {
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.del(`/p/${pkmn.id}/n/${note.id}`);
+      expect(res2.statusCode).to.equal(404);
+    });
+  });
+  describe('getting notes', () => {
+    let pkmn, publicNote, privateNote;
+    before(async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      pkmn = res.body;
+      const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'a', visibility: 'public'});
+      expect(res2.statusCode).to.equal(201);
+      publicNote = res2.body;
+      const res3 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'b', visibility: 'private'});
+      expect(res3.statusCode).to.equal(201);
+      privateNote = res3.body;
+    });
+    it('displays all notes when a user views their own pokemon', async () => {
+      const res = await agent.get(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.notes).to.be.an.instanceof(Array);
+      expect(res.body.notes).to.have.lengthOf(2);
+      expect(res.body.notes[0].id).to.equal(publicNote.id);
+      expect(res.body.notes[1].id).to.equal(privateNote.id);
+    });
+    it('only displays public notes when a third party views a pokemon', async () => {
+      const res = await otherAgent.get(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.notes).to.be.an.instanceof(Array);
+      expect(res.body.notes).to.have.lengthOf(1);
+      expect(res.body.notes[0].id).to.equal(publicNote.id);
+    });
+    it('only displays public notes when an unauthenticated user views a pokemon', async () => {
+      const res = await noAuthAgent.get(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.notes).to.be.an.instanceof(Array);
+      expect(res.body.notes).to.have.lengthOf(1);
+      expect(res.body.notes[0].id).to.equal(publicNote.id);
+    });
+    it('displays all notes when an admin views a pokemon', async () => {
+      const res = await adminAgent.get(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.notes).to.be.an.instanceof(Array);
+      expect(res.body.notes).to.have.lengthOf(2);
+      expect(res.body.notes[0].id).to.equal(publicNote.id);
+      expect(res.body.notes[1].id).to.equal(privateNote.id);
+    });
+  });
+  describe('editing notes', async () => {
+    let pkmn, note, otherPkmn;
+    beforeEach(async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      pkmn = res.body;
+      const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'a', visibility: 'public'});
+      expect(res2.statusCode).to.equal(201);
+      note = res2.body;
+      const res3 = await otherAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res3.statusCode).to.equal(201);
+      otherPkmn = res3.body;
+    });
+    it('allows a user to edit a note on their pokemon', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({
+        visibility: 'private',
+        text: 'b'
+      });
+      expect(res.statusCode).to.equal(200);
+      const updated = (await agent.get(`/p/${pkmn.id}`)).body.notes[0];
+      expect(updated.text).to.equal('b');
+      expect(updated.visibility).to.equal('private');
+    });
+    it('allows a user to only edit the text of a note', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: 'c'});
+      expect(res.statusCode).to.equal(200);
+      const updated = (await agent.get(`/p/${pkmn.id}`)).body.notes[0];
+      expect(updated.text).to.equal('c');
+      expect(updated.visibility).to.equal('public');
+    });
+    it('allows a user to only edit the visibility of a note', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({visibility: 'private'});
+      expect(res.statusCode).to.equal(200);
+      const updated = (await agent.get(`/p/${pkmn.id}`)).body.notes[0];
+      expect(updated.text).to.equal('a');
+      expect(updated.visibility).to.equal('private');
+    });
+    it('returns a 400 error when given an invalid visibility', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({visibility: 'meh'});
+      expect(res.statusCode).to.equal(400);
+    });
+    it('returns a 400 error when given an invalid text', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: ''});
+      expect(res.statusCode).to.equal(400);
+      const res2 = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: ['cookies']});
+      expect(res2.statusCode).to.equal(400);
+    });
+    it('returns a 400 error when no valid parameters are provided', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({pokemon: 'aaaaa'});
+      expect(res.statusCode).to.equal(400);
+    });
+    it("returns a 404 error if the given note isn't found on the given pokemon", async () => {
+      const res2 = await otherAgent.post(`/p/${otherPkmn.id}/n/${note.id}/edit`).send({text: 'd'});
+      expect(res2.statusCode).to.equal(404);
+    });
+    it("does not allow a user to edit another user's notes", async () => {
+      const res = await otherAgent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: 'blah'});
+      expect(res.statusCode).to.equal(403);
+    });
+    it('does not allow a note to be edited on a pokemon which is marked for deletion', async () => {
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: 'e'});
+      expect(res2.statusCode).to.equal(404);
+    });
+  });
 });
