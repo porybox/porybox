@@ -116,7 +116,7 @@ describe('PokemonController', () => {
     });
   });
 
-  describe('deleting a pokemon', async () => {
+  describe('deleting a pokemon', () => {
     let previousDeletionDelay, pkmn;
     before(() => {
       /* Normally this is 5 minutes, but it's annoying for the unit tests to take that long.
@@ -298,7 +298,7 @@ describe('PokemonController', () => {
       expect(finalPrivateCount).to.equal(initialPrivateCount);
     });
   });
-  describe('moving a pokemon', async () => {
+  describe('moving a pokemon', () => {
     let pkmn, someoneElsesPkmn, box1, box2, someoneElsesBox, adminPkmn, adminBox;
     beforeEach(async () => {
       box1 = (await agent.post('/box').send({name: 'Shoebox'})).body;
@@ -372,7 +372,7 @@ describe('PokemonController', () => {
       expect(res2.statusCode).to.equal(404);
     });
   });
-  describe('adding notes', async () => {
+  describe('adding notes', () => {
     let pkmn;
     beforeEach(async () => {
       const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
@@ -408,7 +408,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(403);
     });
   });
-  describe('deleting notes', async () => {
+  describe('deleting notes', () => {
     let pkmn, note;
     beforeEach(async () => {
       const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
@@ -487,7 +487,7 @@ describe('PokemonController', () => {
       expect(res.body.notes[1].id).to.equal(privateNote.id);
     });
   });
-  describe('editing notes', async () => {
+  describe('editing notes', () => {
     let pkmn, note, otherPkmn;
     beforeEach(async () => {
       const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
