@@ -6,6 +6,9 @@
     'User': true,
     'Box': true,
     'Pokemon': true,
-    'PokemonHandler': true
+    'PokemonHandler': true,
+    'Constants': true,
+    'UserPreferences': true,
+    'PokemonNote': true
   }
 }

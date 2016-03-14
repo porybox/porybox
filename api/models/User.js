@@ -3,7 +3,7 @@ module.exports =  {
   schema: true,
 
   attributes: {
-    username: {
+    name: {
       type: 'string',
       columnName: 'id',
       unique: true,
@@ -18,8 +18,26 @@ module.exports =  {
       via: 'user'
     },
     boxes: {
-      collection: 'Box',
+      collection: 'box',
+      via: 'owner'
+    },
+    /* We want a one-to-one mapping between User and UserPreferences objects. Waterline's suppport
+    for one-to-one associations is a bit limited, so this is actually stored as a one-to-many
+    association that always happens to only contain one UserPreferences object per User. The effect
+    of this is that calling User.findOne({}).populate('preferences') will return the user's
+    preferences as an Array. This Array will only contain one object, which is the user's
+    preferences.
+    */
+    preferences: {
+      collection: 'UserPreferences',
       via: 'user'
+    },
+    isAdmin: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    omitPrivateInformation () {
+      return _.omit(this, ['passports', 'email', 'preferences', 'updatedAt']);
     }
   }
 };

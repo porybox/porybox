@@ -5,5 +5,5 @@ describe('404', () => {
     request(sails.hooks.http.app)
       .post('/thiswillneverbevalid')
       .expect(404, done);
-  })
+  });
 });

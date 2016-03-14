@@ -27,6 +27,10 @@ module.exports.routes = {
   // Boxes
 
   'post /box': 'BoxController.add',
+  'get /b/:id': 'BoxController.get',
+  'get /boxes/mine': 'BoxController.mine',
+  'delete /b/:id': 'BoxController.delete',
+  'post /b/:id/undelete': 'BoxController.undelete',
 
   // Authentication
 
@@ -47,6 +51,21 @@ module.exports.routes = {
   'post /uploadpk6': 'PokemonController.uploadpk6',
 
   'get /p/:id': 'PokemonController.get',
+  'get /p/:id/download': 'PokemonController.download',
   'delete /p/:id': 'PokemonController.delete',
-  'get /pokemon/mine': 'PokemonController.mine'
+  'post /p/:id/undelete': 'PokemonController.undelete',
+  'get /pokemon/mine': 'PokemonController.mine',
+  'post /p/:id/move': 'PokemonController.move',
+  'post /p/:id/note': 'PokemonController.addNote',
+  'delete /p/:id/n/:noteId': 'PokemonController.deleteNote',
+  'post /p/:id/n/:noteId/edit': 'PokemonController.editNote',
+
+  // Users
+  'get /user/:name': 'UserController.get',
+  'get /user/:name/boxes': 'UserController.boxes',
+  'get /api/v1/me': 'UserController.me',
+  'get /preferences': 'UserController.getPreferences',
+  'post /preferences/edit': 'UserController.editPreferences',
+  'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
+  'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus'
 };
