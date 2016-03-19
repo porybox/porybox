@@ -1,9 +1,7 @@
 module.exports = _.mapValues({
   async get (req, res) {
     const params = req.allParams();
-    if (!params.name) {
-      return res.badRequest();
-    }
+    Validation.requireParams(params, 'name');
     const user = await User.findOne({name: params.name}).populate('preferences');
     if (!user) {
       return res.notFound();
@@ -37,10 +35,8 @@ module.exports = _.mapValues({
   },
   async editPreferences (req, res) {
     // Only allow users to change the preferences that have been explicitly marked as modifiable
-    const filteredParams = _.pick(req.allParams(), _.keys(Constants.CHANGEABLE_PREFERENCES));
-    if (_.isEmpty(filteredParams)) {
-      return res.badRequest('No valid preferences specified');
-    }
+    const params = req.allParams();
+    const filteredParams = Validation.filterParams(params, Constants.CHANGEABLE_PREFERENCES);
     for (const i of _.keys(filteredParams)) {
       if (!Constants.CHANGEABLE_PREFERENCES[i].enum.includes(filteredParams[i])) {
         return res.badRequest(`Invalid value for preference '${i}'`);

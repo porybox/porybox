@@ -59,6 +59,7 @@ module.exports.routes = {
   'post /p/:id/note': 'PokemonController.addNote',
   'delete /p/:id/n/:noteId': 'PokemonController.deleteNote',
   'post /p/:id/n/:noteId/edit': 'PokemonController.editNote',
+  'post /p/:id/edit': 'PokemonController.edit',
 
   // Users
   'get /user/:name': 'UserController.get',

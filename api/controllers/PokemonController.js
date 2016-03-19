@@ -50,6 +50,8 @@ module.exports = _.mapValues({
     return res.created(result);
   },
 
+  /* TODO: Get rid of repetitive code here -- the authentication to check whether the user is a pokemon's owner
+  should probably be moved to a service rather than being repeated in each function. */
   async get (req, res) {
     const pokemon = await Pokemon.findOne({
       id: req.param('id'),
@@ -129,12 +131,7 @@ module.exports = _.mapValues({
   },
 
   async move (req, res) {
-    if (!req.param('id')) {
-      return res.badRequest('No pokemon specified');
-    }
-    if (!req.param('box')) {
-      return res.badRequest('No box specified');
-    }
+    Validation.requireParams(req.allParams(), ['id', 'box']);
     const pokemon = await Pokemon.findOne({id: req.param('id'), _markedForDeletion: false});
     if (!pokemon) {
       return res.notFound();
@@ -152,10 +149,8 @@ module.exports = _.mapValues({
   },
   async addNote (req, res) {
     const params = req.allParams();
+    Validation.requireParams(params, 'id');
     const pokemon = await Pokemon.findOne({id: params.id});
-    if (!params.id) {
-      return res.badRequest('No Pokemon specified');
-    }
     if (!pokemon) {
       return res.notFound();
     }
@@ -188,12 +183,7 @@ module.exports = _.mapValues({
 
   async deleteNote (req, res) {
     const params = req.allParams();
-    if (!params.id) {
-      return res.badRequest('Missing pokemon id');
-    }
-    if (!params.noteId) {
-      return res.badRequest('Missing note id');
-    }
+    Validation.requireParams(params, ['id', 'noteId']);
     const pokemon = await Pokemon.findOne({id: params.id, _markedForDeletion: false});
     if (!pokemon) {
       return res.notFound();
@@ -211,11 +201,7 @@ module.exports = _.mapValues({
 
   async editNote (req, res) {
     const params = req.allParams();
-    const EDITABLE_FIELDS = ['text', 'visibility'];
-    const filteredParams = _.pick(params, EDITABLE_FIELDS);
-    if (_.isEmpty(filteredParams)) {
-      return res.badRequest('No valid fields specified');
-    }
+    const filteredParams = Validation.filterParams(params, ['text', 'visibility']);
     const text = filteredParams.text;
     if (_.has(filteredParams, 'text') && !_.isString(text) || text === '') {
       return res.badRequest('Invalid note text');
@@ -244,5 +230,21 @@ module.exports = _.mapValues({
     _.assign(note, filteredParams);
     await note.save();
     return res.ok(note);
+  },
+
+  async edit (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'id');
+    const filteredParams = Validation.filterParams(params, ['visibility']);
+    const pokemon = await Pokemon.findOne({id: params.id});
+    if (!pokemon) {
+      return res.notFound();
+    }
+    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
+      return res.forbidden();
+    }
+    _.assign(pokemon, filteredParams);
+    await pokemon.save();
+    return res.ok(pokemon);
   }
 }, CatchAsyncErrors);
