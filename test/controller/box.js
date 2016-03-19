@@ -350,5 +350,9 @@ describe('BoxController', () => {
       const res2 = await agent.post(`/b/${box.id}/edit`).send({description: 'a box'});
       expect(res2.statusCode).to.equal(404);
     });
+    it("does not allow a box's name to be edited to the empty string", async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({name: ''});
+      expect(res.statusCode).to.equal(400);
+    });
   });
 });
