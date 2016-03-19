@@ -5,10 +5,8 @@ module.exports = _.mapValues({
     const params = req.allParams();
     let visibility;
     if (params.visibility) {
-      if (!Constants.POKEMON_VISIBILITIES.includes(params.visibility)) {
-        return res.status(400).json('Invalid visibility setting');
-      }
       visibility = params.visibility;
+      Validation.verifyPokemonParams({visibility});
     } else {
       visibility = (await UserPreferences.findOne({
         user: req.user.name
@@ -135,30 +133,22 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'text']);
     const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== req.user.name) {
-      return res.forbidden();
-    }
     let visibility;
     if (params.visibility) {
-      if (Constants.POKEMON_NOTE_VISIBILITIES.includes(params.visibility)) {
-        visibility = params.visibility;
-      } else {
-        return res.badRequest('Invalid visibility setting');
-      }
+      visibility = params.visibility;
     } else {
       visibility = (await UserPreferences.findOne({
         user: req.user.name
       })).defaultPokemonNoteVisibility;
     }
-    const newNote = await PokemonNote.create({
+    const newNoteParams = {
       text: params.text,
       visibility,
       pokemon,
       id: require('crypto').randomBytes(16).toString('hex')
-    });
+    };
+    Validation.verifyPokemonNoteParams(newNoteParams);
+    const newNote = await PokemonNote.create(newNoteParams);
     return res.created(newNote);
   },
 
@@ -184,20 +174,13 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'noteId']);
     const filteredParams = Validation.filterParams(params, ['text', 'visibility']);
-    const text = filteredParams.text;
-    if (_.has(filteredParams, 'text') && !_.isString(text) || text === '') {
-      return res.badRequest('Invalid note text');
-    }
-    const vis = filteredParams.visibility;
-    if (_.has(filteredParams, 'visibility') && !Constants.POKEMON_NOTE_VISIBILITIES.includes(vis)) {
-      return res.badRequest('Invalid visibility setting');
-    }
     await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
     const note = await PokemonNote.findOne({id: params.noteId, pokemon: params.id});
     if (!note) {
       return res.notFound();
     }
     _.assign(note, filteredParams);
+    Validation.verifyPokemonNoteParams(note);
     await note.save();
     return res.ok(note);
   },
@@ -208,6 +191,7 @@ module.exports = _.mapValues({
     const filteredParams = Validation.filterParams(params, ['visibility']);
     const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
     _.assign(pokemon, filteredParams);
+    Validation.verifyPokemonParams(pokemon);
     await pokemon.save();
     return res.ok(pokemon);
   }

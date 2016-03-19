@@ -588,5 +588,11 @@ describe('PokemonController', () => {
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.visibility).to.equal('private');
     });
+    it('does not allow a deleted pokemon to be edited', async () => {
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      expect(res2.statusCode).to.equal(404);
+    });
   });
 });

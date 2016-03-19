@@ -40,5 +40,29 @@ module.exports = {
   },
   verifyUserIsBoxOwner (...args) {
     return module.exports.verifyUserIsOwner(Box, ...args);
+  },
+  verifyBoxParams (box) {
+    if (!_.isString(box.name) || _.isEmpty(box.name)) {
+      throw {statusCode: 400, message: 'Invalid box name'};
+    }
+    if (box.description && !_.isString(box.description)) {
+      throw {statusCode: 400, message: 'Invalid box description'};
+    }
+    if (!Constants.BOX_VISIBILITIES.includes(box.visibility)) {
+      throw {statusCode: 400, message: 'Invalid box visibility'};
+    }
+  },
+  verifyPokemonParams (pokemon) {
+    if (!Constants.POKEMON_VISIBILITIES.includes(pokemon.visibility)) {
+      throw {statusCode: 400, message: 'Invalid pokemon visibility'};
+    }
+  },
+  verifyPokemonNoteParams (note) {
+    if (!_.isString(note.text) || _.isEmpty(note.text)) {
+      throw {statusCode: 400, message: 'Invalid note text'};
+    }
+    if (!Constants.POKEMON_NOTE_VISIBILITIES.includes(note.visibility)) {
+      throw {statusCode: 400, message: 'Invalid note visibility'};
+    }
   }
 };

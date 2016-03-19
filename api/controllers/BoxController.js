@@ -12,20 +12,19 @@ module.exports = _.mapValues({
     Validation.requireParams(params, 'name');
     let visibility;
     if (params.visibility) {
-      if (!Constants.BOX_VISIBILITIES.includes(params.visibility)) {
-        return res.badRequest('Invalid visibility setting');
-      }
       visibility = params.visibility;
     } else {
       visibility = (await UserPreferences.findOne({user: req.user.name})).defaultBoxVisibility;
     }
-    const box = await Box.create({
+    const newParams = {
       name: params.name,
       owner: req.user.name,
       description: params.description,
       visibility,
       id: require('crypto').randomBytes(16).toString('hex')
-    });
+    };
+    Validation.verifyBoxParams(newParams);
+    const box = await Box.create(newParams);
     return res.created(box);
   },
 
@@ -77,6 +76,7 @@ module.exports = _.mapValues({
     const filteredParams = Validation.filterParams(params, ['name', 'description', 'visibility']);
     const box = await Validation.verifyUserIsBoxOwner({user: req.user, id: params.id});
     _.assign(box, filteredParams);
+    Validation.verifyBoxParams(box);
     await box.save();
     return res.ok(box);
   }
