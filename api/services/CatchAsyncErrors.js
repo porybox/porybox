@@ -1,6 +1,12 @@
-module.exports = func => (req, res) => Promise.method(func)(req, res).catch(err =>
-  res.finished ? sails.log.error(err) : res.serverError(err)
-);
+module.exports = func => (req, res) => Promise.method(func)(req, res).catch(err => {
+  if (res.finished) {
+    return sails.log.error(err);
+  }
+  if (!_.isError(err) && err.statusCode) {
+    return res.status(err.statusCode).json(err.message);
+  }
+  res.serverError(err);
+});
 
 /* Maps a controller function to an equivalent function that also handles async errors correctly.
 
@@ -33,5 +39,18 @@ module.exports = _.mapValues({
     doMoreActualLogic();
   }
 }, CatchAsyncErrors);
+
+This also allows custom errors to be thrown (e.g. from services that don't have access to the `res`
+object). If a thrown error has the `statusCode` property (and optionally a `message` property), that
+status code will be returned to the client.
+
+Note: To avoid accidentally leaking error information,
+error information will only get sent if the error is not an instance of the global `Error` object.
+
+i.e.
+
+throw {statusCode: 400, message: 'Missing parameter'}; // (will cause a 400 error to be sent to the client)
+
+throw new Error({statusCode: 400, message: 'Missing parameter'}) // (will result in a 500 status code)
 
 */

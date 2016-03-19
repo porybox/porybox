@@ -10,6 +10,7 @@
     'Constants': true,
     'UserPreferences': true,
     'PokemonNote': true,
-    'CatchAsyncErrors': true
+    'CatchAsyncErrors': true,
+    'Validation': true
   }
 }
