@@ -50,8 +50,6 @@ module.exports = _.mapValues({
     return res.created(result);
   },
 
-  /* TODO: Get rid of repetitive code here -- the authentication to check whether the user is a pokemon's owner
-  should probably be moved to a service rather than being repeated in each function. */
   async get (req, res) {
     const pokemon = await Pokemon.findOne({
       id: req.param('id'),
@@ -75,13 +73,7 @@ module.exports = _.mapValues({
 
   async delete (req, res) {
     const id = req.param('id');
-    let pokemon = await Pokemon.findOne({id});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
-      return res.forbidden();
-    }
+    let pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id});
     await pokemon.markForDeletion();
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.POKEMON_DELETION_DELAY);
@@ -92,15 +84,12 @@ module.exports = _.mapValues({
   },
 
   async undelete (req, res) {
-    const pokemon = await Pokemon.findOne({id: req.param('id')});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
-      /* If anyone other than the owner tries to undelete the pokemon, return a 404 error.
-      That way, the server doesn't leak information on whether a pokemon with the given ID ever existed. */
-      return pokemon._markedForDeletion ? res.notFound() : res.forbidden();
-    }
+    const params = req.allParams();
+    const pokemon = await Validation.verifyUserIsPokemonOwner({
+      user: req.user,
+      id: params.id,
+      allowDeleted: true
+    });
     await pokemon.unmarkForDeletion();
     return res.ok();
   },
@@ -131,16 +120,11 @@ module.exports = _.mapValues({
   },
 
   async move (req, res) {
-    Validation.requireParams(req.allParams(), ['id', 'box']);
-    const pokemon = await Pokemon.findOne({id: req.param('id'), _markedForDeletion: false});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    const newBox = await Box.findOne({id: req.param('box'), _markedForDeletion: false});
-    if (!newBox) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== newBox.owner || pokemon.owner !== req.user.name && !req.user.isAdmin) {
+    const params = req.allParams();
+    Validation.requireParams(params, ['id', 'box']);
+    const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
+    const newBox = await Validation.verifyUserIsBoxOwner({user: req.user, id: params.box});
+    if (pokemon.owner !== newBox.owner) {
       return res.forbidden();
     }
     pokemon.box = newBox.id;
@@ -149,16 +133,13 @@ module.exports = _.mapValues({
   },
   async addNote (req, res) {
     const params = req.allParams();
-    Validation.requireParams(params, 'id');
-    const pokemon = await Pokemon.findOne({id: params.id});
+    Validation.requireParams(params, ['id', 'text']);
+    const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
     if (!pokemon) {
       return res.notFound();
     }
     if (pokemon.owner !== req.user.name) {
       return res.forbidden();
-    }
-    if (!params.text) {
-      return res.badRequest('Missing note text');
     }
     let visibility;
     if (params.visibility) {
@@ -201,28 +182,17 @@ module.exports = _.mapValues({
 
   async editNote (req, res) {
     const params = req.allParams();
+    Validation.requireParams(params, ['id', 'noteId']);
     const filteredParams = Validation.filterParams(params, ['text', 'visibility']);
     const text = filteredParams.text;
     if (_.has(filteredParams, 'text') && !_.isString(text) || text === '') {
       return res.badRequest('Invalid note text');
     }
-    const visibility = filteredParams.visibility;
-    if (_.has(filteredParams, 'visibility') && !Constants.POKEMON_NOTE_VISIBILITIES.includes(visibility)) {
+    const vis = filteredParams.visibility;
+    if (_.has(filteredParams, 'visibility') && !Constants.POKEMON_NOTE_VISIBILITIES.includes(vis)) {
       return res.badRequest('Invalid visibility setting');
     }
-    if (!params.id) {
-      return res.badRequest('Missing pokemon id');
-    }
-    if (!params.noteId) {
-      return res.badRequest('Missing note id');
-    }
-    const pokemon = await Pokemon.findOne({id: params.id, _markedForDeletion: false});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== req.user.name) {
-      return res.forbidden();
-    }
+    await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
     const note = await PokemonNote.findOne({id: params.noteId, pokemon: params.id});
     if (!note) {
       return res.notFound();
@@ -236,13 +206,7 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, 'id');
     const filteredParams = Validation.filterParams(params, ['visibility']);
-    const pokemon = await Pokemon.findOne({id: params.id});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
-      return res.forbidden();
-    }
+    const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
     _.assign(pokemon, filteredParams);
     await pokemon.save();
     return res.ok(pokemon);

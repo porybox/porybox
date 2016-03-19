@@ -57,7 +57,8 @@ module.exports.policies = {
     get: anyone,
     mine: user,
     delete: user,
-    undelete: user
+    undelete: user,
+    edit: user
   },
 
   UserController: {
