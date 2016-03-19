@@ -275,4 +275,80 @@ describe('BoxController', () => {
       sails.services.constants.BOX_DELETION_DELAY = previousDeletionDelay;
     });
   });
+  describe('editing a box', () => {
+    let box;
+    beforeEach(async () => {
+      const res = await agent.post('/box').send({name: 'Pillbox', visibility: 'listed'});
+      expect(res.statusCode).to.equal(201);
+      box = res.body;
+    });
+    it('allows a user to edit the name of their box', async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'Boxfish'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.body.name).to.equal('Boxfish');
+      expect(res2.body.description).to.equal('');
+      expect(res2.body.visibility).to.equal('listed');
+    });
+    it('allows a user to edit the description of their box', async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({description: 'Contains things'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.body.name).to.equal('Pillbox');
+      expect(res2.body.description).to.equal('Contains things');
+      expect(res2.body.visibility).to.equal('listed');
+    });
+    it('allows a user to edit the visibility of their box', async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({visibility: 'unlisted'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.body.name).to.equal('Pillbox');
+      expect(res2.body.description).to.equal('');
+      expect(res2.body.visibility).to.equal('unlisted');
+    });
+    it('allows a user to edit multiple box properties at once', async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'a', visibility: 'unlisted'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.body.name).to.equal('a');
+      expect(res2.body.description).to.equal('');
+      expect(res2.body.visibility).to.equal('unlisted');
+    });
+    it('does not allow invalid properties to be edited', async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({visibility: 'unlisted', owner: 'b'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.body.name).to.equal('Pillbox');
+      expect(res2.body.description).to.equal('');
+      expect(res2.body.visibility).to.equal('unlisted');
+      expect(res2.body.owner).to.not.equal('b');
+    });
+    it('returns a 400 error if no valid properties are specified', async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({owner: 'b', contents: []});
+      expect(res.statusCode).to.equal(400);
+    });
+    it('returns a 404 error if an invalid box ID is given', async () => {
+      const res = await agent.post('/b/NotARealBoxID/edit').send({visibility: 'unlisted'});
+      expect(res.statusCode).to.equal(404);
+    });
+    it("does not allow a user to edit someone else's box", async () => {
+      const res = await otherAgent.post(`/b/${box.id}/edit`).send({description: 'a box'});
+      expect(res.statusCode).to.equal(403);
+    });
+    it("allows an admin to edit anyone's box", async () => {
+      const res = await adminAgent.post(`/b/${box.id}/edit`).send({description: 'a box'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.name).to.equal('Pillbox');
+      expect(res2.body.description).to.equal('a box');
+      expect(res.body.visibility).to.equal('listed');
+    });
+    it('does not allow a deleted box to be edited', async () => {
+      const res = await agent.del(`/b/${box.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/b/${box.id}/edit`).send({description: 'a box'});
+      expect(res2.statusCode).to.equal(404);
+    });
+  });
 });

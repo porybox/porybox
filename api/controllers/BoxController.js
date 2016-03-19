@@ -9,9 +9,7 @@ module.exports = _.mapValues({
 
   async add (req, res) {
     const params = req.allParams();
-    if (!params.name) {
-      return res.badRequest('Missing box name');
-    }
+    Validation.requireParams(params, 'name');
     let visibility;
     if (params.visibility) {
       if (!Constants.BOX_VISIBILITIES.includes(params.visibility)) {
@@ -52,13 +50,7 @@ module.exports = _.mapValues({
 
   async delete (req, res) {
     const id = req.param('id');
-    let box = await Box.findOne({id});
-    if (!box || box._markedForDeletion) {
-      return res.notFound();
-    }
-    if (box.owner !== req.user.name && !req.user.isAdmin) {
-      return res.forbidden();
-    }
+    let box = await Validation.verifyUserIsBoxOwner({user: req.user, id});
     await box.markForDeletion();
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.BOX_DELETION_DELAY);
@@ -69,16 +61,23 @@ module.exports = _.mapValues({
   },
 
   async undelete (req, res) {
-    const box = await Box.findOne({id: req.param('id')}).populate('contents');
-    if (!box) {
-      return res.notFound();
-    }
-    if (box.owner !== req.user.name && !req.user.isAdmin) {
-      /* If anyone other than the owner tries to undelete the box, return a 404 error.
-      That way, the server doesn't leak information on whether a box with the given ID ever existed. */
-      return box._markedForDeletion ? res.notFound() : res.forbidden();
-    }
+    const box = await Validation.verifyUserIsBoxOwner({
+      id: req.param('id'),
+      user: req.user,
+      allowDeleted: true,
+      populate: ['contents']
+    });
     await box.unmarkForDeletion();
     return res.ok();
+  },
+
+  async edit (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'id');
+    const filteredParams = Validation.filterParams(params, ['name', 'description', 'visibility']);
+    const box = await Validation.verifyUserIsBoxOwner({user: req.user, id: params.id});
+    _.assign(box, filteredParams);
+    await box.save();
+    return res.ok(box);
   }
 }, CatchAsyncErrors);

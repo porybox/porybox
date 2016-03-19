@@ -31,6 +31,7 @@ module.exports.routes = {
   'get /boxes/mine': 'BoxController.mine',
   'delete /b/:id': 'BoxController.delete',
   'post /b/:id/undelete': 'BoxController.undelete',
+  'post /b/:id/edit': 'BoxController.edit',
 
   // Authentication
 

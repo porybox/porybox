@@ -12,5 +12,33 @@ module.exports = {
         throw {statusCode: 400, message: `Missing parameter ${param}`};
       }
     });
+  },
+  async verifyUserIsOwner (
+    model,
+    {user, id, allowAdmin = true, allowDeleted = false, populate = []}
+  ) {
+    const queryParams = {id};
+    if (!allowDeleted) {
+      queryParams._markedForDeletion = false;
+    }
+    const item = await model.findOne(queryParams).populate(populate || []);
+    if (!item) {
+      throw {statusCode: 404};
+    }
+    if (item.owner === user.name || user.isAdmin && allowAdmin) {
+      return item;
+    }
+    if (item._markedForDeletion) {
+      /* If anyone other than the owner tries to undelete the pokemon, return a 404 error.
+      That way, the server doesn't leak information on whether a pokemon with the given ID ever existed. */
+      throw {statusCode: 404};
+    }
+    throw {statusCode: 403};
+  },
+  verifyUserIsPokemonOwner (...args) {
+    return module.exports.verifyUserIsOwner(Pokemon, ...args);
+  },
+  verifyUserIsBoxOwner (...args) {
+    return module.exports.verifyUserIsOwner(Box, ...args);
   }
 };
