@@ -42,6 +42,15 @@ exports.register = async function (req, res, next) {
     req.flash('error', 'Error.Passport.Password.Missing');
     return next(new Error('No password was entered.'));
   }
+  try {
+    const nameAvailable = await Validation.usernameAvailable(name);
+    if (!nameAvailable) {
+      req.flash('error', 'Error.Passport.Bad.Username');
+      return next(new Error('That username is unavailable.'));
+    }
+  } catch (err) {
+    return next(err);
+  }
   let user, token;
   try {
     user = await User.create({name, email});

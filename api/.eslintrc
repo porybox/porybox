@@ -11,6 +11,7 @@
     'UserPreferences': true,
     'PokemonNote': true,
     'CatchAsyncErrors': true,
-    'Validation': true
+    'Validation': true,
+    'DeletedUser': true
   }
 }

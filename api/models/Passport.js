@@ -50,7 +50,8 @@ const Passport = {
     // passport (with protocol 'local') is created for a user.
     password: {
       type: 'string',
-      minLength: 8
+      minLength: 8,
+      maxLength: 72
     },
     accessToken: {
       type: 'string'

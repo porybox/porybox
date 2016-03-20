@@ -62,5 +62,22 @@ module.exports = _.mapValues({
     user.isAdmin = false;
     await user.save();
     return res.ok();
+  },
+  async deleteAccount (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'password');
+    const userPassport = await Passport.findOne({user: req.user.name, protocol: 'local'});
+    const validate = userPassport.validatePassword.bind(userPassport);
+    const isValid = await Promise.promisify(validate)(params.password);
+    if (!isValid) {
+      return res.forbidden('Incorrect password');
+    }
+    await req.user.deleteAccount();
+    return res.redirect('/');
+  },
+  async checkUsernameAvailable (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'name');
+    return res.ok(await Validation.usernameAvailable(params.name));
   }
 }, CatchAsyncErrors);

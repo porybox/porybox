@@ -27,3 +27,5 @@ exports.CHANGEABLE_PREFERENCES = {
 // The number of milliseconds for which deleted boxes/pokemon should be cached before they are permanently deleted.
 exports.BOX_DELETION_DELAY = 300000; // (i.e. 5 minutes)
 exports.POKEMON_DELETION_DELAY = 300000;
+
+exports.VALID_USERNAME_REGEX = /^[a-zA-Z0-9_-]{1,20}$/;
