@@ -64,5 +64,13 @@ module.exports = {
     if (!Constants.POKEMON_NOTE_VISIBILITIES.includes(note.visibility)) {
       throw {statusCode: 400, message: 'Invalid note visibility'};
     }
+  },
+  async usernameAvailable (name) {
+    if (!_.isString(name) || !Constants.VALID_USERNAME_REGEX.test(name)) {
+      return false;
+    }
+    const existingUser = await User.findOne({name});
+    const deletedUser = await DeletedUser.findOne({name});
+    return !(existingUser || deletedUser);
   }
 };

@@ -14,13 +14,13 @@ describe('UserController', () => {
     expect(res.header.location).to.equal('/');
     adminAgent = supertest.agent(sails.hooks.http.app);
     const res2 = await adminAgent.post('/auth/local/register').send({
-      name: 'I_AM_AN_ADMIN_FEAR_ME',
-      password: '*********************************************************************************',
+      name: 'IM_AN_ADMIN_FEAR_ME',
+      password: '***********************************************************************',
       email: 'admin@porybox.com'
     });
     expect(res2.statusCode).to.equal(302);
     expect(res2.header.location).to.equal('/');
-    await sails.models.user.update({name: 'I_AM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
+    await sails.models.user.update({name: 'IM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
     noAuthAgent = supertest.agent(sails.hooks.http.app);
   });
   it('can redirect users to information about their own profile', async () => {
@@ -38,9 +38,9 @@ describe('UserController', () => {
       expect(res.body.preferences).to.exist;
     });
     it("omits private information when a user gets someone else's profile", async () => {
-      const res = await agent.get('/user/I_AM_AN_ADMIN_FEAR_ME');
+      const res = await agent.get('/user/IM_AN_ADMIN_FEAR_ME');
       expect(res.statusCode).to.equal(200);
-      expect(res.body.name).to.equal('I_AM_AN_ADMIN_FEAR_ME');
+      expect(res.body.name).to.equal('IM_AN_ADMIN_FEAR_ME');
       expect(res.body.isAdmin).to.be.true;
       expect(res.body.email).to.not.exist;
       expect(res.body.preferences).to.not.exist;
@@ -165,8 +165,8 @@ describe('UserController', () => {
   });
   describe('granting/revoking admin status', () => {
     beforeEach(async () => {
-      await sails.models.user.update({name: 'I_AM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
-      await sails.models.user.update({name: {not: 'I_AM_AN_ADMIN_FEAR_ME'}}, {isAdmin: false});
+      await sails.models.user.update({name: 'IM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
+      await sails.models.user.update({name: {not: 'IM_AN_ADMIN_FEAR_ME'}}, {isAdmin: false});
     });
     it('allows admins to grant/revoke admin status to other users', async () => {
       const res = await adminAgent.post('/user/usertester/grantAdminStatus');
@@ -180,15 +180,46 @@ describe('UserController', () => {
       const res = await agent.post('/user/usertester/grantAdminStatus');
       expect(res.statusCode).to.equal(403);
       expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
-      const res2 = await agent.post('/user/I_AM_AN_ADMIN_FEAR_ME/revokeAdminStatus');
+      const res2 = await agent.post('/user/IM_AN_ADMIN_FEAR_ME/revokeAdminStatus');
       expect(res2.statusCode).to.equal(403);
-      expect((await noAuthAgent.get('/user/I_AM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true;
+      expect((await noAuthAgent.get('/user/IM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true;
     });
     it('returns a 404 error if the specified user does not exist', async () => {
       const res = await adminAgent.post('/user/nonexistent_username/grantAdminStatus');
       expect(res.statusCode).to.equal(404);
       const res2 = await adminAgent.post('/user/nonexistent_username/revokeAdminStatus');
       expect(res2.statusCode).to.equal(404);
+    });
+  });
+  describe('deleting an account', () => {
+    let deleteAgent;
+    beforeEach(async () => {
+      deleteAgent = supertest.agent(sails.hooks.http.app);
+      const uniqueUsername = `deleteTester${require('crypto').randomBytes(4).toString('hex')}`;
+      const res = await deleteAgent.post('/auth/local/register').send({
+        name: uniqueUsername,
+        password: 'correct-password',
+        email: `${uniqueUsername}@usertesting.com`
+      });
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/');
+    });
+    it('allows an account to be deleted if the correct password is provided', async () => {
+      const res = await deleteAgent.post('/deleteAccount').send({password: 'correct-password'});
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/');
+    });
+    it('does not allow an account to be deleted if an incorrect password is provided', async () => {
+      const res = await deleteAgent.post('/deleteAccount').send({password: 'incorrect-password'});
+      expect(res.statusCode).to.equal(403);
+    });
+    it("deletes all of a user's boxes when their account is deleted", async () => {
+      const res = await deleteAgent.post('/box').send({name: 'My box', visibility: 'listed'});
+      expect(res.statusCode).to.equal(201);
+      const box = res.body;
+      expect((await agent.get(`/b/${box.id}`)).statusCode).to.equal(200);
+      await deleteAgent.post('/deleteAccount').send({password: 'correct-password'});
+      expect((await agent.get(`/b/${box.id}`)).statusCode).to.equal(404);
     });
   });
 });
