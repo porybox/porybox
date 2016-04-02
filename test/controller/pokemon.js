@@ -77,6 +77,8 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.not.exist;
+      expect(res.body.pidHint).to.exist;
+      expect(res.body.pidHint).to.be.below(0x10000);
     });
     it('allows the uploader to view all the data on a private pokemon', async () => {
       const res = await agent.get(`/p/${privateId}`);
