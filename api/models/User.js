@@ -1,6 +1,18 @@
+function matchesAll (testRegex, array) {
+  // Checks whether every element in `array` matches the given `testRegex`.
+  return array.every(value => _.isString(value) && testRegex.test(value));
+}
+
+
 module.exports =  {
   // Enforce model schema in the case of schemaless databases
   schema: true,
+
+  types: {
+    containsOnlyFriendCodes: _.partial(matchesAll, Constants.FRIEND_CODE_REGEX),
+    containsOnlyValidIGNs: _.partial(matchesAll, Constants.IGN_REGEX),
+    containsOnlyTSVs: _.partial(matchesAll, Constants.TSV_REGEX)
+  },
 
   attributes: {
     name: {
@@ -35,6 +47,21 @@ module.exports =  {
     isAdmin: {
       type: 'boolean',
       defaultsTo: false
+    },
+    friendCodes: {
+      type: 'array',
+      containsOnlyFriendCodes: true,
+      defaultsTo: []
+    },
+    inGameNames: {
+      type: 'array',
+      containsOnlyValidIGNs: true,
+      defaultsTo: []
+    },
+    trainerShinyValues: {
+      type: 'array',
+      containsOnlyTSVs: true,
+      defaultsTo: []
     },
     omitPrivateInformation () {
       return _.omit(this, ['passports', 'email', 'preferences', 'updatedAt']);
