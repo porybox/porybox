@@ -7,11 +7,14 @@ describe('AddCtrl', function() {
   let $scope = {},
     io = {},
     $controller = {},
+    $mdDialog = {},
+    $mdMedia = {},
     tested, postSpy;
-
   beforeEach(inject(function(_$controller_){
     $scope = {
-      $apply: function () {}
+      boxes: [],
+      $apply: function () {},
+      $watch: function () {}
     };
     io = {
       socket: {
@@ -20,16 +23,25 @@ describe('AddCtrl', function() {
         }
       }
     }
+    $mdDialog = {
+      show: function () {
+        return {
+          then: function (fn) {
+            fn({name: 'name', description: 'description'});
+          }
+        }
+      }
+    }
+    $mdMedia = function () {};
     $controller = _$controller_;
-    tested = $controller(ctrlTest, {$scope: $scope, io: io}, {boxes: []});
+    tested = $controller(ctrlTest, {
+      $scope: $scope,
+      io: io,
+      $mdDialog: $mdDialog,
+      $mdMedia: $mdMedia
+    }, {boxes: []});
     postSpy = sinon.spy(io.socket, 'post');
   }));
-
-  describe('controller.count', function() {
-    it('is instansiated correctly', function() {
-      expect(tested.count).to.equal(0);
-    });
-  });
 
   describe('controller.addBox', function() {
     it('calls io.socket.post', function() {
@@ -37,12 +49,8 @@ describe('AddCtrl', function() {
       expect(postSpy.called).to.equal(true);
     });
 
-    it('increments count', function() {
-      tested.box();
-      expect(tested.count).to.equal(1);
-    });
-
     it('adds to boxes', function() {
+      expect(tested.boxes.length).to.equal(0);
       tested.box();
       expect(tested.boxes.length).to.equal(1);
     });

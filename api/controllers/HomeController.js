@@ -7,7 +7,7 @@
 
 module.exports = _.mapValues({
   async index (req, res) {
-    const boxes = await Box.find({user: req.user.name});
+    const boxes = await Box.find({owner: req.user.name});
     res.view('home/view', {boxes});
   },
 
