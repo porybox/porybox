@@ -49,23 +49,22 @@ module.exports = _.mapValues({
 
   async delete (req, res) {
     const id = req.param('id');
-    let box = await Validation.verifyUserIsBoxOwner({user: req.user, id});
+    const box = await Box.findOne({id});
+    Validation.verifyUserIsOwner(box, req.user);
     await box.markForDeletion();
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.BOX_DELETION_DELAY);
-    box = await Box.findOne({id});
-    if (box._markedForDeletion) {
+    const updatedBox = await Box.findOne({id});
+    if (updatedBox._markedForDeletion) {
       await box.destroy();
     }
   },
 
   async undelete (req, res) {
-    const box = await Validation.verifyUserIsBoxOwner({
-      id: req.param('id'),
-      user: req.user,
-      allowDeleted: true,
-      populate: ['contents']
-    });
+    const params = req.allParams();
+    Validation.requireParams(params, 'id');
+    const box = await Box.findOne({id: req.param('id')}).populate('contents');
+    Validation.verifyUserIsOwner(box, req.user, {allowDeleted: true});
     await box.unmarkForDeletion();
     return res.ok();
   },
@@ -74,7 +73,8 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, 'id');
     const filteredParams = Validation.filterParams(params, ['name', 'description', 'visibility']);
-    const box = await Validation.verifyUserIsBoxOwner({user: req.user, id: params.id});
+    const box = await Box.findOne({id: params.id});
+    Validation.verifyUserIsOwner(box, req.user);
     _.assign(box, filteredParams);
     Validation.verifyBoxParams(box);
     await box.save();
