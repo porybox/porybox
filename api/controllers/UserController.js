@@ -43,6 +43,23 @@ module.exports = _.mapValues({
     const updated = await UserPreferences.update({user: req.user.name}, filteredParams);
     return res.ok(updated[0]);
   },
+  /* Each user will probably have sufficiently few FCs/IGNs/TSVs that it's easier to have a single endpoint to set all of the
+  FCs than to make a different request to add/delete each FC.
+  */
+  async editAccountInfo (req, res) {
+    const changeableKeys = ['inGameNames', 'friendCodes', 'trainerShinyValues'];
+    const filteredParams = Validation.filterParams(req.allParams(), changeableKeys);
+    Validation.assert(_.every(filteredParams, _.isArray), 'Parameters must be arrays');
+    const hasNoDupes = arr => _.uniq(arr).length === arr.length;
+    Validation.assert(_.every(filteredParams, hasNoDupes), 'Arrays must not have duplicate values');
+    _.assign(req.user, filteredParams);
+    try {
+      await req.user.save();
+    } catch (err) {
+      return err.code === 'E_VALIDATION' ? res.badRequest() : res.serverError(err);
+    }
+    return res.ok();
+  },
   async grantAdminStatus (req, res) {
     const user = await User.findOne({name: req.param('name')});
     if (!user) {
