@@ -71,23 +71,21 @@ module.exports = _.mapValues({
 
   async delete (req, res) {
     const id = req.param('id');
-    let pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id});
+    const pokemon = await Pokemon.findOne({id});
+    Validation.verifyUserIsOwner(pokemon, req.user);
     await pokemon.markForDeletion();
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.POKEMON_DELETION_DELAY);
-    pokemon = await Pokemon.findOne({id});
-    if (pokemon._markedForDeletion) {
+    const updatedPokemon = await Pokemon.findOne({id});
+    if (updatedPokemon._markedForDeletion) {
       await pokemon.destroy();
     }
   },
 
   async undelete (req, res) {
     const params = req.allParams();
-    const pokemon = await Validation.verifyUserIsPokemonOwner({
-      user: req.user,
-      id: params.id,
-      allowDeleted: true
-    });
+    const pokemon = await Pokemon.findOne({id: params.id});
+    Validation.verifyUserIsOwner(pokemon, req.user, {allowDeleted: true});
     await pokemon.unmarkForDeletion();
     return res.ok();
   },
@@ -120,8 +118,10 @@ module.exports = _.mapValues({
   async move (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'box']);
-    const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
-    const newBox = await Validation.verifyUserIsBoxOwner({user: req.user, id: params.box});
+    const pokemon = await Pokemon.findOne({id: params.id});
+    const newBox = await Box.findOne({id: params.box});
+    Validation.verifyUserIsOwner(pokemon, req.user);
+    Validation.verifyUserIsOwner(newBox, req.user);
     if (pokemon.owner !== newBox.owner) {
       return res.forbidden();
     }
@@ -132,7 +132,8 @@ module.exports = _.mapValues({
   async addNote (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'text']);
-    const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
+    const pokemon = await Pokemon.findOne({id: params.id});
+    Validation.verifyUserIsOwner(pokemon, req.user);
     let visibility;
     if (params.visibility) {
       visibility = params.visibility;
@@ -174,7 +175,8 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'noteId']);
     const filteredParams = Validation.filterParams(params, ['text', 'visibility']);
-    await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
+    const pokemon = await Pokemon.findOne({id: params.id});
+    Validation.verifyUserIsOwner(pokemon, req.user);
     const note = await PokemonNote.findOne({id: params.noteId, pokemon: params.id});
     if (!note) {
       return res.notFound();
@@ -189,7 +191,8 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, 'id');
     const filteredParams = Validation.filterParams(params, ['visibility']);
-    const pokemon = await Validation.verifyUserIsPokemonOwner({user: req.user, id: params.id});
+    const pokemon = await Pokemon.findOne({id: params.id});
+    Validation.verifyUserIsOwner(pokemon, req.user);
     _.assign(pokemon, filteredParams);
     Validation.verifyPokemonParams(pokemon);
     await pokemon.save();

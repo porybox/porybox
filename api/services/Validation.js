@@ -13,33 +13,15 @@ module.exports = {
       }
     });
   },
-  async verifyUserIsOwner (
-    model,
-    {user, id, allowAdmin = true, allowDeleted = false, populate = []}
-  ) {
-    const queryParams = {id};
-    if (!allowDeleted) {
-      queryParams._markedForDeletion = false;
-    }
-    const item = await model.findOne(queryParams).populate(populate || []);
-    if (!item) {
+  verifyUserIsOwner (item, user, {allowAdmin = true, allowDeleted = false} = {}) {
+    if (!item || !allowDeleted && item._markedForDeletion) {
       throw {statusCode: 404};
     }
-    if (item.owner === user.name || user.isAdmin && allowAdmin) {
-      return item;
+    if (item.owner !== user.name && !(user.isAdmin && allowAdmin)) {
+      /* If anyone other than the owner tries to undelete an item, return a 404 error.
+      That way, the server doesn't leak information on whether an item with the given ID ever existed. */
+      throw {statusCode: item._markedForDeletion ? 404 : 403};
     }
-    if (item._markedForDeletion) {
-      /* If anyone other than the owner tries to undelete the pokemon, return a 404 error.
-      That way, the server doesn't leak information on whether a pokemon with the given ID ever existed. */
-      throw {statusCode: 404};
-    }
-    throw {statusCode: 403};
-  },
-  verifyUserIsPokemonOwner (...args) {
-    return module.exports.verifyUserIsOwner(Pokemon, ...args);
-  },
-  verifyUserIsBoxOwner (...args) {
-    return module.exports.verifyUserIsOwner(Box, ...args);
   },
   verifyBoxParams (box) {
     if (!_.isString(box.name) || _.isEmpty(box.name)) {
