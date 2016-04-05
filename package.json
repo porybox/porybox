@@ -41,7 +41,7 @@
     "socket.io-browserify": "^0.9.6",
     "socket.io-client": "^1.4.5",
     "supertest": "^1.2.0",
-    "validator": "^4.8.0",
+    "validator": "^5.2.0",
     "watchify": "^3.7.0"
   },
   "scripts": {
