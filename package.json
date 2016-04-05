@@ -23,7 +23,7 @@
     "connect-mongo": "^0.8.2",
     "ejs": "2.3.4",
     "eslint": "=2.2.0",
-    "grunt": "0.4.5",
+    "grunt": "1.0.0",
     "include-all": "0.1.6",
     "kerberos": "0.0.19",
     "less": "^2.6.0",
