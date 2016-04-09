@@ -153,4 +153,108 @@ describe('AuthController', function() {
       expect(res.header.location).to.equal('/register');
     });
   });
+  describe('changing a password', () => {
+    let passAgent, passAgent2, passAgent3, username;
+    beforeEach(async () => {
+      username = `USERNAME_${require('crypto').randomBytes(4).toString('hex')}`;
+      passAgent = supertest.agent(sails.hooks.http.app);
+      passAgent2 = supertest.agent(sails.hooks.http.app);
+      passAgent3 = supertest.agent(sails.hooks.http.app);
+      const res = await passAgent.post('/auth/local/register').send({
+        name: username,
+        password: 'Correct Horse Battery Staple',
+        email: `${require('crypto').randomBytes(4).toString('hex')}@porybox.com`
+      });
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/');
+    });
+    it('allows a user to change their password', async () => {
+      const res = await passAgent.post('/changePassword').send({
+        oldPassword: 'Correct Horse Battery Staple',
+        newPassword: 'Correct Llama Battery Staple'
+      });
+      expect(res.statusCode).to.equal(200);
+      // do another request to make sure the current user is still authenticated
+      const res2 = await passAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res2.statusCode).to.equal(201);
+      expect(res2.body.pid).to.exist;
+      // log in with a different agent to make sure the new password works
+      const res3 = await passAgent2.post('/auth/local').send({
+        identifier: username,
+        password: 'Correct Llama Battery Staple'
+      });
+      expect(res3.statusCode).to.equal(302);
+      expect(res3.header.location).to.equal('/');
+      // log in with the old password and make sure it doesn't work
+      const res4 = await passAgent3.post('/auth/local').send({
+        identifier: username,
+        password: 'Correct Horse Battery Staple'
+      });
+      expect(res4.statusCode).to.equal(302);
+      expect(res4.header.location).to.equal('/login');
+    });
+    it('does not allow users to change their password if the given password is wrong', async () => {
+      const res = await passAgent.post('/changePassword').send({
+        oldPassword: 'Incorrect Horse Battery Staple',
+        newPassword: 'invalid new password'
+      });
+      expect(res.statusCode).to.equal(403);
+      // log in with the old password and make sure it still works
+      const res2 = await passAgent2.post('/auth/local').send({
+        identifier: username,
+        password: 'Correct Horse Battery Staple'
+      });
+      expect(res2.statusCode).to.equal(302);
+      expect(res2.header.location).to.equal('/');
+      // log in with the new password and make sure it doesn't work
+      const res3 = await passAgent3.post('/auth/local').send({
+        identifier: username,
+        password: 'invalid new password'
+      });
+      expect(res3.statusCode).to.equal(302);
+      expect(res3.header.location).to.equal('/login');
+    });
+    it('returns a 400 error if a user omits either parameter', async () => {
+      const res = await passAgent.post('/changePassword').send({newPassword: 'new password yay'});
+      expect(res.statusCode).to.equal(400);
+      const res2 = await passAgent.post('/changePassword').send({oldPassword: 'old password yay'});
+      expect(res2.statusCode).to.equal(400);
+    });
+    it('functions properly if the new password happens to be the same as the old one', async () => {
+      const res = await passAgent.post('/changePassword').send({
+        oldPassword: 'Correct Horse Battery Staple',
+        newPassword: 'Correct Horse Battery Staple'
+      });
+      expect(res.statusCode).to.equal(200);
+      // do another request to make sure the current user is still authenticated
+      const res2 = await passAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res2.statusCode).to.equal(201);
+      expect(res2.body.pid).to.exist;
+      // log in with a different agent to make sure the password still works
+      const res3 = await passAgent2.post('/auth/local').send({
+        identifier: username,
+        password: 'Correct Horse Battery Staple'
+      });
+      expect(res3.statusCode).to.equal(302);
+      expect(res3.header.location).to.equal('/');
+    });
+    it('returns a 400 error and keeps the old password valid if new one is invalid', async () => {
+      const res = await passAgent.post('/changePassword').send({
+        oldPassword: 'Correct Horse Battery Staple',
+        newPassword: 'blah' // Invalid password (too short)
+      });
+      expect(res.statusCode).to.equal(400);
+      // do another request to make sure the current user is still authenticated
+      const res2 = await passAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res2.statusCode).to.equal(201);
+      expect(res2.body.pid).to.exist;
+      // log in with a different agent to make sure the old password still works
+      const res3 = await passAgent2.post('/auth/local').send({
+        identifier: username,
+        password: 'Correct Horse Battery Staple'
+      });
+      expect(res3.statusCode).to.equal(302);
+      expect(res3.header.location).to.equal('/');
+    });
+  });
 });

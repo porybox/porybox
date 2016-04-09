@@ -68,6 +68,7 @@ module.exports.policies = {
     getPreferences: user,
     editPreferences: user,
     deleteAccount: user,
+    changePassword: user,
     checkUsernameAvailable: anyone
   }
 

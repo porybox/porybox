@@ -71,5 +71,6 @@ module.exports.routes = {
   'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
   'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
   'post /deleteAccount': 'UserController.deleteAccount',
+  'post /changePassword': 'UserController.changePassword',
   'get /checkUsernameAvailable': 'UserController.checkUsernameAvailable'
 };
