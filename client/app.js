@@ -1,6 +1,7 @@
 // Import libraries
 const ng = require('angular');
 require('angular-material');
+require('angular-messages');
 
 // Import modules
 require('./login/login.module.js');
@@ -25,6 +26,14 @@ porybox.controller('MainCtrl', function () {
   this.init = function ({boxes}) {
     this.boxes = boxes;
   }
+});
+
+porybox.config(function($mdThemingProvider) {
+  $mdThemingProvider.theme('default')
+    .primaryPalette('light-blue')
+    .accentPalette('pink', {
+      default: 'A200'
+    });
 });
 
 porybox.service('io', function () {
