@@ -257,4 +257,27 @@ describe('AuthController', function() {
       expect(res3.header.location).to.equal('/');
     });
   });
+
+  describe('logging out', () => {
+    let logoutAgent;
+    beforeEach(async () => {
+      logoutAgent = supertest.agent(sails.hooks.http.app);
+      const res = await logoutAgent.post('/auth/local/register').send({
+        name: 'logoutTester',
+        password: "I can't think of any funny placeholder passwords right now",
+        email: 'logoutTester@porybox.com'
+      });
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/');
+    });
+    it('allows the user to log themselves out', async () => {
+      const res = await logoutAgent.post('/logout');
+      expect(res.statusCode).to.equal(200);
+
+      // Do a request to make sure it doesn't work
+      const res2 = await logoutAgent.get('/boxes/mine');
+      expect(res2.statusCode).to.equal(302);
+      expect(res2.header.location.startsWith('/login')).to.be.true;
+    });
+  });
 });
