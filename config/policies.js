@@ -26,7 +26,7 @@ module.exports.policies = {
 
   AuthController: {
     login: anyone,
-    logout: anyone,
+    logout: user,
     register: anyone,
     provider: anyone,
     callback: anyone,
