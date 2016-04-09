@@ -48,7 +48,8 @@ module.exports.policies = {
     move: user,
     addNote: user,
     deleteNote: user,
-    editNote: user
+    editNote: user,
+    edit: user
   },
 
   BoxController: {
@@ -56,7 +57,8 @@ module.exports.policies = {
     get: anyone,
     mine: user,
     delete: user,
-    undelete: user
+    undelete: user,
+    edit: user
   },
 
   UserController: {
@@ -64,7 +66,9 @@ module.exports.policies = {
     boxes: anyone,
     me: user,
     getPreferences: user,
-    editPreferences: user
+    editPreferences: user,
+    deleteAccount: user,
+    checkUsernameAvailable: anyone
   }
 
 };
