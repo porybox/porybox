@@ -31,6 +31,10 @@ module.exports = {
    * @param {Object} res
    */
   login: function (req, res) {
+    if (req.session.authenticated) {
+      return res.redirect('/');
+    }
+
     const strategies = sails.config.passport,
       providers  = {};
 
