@@ -31,6 +31,7 @@ module.exports.routes = {
   'get /boxes/mine': 'BoxController.mine',
   'delete /b/:id': 'BoxController.delete',
   'post /b/:id/undelete': 'BoxController.undelete',
+  'post /b/:id/edit': 'BoxController.edit',
 
   // Authentication
 
@@ -59,6 +60,7 @@ module.exports.routes = {
   'post /p/:id/note': 'PokemonController.addNote',
   'delete /p/:id/n/:noteId': 'PokemonController.deleteNote',
   'post /p/:id/n/:noteId/edit': 'PokemonController.editNote',
+  'post /p/:id/edit': 'PokemonController.edit',
 
   // Users
   'get /user/:name': 'UserController.get',
@@ -67,5 +69,7 @@ module.exports.routes = {
   'get /preferences': 'UserController.getPreferences',
   'post /preferences/edit': 'UserController.editPreferences',
   'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
-  'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus'
+  'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
+  'post /deleteAccount': 'UserController.deleteAccount',
+  'get /checkUsernameAvailable': 'UserController.checkUsernameAvailable'
 };

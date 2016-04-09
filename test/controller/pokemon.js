@@ -555,4 +555,46 @@ describe('PokemonController', () => {
       expect(res2.statusCode).to.equal(404);
     });
   });
+  describe("editing a pokemon's visibility", () => {
+    let pkmn;
+    beforeEach(async () => {
+      const res = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('visibility', 'readonly');
+      expect(res.statusCode).to.equal(201);
+      pkmn = res.body;
+    });
+    it("allows a user to edit their pokemon's visibility", async () => {
+      const res = await agent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.visibility).to.equal('private');
+    });
+    it('returns a 400 error if no valid parameters are specified', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/edit`).send({owner: 'AAAAA'});
+      expect(res.statusCode).to.equal(400);
+    });
+    it('returns a 404 error if given an invalid pokemon id', async () => {
+      const res = await agent.post('/p/invalidpokemonid/edit').send({visibility: 'private'});
+      expect(res.statusCode).to.equal(404);
+    });
+    it("does not allow a user to edit another user's pokemon's visibility", async () => {
+      const res = await otherAgent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      expect(res.statusCode).to.equal(403);
+    });
+    it("allows an admin to edit a pokemon's visibility", async () => {
+      const res = await adminAgent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/p/${pkmn.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.visibility).to.equal('private');
+    });
+    it('does not allow a deleted pokemon to be edited', async () => {
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      expect(res2.statusCode).to.equal(404);
+    });
+  });
 });

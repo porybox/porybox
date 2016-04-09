@@ -9,25 +9,22 @@ module.exports = _.mapValues({
 
   async add (req, res) {
     const params = req.allParams();
-    if (!params.name) {
-      return res.badRequest('Missing box name');
-    }
+    Validation.requireParams(params, 'name');
     let visibility;
     if (params.visibility) {
-      if (!Constants.BOX_VISIBILITIES.includes(params.visibility)) {
-        return res.badRequest('Invalid visibility setting');
-      }
       visibility = params.visibility;
     } else {
       visibility = (await UserPreferences.findOne({user: req.user.name})).defaultBoxVisibility;
     }
-    const box = await Box.create({
+    const newParams = {
       name: params.name,
       owner: req.user.name,
       description: params.description,
       visibility,
       id: require('crypto').randomBytes(16).toString('hex')
-    });
+    };
+    Validation.verifyBoxParams(newParams);
+    const box = await Box.create(newParams);
     return res.created(box);
   },
 
@@ -52,33 +49,35 @@ module.exports = _.mapValues({
 
   async delete (req, res) {
     const id = req.param('id');
-    let box = await Box.findOne({id});
-    if (!box || box._markedForDeletion) {
-      return res.notFound();
-    }
-    if (box.owner !== req.user.name && !req.user.isAdmin) {
-      return res.forbidden();
-    }
+    const box = await Box.findOne({id});
+    Validation.verifyUserIsOwner(box, req.user);
     await box.markForDeletion();
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.BOX_DELETION_DELAY);
-    box = await Box.findOne({id});
-    if (box._markedForDeletion) {
+    const updatedBox = await Box.findOne({id});
+    if (updatedBox._markedForDeletion) {
       await box.destroy();
     }
   },
 
   async undelete (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'id');
     const box = await Box.findOne({id: req.param('id')}).populate('contents');
-    if (!box) {
-      return res.notFound();
-    }
-    if (box.owner !== req.user.name && !req.user.isAdmin) {
-      /* If anyone other than the owner tries to undelete the box, return a 404 error.
-      That way, the server doesn't leak information on whether a box with the given ID ever existed. */
-      return box._markedForDeletion ? res.notFound() : res.forbidden();
-    }
+    Validation.verifyUserIsOwner(box, req.user, {allowDeleted: true});
     await box.unmarkForDeletion();
     return res.ok();
+  },
+
+  async edit (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'id');
+    const filteredParams = Validation.filterParams(params, ['name', 'description', 'visibility']);
+    const box = await Box.findOne({id: params.id});
+    Validation.verifyUserIsOwner(box, req.user);
+    _.assign(box, filteredParams);
+    Validation.verifyBoxParams(box);
+    await box.save();
+    return res.ok(box);
   }
 }, CatchAsyncErrors);

@@ -38,6 +38,15 @@ module.exports =  {
     },
     omitPrivateInformation () {
       return _.omit(this, ['passports', 'email', 'preferences', 'updatedAt']);
+    },
+    async deleteAccount () {
+      await Promise.all([
+        UserPreferences.destroy({user: this.name}),
+        Promise.map(Box.find({owner: this.name}), box => box.destroy()),
+        Passport.destroy({user: this.name})
+      ]);
+      await User.destroy({name: this.name});
+      await DeletedUser.create({name: this.name});
     }
   }
 };
