@@ -23,6 +23,19 @@ describe('AuthController', function() {
       expect(res.header.location).to.equal('/login');
     });
 
+    it('should redirect from /login to / when logged in', async () => {
+      const res = await otherAgent.post('/auth/local/register').send({
+        name: 'redirectLoginToHome',
+        password: 'hunter22',
+        email: 'redirect@porybox.com'
+      });
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/');
+      const res2 = await otherAgent.get('/login');
+      expect(res2.statusCode).to.equal(302);
+      expect(res2.header.location).to.equal('/');
+    });
+
     it('should be able to register an account', async () => {
       const res = await agent.post('/auth/local/register').send({
         name: 'testuser1',
