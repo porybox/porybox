@@ -72,12 +72,8 @@ module.exports = {
    * @param {Object} res
    */
   logout: function (req, res) {
-    req.logout();
-
-    // mark the user as logged out for auth purposes
-    req.session.authenticated = false;
-
-    res.redirect('/');
+    req.session.destroy();
+    return res.ok();
   },
 
   /**
