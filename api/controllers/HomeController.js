@@ -8,7 +8,8 @@
 module.exports = _.mapValues({
   async index (req, res) {
     const boxes = await Box.find({owner: req.user.name});
-    res.view('home/view', {boxes});
+    const prefs = await UserPreferences.find({user: req.user.name});
+    res.view('home/view', {boxes, prefs});
   },
 
   uploadpk6 (req, res) {

@@ -7,13 +7,14 @@ const controller = require('./add.ctrl');
  * @param  {[type]} []             [description]
  * @return {[type]}                [description]
  */
-ng.module('porybox.add', ['porybox.box', 'ngMessages'])
+ng.module('porybox.add', ['porybox.box', 'ngMessages', 'ngFileUpload'])
   .component('addMenu',
   {
     bindings: {
-      boxes: '='
+      boxes: '=',
+      prefs: '='
     },
     templateUrl: 'add/add.view.html',
-    controller: ['$scope', 'io', '$mdDialog', '$mdMedia', controller],
+    controller: ['$scope', 'io', '$mdDialog', '$mdMedia', '$mdBottomSheet', controller],
     controllerAs: 'add'
   });

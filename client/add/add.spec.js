@@ -9,6 +9,7 @@ describe('AddCtrl', function() {
     $controller = {},
     $mdDialog = {},
     $mdMedia = {},
+    $mdBottomSheet = {},
     tested, postSpy;
   beforeEach(inject(function(_$controller_){
     $scope = {
@@ -32,13 +33,23 @@ describe('AddCtrl', function() {
         }
       }
     }
+    $mdBottomSheet = {
+      show: function () {
+        return {
+          then: function (fn) {
+            fn({name: 'name', description: 'description'});
+          }
+        }
+      }
+    }
     $mdMedia = function () {};
     $controller = _$controller_;
     tested = $controller(ctrlTest, {
       $scope: $scope,
       io: io,
       $mdDialog: $mdDialog,
-      $mdMedia: $mdMedia
+      $mdMedia: $mdMedia,
+      $mdBottomSheet: $mdBottomSheet
     }, {boxes: []});
     postSpy = sinon.spy(io.socket, 'post');
   }));

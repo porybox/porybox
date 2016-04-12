@@ -1,17 +1,18 @@
 const angular = require('angular');
-const controller = require('./box.ctrl.js');
+const boxCtrl = require('./box.ctrl.js');
+const pokemonCtrl = require('./pokemon.ctrl.js');
 
 /**
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, io, $mdDialog, $mdMedia) {
+module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
   const self = this;
 
   this.box = function (event) {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $mdDialog.show({
-      controller: ['$mdDialog', controller],
+      controller: ['$mdDialog', boxCtrl],
       controllerAs: 'dialog',
       templateUrl: 'add/box.view.html',
       parent: angular.element(document.body),
@@ -37,6 +38,23 @@ module.exports = function($scope, io, $mdDialog, $mdMedia) {
       return $mdMedia('xs') || $mdMedia('sm');
     }, function(wantsFullScreen) {
       $scope.customFullscreen = (wantsFullScreen === true);
+    });
+  }
+
+  this.pokemon = function (event) {
+    $mdBottomSheet.show({
+      templateUrl: 'add/pokemon.view.html',
+      controller: ['$mdBottomSheet', 'Upload', pokemonCtrl],
+      locals: {
+        boxes: this.boxes,
+        defaultPokemonVisibility: this.prefs[0].defaultPokemonVisibility
+      },
+      controllerAs: 'pkmDialog',
+      bindToController: true,
+      parent: angular.element(document.body),
+      targetEvent: event
+    }).then(function({pokemon}) {
+      console.log(pokemon);
     });
   }
 
