@@ -270,18 +270,21 @@ describe('PokemonController', () => {
     it('increases the download count with downloads by third parties', async () => {
       const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       await otherAgent.get(`/p/${publicPkmn.id}/download`);
+      await Promise.delay(500);
       const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       expect(newCount).to.equal(initialCount + 1);
     });
     it('increases the download count with downloads by unauthenticated users', async () => {
       const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       await noAuthAgent.get(`/p/${publicPkmn.id}/download`);
+      await Promise.delay(500);
       const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       expect(newCount).to.equal(initialCount + 1);
     });
     it("does not increase the download count with downloads by a pokemon's owner", async () => {
       const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       await agent.get(`/p/${publicPkmn.id}/download`);
+      await Promise.delay(500);
       const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       expect(newCount).to.equal(initialCount);
     });
@@ -292,6 +295,7 @@ describe('PokemonController', () => {
       await adminAgent.get(`/p/${publicPkmn.id}/download`);
       await adminAgent.get(`/p/${readonlyPkmn.id}/download`);
       await adminAgent.get(`/p/${privatePkmn.id}/download`);
+      await Promise.delay(500);
       const finalPublicCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
       const finalReadonlyCount = (await agent.get(`/p/${readonlyPkmn.id}`)).body.downloadCount;
       const finalPrivateCount = (await agent.get(`/p/${privatePkmn.id}`)).body.downloadCount;
