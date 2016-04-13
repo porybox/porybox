@@ -150,6 +150,7 @@ describe('BoxController', () => {
     it('does not leak internal properties of a box to the client', async () => {
       const box = (await agent.get(`/b/${box1Id}`)).body;
       expect(box._markedForDeletion).to.not.exist;
+      expect(box._orderedIds).to.not.exist;
     });
   });
   describe('deleting a box', function () {
