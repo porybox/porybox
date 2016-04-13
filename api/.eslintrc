@@ -12,6 +12,7 @@
     'PokemonNote': true,
     'CatchAsyncErrors': true,
     'Validation': true,
-    'DeletedUser': true
+    'DeletedUser': true,
+    'BoxOrdering': true
   }
 }

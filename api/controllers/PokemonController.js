@@ -45,6 +45,8 @@ module.exports = _.mapValues({
     parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
+    box._orderedIds.push(result.id);
+    await box.save();
     return res.created(result);
   },
 
@@ -126,8 +128,11 @@ module.exports = _.mapValues({
     if (pokemon.owner !== newBox.owner) {
       return res.forbidden();
     }
+    const oldBox = await Box.findOne({id: pokemon.box});
+    _.remove(oldBox._orderedIds, id => id === pokemon.id);
+    newBox._orderedIds.push(pokemon.id);
     pokemon.box = newBox.id;
-    await pokemon.save();
+    await Promise.all([pokemon.save(), oldBox.save(), newBox.save()]);
     return res.ok();
   },
   async addNote (req, res) {
