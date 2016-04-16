@@ -19,13 +19,11 @@ module.exports = _.mapValues({
     const boxes = await Box.find({
       owner: req.param('name'),
       _markedForDeletion: false
-    }).populate('contents');
+    });
     if (req.user && (req.user.name === user.name || req.user.isAdmin)) {
       return res.ok(boxes);
     }
-    return res.ok(
-      _.reject(boxes, b => b.visibility === 'unlisted').map(b => b.omitPrivateContents())
-    );
+    return res.ok(_.reject(boxes, b => b.visibility === 'unlisted'));
   },
   me (req, res) {
     return res.redirect(`/user/${req.user.name}`);
