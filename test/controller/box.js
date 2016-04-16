@@ -117,10 +117,7 @@ describe('BoxController', () => {
       expect(boxNames).to.include('Penalty Box');
       expect(boxNames).to.not.include("Pandora's Box");
       const boxContents = _.find(myBoxes, {id: box1Id}).contents;
-      expect(boxContents).to.have.lengthOf(3);
-      expect(boxContents[0].pid).to.exist;
-      expect(boxContents[1].pid).to.exist;
-      expect(boxContents[2].pid).to.exist;
+      expect(boxContents).to.eql([]);
     });
     it("allows a third party to get a user's listed boxes", async () => {
       const boxes = (await otherAgent.get('/user/boxtester/boxes')).body;
@@ -129,10 +126,7 @@ describe('BoxController', () => {
       expect(listedBoxNames).to.include('Sandbox');
       expect(listedBoxNames).to.not.include('Penalty Box');
       const boxContents = _.find(boxes, {id: box1Id}).contents;
-      expect(boxContents).to.have.lengthOf(2);
-      expect(boxContents[0].pid).to.not.exist;
-      expect(boxContents[1].pid).to.exist;
-      expect(boxContents[2]).to.not.exist;
+      expect(boxContents).to.eql([]);
     });
     it("allows an unauthenticated user to get a user's listed boxes", async () => {
       const boxes = (await noAuthAgent.get('/user/boxtester/boxes')).body;
@@ -141,10 +135,7 @@ describe('BoxController', () => {
       expect(listedBoxNames).to.include('Sandbox');
       expect(listedBoxNames).to.not.include('Penalty Box');
       const boxContents = _.find(boxes, {id: box1Id}).contents;
-      expect(boxContents).to.have.lengthOf(2);
-      expect(boxContents[0].pid).to.not.exist;
-      expect(boxContents[1].pid).to.exist;
-      expect(boxContents[2]).to.not.exist;
+      expect(boxContents).to.eql([]);
     });
     it("allows an admin to get all of a user's boxes", async () => {
       const boxes = (await adminAgent.get('/user/boxtester/boxes')).body;
@@ -154,10 +145,7 @@ describe('BoxController', () => {
       expect(boxNames).to.include('Penalty Box');
       expect(boxNames).to.not.include("Pandora's Box");
       const boxContents = _.find(boxes, {id: box1Id}).contents;
-      expect(boxContents).to.have.lengthOf(3);
-      expect(boxContents[0].pid).to.exist;
-      expect(boxContents[1].pid).to.exist;
-      expect(boxContents[2].pid).to.exist;
+      expect(boxContents).to.eql([]);
     });
     it('does not leak internal properties of a box to the client', async () => {
       const box = (await agent.get(`/b/${box1Id}`)).body;
