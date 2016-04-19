@@ -1,3 +1,4 @@
+const pk6parse = require('pk6parse');
 const attributes = {
   dexNo: {},
   heldItemId: {},
@@ -148,6 +149,10 @@ const attributes = {
     Conveniently, this means that the internal properties are never sent to the client.
     (Not to be confused with the omitPrivateData function, which removes *confidential* data.) */
     return _.omit(this, (value, key) => key.startsWith('_'));
+  },
+  assignParsedNames () {
+    this.pidHint = this.pid >>> 16;
+    return pk6parse.assignReadableNames(this);
   }
 };
 
