@@ -66,17 +66,23 @@ describe('PokemonController', () => {
       const res = await otherAgent.get(`/p/${publicId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
+      expect(res.body.speciesName).to.equal('Pelipper');
+      expect(res.body.abilityName).to.equal('Keen Eye');
+      expect(res.body.natureName).to.equal('Rash');
+      expect(res.body.move1Name).to.equal('Agility');
     });
     it('allows the uploader to view all the data on a readonly pokemon', async () => {
       const res = await agent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
+      expect(res.body.speciesName).to.exist;
     });
     it('allows third parties to view only public data on a readonly pokemon', async () => {
       const res = await otherAgent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.not.exist;
+      expect(res.body.speciesName).to.exist;
       expect(res.body.pidHint).to.exist;
       expect(res.body.pidHint).to.be.below(0x10000);
     });
@@ -84,6 +90,7 @@ describe('PokemonController', () => {
       const res = await agent.get(`/p/${privateId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist;
+      expect(res.body.speciesName).to.exist;
     });
     it('does not allow third parties to view a private pokemon', async () => {
       const res = await otherAgent.get(`/p/${privateId}`);
@@ -94,18 +101,21 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.exist;
+      expect(res.body.speciesName).to.exist;
     });
     it('allows an admin to view all the data on a readonly pokemon', async () => {
       const res = await adminAgent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.exist;
+      expect(res.body.speciesName).to.exist;
     });
     it('allows an admin to view all the data on a private pokemon', async () => {
       const res = await adminAgent.get(`/p/${privateId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.exist;
+      expect(res.body.speciesName).to.exist;
     });
     it("can return a list of all the requester's pokemon", async () => {
       const res = await agent.get('/pokemon/mine');

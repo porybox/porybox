@@ -57,7 +57,7 @@ module.exports = _.mapValues({
       return res.notFound();
     }
     pokemon.isUnique = await pokemon.checkIfUnique();
-    pokemon.pidHint = pokemon.pid >>> 16;
+    pokemon.assignParsedNames();
     const pokemonIsPublic = pokemon.visibility === 'public';
     const userIsOwner = !!req.user && req.user.name === pokemon.owner;
     const userIsAdmin = !!req.user && req.user.isAdmin;
