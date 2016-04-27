@@ -3,7 +3,7 @@ exports.computeCloneHash = pkmn => {
   // Computes a hash of this Pokemon's immutable data, for the purposes of detecting clones.
   // Data that can be changed (e.g. current moves, EVs, evolution state) is not included.
   // If the output of this function changes, a database migration should be run to fix the hashes on everything.
-  const buf = new Buffer(42).fill(0);
+  const buf = Buffer.alloc(42);
   buf.writeUInt32LE(pkmn.encryptionConstant); // 4 bytes
   buf.write(pkmn.ot, 4, 24, 'utf16le'); // 24 bytes
   buf.writeUInt16LE(pkmn.tid, 28); // 2 bytes
