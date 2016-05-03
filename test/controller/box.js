@@ -46,11 +46,12 @@ describe('BoxController', () => {
     let boxId;
     before(async () => {
       boxId = (await agent.post('/box').send({name: 'Inbox'})).body.id;
-      await Promise.each(['readonly', 'public', 'private'], visibility => {
-        return agent.post('/uploadpk6')
+      await Promise.each(['readonly', 'public', 'private'], async visibility => {
+        const res = await agent.post('/uploadpk6')
           .attach('pk6', __dirname + '/pkmn1.pk6')
           .field('box', boxId)
           .field('visibility', visibility);
+        expect(res.statusCode).to.equal(201);
       });
     });
     it('allows a user to view the contents of their box by ID', async () => {
@@ -99,11 +100,12 @@ describe('BoxController', () => {
       await agent.post('/box').send({name: 'Sandbox'});
       await agent.post('/box').send({name: 'Penalty Box', visibility: 'unlisted'});
       await otherAgent.post('/box').send({name: "Pandora's Box"});
-      await Promise.each(['readonly', 'public', 'private'], visibility => {
-        return agent.post('/uploadpk6')
+      await Promise.each(['readonly', 'public', 'private'], async visibility => {
+        const res = await agent.post('/uploadpk6')
           .attach('pk6', __dirname + '/pkmn1.pk6')
           .field('box', box1Id)
           .field('visibility', visibility);
+        expect(res.statusCode).to.equal(201);
       });
     });
     it('allows a user to get their own boxes', async () => {
