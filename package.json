@@ -37,7 +37,7 @@
     "sails-disk": "0.10.9",
     "sails-hook-winston": "^1.0.0",
     "sails-mongo": "^0.12.0",
-    "sails.io.js": "^0.13.5",
+    "sails.io.js": "^0.13.7",
     "sinon": "^1.17.3",
     "socket.io-browserify": "^0.9.6",
     "socket.io-client": "^1.4.5",
