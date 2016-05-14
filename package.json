@@ -19,7 +19,7 @@
     "bcryptjs": "^2.3.0",
     "bluebird": "3.3.5",
     "browserify": "13.0.1",
-    "concurrently": "^1.0.0",
+    "concurrently": "^2.1.0",
     "connect-mongo": "^0.8.2",
     "ejs": "2.3.4",
     "eslint": "~2.9.0",
