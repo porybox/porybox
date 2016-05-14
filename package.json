@@ -22,7 +22,7 @@
     "concurrently": "^1.0.0",
     "connect-mongo": "^0.8.2",
     "ejs": "2.3.4",
-    "eslint": "^2.7.0",
+    "eslint": "~2.9.0",
     "grunt": "1.0.1",
     "include-all": "0.1.6",
     "kerberos": "0.0.20",
