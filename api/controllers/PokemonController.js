@@ -45,6 +45,8 @@ module.exports = _.mapValues({
     parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
+    box._orderedIds.push(result.id);
+    await box.save();
     return res.created(result);
   },
 
@@ -116,6 +118,14 @@ module.exports = _.mapValues({
     }
   },
 
+  /**
+  * Moves a Pokémon from one box to another, or to a different location within a box.
+  * POST /p/:id/move
+  * @param {string} id The ID of the Pokémon that should be moved
+  * @param {string} box The ID of the box that the Pokémon should be moved to.
+  * @param {number} [index] The index where the Pokémon should be inserted in the new box. If omitted, the
+  Pokémon is inserted at the end of the box.
+  */
   async move (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'box']);
@@ -126,8 +136,25 @@ module.exports = _.mapValues({
     if (pokemon.owner !== newBox.owner) {
       return res.forbidden();
     }
+    const index = _.has(params, 'index') ? params.index : newBox._orderedIds.length;
+    if (!_.isNumber(index) || index % 1 || !_.inRange(index, newBox._orderedIds.length + 1)) {
+      return res.badRequest('Invalid index parameter');
+    }
+
+    let itemsToSave, oldBox;
+    if (params.box === pokemon.box) {
+      oldBox = newBox;
+      itemsToSave = [pokemon, newBox];
+    } else {
+      oldBox = await Box.findOne({id: pokemon.box});
+      itemsToSave = [pokemon, newBox, oldBox];
+    }
+
+    _.remove(oldBox._orderedIds, id => id === pokemon.id);
     pokemon.box = newBox.id;
-    await pokemon.save();
+    newBox._orderedIds.splice(index, 0, pokemon.id);
+
+    await Promise.all(itemsToSave.map(item => item.save()));
     return res.ok();
   },
   async addNote (req, res) {

@@ -37,6 +37,7 @@ module.exports = _.mapValues({
     if (!box) {
       return res.notFound();
     }
+    box.contents = BoxOrdering.getOrderedPokemonList(box);
     if (req.user && (box.owner === req.user.name || req.user.isAdmin)) {
       return res.ok(box.omitDeletedContents());
     }
