@@ -29,3 +29,6 @@ exports.BOX_DELETION_DELAY = 300000; // (i.e. 5 minutes)
 exports.POKEMON_DELETION_DELAY = 300000;
 
 exports.VALID_USERNAME_REGEX = /^[a-zA-Z0-9_-]{1,20}$/;
+exports.FRIEND_CODE_REGEX = /^\d{4}-\d{4}-\d{4}$/;
+exports.IGN_REGEX = /^.{1,12}$/;
+exports.TSV_REGEX = /^([0-3]\d{3}|40([0-8]\d|9[0-5]))$/; // (matches any 4-digit string between 0000 and 4095, inclusive)
