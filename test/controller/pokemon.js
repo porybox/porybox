@@ -315,13 +315,31 @@ describe('PokemonController', () => {
     });
   });
   describe('moving a pokemon', () => {
-    let pkmn, someoneElsesPkmn, box1, box2, someoneElsesBox, adminPkmn, adminBox;
+    let pkmn, pkmn2, pkmn3, pkmn4, pkmn5, pkmn6, someoneElsesPkmn, box1, box2, someoneElsesBox,
+      adminPkmn, adminBox;
+    // pkmn, pkmn2, and pkmn3 start out in box1
+    // pkmn4, pkmn5, and pkmn6 start out in box2
     beforeEach(async () => {
       box1 = (await agent.post('/box').send({name: 'Shoebox'})).body;
       box2 = (await agent.post('/box').send({name: 'Lunchbox'})).body;
       pkmn = (await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box1.id)).body;
+      pkmn2 = (await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', box1.id)).body;
+      pkmn3 = (await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', box1.id)).body;
+      pkmn4 = (await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', box2.id)).body;
+      pkmn5 = (await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', box2.id)).body;
+      pkmn6 = (await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', box2.id)).body;
       someoneElsesBox = (await otherAgent.post('/box').send({name: 'Mailbox'})).body;
       someoneElsesPkmn = (await otherAgent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
@@ -335,8 +353,25 @@ describe('PokemonController', () => {
       const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
       expect(res.statusCode).to.equal(200);
       expect((await agent.get(`/p/${pkmn.id}`)).body.box).to.equal(box2.id);
-      expect((await agent.get(`/b/${box1.id}`)).body.contents).to.be.empty;
-      expect((await agent.get(`/b/${box2.id}`)).body.contents[0].id).to.equal(pkmn.id);
+      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
+      const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
+      expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn4.id, pkmn5.id, pkmn6.id, pkmn.id]);
+    });
+    it('allows an index to be specified for the pokemon within the new box', async () => {
+      const res = await agent.post(`/p/${pkmn2.id}/move`).send({box: box2.id, index: 1});
+      expect(res.statusCode).to.equal(200);
+      expect((await agent.get(`/p/${pkmn2.id}`)).body.box).to.equal(box2.id);
+      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn.id, pkmn3.id]);
+      const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
+      expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn4.id, pkmn2.id, pkmn5.id, pkmn6.id]);
+    });
+    it('allows a pokemon to be relocated within its original box', async () => {
+      const res = await agent.post(`/p/${pkmn3.id}/move`).send({box: box1.id, index: 1});
+      expect(res.statusCode).to.equal(200);
+      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn.id, pkmn3.id, pkmn2.id]);
     });
     it("does not allow a third party to move someone's else pokemon", async () => {
       const res = await otherAgent.post(`/p/${pkmn.id}/move`).send({box: someoneElsesBox.id});
@@ -349,10 +384,14 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(403);
     });
     it("allows an admin to move someone else's pokemon to another one of their boxes", async () => {
-      const res = await adminAgent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      const res = await adminAgent.post(`/p/${pkmn.id}/move`).send({box: box2.id, index: 0});
       expect(res.statusCode).to.equal(200);
-      expect((await agent.get(`/b/${box1.id}`)).body.contents).to.be.empty;
-      expect((await agent.get(`/b/${box2.id}`)).body.contents[0].id).to.equal(pkmn.id);
+      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
+      expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
+      expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn.id, pkmn4.id, pkmn5.id, pkmn6.id]);
+      const updatedPkmn = (await agent.get(`/p/${pkmn.id}`)).body;
+      expect(updatedPkmn.box).to.equal(box2.id);
     });
     it("does not allow an admin to move one user's pokemon to a different user's box", async () => {
       const res = await adminAgent.post(`/p/${pkmn.id}/move`).send({box: someoneElsesBox.id});
@@ -374,6 +413,26 @@ describe('PokemonController', () => {
     });
     it('returns a 400 error if no box ID is included', async () => {
       expect((await agent.post(`/p/${pkmn.id}/move`)).statusCode).to.equal(400);
+    });
+    it('returns a 400 error if the provided index is invalid', () => {
+      const invalidIndices = [
+        -1, // negative
+        5, // larger than box length
+        '2', // not an integer
+        1.5, // not an integer
+        [], // not an integer
+        null // not an integer
+      ];
+      return Promise.each(invalidIndices, async index => {
+        const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id, index});
+        const res2 = await agent.get(`/b/${box1.id}`);
+        const res3 = await agent.get(`/b/${box2.id}`);
+        expect(res2.statusCode).to.equal(200);
+        expect(res3.statusCode).to.equal(200);
+        expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id]);
+        expect(_.map(res3.body.contents, 'id')).to.eql([pkmn4.id, pkmn5.id, pkmn6.id]);
+        expect(res.statusCode).to.equal(400);
+      })
     });
     it("does not allow a pokemon to be moved if it's marked for deletion", async () => {
       const res = await agent.del(`/p/${pkmn.id}`);

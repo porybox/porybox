@@ -24,6 +24,14 @@ module.exports =  {
       via: 'box',
       defaultsTo: []
     },
+    /* Stores the list of Pokémon IDs that this box contains, in the order that they should be displayed to the user.
+    Note: This should never be sent to the client (especially to someone other than the box owner), because this
+    will contain the IDs of private Pokémon in a box, leaking their existence. (Since this property starts with a '_',
+    it is not included in JSON responses anyway -- see the toJSON method in this model.) */
+    _orderedIds: {
+      type: 'array',
+      defaultsTo: []
+    },
     id: {
       type: 'string',
       unique: true,

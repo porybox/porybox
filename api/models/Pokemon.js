@@ -142,6 +142,9 @@ const attributes = {
   async destroy () {
     const notes = (await Pokemon.findOne({id: this.id}).populate('notes')).notes;
     await Promise.each(notes, note => note.destroy());
+    const box = await Box.findOne({id: this.box});
+    _.remove(box.orderedIds, id => id === this.id);
+    await box.save();
     return await Pokemon.destroy({id: this.id});
   },
   toJSON () {
