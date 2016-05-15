@@ -47,6 +47,11 @@ module.exports = {
       throw {statusCode: 400, message: 'Invalid note visibility'};
     }
   },
+  assert (value, message) {
+    if (!value) {
+      throw {statusCode: 400, message};
+    }
+  },
   async usernameAvailable (name) {
     if (!_.isString(name) || !Constants.VALID_USERNAME_REGEX.test(name)) {
       return false;

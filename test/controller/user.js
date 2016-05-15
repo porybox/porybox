@@ -36,6 +36,9 @@ describe('UserController', () => {
       expect(res.body.isAdmin).to.be.false;
       expect(res.body.email).to.equal('usertester@usertesting.com');
       expect(res.body.preferences).to.exist;
+      expect(res.body.friendCodes).to.be.an.instanceof(Array);
+      expect(res.body.inGameNames).to.be.an.instanceof(Array);
+      expect(res.body.trainerShinyValues).to.be.an.instanceof(Array);
     });
     it("omits private information when a user gets someone else's profile", async () => {
       const res = await agent.get('/user/IM_AN_ADMIN_FEAR_ME');
@@ -44,6 +47,9 @@ describe('UserController', () => {
       expect(res.body.isAdmin).to.be.true;
       expect(res.body.email).to.not.exist;
       expect(res.body.preferences).to.not.exist;
+      expect(res.body.friendCodes).to.exist;
+      expect(res.body.inGameNames).to.exist;
+      expect(res.body.trainerShinyValues).exist;
     });
     it("returns full information when an admin gets someone else's profile", async () => {
       const res = await adminAgent.get('/user/usertester');
@@ -52,6 +58,9 @@ describe('UserController', () => {
       expect(res.body.isAdmin).to.be.false;
       expect(res.body.email).to.equal('usertester@usertesting.com');
       expect(res.body.preferences).to.exist;
+      expect(res.body.friendCodes).to.exist;
+      expect(res.body.inGameNames).to.exist;
+      expect(res.body.trainerShinyValues).exist;
     });
     it('omits private information when an unauthenticated user gets a profile', async () => {
       const res = await noAuthAgent.get('/user/usertester');
@@ -60,6 +69,9 @@ describe('UserController', () => {
       expect(res.body.isAdmin).to.be.false;
       expect(res.body.email).to.not.exist;
       expect(res.body.preferences).to.not.exist;
+      expect(res.body.friendCodes).to.exist;
+      expect(res.body.inGameNames).to.exist;
+      expect(res.body.trainerShinyValues).exist;
     });
   });
   describe('preferences', () => {
@@ -160,6 +172,78 @@ describe('UserController', () => {
         await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'public', text: 'aaa'});
         const notes2 = (await agent.get(`/p/${pkmn.id}`)).body.notes;
         expect(_.last(notes2).visibility).to.equal('public');
+      });
+    });
+  });
+  describe('editing account information', async () => {
+    beforeEach(async () => {
+      const res = await agent.post('/editAccountInfo').send({
+        friendCodes: [],
+        inGameNames: [],
+        trainerShinyValues: []
+      });
+      expect(res.statusCode).to.equal(200);
+    });
+    it('allows a user to edit their account information', async () => {
+      const res = await agent.post('/editAccountInfo').send({
+        friendCodes: ['0000-0000-0000', '1111-1111-1111'],
+        inGameNames: ['Joe', 'Steve', 'Bob'],
+        trainerShinyValues: ['0000', '4095', '1337']
+      });
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get('/user/usertester');
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.friendCodes).to.eql(['0000-0000-0000', '1111-1111-1111']);
+      expect(res2.body.inGameNames).to.eql(['Joe', 'Steve', 'Bob']);
+      expect(res2.body.trainerShinyValues).to.eql(['0000', '4095', '1337']);
+    });
+    it('allows the user to edit a subset of their information by omitting parameters', async () => {
+      const res = await agent.post('/editAccountInfo').send({
+        friendCodes: ['0000-0000-0135']
+      });
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get('/user/usertester');
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body.friendCodes).to.eql(['0000-0000-0135']);
+      expect(res2.body.inGameNames).to.eql([]);
+      expect(res2.body.trainerShinyValues).to.eql([]);
+    });
+    it('returns a 400 error if any of the parameters are invalid', () => {
+      const invalidParameterSets = [ // all of the following sets of parameters should be marked as "invalid".
+        {}, // no parameters
+        {someUnrelatedParameter: 5}, // no valid parameters
+        {friendCodes: '0000-0000-0000'}, // not an array
+        {friendCodes: ['not a real friend code']},
+        {friendCodes: ['0000-1111-2222', 'not a real friend code']},
+        {friendCodes: ['4444-4444-4444', '4444-4444-4444']}, // duplicates
+        {inGameNames: 'Joe'}, // not an array
+        {inGameNames: ['']}, // must be non-empty name
+        {inGameNames: ['thisNameIsTooLong']},
+        {inGameNames: ['thisNameIsOk', 'thisNameIsTooLong']},
+        {inGameNames: ['Joe', 'Joe']}, // duplicates
+        {trainerShinyValues: '0000'}, // not an array
+        {trainerShinyValues: ['not a valid TSV']},
+        {trainerShinyValues: ['0000', 'not a valid TSV']},
+        {trainerShinyValues: [2222]}, // should be a string instead of a number
+        {trainerShinyValues: [2222, '3333']},
+        {trainerShinyValues: ['4096']}, // too high
+        {trainerShinyValues: ['1234.5']},
+        {trainerShinyValues: ['2222', '2222']}, // duplicates
+        {friendCodes: ['1234-5678-9012'], inGameNames: ['thisNameIsTooLong']},
+        {friendCodes: ['invalid fc'], inGameNames: ['Joe']},
+        {friendCodes: ['0123-4567-8901'], inGameNames: ['Joe'], trainerShinyValues: ['9999']}
+      ];
+      return Promise.each(invalidParameterSets, async params => {
+        const res = await agent.post('/editAccountInfo').send(params);
+        const res2 = await agent.get('/user/usertester');
+        expect(res2.body.friendCodes).to.eql([]);
+        expect(res2.body.inGameNames).to.eql([]);
+        expect(res2.body.trainerShinyValues).to.eql([]);
+        /* Normally this line would be right below the line with the POST request, but that makes
+        it very hard to tell which test case failed, because it ends up only outputting an error message
+        of `expected 200 to equal 400` without any more detail. Putting it below gives the same test
+        security with more useful error messages. */
+        expect(res.statusCode).to.equal(400);
       });
     });
   });
