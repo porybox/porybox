@@ -25,8 +25,6 @@ process.chdir(__dirname);
 
 // Ensure a "sails" can be located:
 (function() {
-  require('babel-register')();
-  require('babel-polyfill');
   global.Promise = require('bluebird');
   let sails;
   try {
