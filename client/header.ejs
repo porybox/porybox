@@ -8,7 +8,7 @@
     <span flex></span>
 
     <% if (typeof user !== 'undefined') {%>
-      <add-menu boxes="main.boxes"></add-menu>
+      <add-menu boxes="main.boxes" prefs="main.prefs"></add-menu>
       <user-menu name="'<%= user.name %>'"></user-menu>
     <% } else { %>
       <a class="mdl-navigation__link" href="/login">Login/Register</a>

@@ -2,6 +2,7 @@
 const ng = require('angular');
 require('angular-material');
 require('angular-messages');
+require('ng-file-upload');
 
 // Import modules
 require('./login/login.module.js');
@@ -23,8 +24,10 @@ const porybox = ng.module('porybox', [
 
 porybox.controller('MainCtrl', function () {
   this.boxes = [];
-  this.init = function ({boxes}) {
+  this.init = function ({boxes, user, prefs}) {
     this.boxes = boxes;
+    this.user = user;
+    this.prefs = prefs;
   }
 });
 

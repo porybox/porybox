@@ -1,0 +1,34 @@
+<md-bottom-sheet class="md-grid md-has-header" layout="column" ng-cloak>
+  <form name="addPK6">
+    <div layout="row">
+      <md-subheader>Upload PK6</md-subheader>
+      <span flex></span>
+      <md-button ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd()" type="submit">
+        Upload
+      </md-button>
+    </div>
+    <div layout="row">
+      <md-input-container class="md-block">
+          <input type="file" ngf-select ngf-model-invalid="errorFile" ng-model="pkmDialog.file" name="file" accept=".pk6,.pkx" required>
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label>Visibility</label>
+        <md-select ng-model="pkmDialog.visibility" name="visibility">
+          <md-option ng-value="visibility" ng-repeat="visibility in pkmDialog.visibilities">{{ visibility }}</md-option>
+        </md-select>
+        <div ng-messages="addPK6.visibility.$error" role="alert">
+          <div ng-message="required">Please choose visibility.</div>
+        </div>
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label>Box</label>
+        <md-select ng-model="pkmDialog.box" name="box">
+          <md-option ng-value="box.id" ng-repeat="box in pkmDialog.boxes">{{ box.name }}</md-option>
+        </md-select>
+        <div ng-messages="addPK6.box.$error" role="alert">
+          <div ng-message="required">Please choose box.</div>
+        </div>
+      </md-input-container>
+    </div>
+  </form>
+</md-bottom-sheet>
