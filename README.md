@@ -7,6 +7,8 @@ display their collections and make more informed trade decisions.
 
 ### Installation
 
+Make sure you have Node 6+ installed.
+
 ```bash
 git clone https://github.com/porygonco/porybox.git
 cd porybox
