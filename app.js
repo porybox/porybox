@@ -25,7 +25,6 @@ process.chdir(__dirname);
 
 // Ensure a "sails" can be located:
 (function() {
-  global.Promise = require('bluebird');
   let sails;
   try {
     sails = require('sails');
