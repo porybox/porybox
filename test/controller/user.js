@@ -1,3 +1,4 @@
+'use strict';
 const _ = require('lodash');
 const supertest = require('supertest-as-promised');
 const expect = require('chai').expect;
