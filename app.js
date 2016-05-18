@@ -25,6 +25,7 @@ process.chdir(__dirname);
 
 // Ensure a "sails" can be located:
 (function() {
+  require('babel-register')();
   let sails;
   try {
     sails = require('sails');
