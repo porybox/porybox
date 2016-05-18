@@ -11,7 +11,6 @@
  */
 
 // This causes a performance hit so it shouldn't be used in production, but it's very useful for debugging in development.
-Promise.config({longStackTraces: true});
 
 module.exports = {
 
