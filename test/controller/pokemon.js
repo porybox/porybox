@@ -4,7 +4,7 @@ const _ = require('lodash');
 const expect = require('chai').expect;
 const Promise = require('bluebird');
 describe('PokemonController', () => {
-  let agent, otherAgent, noAuthAgent, adminAgent;
+  let agent, otherAgent, noAuthAgent, adminAgent, generalPurposeBox;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
     otherAgent = supertest.agent(sails.hooks.http.app);
@@ -34,33 +34,70 @@ describe('PokemonController', () => {
     expect(res3.statusCode).to.equal(302);
     expect(res.header.location).to.equal('/');
 
+    const res4 = await agent.post('/box').send({name: 'Boxers'});
+    expect(res4.statusCode).to.equal(201);
+    generalPurposeBox = res4.body.id;
+
     await sails.models.user.update({name: 'pokemon_admin'}, {isAdmin: true});
   });
   describe('upload', () => {
+    let otherBox;
+    before(async () => {
+      const res = await otherAgent.post('/box').send({name: 'carBoxyl'});
+      expect(res.statusCode).to.equal(201);
+      otherBox = res.body.id;
+    });
     it('should be able to upload a pk6 file and receive a parsed version', async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn1.pk6');
+      const res = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       expect(res.body.dexNo).to.equal(279);
       expect(res.body.owner).to.equal('pk6tester');
     });
     it('should identify uploaded things as clones', async () => {
-      const res1 = await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6');
+      const res1 = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pkmn2.pk6`);
       expect(res1.statusCode).to.equal(201);
       expect(res1.body.isUnique).to.be.true;
-      const res2 = await agent.post('/uploadpk6').attach('pk6', __dirname + '/pkmn2.pk6');
+      const res2 = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pkmn2.pk6`);
       expect(res2.statusCode).to.equal(201);
       expect(res2.body.isUnique).to.be.false;
     });
     it("should reject uploads that aren't pk6 files", async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/not_a_pk6_file.txt`);
+      const res = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/not_a_pk6_file.txt`);
       expect(res.statusCode).to.equal(400);
+    });
+    it('should not allow a user to upload a pk6 file without specifying a box', async () => {
+      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(400);
+    });
+    it('should return a 404 error if the specified box does not exist', async () => {
+      const res = await agent.post('/uploadpk6')
+        .field('box', 'not a real box id')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(404);
+    });
+    it('should return a 403 error if the specified box belongs to someone else', async () => {
+      const res = await agent.post('/uploadpk6')
+        .field('box', otherBox)
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(403);
     });
   });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, readOnlyId;
     before(async () => {
       [publicId, privateId, readOnlyId] = await Promise.map(['public', 'private', 'readonly'], v =>
-        agent.post('/uploadpk6').field('visibility', v).attach('pk6', __dirname + '/pkmn1.pk6')
+        agent.post('/uploadpk6')
+          .field('visibility', v)
+          .field('box', generalPurposeBox)
+          .attach('pk6', __dirname + '/pkmn1.pk6')
       ).map(response => response.body.id);
     });
     it('allows third parties to view all the data on a public pokemon', async () => {
@@ -138,7 +175,9 @@ describe('PokemonController', () => {
       sails.services.constants.POKEMON_DELETION_DELAY = 2000;
     });
     beforeEach(async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
     });
@@ -221,15 +260,19 @@ describe('PokemonController', () => {
     before(async () => {
       const res = await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
-        .field('visibility', 'public');
+        .field('visibility', 'public')
+        .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       publicPkmn = res.body;
-      const res2 = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res2 = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', generalPurposeBox);
       expect(res2.statusCode).to.equal(201);
       readonlyPkmn = res2.body;
       const res3 = await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
-        .field('visibility', 'private');
+        .field('visibility', 'private')
+        .field('box', generalPurposeBox);
       expect(res3.statusCode).to.equal(201);
       privatePkmn = res3.body;
       rawPk6 = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`).toString('base64');
@@ -451,7 +494,9 @@ describe('PokemonController', () => {
   describe('adding notes', () => {
     let pkmn;
     beforeEach(async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
     });
@@ -487,7 +532,9 @@ describe('PokemonController', () => {
   describe('deleting notes', () => {
     let pkmn, note;
     beforeEach(async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
       const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'a'});
@@ -522,7 +569,9 @@ describe('PokemonController', () => {
   describe('getting notes', () => {
     let pkmn, publicNote, privateNote;
     before(async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
       const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'a', visibility: 'public'});
@@ -566,15 +615,22 @@ describe('PokemonController', () => {
   describe('editing notes', () => {
     let pkmn, note, otherPkmn;
     beforeEach(async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
       const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'a', visibility: 'public'});
       expect(res2.statusCode).to.equal(201);
       note = res2.body;
-      const res3 = await otherAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res3 = await otherAgent.post('/box').send({name: 'Litterbox'});
       expect(res3.statusCode).to.equal(201);
-      otherPkmn = res3.body;
+      const otherBox = res3.body.id;
+      const res4 = await otherAgent.post('/uploadpk6')
+        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .field('box', otherBox);
+      expect(res4.statusCode).to.equal(201);
+      otherPkmn = res4.body;
     });
     it('allows a user to edit a note on their pokemon', async () => {
       const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({
@@ -634,7 +690,8 @@ describe('PokemonController', () => {
     beforeEach(async () => {
       const res = await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
-        .field('visibility', 'readonly');
+        .field('visibility', 'readonly')
+        .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
     });
