@@ -1,0 +1,29 @@
+<md-card>
+  <md-card-header>
+    <md-card-avatar>
+      <img ng-src="http://pokeapi.co/media/sprites/pokemon/{{pokemon.dexNo}}.png" />
+    </md-card-avatar>
+    <a href="#/pokemon/{{pokemon.id}}"><span class="md-headline">{{pokemon.name}}</span></a>
+  </md-card-header>
+  <md-card-content layout="column">
+    <div layout="row" layout-align="none center">
+      <img ng-if="pokemon.ball" class="pokeball"
+        ng-src="{{pokemon.ball.sprites.default}}"
+        alt="{{pokemon.ball.name}}" />
+      <img class="helditem"
+        ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
+        alt="{{pokemon.heldItemUrl}}" />
+      <span class="pokemonShiny" flex ng-if="pokemon.isShiny()">*</span>
+      <span class="pokemonKB" flex ng-if="pokemon.isKB()">x</span>
+
+
+      <span flex></span>
+      <span flex>{{pokemon.language}}</span>
+    </div>
+    <div flex>Level {{pokemon.level}}</div>
+    <div flex>{{pokemon.nature}}</div>
+    <div flex>{{pokemon.ability}}</div>
+    <div flex>{{pokemon.tid}}/{{pokemon.ot}}</div>
+    <div flex>{{pokemon.ivs}}</div>
+  </md-card-content>
+</md-card>

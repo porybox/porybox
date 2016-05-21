@@ -36,12 +36,12 @@ md-card-title-text {
   align-items: stretch;
 }
 
-.flex-20 box-card {
+.flex-20 box-card, .flex-20 pokemon-card {
   display: flex;
   width: 100%;
 }
 
-.flex-20 box-card md-card {
+.flex-20 box-card md-card, .flex-20 pokemon-card md-card {
   width: 100%;
 }
 
@@ -51,10 +51,17 @@ md-card-title-text {
   text-overflow: ellipsis;
 }
 
-/*******************************
- * Error pages
- *******************************/
- 
+ /*******************************
+  * Pokemon cards
+  *******************************/
+
+.pokemonShiny, .pokemonKB {
+  padding-left: 10px;
+}
+
+ /*******************************
+  * Error pages
+  *******************************/
 .errorimg {
 	margin: 0 auto;
 	display: block;
@@ -64,15 +71,4 @@ md-card-title-text {
 .errorname, .errortext {
 	text-align: center;
 	font-family: sans-serif;
-}
-
-/*******************************
- * Upload button
- *******************************/
- 
-.layout-row .md-button {
-	color: rgba(255,255,255,0.87);
-	background-color: rgb(3,169,244)!important;
-	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-	height: 20px;
 }

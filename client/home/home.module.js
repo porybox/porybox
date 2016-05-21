@@ -7,7 +7,7 @@ const controller = require('./home.ctrl');
  * @param  {[type]} []             [description]
  * @return {[type]}                [description]
  */
-ng.module('porybox.home', ['porybox.box'])
+ng.module('porybox.home', ['porybox.box', 'porybox.pokemon'])
   .component('homepage',
   {
     bindings: {
@@ -16,4 +16,9 @@ ng.module('porybox.home', ['porybox.box'])
     templateUrl: 'home/home.view.html',
     controller: controller,
     controllerAs: 'home'
-  });
+  }).config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+      when('/', {
+        templateUrl: '/home/index.view.html'
+      });
+  }]);

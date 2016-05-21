@@ -1,6 +1,6 @@
-const ctrlTest = require('./box.ctrl');
+const ctrlTest = require('./pokemon.ctrl');
 
-describe('BoxCtrl', function() {
+describe('PokemonCtrl', function() {
 
   let $controller, $scope, $routeParams, io, tested;
 
@@ -22,29 +22,27 @@ describe('BoxCtrl', function() {
         $scope: $scope,
         io: io, $routeParams:
         $routeParams
-      }, {box: {
-        name: 'boxName',
-        description: 'boxDescription',
+      }, {pokemon: {
+        nickname: 'pokemondNickname',
+        dexNo: 'pokemonDexNo',
         user: 'boxUser',
-        id: 'boxId'
+        id: 'pokemonId'
       }});
-      expect(tested.name).to.equal('boxName');
+      expect(tested.nickname).to.equal('pokemondNickname');
       expect(tested.user).to.equal('boxUser');
-      expect(tested.description).to.equal('boxDescription');
-      expect(tested.id).to.equal('boxId');
+      expect(tested.dexNo).to.equal('pokemonDexNo');
+      expect(tested.id).to.equal('pokemonId');
     });
 
     it('are correctly instantiated when not provided at construction', function() {
-      $routeParams.boxid = 'routeParamId';
-
+      $routeParams.pokemonid = 'routeParamId';
       tested = $controller(ctrlTest, {
         $scope: $scope,
         io: io, $routeParams:
         $routeParams
       }, {});
       expect(tested.id).to.equal('routeParamId');
-      expect(tested.pokemon.length).to.equal(0);
-      expect(Object.keys(tested.box).length).to.equal(0);
+      expect(Object.keys(tested.pokemon).length).to.equal(0);
     });
   });
 });

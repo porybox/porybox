@@ -10,6 +10,7 @@
     "angular-aria": "^1.5.0",
     "angular-material": "^1.0.7",
     "angular-messages": "^1.5.3",
+    "angular-route": "^1.5.5",
     "babel-core": "^6.8.0",
     "babel-eslint": "^6.0.2",
     "babel-plugin-transform-async-to-generator": "^6.7.4",
@@ -26,7 +27,7 @@
     "grunt": "1.0.1",
     "include-all": "0.1.6",
     "kerberos": "0.0.20",
-    "less": "^2.6.0",
+    "less": "^2.7.1",
     "moment": "^2.11.2",
     "ng-file-upload": "^12.0.4",
     "passport": "^0.3.2",
@@ -48,14 +49,15 @@
   },
   "scripts": {
     "bundle": "npm run less && browserify client/app.js -o client/bundle.js -t babelify -d",
-    "watchbundle": "watchify client/app.js -o client/bundle.js -t babelify -d -v",
-    "dev": "concurrent 'npm run less' 'npm run watchbundle' 'node app.js'",
-    "frontendTest": "npm run lint && karma start --single-run",
+    "bundle:watch": "watchify client/app.js -o client/bundle.js -t babelify -d -v",
     "less": "lessc client/styles/importer.less client/bundle.css",
     "lint": "eslint ./",
     "start": "npm run bundle && node app.js",
-    "test": "npm run lint && mocha --timeout 5000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js && karma start --single-run",
-    "testwatch": "concurrent 'mocha -w --compilers js:babel-core/register' 'karma start'"
+    "start:dev": "concurrently 'npm run less' 'npm run bundle:watch' 'node app.js'",
+    "test": "npm run lint && npm run test:server && npm run test:client",
+    "test:client": "karma start --single-run",
+    "test:server": "mocha --timeout 5000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js",
+    "test:watch": "concurrently 'mocha -w --compilers js:babel-core/register' 'karma start'"
   },
   "main": "app.js",
   "repository": {
