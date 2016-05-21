@@ -7,7 +7,7 @@ const boxController = require('./box.ctrl');
  * @param  {[type]} []             [description]
  * @return {[type]}                [description]
  */
-ng.module('porybox.box', [])
+ng.module('porybox.box', ['ngRoute'])
   .component('boxCard',
   {
     bindings: {
@@ -16,4 +16,11 @@ ng.module('porybox.box', [])
     templateUrl: 'box/box-card.view.html',
     controller: boxController,
     controllerAs: 'box'
-  });
+  }).config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+      when('/box/:boxid', {
+        templateUrl: '/box/box-list.view.html',
+        controller: ['$scope', '$routeParams', 'io', boxController],
+        controllerAs: 'box'
+      });
+  }]);

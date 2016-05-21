@@ -50,7 +50,7 @@
     // disallow declaration of variables that are not used in the code
     'no-unused-vars': [2, {'vars': 'local', 'args': 'none'}],
     // require all variables to be defined
-    'no-undef': 2,
+    'no-undef': "error",
     // specify whether double or single quotes should be used
     'quotes': [2, 'single', 'avoid-escape'],
     // enforce spacing before and after semicolons
