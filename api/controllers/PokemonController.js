@@ -1,5 +1,4 @@
 const pk6parse = require('pk6parse');
-const moment = require('moment');
 module.exports = _.mapValues({
   async uploadpk6 (req, res) {
     const params = req.allParams();
@@ -22,22 +21,9 @@ module.exports = _.mapValues({
     if (_.isError(parsed)) {
       return res.status(400).json('Failed to parse the provided file');
     }
-    let box;
-    if (params.box) {
-      box = await Box.findOne({id: params.box});
-      if (!box) {
-        return res.status(400).json(`Box ${params.box} not found`);
-      }
-      if (box.owner !== req.user.name) {
-        return res.status(403).json("Cannot upload to another user's box");
-      }
-    } else {
-      box = await Box.create({
-        name: `Untitled Box ${moment.utc().format('YYYY-MM-DD HH:mm:ss')}`,
-        owner: req.user.name,
-        id: require('crypto').randomBytes(16).toString('hex')
-      });
-    }
+    Validation.requireParams(params, 'box');
+    const box = await Box.findOne({id: params.box});
+    Validation.verifyUserIsOwner(box, req.user, {allowAdmin: false});
     parsed.box = box.id;
     parsed.owner = req.user.name;
     parsed.visibility = visibility;

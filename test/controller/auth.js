@@ -189,9 +189,8 @@ describe('AuthController', function() {
       });
       expect(res.statusCode).to.equal(200);
       // do another request to make sure the current user is still authenticated
-      const res2 = await passAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res2 = await passAgent.post('/box').send({name: 'Soapbox'});
       expect(res2.statusCode).to.equal(201);
-      expect(res2.body.pid).to.exist;
       // log in with a different agent to make sure the new password works
       const res3 = await passAgent2.post('/auth/local').send({
         identifier: username,
@@ -241,9 +240,8 @@ describe('AuthController', function() {
       });
       expect(res.statusCode).to.equal(200);
       // do another request to make sure the current user is still authenticated
-      const res2 = await passAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res2 = await passAgent.post('/box').send({name: 'Outbox'});
       expect(res2.statusCode).to.equal(201);
-      expect(res2.body.pid).to.exist;
       // log in with a different agent to make sure the password still works
       const res3 = await passAgent2.post('/auth/local').send({
         identifier: username,
@@ -259,9 +257,8 @@ describe('AuthController', function() {
       });
       expect(res.statusCode).to.equal(400);
       // do another request to make sure the current user is still authenticated
-      const res2 = await passAgent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res2 = await passAgent.post('/box').send({name: 'PO Box'});
       expect(res2.statusCode).to.equal(201);
-      expect(res2.body.pid).to.exist;
       // log in with a different agent to make sure the old password still works
       const res3 = await passAgent2.post('/auth/local').send({
         identifier: username,

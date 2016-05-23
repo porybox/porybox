@@ -5,12 +5,8 @@ module.exports = {
     const pokemonMapById = keyBy(box.contents, 'id');
     const orderedList = [];
     _.forEach(box._orderedIds, id => {
-      if (_.isString(id) && id in pokemonMapById) {
-        if (!pokemonMapById[id]._markedForDeletion) {
-          orderedList.push(pokemonMapById[id]);
-        }
-      } else {
-        sails.log.warn(`Pokemon ${id} is in box ${box.id}, but is not on its ordered ID list.`);
+      if (_.isString(id) && _.has(pokemonMapById, id) && !pokemonMapById[id]._markedForDeletion) {
+        orderedList.push(pokemonMapById[id]);
       }
     });
     return orderedList;
