@@ -3,7 +3,7 @@ const _ = require('lodash');
 const supertest = require('supertest-as-promised');
 const expect = require('chai').expect;
 describe('UserController', () => {
-  let agent, adminAgent, noAuthAgent;
+  let agent, adminAgent, noAuthAgent, generalPurposeBox;
   before(async () => {
     agent = supertest.agent(sails.hooks.http.app);
     const res = await agent.post('/auth/local/register').send({
@@ -23,6 +23,10 @@ describe('UserController', () => {
     expect(res2.header.location).to.equal('/');
     await sails.models.user.update({name: 'IM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
     noAuthAgent = supertest.agent(sails.hooks.http.app);
+
+    const res3 = await agent.post('/box').send({name: 'Boxer'});
+    expect(res3.statusCode).to.equal(201);
+    generalPurposeBox = res3.body.id;
   });
   it('can redirect users to information about their own profile', async () => {
     const res = await agent.get('/api/v1/me');
@@ -128,29 +132,41 @@ describe('UserController', () => {
     describe('defaultPokemonVisibility', () => {
       it('sets the default visibility of uploaded pokemon', async () => {
         await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'public'});
-        const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+        const res = await agent.post('/uploadpk6')
+          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+          .field('box', generalPurposeBox);
+        expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('public');
         await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'readonly'});
-        const res2 = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+        const res2 = await agent.post('/uploadpk6')
+          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+          .field('box', generalPurposeBox);
+        expect(res2.statusCode).to.equal(201);
         expect(res2.body.visibility).to.equal('readonly');
       });
       it('can be overridden by specifying a visibility while uploading a pokemon', async () => {
         await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'public'});
         const res = await agent.post('/uploadpk6')
           .field('visibility', 'readonly')
+          .field('box', generalPurposeBox)
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('readonly');
         await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'readonly'});
         const res2 = await agent.post('/uploadpk6')
           .field('visibility', 'public')
+          .field('box', generalPurposeBox)
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        expect(res.statusCode).to.equal(201);
         expect(res2.body.visibility).to.equal('public');
       });
     });
     describe('defaultPokemonNoteVisibility', () => {
       let pkmn;
       before(async () => {
-        const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+        const res = await agent.post('/uploadpk6')
+          .field('box', generalPurposeBox)
+          .attach('pk6', `${__dirname}/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
         pkmn = res.body;
       });
