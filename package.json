@@ -32,7 +32,7 @@
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
-    "pk6parse": "^0.7.0",
+    "pk6parse": "^0.8.0",
     "rc": "1.0.1",
     "sails": "0.12.3",
     "sails-disk": "0.10.9",
