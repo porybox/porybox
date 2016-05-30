@@ -23,6 +23,8 @@ module.exports = function($routeParams, $http, $scope) {
               self.pokemon.ivSpDef;
 
   self.language = self.pokemon.language;
+  self.ballName = self.pokemon.ballName;
+  self.heldItemName = self.pokemon.heldItemName;
   self.ballNameUrl = self.pokemon.ballName
     ? self.pokemon.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
     : null;

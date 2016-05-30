@@ -10,11 +10,11 @@
       <img class="pokeball"
         ng-if="pokemon.ballNameUrl"
         ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
-        alt="{{pokemon.ballName}}" />
+        title="{{pokemon.ballName}}" />
       <img class="helditem"
         ng-if="pokemon.heldItemUrl"
         ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
-        alt="{{pokemon.heldItemName}}" />
+        title="{{pokemon.heldItemName}}" />
       <span class="pokemonShiny" flex ng-if="pokemon.isShiny()">&#x2605;</span>
       <span class="pokemonKB" flex ng-if="pokemon.isKB()">&#x2B1F;</span>
 
