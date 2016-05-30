@@ -1,7 +1,7 @@
 <md-card>
   <md-card-header>
     <md-card-avatar>
-      <img ng-src="https://pokeapi.co/media/sprites/pokemon/{{pokemon.dexNo}}.png" />
+      <img ng-src="https://pokeapi.co/media/sprites/pokemon/{{pokemon.isShiny() ? 'shiny/' : ''}}{{pokemon.dexNo}}.png" />
     </md-card-avatar>
     <a href="#/pokemon/{{pokemon.id}}"><span class="md-headline">{{pokemon.name}}</span></a>
   </md-card-header>
