@@ -9,13 +9,12 @@ module.exports = function($routeParams, $http, $scope) {
   self.user = self.pokemon.user;
   self.id = $routeParams.pokemonid || self.pokemon.id;
   self.dexNo = self.pokemon.dexNo;
-  self.ball;
-  self.item;
   self.level = self.pokemon.level;
   self.nature = self.pokemon.natureName;
   self.ability = self.pokemon.abilityName;
   self.ot = self.pokemon.ot;
   self.tid = self.pokemon.tid;
+  self.paddedTid = ('00000' + self.tid).slice(-5);
   self.ivs = self.pokemon.ivHp + '/' +
               self.pokemon.ivAtk + '/' +
               self.pokemon.ivDef + '/' +
@@ -24,8 +23,13 @@ module.exports = function($routeParams, $http, $scope) {
               self.pokemon.ivSpDef;
 
   self.language = self.pokemon.language;
-  // self.ballNameUrl = self.ballName.replace(' ', '-').toLowerCase();
-  self.heldItemUrl = self.pokemon.heldItemName.replace(' ', '-').toLowerCase();
+  self.ballNameUrl = self.pokemon.ballName
+    ? self.pokemon.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
+    : null;
+
+  self.heldItemUrl = self.pokemon.heldItemName
+    ? self.pokemon.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
+    : null;
 
   self.tsv = function () {
     return (self.pokemon.tid ^ self.pokemon.sid) >>> 4;
@@ -42,17 +46,4 @@ module.exports = function($routeParams, $http, $scope) {
   self.isKB = function () {
     return self.pokemon.otGameId >= 24 && self.pokemon.otGameId <= 29;
   }
-
-
-  // This will be replaced when I get the ball name
-  $http({
-    method: 'GET',
-    url: 'https://pokeapi.co/api/v2/item/' + self.pokemon.ballId,
-    cache: true
-  }).then(function (res) {
-    self.ball = res.data;
-  }, function (errRes) {
-    console.log(errRes);
-  });
-
 }
