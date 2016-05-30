@@ -106,7 +106,7 @@ describe('PokemonController', () => {
       expect(res.body.pid).to.exist;
       expect(res.body.speciesName).to.equal('Pelipper');
       expect(res.body.abilityName).to.equal('Keen Eye');
-      expect(res.body.natureName).to.equal('Rash');
+      expect(res.body.natureName).to.equal('Modest');
       expect(res.body.move1Name).to.equal('Agility');
     });
     it('allows the uploader to view all the data on a readonly pokemon', async () => {
