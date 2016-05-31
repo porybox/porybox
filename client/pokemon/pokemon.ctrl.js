@@ -18,9 +18,9 @@ module.exports = function($routeParams, $http, $scope) {
   self.ivs = self.pokemon.ivHp + '/' +
               self.pokemon.ivAtk + '/' +
               self.pokemon.ivDef + '/' +
-              self.pokemon.ivSpe + '/' +
               self.pokemon.ivSpAtk + '/' +
-              self.pokemon.ivSpDef;
+              self.pokemon.ivSpDef + '/' +
+              self.pokemon.ivSpe;
 
   self.language = self.pokemon.language;
   self.ballName = self.pokemon.ballName;
