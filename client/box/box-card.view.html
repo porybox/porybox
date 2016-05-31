@@ -1,10 +1,12 @@
 <md-card>
-  <md-card-title>
-    <md-card-title-text>
-      <a href="#/box/{{box.id}}"><span class="md-headline">{{box.name}}</span></a>
-      <span class="md-subhead">{{box.description}}</span>
-    </md-card-title-text>
-  </md-card-title>
-  <md-card-actions layout="row" layout-align="end center">
-  </md-card-actions>
+  <a ng-href="#/box/{{box.id}}" class="card-link">
+    <md-card-title>
+      <md-card-title-text>
+        <span class="md-headline">{{box.name}}</span>
+        <span class="md-subhead">{{box.description}}</span>
+      </md-card-title-text>
+    </md-card-title>
+    <md-card-actions layout="row" layout-align="end center">
+    </md-card-actions>
+  </a>
 </md-card>
