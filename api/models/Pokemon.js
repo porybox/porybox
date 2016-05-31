@@ -86,7 +86,7 @@ const attributes = {
   otMemoryTextVar: {},
   otMemoryFeeling: {},
   eggDate: {required: false},
-  metDate: {},
+  metDate: {required: false},
   eggLocationId: {},
   metLocationId: {},
   ballId: {},
