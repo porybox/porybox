@@ -7,7 +7,7 @@ const controller = require('./add.ctrl');
  * @param  {[type]} []             [description]
  * @return {[type]}                [description]
  */
-ng.module('porybox.add', ['porybox.box', 'ngMessages', 'ngFileUpload'])
+ng.module('porybox.add', ['porybox.box', 'porybox.pokemon', 'ngMessages', 'ngFileUpload'])
   .component('addMenu',
   {
     bindings: {
