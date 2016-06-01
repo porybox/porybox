@@ -99,7 +99,7 @@ const attributes = {
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
   _rawPk6: {type: 'string'},
-  cloneHash: {type: 'string'},
+  _cloneHash: {type: 'string'},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
   id: {type: 'string', unique: true, primaryKey: true},
@@ -117,14 +117,14 @@ const attributes = {
   },
   async checkIfUnique () {
     return (await Pokemon.find({
-      cloneHash: this.cloneHash,
+      _cloneHash: this._cloneHash,
       _markedForDeletion: false
     }).limit(2)).length === 1;
   },
   omitPrivateData () {
     /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
     it's possible to brute-force the PID. */
-    const secretProperties = ['pid', 'encryptionConstant', 'cloneHash', '_rawPk6'];
+    const secretProperties = ['pid', 'encryptionConstant', '_rawPk6'];
     if (PokemonHandler.isStaticPidEvent(this)) {
       secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
     }
