@@ -27,8 +27,6 @@ module.exports = _.mapValues({
     parsed.box = box.id;
     parsed.owner = req.user.name;
     parsed.visibility = visibility;
-    parsed._cloneHash = PokemonHandler.computeCloneHash(parsed);
-    parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
     box._orderedIds.push(result.id);
@@ -156,12 +154,7 @@ module.exports = _.mapValues({
         user: req.user.name
       })).defaultPokemonNoteVisibility;
     }
-    const newNoteParams = {
-      text: params.text,
-      visibility,
-      pokemon,
-      id: require('crypto').randomBytes(16).toString('hex')
-    };
+    const newNoteParams = {text: params.text, visibility, pokemon};
     Validation.verifyPokemonNoteParams(newNoteParams);
     const newNote = await PokemonNote.create(newNoteParams);
     return res.created(newNote);

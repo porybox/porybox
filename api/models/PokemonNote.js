@@ -19,5 +19,9 @@ module.exports = {
     destroy () {
       return PokemonNote.destroy({id: this.id});
     }
+  },
+  beforeCreate (note, next) {
+    note.id = Util.generateHexId();
+    next(null, note);
   }
 };

@@ -99,10 +99,10 @@ const attributes = {
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
   _rawPk6: {type: 'string'},
-  _cloneHash: {type: 'string'},
+  _cloneHash: {type: 'string', required: false},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
-  id: {type: 'string', unique: true, primaryKey: true},
+  id: {type: 'string', unique: true, primaryKey: true, required: false},
   visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
   _markedForDeletion: {type: 'boolean', defaultsTo: false},
   downloadCount: {defaultsTo: 0},
@@ -167,4 +167,12 @@ _.forEach(attributes, attr => {
 attributes.box = {model: 'box'};
 attributes.notes = {collection: 'PokemonNote', via: 'pokemon', defaultsTo: []};
 
-module.exports = {schema: true, attributes};
+module.exports = {
+  schema: true,
+  attributes,
+  beforeCreate (pkmn, next) {
+    pkmn.id = Util.generateHexId();
+    pkmn._cloneHash = PokemonHandler.computeCloneHash(pkmn);
+    next(null, pkmn);
+  }
+};

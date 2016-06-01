@@ -83,5 +83,9 @@ module.exports =  {
     toJSON () {
       return _.omit(this, (value, key) => key.startsWith('_'));
     }
+  },
+  beforeCreate (box, next) {
+    box.id = Util.generateHexId();
+    next(null, box);
   }
 };

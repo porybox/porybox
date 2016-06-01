@@ -41,6 +41,7 @@ describe('BoxController', () => {
       expect(res.body.owner).to.equal('boxtester');
       expect(res.body.name).to.equal('Pizza Box');
       expect(res.body.description).to.equal('A box');
+      expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
     });
   });
   describe('getting a box', () => {

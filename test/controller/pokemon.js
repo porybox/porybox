@@ -54,6 +54,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(201);
       expect(res.body.dexNo).to.equal(279);
       expect(res.body.owner).to.equal('pk6tester');
+      expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
     });
     it('should identify uploaded things as clones', async () => {
       const res1 = await agent.post('/uploadpk6')
