@@ -13,6 +13,7 @@
     'CatchAsyncErrors': true,
     'Validation': true,
     'DeletedUser': true,
-    'BoxOrdering': true
+    'BoxOrdering': true,
+    'Util': true
   }
 }

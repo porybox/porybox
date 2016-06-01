@@ -20,8 +20,7 @@ module.exports = _.mapValues({
       name: params.name,
       owner: req.user.name,
       description: params.description,
-      visibility,
-      id: require('crypto').randomBytes(16).toString('hex')
+      visibility
     };
     Validation.verifyBoxParams(newParams);
     const box = await Box.create(newParams);
