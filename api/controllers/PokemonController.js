@@ -42,6 +42,7 @@ module.exports = _.mapValues({
     if (!pokemon) {
       return res.notFound();
     }
+    pokemon.notes = pokemon.notes.filter(note => !note._markedForDeletion);
     pokemon.isUnique = await pokemon.checkIfUnique();
     pokemon.assignParsedNames();
     const pokemonIsPublic = pokemon.visibility === 'public';
