@@ -41,7 +41,8 @@ porybox.config(['$mdThemingProvider','$routeProvider',function(
   $mdThemingProvider.theme('default')
     .primaryPalette('light-blue', {
       'default': '600',
-      'hue-1': '900'
+      'hue-1': '900',
+      'hue-2': 'A100'
     })
     .accentPalette('pink', {
       'default': 'A100'
