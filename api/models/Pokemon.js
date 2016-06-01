@@ -154,7 +154,6 @@ const attributes = {
     return _.omit(this, (value, key) => key.startsWith('_'));
   },
   assignParsedNames () {
-    this.pidHint = this.pid >>> 16;
     return pk6parse.assignReadableNames(this);
   }
 };
