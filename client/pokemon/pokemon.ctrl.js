@@ -19,13 +19,19 @@ module.exports = function($routeParams, $http, $scope) {
   this.isShiny = this.tsv === this.esv;
   this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
 
-  this.iconUrl = (this.isShiny ? 'shiny/' : '') + this.data.dexNo;
+  self.tsv = function () {
+    return (self.pokemon.tid ^ self.pokemon.sid) >>> 4;
+  };
 
-  this.ballNameUrl = this.data.ballName
-    ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
-    : null;
+  self.esv = function () {
+    return ((self.pokemon.pid & 0xffff) ^ (self.pokemon.pid >>> 16)) >>> 4;
+  };
 
-  this.heldItemUrl = this.data.heldItemName
-    ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
-    : null;
-}
+  self.isShiny = function () {
+    return self.tsv() === self.esv();
+  };
+
+  self.isKB = function () {
+    return self.pokemon.otGameId >= 24 && self.pokemon.otGameId <= 29;
+  }
+};
