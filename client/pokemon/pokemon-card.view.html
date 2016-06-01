@@ -24,12 +24,10 @@
         <div flex style="font-weight:400;">{{pokemon.data.speciesName}}</div>
         <md-icon md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny"></md-icon>
         <md-icon md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb"></md-icon>
-        <!--<span class="pokemon-shiny" ng-if="pokemon.isShiny">&#x2605;</span>-->
-        <!--<span class="pokemon-kb" ng-if="pokemon.isKB">&#x2B1F;</span>-->
       </div>
       <div flex>Level {{pokemon.data.level}}</div>
       <div flex>{{pokemon.data.natureName}}</div>
-      <div flex>{{pokemon.data.abilityName}}</div>
+      <div flex ng-class="{'pokemon-ha': pokemon.data.abilityNum === 4}">{{pokemon.data.abilityName}}</div>
       <div flex>{{pokemon.data.ot}}/{{pokemon.paddedTid}}</div>
       <div flex>{{pokemon.ivs}}</div>
     </md-card-content>
