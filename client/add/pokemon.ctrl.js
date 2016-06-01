@@ -1,12 +1,15 @@
+import {maxBy} from 'lodash';
+
 /**
  * Controller for handling the dialog to add a new pokemon
  * @return {function} A controller that contains 2 test elements
  */
 module.exports = function ($mdBottomSheet, Upload) {
-
   this.visibilities = require('../../api/services/Constants.js').POKEMON_VISIBILITIES;
   this.visibility = this.defaultPokemonVisibility;
-  this.box = this.defaultBox ? this.defaultBox.id : undefined;
+  if (this.boxes.length) {
+    this.box = maxBy(this.boxes, box => +new Date(box.updatedAt)).id;
+  }
   this.file = {};
 
   this.cancel = function() {
