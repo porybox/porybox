@@ -3,7 +3,6 @@
  * @return {function} A controller that contains 2 test elements
  */
 module.exports = function ($mdBottomSheet, Upload) {
-
   this.visibilities = require('../../api/services/Constants.js').POKEMON_VISIBILITIES;
   this.visibility = this.defaultPokemonVisibility;
   this.box = this.defaultBox ? this.defaultBox.id : undefined;
