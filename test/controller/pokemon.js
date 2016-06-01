@@ -121,8 +121,9 @@ describe('PokemonController', () => {
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.not.exist;
       expect(res.body.speciesName).to.exist;
-      expect(res.body.pidHint).to.exist;
-      expect(res.body.pidHint).to.be.below(0x10000);
+      expect(res.body.tsv).to.be.a('number');
+      expect(res.body.esv).to.be.a('number');
+      expect(res.body.isShiny).to.be.a('boolean');
     });
     it('allows the uploader to view all the data on a private pokemon', async () => {
       const res = await agent.get(`/p/${privateId}`);
