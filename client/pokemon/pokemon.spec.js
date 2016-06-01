@@ -22,16 +22,16 @@ describe('PokemonCtrl', function() {
         $scope: $scope,
         io: io, $routeParams:
         $routeParams
-      }, {pokemon: {
+      }, {data: {
         nickname: 'pokemondNickname',
         dexNo: 'pokemonDexNo',
-        user: 'boxUser',
+        owner: 'boxUser',
         id: 'pokemonId'
       }});
-      expect(tested.nickname).to.equal('pokemondNickname');
-      expect(tested.user).to.equal('boxUser');
-      expect(tested.dexNo).to.equal('pokemonDexNo');
-      expect(tested.id).to.equal('pokemonId');
+      expect(tested.data.nickname).to.equal('pokemondNickname');
+      expect(tested.data.owner).to.equal('boxUser');
+      expect(tested.data.dexNo).to.equal('pokemonDexNo');
+      expect(tested.data.id).to.equal('pokemonId');
     });
 
     it('are correctly instantiated when not provided at construction', function() {
@@ -42,37 +42,37 @@ describe('PokemonCtrl', function() {
         $routeParams
       }, {});
       expect(tested.id).to.equal('routeParamId');
-      expect(Object.keys(tested.pokemon).length).to.equal(0);
+      expect(Object.keys(tested.data).length).to.equal(0);
     });
 
     it("pads a Pokémon's TID correctly", function() {
-      const tested1 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {tid: 12345}});
+      const tested1 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 12345}});
       expect(tested1.paddedTid).to.equal('12345');
-      const tested2 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {tid: 1234}});
+      const tested2 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 1234}});
       expect(tested2.paddedTid).to.equal('01234');
-      const tested3 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {tid: 123}});
+      const tested3 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 123}});
       expect(tested3.paddedTid).to.equal('00123');
-      const tested4 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {tid: 12}});
+      const tested4 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 12}});
       expect(tested4.paddedTid).to.equal('00012');
-      const tested5 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {tid: 1}});
+      const tested5 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 1}});
       expect(tested5.paddedTid).to.equal('00001');
-      const tested6 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {tid: 0}});
+      const tested6 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 0}});
       expect(tested6.paddedTid).to.equal('00000');
     });
 
     it('determines shininess correctly', function() {
-      const tested1 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {
+      const tested1 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {
         pid: 0,
         tid: 0,
         sid: 15}
       });
-      expect(tested1.isShiny()).to.be.true;
-      const tested2 = $controller(ctrlTest, {$scope, io, $routeParams}, {pokemon: {
+      expect(tested1.isShiny).to.be.true;
+      const tested2 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {
         pid: 0,
         tid: 0,
         sid: 16}
       });
-      expect(tested2.isShiny()).to.be.false;
+      expect(tested2.isShiny).to.be.false;
     });
   });
 });
