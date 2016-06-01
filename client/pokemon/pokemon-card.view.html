@@ -2,9 +2,9 @@
   <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link">
     <md-card-header>
       <md-card-avatar>
-        <img ng-src="https://pokeapi.co/media/sprites/pokemon/{{pokemon.iconUrl}}.png" />
+        <img ng-src="https://github.com/msikma/pokesprite/blob/master/icons/pokemon/{{pokemon.isShiny() ? 'shiny/' : 'regular'}}/{{pokemon.name|lowercase}}.png?raw=true" />
       </md-card-avatar>
-      <span class="md-headline">{{pokemon.data.speciesName}}</span>
+      <span class="md-headline">{{pokemon.nickname}}</span>
     </md-card-header>
     <md-card-content layout="column">
       <div layout="row" layout-align="none center">
@@ -15,9 +15,11 @@
         <img class="helditem"
           ng-if="pokemon.heldItemUrl"
           ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
-          title="{{pokemon.data.heldItemName}}" />
-        <span class="pokemonShiny" flex ng-if="pokemon.isShiny">&#x2605;</span>
-        <span class="pokemonKB" flex ng-if="pokemon.isKB">&#x2B1F;</span>
+          title="{{pokemon.heldItemName}}" />
+        <img class="pokemonShiny" ng-if="pokemon.isShiny()" src="/img/icons/shiny.png"/>
+        <img class="pokemonKB" ng-if="pokemon.isKB()" src="/img/icons/kb.png"/>
+        <!-- span class="pokemonShiny" flex ng-if="pokemon.isShiny()">&#x2605;</span>
+        <span class="pokemonKB" flex ng-if="pokemon.isKB()">&#x2B1F;</span -->
 
 
         <span flex></span>
