@@ -73,6 +73,10 @@ module.exports = _.mapValues({
     const params = req.allParams();
     const pokemon = await Pokemon.findOne({id: params.id});
     Validation.verifyUserIsOwner(pokemon, req.user, {allowDeleted: true});
+    const box = await Box.findOne({id: pokemon.box, _markedForDeletion: false});
+    if (!box) {
+      return res.badRequest();
+    }
     await pokemon.unmarkForDeletion();
     return res.ok();
   },

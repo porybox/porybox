@@ -228,6 +228,11 @@ describe('BoxController', () => {
       const res = await otherAgent.post(`/b/${box.id}/undelete`);
       expect(res.statusCode).to.equal(404);
     });
+    it('does not allow a user to undelete a pokemon if its box was deleted', async () => {
+      await agent.del(`/b/${box.id}`);
+      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      expect(res.statusCode).to.equal(400);
+    });
     it('allows admins to delete a box belonging to anyone', async () => {
       const res = await adminAgent.del(`/b/${box.id}`);
       expect(res.statusCode).to.equal(202);
