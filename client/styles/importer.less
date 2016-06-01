@@ -20,11 +20,26 @@
  * Overrides
  *******************************/
 
+md-card md-card-title {
+  padding: 10px 16px;
+}
+
+md-card md-card-header {
+  background-color: rgba(0,0,0,.2);
+  padding: 5px 0 0 0;
+}
+
+md-card md-card-content {
+  padding: 14px;
+  font-weight: 300;
+}
+
 .md-headline {
   max-height: 3em;
   overflow-x: hidden;
   text-overflow: ellipsis;
-  overflow-y: hidden
+  overflow-y: hidden;
+  font-size: 18px;
 }
 
 md-card-title-text {
@@ -51,6 +66,15 @@ md-card-title-text {
   text-overflow: ellipsis;
 }
 
+/*******************************
+ * Header
+ *******************************/
+
+.md-toolbar-tools img {
+  height: 74px;
+  margin: 0 7px 0px -5px;
+}
+
  /*******************************
   * Pokemon cards
   *******************************/
@@ -61,21 +85,18 @@ md-card-title-text {
   display: block;
 }
 
-.pokemonShiny, .pokemonKB {
-  padding-left: 10px;
-}
-
-.pokemonKB {
-  color: blue;
-}
-
-.pokemonShiny {
-  color: red;
+.pokemonKB, .pokemonShiny {
+  width: 10px;
+  margin-left: 5px;
 }
 
 .pokeball, .helditem {
   width: 32px;
   height: 32px;
+}
+
+.pokeball {
+  margin-left: -5px;
 }
 
  /*******************************
