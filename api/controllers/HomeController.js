@@ -14,5 +14,9 @@ module.exports = _.mapValues({
 
   uploadpk6 (req, res) {
     return res.view('home/uploadpk6');
+  },
+
+  faq (req, res) {
+    return res.view('home/faq');
   }
 }, CatchAsyncErrors);

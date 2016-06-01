@@ -23,6 +23,7 @@
 module.exports.routes = {
 
   '/': 'HomeController.index',
+  '/faq': 'HomeController.faq',
 
   // Boxes
 
