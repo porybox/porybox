@@ -39,7 +39,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
     }, function(wantsFullScreen) {
       $scope.customFullscreen = (wantsFullScreen === true);
     });
-  }
+  };
 
   this.pokemon = function (event) {
     $mdBottomSheet.show({
@@ -58,4 +58,4 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
     });
   }
 
-}
+};

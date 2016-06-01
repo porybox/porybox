@@ -23,7 +23,7 @@ describe('AddCtrl', function() {
           callback(data, {statusCode: 200});
         }
       }
-    }
+    };
     $mdDialog = {
       show: function () {
         return {
@@ -32,7 +32,7 @@ describe('AddCtrl', function() {
           }
         }
       }
-    }
+    };
     $mdBottomSheet = {
       show: function () {
         return {
@@ -41,7 +41,7 @@ describe('AddCtrl', function() {
           }
         }
       }
-    }
+    };
     $mdMedia = function () {};
     $controller = _$controller_;
     tested = $controller(ctrlTest, {

@@ -4,8 +4,6 @@
  *******************************/
 @import (inline) '../../node_modules/angular-material/angular-material.css';
 
-
-
 /******************************
  *
  ******************************/
@@ -25,7 +23,7 @@ md-card md-card-title {
 }
 
 md-card md-card-header {
-  background-color: rgba(0,0,0,.2);
+  background-color: rgba(128, 216, 255, .25);
   padding: 5px 0 0 0;
 }
 
@@ -85,18 +83,35 @@ md-card-title-text {
   display: block;
 }
 
-.pokemonKB, .pokemonShiny {
-  width: 10px;
+.pokemon-kb, .pokemon-shiny {
   margin-left: 5px;
+  font-size: 10px;
 }
 
-.pokeball, .helditem {
+.pokemon-kb {
+  color: rgba(4,53,117,1);
+}
+
+.pokemon-shiny {
+  color: rgba(249,38,47,1);
+}
+
+.pokeball, .held-item {
   width: 32px;
   height: 32px;
 }
 
 .pokeball {
   margin-left: -5px;
+}
+
+.language-tag {
+  color: #fff;
+  background-color: #505050;
+  border: 3px solid #505050;
+  border-radius: 2px;
+  font-weight: 400;
+  font-size: 14px;
 }
 
  /*******************************
