@@ -131,17 +131,18 @@ const attributes = {
     const filteredNotes = _.filter(this.notes, note => note.visibility === 'public');
     return _(this).omit(secretProperties).assign({notes: filteredNotes}).value();
   },
-  markForDeletion () {
+  async markForDeletion () {
     this._markedForDeletion = true;
+    await PokemonNote.update({id: this.notes}, {_markedForDeletion: true});
     return this.save();
   },
-  unmarkForDeletion () {
+  async unmarkForDeletion () {
     this._markedForDeletion = false;
+    await PokemonNote.update({id: this.notes}, {_markedForDeletion: false});
     return this.save();
   },
   async destroy () {
-    const notes = (await Pokemon.findOne({id: this.id}).populate('notes')).notes;
-    await Promise.each(notes, note => note.destroy());
+    await PokemonNote.destroy({id: this.notes});
     const box = await Box.findOne({id: this.box});
     _.remove(box.orderedIds, id => id === this.id);
     await box.save();

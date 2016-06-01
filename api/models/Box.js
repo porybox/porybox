@@ -71,10 +71,16 @@ module.exports =  {
     },
 
     async destroy () {
-      await Promise.each((await Box.findOne({id: this.id}).populate('contents')).contents, pkmn => {
-        return pkmn.destroy();
-      });
-      return await Box.destroy({id: this.id});
+      /* Find all the pokemon and note IDs rather than calling pokemon.destroy() on each pokemon. This
+      allows all the notes to be deleted with one database query. */
+      const contents = (await Box.findOne({id: this.id}).populate('contents')).contents;
+      const allContentIds = _.map(contents, 'id');
+      const allNoteIds = _.flatten(_.map(contents, 'notes'));
+      return Promise.all([
+        Box.destroy({id: this.id}),
+        Pokemon.destroy({id: allContentIds}),
+        PokemonNote.destroy({id: allNoteIds})
+      ]).get(0);
     },
 
     /* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
