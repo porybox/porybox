@@ -51,6 +51,10 @@ module.exports = _.mapValues({
     const id = req.param('id');
     const box = await Box.findOne({id});
     Validation.verifyUserIsOwner(box, req.user);
+    const owner = await User.findOne({name: box.owner}).populate('boxes');
+    if (owner.boxes.filter(box => !box._markedForDeletion).length <= 1) {
+      return res.badRequest('Refused to delete the last remaining box.');
+    }
     await box.markForDeletion();
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.BOX_DELETION_DELAY);

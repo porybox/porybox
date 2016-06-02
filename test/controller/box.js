@@ -167,7 +167,7 @@ describe('BoxController', () => {
       expect(box._orderedIds).to.not.exist;
     });
   });
-  describe('deleting a box', function () {
+  describe('deleting a box', () => {
     let previousDeletionDelay, box, pkmn;
     before(() => {
       /* Normally this is 5 minutes, but it's annoying for the unit tests to take that long.
@@ -184,6 +184,23 @@ describe('BoxController', () => {
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res2.statusCode).to.equal(201);
       pkmn = res2.body;
+    });
+    it('does not allow a user to delete their last box', async () => {
+      await Promise.all(_.times(5, async () => {
+        const res = await agent.post('/box').send({name: 'Fare Box'});
+        expect(res.statusCode).to.equal(201);
+      }));
+      const res2 = await agent.get('/user/boxtester/boxes');
+      expect(res2.body.length).to.be.at.least(5);
+      expect(res2.statusCode).to.equal(200);
+      await Promise.each(res2.body.slice(1), async box => {
+        const res3 = await agent.del(`/b/${box.id}`);
+        expect(res3.statusCode).to.equal(202);
+      });
+      const res4 = await agent.del(`/b/${res2.body[0].id}`);
+      expect(res4.statusCode).to.equal(400);
+      const res5 = await agent.get('/user/boxtester/boxes');
+      expect(res5.body.length).to.equal(1);
     });
     it('does not allow users to delete boxes that belong to other users', async () => {
       const res = await otherAgent.del(`/b/${box.id}`);

@@ -38,8 +38,7 @@ module.exports =  {
     association that always happens to only contain one UserPreferences object per User. The effect
     of this is that calling User.findOne({}).populate('preferences') will return the user's
     preferences as an Array. This Array will only contain one object, which is the user's
-    preferences.
-    */
+    preferences. */
     preferences: {
       collection: 'UserPreferences',
       via: 'user'
