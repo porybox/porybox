@@ -13,8 +13,8 @@
   <body layout="column" ng-controller="MainCtrl as main" ng-cloak
     ng-init="main.init({
       boxes: <%=(typeof boxes !== 'undefined' ? JSON.stringify(boxes) : '[]')%>,
-      user: <%=(typeof user !== 'undefined' ? JSON.stringify(user) : '[]')%>,
-      prefs: <%=(typeof prefs !== 'undefined' ? JSON.stringify(prefs) : '[]')%>
+      user: <%=(typeof user !== 'undefined' ? JSON.stringify(user) : 'null')%>,
+      prefs: <%=(typeof prefs !== 'undefined' ? JSON.stringify(prefs) : '{}')%>
     })">
     <%- include header.ejs %>
     <main flex layout="column">

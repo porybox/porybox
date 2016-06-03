@@ -15,24 +15,21 @@ describe('BoxController', () => {
       password: '********',
       email: 'boxtester@boxtesting.com'
     });
-    expect(res.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/');
+    expect(res.statusCode).to.equal(200);
 
     const res2 = await otherAgent.post('/auth/local/register').send({
       name: 'EXPLOUD_BOX',
       password: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
       email: 'AAAAAAAA@BOXBOXBOXBOXBOX.com'
     });
-    expect(res2.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/');
+    expect(res2.statusCode).to.equal(200);
 
     const res3 = await adminAgent.post('/auth/local/register').send({
       name: 'box_admin',
       password: 'boxboxboxboxboxbox',
       email: 'boxadmin@porybox.com'
     });
-    expect(res3.statusCode).to.equal(302);
-    expect(res3.header.location).to.equal('/');
+    expect(res3.statusCode).to.equal(200);
     await sails.models.user.update({name: 'box_admin'}, {isAdmin: true});
   });
   describe('creating a box', () => {

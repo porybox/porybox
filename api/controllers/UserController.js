@@ -85,7 +85,7 @@ module.exports = _.mapValues({
       return res.forbidden('Incorrect password');
     }
     await req.user.deleteAccount();
-    return res.redirect('/');
+    return res.ok();
   },
   async changePassword (req, res) {
     const params = req.allParams();

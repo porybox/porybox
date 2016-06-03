@@ -7,7 +7,7 @@ const controller = require('./login.ctrl');
  * @param  {[type]} []             [description]
  * @return {[type]}                [description]
  */
-ng.module('porybox.login', [])
+ng.module('porybox.login', ['ngRoute'])
   .component('loginForm',
   {
     bindings: {},
@@ -21,4 +21,8 @@ ng.module('porybox.login', [])
     templateUrl: 'login/register.view.html',
     controller: controller,
     controllerAs: 'home'
-  });
+  }).config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/login', {
+      templateUrl: '/login/login-page.view.html'
+    })
+  }]);
