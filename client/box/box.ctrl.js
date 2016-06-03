@@ -20,4 +20,4 @@ module.exports = function($scope, $routeParams, io) {
     }
     $scope.$apply();
   });
-}
+};

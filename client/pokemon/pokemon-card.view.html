@@ -1,4 +1,4 @@
-<md-card>
+<md-card class="pokemon-card-mini">
   <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link">
     <md-card-header>
       <md-card-avatar>
@@ -31,7 +31,7 @@
       <div flex>Level {{pokemon.data.level}}</div>
       <div flex>{{pokemon.data.natureName}}</div>
       <div flex ng-class="{'pokemon-ha': pokemon.data.abilityNum === 4}">{{pokemon.data.abilityName}}</div>
-      <div flex>{{pokemon.data.ot}}/{{pokemon.paddedTid}}</div>
+      <div flex>{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
       <div flex>{{pokemon.ivs}}</div>
     </md-card-content>
 </md-card>
