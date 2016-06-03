@@ -27,6 +27,11 @@ md-card md-card-header {
   padding: 5px 0 0 0;
 }
 
+.box-header {
+  background-color: rgba(45, 45, 45, .2);
+  padding: 7px 10px;
+}
+
 md-card md-card-content {
   padding: 14px;
   font-weight: 300;
@@ -42,26 +47,6 @@ md-card md-card-content {
 
 md-card-title-text {
   overflow-x: hidden;
-}
-
-.flex-20 {
-  display: flex;
-  align-items: stretch;
-}
-
-.flex-20 box-card, .flex-20 pokemon-card {
-  display: flex;
-  width: 100%;
-}
-
-.flex-20 box-card md-card, .flex-20 pokemon-card md-card {
-  width: 100%;
-}
-
-.flex-20 span.md-subhead {
-  max-height: 4em;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 md-icon svg {
@@ -80,6 +65,41 @@ md-icon svg {
  /*******************************
   * Pokemon cards
   *******************************/
+
+.icon-container {
+  position: relative;
+}
+
+.icon-container > img {
+  position: absolute;
+}
+
+@media (min-width: 600px) {
+  .pokemon-card-mini {
+    width: 166px;
+    height: 229px;
+  }
+}
+
+@media (max-width: 599px) {
+  .pokemon-card-mini {
+    display: block;
+    width: auto;
+    height: 229px;
+  }
+}
+
+@media (min-width: 600px) {
+  .box-card {
+    width: 250px;
+    height: 150px;
+  }
+}
+
+.box-card {
+  max-height: 150px;
+  overflow: scroll;
+}
 
 .card-link {
   text-decoration: none;
