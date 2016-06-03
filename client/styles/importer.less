@@ -34,7 +34,8 @@ md-card md-card-header {
 
 md-card md-card-content {
   padding: 14px;
-  font-weight: 300;
+  font-size: 14px;
+  line-height: 21px;
 }
 
 .md-headline {
@@ -66,18 +67,13 @@ md-icon svg {
   * Pokemon cards
   *******************************/
 
-.icon-container {
-  position: relative;
-}
-
-.icon-container > img {
-  position: absolute;
+.pokemon-card-mini {
+  height: 214px;
 }
 
 @media (min-width: 600px) {
   .pokemon-card-mini {
     width: 166px;
-    height: 229px;
   }
 }
 
@@ -85,7 +81,6 @@ md-icon svg {
   .pokemon-card-mini {
     display: block;
     width: auto;
-    height: 229px;
   }
 }
 
