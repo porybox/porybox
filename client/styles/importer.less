@@ -24,7 +24,8 @@ md-card md-card-title {
 
 md-card md-card-header {
   background-color: rgba(128, 216, 255, .25);
-  padding: 5px 0 0 0;
+  padding: 5px 10px 0 0;
+  white-space: nowrap;
 }
 
 .box-header {
@@ -40,10 +41,10 @@ md-card md-card-content {
 
 .md-headline {
   max-height: 3em;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
-  overflow-y: hidden;
   font-size: 18px;
+  max-width: 100px;
 }
 
 md-card-title-text {
@@ -87,6 +88,7 @@ md-icon svg {
 
 .icon-container > img {
   position: absolute;
+  width: 40px;
 }
 
 .pokemon-egg {
