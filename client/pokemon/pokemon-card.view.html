@@ -4,7 +4,7 @@
       <md-card-avatar>
         <div class="icon-container">
           <img ng-if="pokemon.data.isEgg" style="margin-left:-5px" src="https://github.com/msikma/pokesprite/blob/master/icons/etc/egg.png?raw=true" />
-          <img style="margin-left:5px" ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
+          <img ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
         </div>
       </md-card-avatar>
       <span class="md-headline">{{pokemon.data.nickname}}</span>
