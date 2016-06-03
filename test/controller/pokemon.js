@@ -54,6 +54,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(201);
       expect(res.body.dexNo).to.equal(279);
       expect(res.body.owner).to.equal('pk6tester');
+      expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
     });
     it('should identify uploaded things as clones', async () => {
       const res1 = await agent.post('/uploadpk6')
@@ -121,8 +122,9 @@ describe('PokemonController', () => {
       expect(res.body.dexNo).to.exist;
       expect(res.body.pid).to.not.exist;
       expect(res.body.speciesName).to.exist;
-      expect(res.body.pidHint).to.exist;
-      expect(res.body.pidHint).to.be.below(0x10000);
+      expect(res.body.tsv).to.be.a('number');
+      expect(res.body.esv).to.be.a('number');
+      expect(res.body.isShiny).to.be.a('boolean');
     });
     it('allows the uploader to view all the data on a private pokemon', async () => {
       const res = await agent.get(`/p/${privateId}`);
@@ -508,6 +510,7 @@ describe('PokemonController', () => {
       expect(res2.body.notes).to.be.an.instanceof(Array);
       expect(res2.body.notes).to.not.be.empty;
       expect(_.last(res2.body.notes)).to.eql(res.body);
+      expect(_.last(res2.body.notes)._markedForDeletion).to.not.exist;
     });
     it('allows users to set the visibility of their notes when uploading', async () => {
       const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'c', visibility: 'private'});
@@ -527,6 +530,52 @@ describe('PokemonController', () => {
     it("does not allow users to add notes on other peoples' pokemon", async () => {
       const res = await otherAgent.post(`/p/${pkmn.id}/note`).send({text: 'f'});
       expect(res.statusCode).to.equal(403);
+    });
+    it("restores a pokemon's notes when undeleting it", async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'g', visibility: 'private'});
+      expect(res.statusCode).to.equal(201);
+      const res2 = await agent.post(`/p/${pkmn.id}/note`).send({text: 'h', visibility: 'public'});
+      expect(res2.statusCode).to.equal(201);
+      const res3 = await agent.del(`/p/${pkmn.id}`);
+      expect(res3.statusCode).to.equal(202);
+      const res4 = await agent.post(`/p/${pkmn.id}/undelete`);
+      expect(res4.statusCode).to.equal(200);
+      const res5 = await agent.get(`/p/${pkmn.id}`);
+      expect(res5.statusCode).to.equal(200);
+      expect(res5.body.id).to.equal(pkmn.id);
+      expect(res5.body.notes).to.eql([res.body, res2.body]);
+    });
+    it('restores the notes of all the pokemon in a box when undeleting it', async () => {
+      const res = await agent.post('/box').send({name: 'Boxcart'});
+      expect(res.statusCode).to.equal(201);
+      const res2 = await agent.post('/uploadpk6')
+        .field('box', res.body.id)
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res2.statusCode).to.equal(201);
+      const res3 = await agent.post('/uploadpk6')
+        .field('box', res.body.id)
+        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+      expect(res3.statusCode).to.equal(201);
+      const res4 = await agent.post(`/p/${res2.body.id}/note`).send({text: 'i'});
+      expect(res4.statusCode).to.equal(201);
+      const res5 = await agent.post(`/p/${res2.body.id}/note`).send({text: 'j'});
+      expect(res5.statusCode).to.equal(201);
+      const res6 = await agent.post(`/p/${res3.body.id}/note`).send({text: 'k'});
+      expect(res6.statusCode).to.equal(201);
+      const res7 = await agent.post(`/p/${res3.body.id}/note`).send({text: 'l'});
+      expect(res7.statusCode).to.equal(201);
+      const res8 = await agent.del(`/b/${res.body.id}`);
+      expect(res8.statusCode).to.equal(202);
+      const res9 = await agent.post(`/b/${res.body.id}/undelete`);
+      expect(res9.statusCode).to.equal(200);
+      const res10 = await agent.get(`/p/${res2.body.id}`);
+      expect(res10.statusCode).to.equal(200);
+      expect(res10.body.id).to.equal(res2.body.id);
+      expect(res10.body.notes).to.eql([res4.body, res5.body]);
+      const res11 = await agent.get(`/p/${res3.body.id}`);
+      expect(res11.statusCode).to.equal(200);
+      expect(res11.body.id).to.equal(res3.body.id);
+      expect(res11.body.notes).to.eql([res6.body, res7.body]);
     });
   });
   describe('deleting notes', () => {

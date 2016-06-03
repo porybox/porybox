@@ -16,8 +16,13 @@ module.exports = {
     pokemon: {
       model: 'Pokemon'
     },
-    destroy () {
-      return PokemonNote.destroy({id: this.id});
+    _markedForDeletion: {type: 'boolean', defaultsTo: false},
+    toJSON () {
+      return _.omit(this, (value, key) => key.startsWith('_'));
     }
+  },
+  beforeCreate (note, next) {
+    note.id = Util.generateHexId();
+    next(null, note);
   }
 };

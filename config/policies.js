@@ -35,7 +35,7 @@ module.exports.policies = {
 
   HomeController: {
     index: user,
-    uploadpk6: user
+    faq: anyone
   },
 
   PokemonController: {

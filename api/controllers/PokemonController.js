@@ -27,8 +27,6 @@ module.exports = _.mapValues({
     parsed.box = box.id;
     parsed.owner = req.user.name;
     parsed.visibility = visibility;
-    parsed._cloneHash = PokemonHandler.computeCloneHash(parsed);
-    parsed.id = require('crypto').randomBytes(16).toString('hex');
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
     box._orderedIds.push(result.id);
@@ -44,6 +42,7 @@ module.exports = _.mapValues({
     if (!pokemon) {
       return res.notFound();
     }
+    pokemon.notes = pokemon.notes.filter(note => !note._markedForDeletion);
     pokemon.isUnique = await pokemon.checkIfUnique();
     pokemon.assignParsedNames();
     const pokemonIsPublic = pokemon.visibility === 'public';
@@ -75,6 +74,10 @@ module.exports = _.mapValues({
     const params = req.allParams();
     const pokemon = await Pokemon.findOne({id: params.id});
     Validation.verifyUserIsOwner(pokemon, req.user, {allowDeleted: true});
+    const box = await Box.findOne({id: pokemon.box, _markedForDeletion: false});
+    if (!box) {
+      return res.badRequest();
+    }
     await pokemon.unmarkForDeletion();
     return res.ok();
   },
@@ -156,12 +159,7 @@ module.exports = _.mapValues({
         user: req.user.name
       })).defaultPokemonNoteVisibility;
     }
-    const newNoteParams = {
-      text: params.text,
-      visibility,
-      pokemon,
-      id: require('crypto').randomBytes(16).toString('hex')
-    };
+    const newNoteParams = {text: params.text, visibility, pokemon};
     Validation.verifyPokemonNoteParams(newNoteParams);
     const newNote = await PokemonNote.create(newNoteParams);
     return res.created(newNote);

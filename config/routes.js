@@ -23,6 +23,7 @@
 module.exports.routes = {
 
   '/': 'HomeController.index',
+  '/faq': 'HomeController.faq',
 
   // Boxes
 
@@ -48,7 +49,6 @@ module.exports.routes = {
 
   // Pokemon
 
-  'get /uploadpk6': 'HomeController.uploadpk6',
   'post /uploadpk6': 'PokemonController.uploadpk6',
 
   'get /p/:id': 'PokemonController.get',

@@ -99,10 +99,10 @@ const attributes = {
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
   _rawPk6: {type: 'string'},
-  _cloneHash: {type: 'string'},
+  _cloneHash: {type: 'string', required: false},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
-  id: {type: 'string', unique: true, primaryKey: true},
+  id: {type: 'string', unique: true, primaryKey: true, required: false},
   visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
   _markedForDeletion: {type: 'boolean', defaultsTo: false},
   downloadCount: {defaultsTo: 0},
@@ -131,17 +131,18 @@ const attributes = {
     const filteredNotes = _.filter(this.notes, note => note.visibility === 'public');
     return _(this).omit(secretProperties).assign({notes: filteredNotes}).value();
   },
-  markForDeletion () {
+  async markForDeletion () {
     this._markedForDeletion = true;
+    await PokemonNote.update({id: this.notes}, {_markedForDeletion: true});
     return this.save();
   },
-  unmarkForDeletion () {
+  async unmarkForDeletion () {
     this._markedForDeletion = false;
+    await PokemonNote.update({id: this.notes}, {_markedForDeletion: false});
     return this.save();
   },
   async destroy () {
-    const notes = (await Pokemon.findOne({id: this.id}).populate('notes')).notes;
-    await Promise.each(notes, note => note.destroy());
+    await PokemonNote.destroy({id: this.notes});
     const box = await Box.findOne({id: this.box});
     _.remove(box.orderedIds, id => id === this.id);
     await box.save();
@@ -154,7 +155,6 @@ const attributes = {
     return _.omit(this, (value, key) => key.startsWith('_'));
   },
   assignParsedNames () {
-    this.pidHint = this.pid >>> 16;
     return pk6parse.assignReadableNames(this);
   }
 };
@@ -168,4 +168,12 @@ _.forEach(attributes, attr => {
 attributes.box = {model: 'box'};
 attributes.notes = {collection: 'PokemonNote', via: 'pokemon', defaultsTo: []};
 
-module.exports = {schema: true, attributes};
+module.exports = {
+  schema: true,
+  attributes,
+  beforeCreate (pkmn, next) {
+    pkmn.id = Util.generateHexId();
+    pkmn._cloneHash = PokemonHandler.computeCloneHash(pkmn);
+    next(null, pkmn);
+  }
+};

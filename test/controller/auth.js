@@ -47,6 +47,25 @@ describe('AuthController', function() {
       expect(res.header.location).to.equal('/');
     });
 
+    it('creates a box for the user after registering an account', async () => {
+      const firstBoxAgent = supertest.agent(sails.hooks.http.app);
+      const res = await firstBoxAgent.post('/auth/local/register').send({
+        name: 'firstBoxTester',
+        password: 'f1rstB0xTest3r',
+        email: 'firstBoxTester@porybox.com'
+      });
+      expect(res.statusCode).to.equal(302);
+      expect(res.header.location).to.equal('/');
+      const res2 = await firstBoxAgent.get('/user/firstBoxTester/boxes');
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body).to.be.an.instanceof(Array);
+      expect(res2.body).to.have.lengthOf(1);
+      expect(res2.body[0].name).to.equal('Box 1');
+      expect(res2.body[0].description).to.equal('');
+      expect(res2.body[0].visibility).to.equal('listed');
+      expect(res2.body[0].contents).to.eql([]);
+    });
+
     it('should redirect to / when logged in', async () => {
       expect((await agent.get('/')).statusCode).to.equal(200);
     });

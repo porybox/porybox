@@ -12,7 +12,7 @@ module.exports = _.mapValues({
     res.view('home/view', {boxes, prefs});
   },
 
-  uploadpk6 (req, res) {
-    return res.view('home/uploadpk6');
+  faq (req, res) {
+    return res.view('home/faq');
   }
 }, CatchAsyncErrors);
