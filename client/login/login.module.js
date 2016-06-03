@@ -13,14 +13,14 @@ ng.module('porybox.login', ['ngRoute'])
     bindings: {},
     templateUrl: 'login/login.view.html',
     controller: controller,
-    controllerAs: 'home'
+    controllerAs: 'auth'
   })
   .component('registrationForm',
   {
     bindings: {},
     templateUrl: 'login/register.view.html',
     controller: controller,
-    controllerAs: 'home'
+    controllerAs: 'auth'
   }).config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/login', {
       templateUrl: '/login/login-page.view.html'

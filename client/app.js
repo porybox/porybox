@@ -1,4 +1,5 @@
 // Import libraries
+require('babel-polyfill');
 const ng = require('angular');
 require('angular-material');
 require('angular-messages');

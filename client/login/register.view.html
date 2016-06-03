@@ -7,20 +7,21 @@
   <md-card-content>
     <div layout="column" layout-padding>
       <md-content class="autoscroll">
-        <form role="form" action="/auth/local/register" method="post">
+        <form role="form" ng-submit="auth.register()">
           <md-input-container class="md-block">
-            <input type="text" name="name">
+            <input type="text" name="name" ng-model="registerName">
             <label>Username</label>
           </md-input-container>
           <md-input-container class="md-block">
-            <input type="email" name="email" >
+            <input type="email" name="email" ng-model="registerEmail">
             <label>Email</label>
           </md-input-container>
           <md-input-container class="md-block">
-            <input type="password" name="password" >
+            <input type="password" name="password" ng-model="registerPassword">
             <label>Password</label>
           </md-input-container>
-          <md-button type="submit"  class="md-raised">Sign up</md-button>
+          <span ng-if="auth.registerError">{{auth.registerError}}<br></span>
+          <md-button type="submit" class="md-raised">Sign up</md-button>
         </form>
       </md-content>
     </div>

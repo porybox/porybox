@@ -7,15 +7,20 @@
 
 module.exports = _.mapValues({
   async index (req, res) {
-    let boxes = null;
-    let prefs = null;
-    if (req.user) {
-      [boxes, prefs] = await Promise.all([
-        Box.find({owner: req.user.name}),
-        UserPreferences.find({user: req.user.name})
-      ]);
+    if (req.user && !req.user._orderedBoxIds) {
+      req.user._orderedBoxIds = _.map(await Box.find({owner: req.user.name}), 'id')
+      await req.user.save();
     }
-    res.view('home/view', {boxes, prefs});
+    res.view('home/view', {
+      boxes: req.user
+        ? await User.findOne({name: req.user.name})
+          .populate('boxes')
+          .then(BoxOrdering.getOrderedBoxList)
+        : null,
+      prefs: req.user
+        ? await UserPreferences.findOne({user: req.user.name})
+        : null
+    });
   },
 
   faq (req, res) {
