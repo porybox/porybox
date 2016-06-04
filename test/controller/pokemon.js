@@ -419,6 +419,66 @@ describe('PokemonController', () => {
       const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
       expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn.id, pkmn3.id, pkmn2.id]);
     });
+    it('allows a pokemon to be moved to a later slot in its own box', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 1});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box1.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmn2.id, pkmn.id, pkmn3.id]);
+
+      const res3 = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 2});
+      expect(res3.statusCode).to.equal(200);
+      const res4 = await agent.get(`/b/${box1.id}`);
+      expect(res4.statusCode).to.equal(200);
+      expect(_.map(res4.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id, pkmn.id]);
+    });
+    it('defaults to the last slot of the box if an index is not provided', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box1.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id, pkmn.id]);
+    });
+    it('returns a 400 error if the length is out of range due to offsetting', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 3});
+      expect(res.statusCode).to.equal(400);
+      const res2 = await agent.get(`/b/${box1.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id]);
+    });
+    it('allows index to equal the box length if the pkmn is moved to a different box', async () => {
+      const res = await agent.post(`/p/${pkmn4.id}/move`).send({box: box1.id, index: 3});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box1.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id, pkmn4.id]);
+    });
+    it('does not take deleted IDs into account when moving by index', async () => {
+      const res = await agent.del(`/p/${pkmn2.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.get(`/b/${box1.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn3.id]);
+      const res3 = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 1});
+      expect(res3.statusCode).to.equal(200);
+      const res4 = await agent.get(`/b/${box1.id}`);
+      expect(res4.statusCode).to.equal(200);
+      expect(_.map(res4.body.contents, 'id')).to.eql([pkmn3.id, pkmn.id]);
+    });
+    it('returns a 400 error if the provided index is too large due to deletion', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 2});
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get(`/b/${box1.id}`);
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id, pkmn.id]);
+      const res3 = await agent.del(`/p/${pkmn.id}`);
+      expect(res3.statusCode).to.equal(202);
+      const res4 = await agent.get(`/b/${box1.id}`);
+      expect(res4.statusCode).to.equal(200);
+      expect(_.map(res4.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
+      const res5 = await agent.post(`/p/${pkmn2.id}/move`).send({box: box1.id, index: 2});
+      expect(res5.statusCode).to.equal(400);
+    });
     it("does not allow a third party to move someone's else pokemon", async () => {
       const res = await otherAgent.post(`/p/${pkmn.id}/move`).send({box: someoneElsesBox.id});
       expect(res.statusCode).to.equal(403);

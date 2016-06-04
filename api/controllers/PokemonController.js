@@ -112,21 +112,32 @@ module.exports = _.mapValues({
   * POST /p/:id/move
   * @param {string} id The ID of the Pokémon that should be moved
   * @param {string} box The ID of the box that the Pokémon should be moved to.
-  * @param {number} [index] The index where the Pokémon should be inserted in the new box. If omitted, the
-  Pokémon is inserted at the end of the box.
+  * @param {number} [index] The index at which the Pokémon should be placed into the new box. Note that if
+  the Pokémon is being moved around within a single box, the indices of everything else in that box will shift around.
+
+  For example, suppose Box 1 contains [A B C], and Box 2 contains [D E].
+
+  * If D is moved to Box 1 with index=2, Box 1 will look like this: [A B D C] (D ends up at index 2, as requested)
+  * If D is moved to Box 1 with index=3, Box 1 will look like this: [A B C D] (D ends up at index 3, as requested)
+  * If A is moved to Box 1 with index=2, Box 1 will look like this: [B C A] (A ends up at index 2, as requested)
+  * If A is moved to Box 1 with index=3, a 400 error will be returned, because it is not possible to place A at an index of 3.
+
+  If the `index` parameter is omitted, the Pokémon will always be placed in the last slot of the box.
   */
   async move (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, ['id', 'box']);
     const pokemon = await Pokemon.findOne({id: params.id});
-    const newBox = await Box.findOne({id: params.box});
+    const newBox = await Box.findOne({id: params.box}).populate('contents');
     Validation.verifyUserIsOwner(pokemon, req.user);
     Validation.verifyUserIsOwner(newBox, req.user);
     if (pokemon.owner !== newBox.owner) {
       return res.forbidden();
     }
-    const index = _.has(params, 'index') ? params.index : newBox._orderedIds.length;
-    if (!_.isNumber(index) || index % 1 || !_.inRange(index, newBox._orderedIds.length + 1)) {
+    const orderedContents = BoxOrdering.getOrderedPokemonList(newBox);
+    const indCap = params.box === pokemon.box ? orderedContents.length - 1 : orderedContents.length;
+    const index = _.has(params, 'index') ? params.index : indCap;
+    if (!_.isNumber(index) || index % 1 || !_.inRange(index, indCap + 1)) {
       return res.badRequest('Invalid index parameter');
     }
 
@@ -134,6 +145,7 @@ module.exports = _.mapValues({
     if (params.box === pokemon.box) {
       oldBox = newBox;
       itemsToSave = [pokemon, newBox];
+      _.remove(orderedContents, pkmn => pkmn.id === pokemon.id);
     } else {
       oldBox = await Box.findOne({id: pokemon.box});
       itemsToSave = [pokemon, newBox, oldBox];
@@ -141,7 +153,12 @@ module.exports = _.mapValues({
 
     _.remove(oldBox._orderedIds, id => id === pokemon.id);
     pokemon.box = newBox.id;
-    newBox._orderedIds.splice(index, 0, pokemon.id);
+    /* If the new box contains deleted items, the provided index of the new pokemon of the orderedContents list might not be
+    the same as the index of the new pokemon in the _orderedIds list, since the _orderedIds list also contains the IDs of
+    deleted contents. To fix the issue, take the pokemon ID that the new pokemon will immediately follow in the orderedContents
+    list, and place the new pokemon right after that ID in the _orderedIds list. */
+    const adjIndex = index > 0 ? newBox._orderedIds.indexOf(orderedContents[index - 1].id) + 1 : 0;
+    newBox._orderedIds.splice(adjIndex, 0, pokemon.id);
 
     await Promise.all(itemsToSave.map(item => item.save()));
     return res.ok();

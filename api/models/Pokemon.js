@@ -144,7 +144,7 @@ const attributes = {
   async destroy () {
     await PokemonNote.destroy({id: this.notes});
     const box = await Box.findOne({id: this.box});
-    _.remove(box.orderedIds, id => id === this.id);
+    _.remove(box._orderedIds, id => id === this.id);
     await box.save();
     return await Pokemon.destroy({id: this.id});
   },
