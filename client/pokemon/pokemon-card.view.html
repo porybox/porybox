@@ -39,6 +39,7 @@
       <div flex title="Nature">{{pokemon.data.natureName}}</div>
       <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
       <div flex title="OT, TID">{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
-      <div flex>{{pokemon.ivs}}</div>
+      <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
+                      'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
     </md-card-content>
 </md-card>

@@ -1,6 +1,6 @@
-/**
- *
- */
+'use strict';
+const statIndex = {'Hp': 0, 'Atk': 1, 'Def': 2, 'SpAtk': 3, 'SpDef': 4, 'Spe': 5};
+
 module.exports = function($routeParams, $scope, io) {
   this.data = this.data || {};
   this.id = $routeParams.pokemonid || this.data.id;
@@ -13,7 +13,7 @@ module.exports = function($routeParams, $scope, io) {
       this.data.ivSpAtk,
       this.data.ivSpDef,
       this.data.ivSpe
-    ].join('/');
+    ];
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
@@ -27,6 +27,9 @@ module.exports = function($routeParams, $scope, io) {
     this.heldItemUrl = this.data.heldItemName
       ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null;
+
+    this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
+
     return this;
   }
 
