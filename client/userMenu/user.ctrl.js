@@ -3,13 +3,9 @@
  * @return {function} A controller that contains 2 test elements
  */
 module.exports = function(io) {
-  this.logout = function() {
-    io.socket.post('/logout', {}, function (data, res) {
-      if (res.statusCode === 200) {
-        window.location = '/';
-      } else {
-        console.error(data);
-      }
-    });
+  this.logout = function () {
+    io.socket.postAsync('/logout', {}).then(() => {
+      window.location = '/'
+    }).catch(console.error.bind(console));
   };
 }

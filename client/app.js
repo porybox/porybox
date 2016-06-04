@@ -4,6 +4,7 @@ require('angular-material');
 require('angular-messages');
 require('angular-route');
 require('ng-file-upload');
+const Promise = require('bluebird');
 
 // Import modules
 require('./login/login.module.js');
@@ -53,6 +54,18 @@ porybox.config(['$mdThemingProvider','$routeProvider',function(
 porybox.service('io', function () {
   const socket = require('socket.io-client');
   const io = require('sails.io.js')(socket);
+  // create versions of the io.socket functions that return Promises.
+  // e.g. io.socket.getAsync('/foo').then(handleResponse).catch(handleErrors)
+  Promise.promisifyAll(io.socket, {
+    promisifier (fn) {
+      return function (...args) {
+        return new Promise((resolve, reject) => {
+          // Resolve the promise if the status code is 2xx.
+          fn.call(this, ...args, (d, res) => /^2/.test(res.statusCode) ? resolve(d) : reject(res));
+        });
+      }
+    }
+  })
   return io;
 });
 

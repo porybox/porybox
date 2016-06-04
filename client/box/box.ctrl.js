@@ -1,6 +1,3 @@
-/**
- *
- */
 module.exports = function($scope, $routeParams, io) {
   const self = this;
   self.box = self.box || {};
@@ -11,15 +8,11 @@ module.exports = function($scope, $routeParams, io) {
   self.pokemon = [];
 
   self.fetch = function () {
-    io.socket.get('/b/' + self.id, function (data, res) {
-      if (res.statusCode === 200) {
-        self.name = data.name;
-        self.description = data.description;
-        self.pokemon = data.contents;
-      } else {
-        console.error(res);
-      }
+    io.socket.getAsync('/b/' + self.id).then(data => {
+      self.name = data.name;
+      self.description = data.description;
+      self.pokemon = data.contents;
       $scope.$apply();
-    });
+    }).catch(console.error.bind(console));
   }
 };
