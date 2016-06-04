@@ -14,13 +14,13 @@ ng.module('porybox.pokemon', ['ngRoute'])
       data: '='
     },
     templateUrl: 'pokemon/pokemon-card.view.html',
-    controller: ['$routeParams', '$http', '$scope', pokemonController],
+    controller: ['$routeParams', '$scope', 'io', pokemonController],
     controllerAs: 'pokemon'
   }).config(['$routeProvider', function($routeProvider) {
     $routeProvider.
       when('/pokemon/:pokemonid', {
-        templateUrl: '/pokemon/pokemon-list.view.html',
-        controller: ['$routeParams', '$http', '$scope', pokemonController],
+        templateUrl: '/pokemon/pokemon-full.view.html',
+        controller: ['$routeParams', '$scope', 'io', pokemonController],
         controllerAs: 'pokemon'
       });
   }]);

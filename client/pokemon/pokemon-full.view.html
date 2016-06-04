@@ -1,0 +1,12 @@
+<div ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData" style="text-align:center;">
+  <img ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
+  <p>
+    This is a <strong>{{pokemon.data.speciesName}}</strong>.
+    <div ng-if="pokemon.data.isShiny">It is shiny.</div>
+    <div ng-if="!pokemon.data.isShiny">It is not shiny.</div>
+    It was met at {{pokemon.data.metLocationName}}.
+    <div ng-if="pokemon.data.isUnique">It is unique on the Porybox database.</div>
+    <div ng-if="!pokemon.data.isUnique">It is not unique on the Porybox database.</div>
+    <a ng-href="/#/box/{{pokemon.data.box}}">Back to box</a>
+  </p>
+</div>
