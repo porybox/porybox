@@ -1,17 +1,21 @@
 <md-toolbar>
   <div class="md-toolbar-tools">
-
+    <a href="/#/">
+      <img src="/img/logo-header.png" alt="Porybox"/>
+    </a>
     <h2>
-      <span>Porybox</span>
+      <span hide-xs>Porybox</span>
     </h2>
 
     <span flex></span>
 
     <% if (typeof user !== 'undefined') {%>
       <add-menu boxes="main.boxes" prefs="main.prefs"></add-menu>
+      <md-button aria-label="Help & FAQ" href="/faq">Help & FAQ</md-button>
       <user-menu name="'<%= user.name %>'"></user-menu>
     <% } else { %>
-      <a class="mdl-navigation__link" href="/login">Login/Register</a>
+      <md-button aria-label="Help & FAQ" href="/faq">Help & FAQ</md-button>
+      <md-button aria-label="Login/Register" href="/login">Login/Register</md-button>
     <% } %>
   </div>
 </md-toolbar>

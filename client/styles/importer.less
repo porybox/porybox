@@ -4,8 +4,6 @@
  *******************************/
 @import (inline) '../../node_modules/angular-material/angular-material.css';
 
-
-
 /******************************
  *
  ******************************/
@@ -20,40 +18,94 @@
  * Overrides
  *******************************/
 
+md-card md-card-title {
+  padding: 10px 16px;
+}
+
+md-card md-card-header {
+  background-color: rgba(128, 216, 255, .25);
+  padding: 5px 10px 0 0;
+  white-space: nowrap;
+}
+
+.box-header {
+  background-color: rgba(45, 45, 45, .2);
+  padding: 7px 10px;
+}
+
+md-card md-card-content {
+  padding: 14px;
+  font-size: 14px;
+  line-height: 21px;
+}
+
 .md-headline {
   max-height: 3em;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
-  overflow-y: hidden
+  font-size: 18px;
+  max-width: 100px;
 }
 
 md-card-title-text {
   overflow-x: hidden;
 }
 
-.flex-20 {
-  display: flex;
-  align-items: stretch;
+md-icon svg {
+  fill: inherit;
 }
 
-.flex-20 box-card, .flex-20 pokemon-card {
-  display: flex;
-  width: 100%;
-}
+/*******************************
+ * Header
+ *******************************/
 
-.flex-20 box-card md-card, .flex-20 pokemon-card md-card {
-  width: 100%;
-}
-
-.flex-20 span.md-subhead {
-  max-height: 4em;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.md-toolbar-tools img {
+  height: 74px;
+  margin: 0 7px 0px -5px;
 }
 
  /*******************************
   * Pokemon cards
   *******************************/
+
+@media (min-width: 600px) {
+  .pokemon-card-mini {
+    width: 166px;
+    height: 214px;
+  }
+}
+
+@media (max-width: 599px) {
+  .pokemon-card-mini {
+    display: block;
+    width: auto;
+  }
+}
+
+.icon-container {
+  position: relative;
+}
+
+.icon-container > img {
+  position: absolute;
+  width: 40px;
+}
+
+.pokemon-egg {
+  margin-left: 5px;
+}
+
+@media (min-width: 600px) {
+  .box-card {
+    width: 250px;
+    height: 150px;
+  }
+}
+
+.box-card {
+  max-height: 150px;
+  overflow: scroll;
+}
 
 .card-link {
   text-decoration: none;
@@ -61,21 +113,49 @@ md-card-title-text {
   display: block;
 }
 
-.pokemonShiny, .pokemonKB {
-  padding-left: 10px;
+.pokemon-kb, .pokemon-shiny {
+  margin-left: 5px;
+  font-size: 10px;
 }
 
-.pokemonKB {
-  color: blue;
+.pokemon-kb {
+  width: 9px;
 }
 
-.pokemonShiny {
-  color: red;
+.pokemon-kb path {
+  fill: #043575;
 }
 
-.pokeball, .helditem {
+.pokemon-shiny {
+  width: 10px;
+}
+
+.pokemon-shiny path {
+  fill: #f9262f;
+}
+
+.pokeball, .held-item {
   width: 32px;
   height: 32px;
+}
+
+.pokeball {
+  margin-left: -5px;
+}
+
+.pokemon-ha {
+  font-style: italic;
+}
+
+.language-tag {
+  color: #fff;
+  background-color: #505050;
+  border: 3px solid #505050;
+  border-radius: 2px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 14px;
+  margin-right: -2px;
 }
 
  /*******************************
