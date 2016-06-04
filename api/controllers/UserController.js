@@ -12,18 +12,15 @@ module.exports = _.mapValues({
     return res.ok(user.omitPrivateInformation());
   },
   async boxes (req, res) {
-    const user = await User.findOne({id: req.param('name')});
+    const user = await User.findOne({id: req.param('name')}).populate('boxes');
     if (!user) {
       return res.notFound();
     }
-    const boxes = await Box.find({
-      owner: req.param('name'),
-      _markedForDeletion: false
-    });
+    const orderedBoxes = BoxOrdering.getOrderedBoxList(user);
     if (req.user && (req.user.name === user.name || req.user.isAdmin)) {
-      return res.ok(boxes);
+      return res.ok(orderedBoxes);
     }
-    return res.ok(_.reject(boxes, b => b.visibility === 'unlisted'));
+    return res.ok(_.reject(orderedBoxes, b => b.visibility === 'unlisted'));
   },
   me (req, res) {
     return res.redirect(`/user/${req.user.name}`);

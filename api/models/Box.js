@@ -93,5 +93,19 @@ module.exports =  {
   beforeCreate (box, next) {
     box.id = Util.generateHexId();
     next(null, box);
+  },
+  afterCreate (box, next) {
+    User.findOne({name: box.owner}).then(user => {
+      user._orderedBoxIds.push(box.id);
+      return user.save();
+    }).asCallback(next);
+  },
+  afterDestroy (destroyedBoxes, next) {
+    Promise.each(destroyedBoxes, box => {
+      return User.findOne({name: box.owner}).then(user => {
+        _.remove(user._orderedBoxIds, id => id === box.id);
+        return user.save();
+      });
+    }).asCallback(next);
   }
 };

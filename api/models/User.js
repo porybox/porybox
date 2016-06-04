@@ -62,6 +62,10 @@ module.exports =  {
       containsOnlyTSVs: true,
       defaultsTo: []
     },
+    _orderedBoxIds: {
+      type: 'array',
+      defaultsTo: []
+    },
     omitPrivateInformation () {
       return _.omit(this, ['passports', 'email', 'preferences', 'updatedAt']);
     },
