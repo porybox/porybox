@@ -61,7 +61,9 @@ porybox.service('io', function () {
       return function (...args) {
         return new Promise((resolve, reject) => {
           // Resolve the promise if the status code is 2xx.
-          fn.call(this, ...args, (d, res) => /^2/.test(res.statusCode) ? resolve(d) : reject(res));
+          fn.call(this, ...args, (d, res) => {
+            return /^2/.test(res.statusCode) ? resolve(d) : reject(new Error(res));
+          })
         });
       }
     }
