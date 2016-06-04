@@ -37,7 +37,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       controller: ['$mdBottomSheet', 'Upload', pokemonCtrl],
       locals: {
         boxes: this.boxes,
-        defaultPokemonVisibility: this.prefs[0].defaultPokemonVisibility
+        defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
       },
       controllerAs: 'pkmDialog',
       bindToController: true,

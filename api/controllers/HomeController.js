@@ -14,7 +14,7 @@ module.exports = _.mapValues({
           .then(BoxOrdering.getOrderedBoxList)
         : null,
       prefs: req.user
-        ? await UserPreferences.find({user: req.user.name})
+        ? await UserPreferences.findOne({user: req.user.name})
         : null
     });
   },
