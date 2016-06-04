@@ -16,6 +16,7 @@ module.exports = function($routeParams, $scope, io) {
     ].join('/');
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
+    this.hasHA = this.data.abilityNum === 4;
 
     this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
       this.data.speciesName && this.data.speciesName.toLowerCase()}`;
