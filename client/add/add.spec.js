@@ -1,5 +1,7 @@
 const ctrlTest = require('./add.ctrl');
 const sinon = require('sinon');
+const Promise = require('bluebird');
+Promise.config({warnings: false});
 
 describe('AddCtrl', function() {
   // beforeEach(module('porygon'));
@@ -19,8 +21,8 @@ describe('AddCtrl', function() {
     };
     io = {
       socket: {
-        post: function (url, data, callback) {
-          callback(data, {statusCode: 200});
+        postAsync: function (url, data) {
+          return Promise.resolve().then(() => ({}));
         }
       }
     };
@@ -51,19 +53,20 @@ describe('AddCtrl', function() {
       $mdMedia: $mdMedia,
       $mdBottomSheet: $mdBottomSheet
     }, {boxes: []});
-    postSpy = sinon.spy(io.socket, 'post');
+    postSpy = sinon.spy(io.socket, 'postAsync');
   }));
 
   describe('controller.addBox', function() {
-    it('calls io.socket.post', function() {
+    it('calls io.socket.postAsync', function() {
       tested.box();
       expect(postSpy.called).to.equal(true);
     });
 
-    it('adds to boxes', function() {
+    it('adds to boxes', function () {
       expect(tested.boxes.length).to.equal(0);
-      tested.box();
-      expect(tested.boxes.length).to.equal(1);
+      return tested.box().then(() => {
+        expect(tested.boxes.length).to.equal(1);
+      });
     });
   });
 });

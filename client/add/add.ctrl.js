@@ -1,4 +1,5 @@
 const angular = require('angular');
+const Promise = require('bluebird');
 const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
 
@@ -7,11 +8,9 @@ const pokemonCtrl = require('./pokemon.ctrl.js');
  * @return {function} A controller that contains 2 test elements
  */
 module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
-  const self = this;
-
-  this.box = function (event) {
+  this.box = event => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-    $mdDialog.show({
+    return Promise.resolve($mdDialog.show({
       controller: ['$mdDialog', boxCtrl],
       controllerAs: 'dialog',
       templateUrl: 'add/box.view.html',
@@ -19,20 +18,11 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       targetEvent: event,
       clickOutsideToClose: true,
       fullscreen: useFullScreen
-    })
-    .then(function({name, description}) {
-      io.socket.post('/box', {
-        name: name,
-        description: description
-      }, function (data, res) {
-        if (res.statusCode === 200 || res.statusCode === 201) {
-          self.boxes.push(data);
-        } else {
-          console.log(data);
-        }
-        $scope.$apply();
-      });
-    });
+    }).then(({name, description}) => {
+      return io.socket.postAsync('/box', {name, description});
+    })).then(res => {
+      this.boxes.push(res);
+    }).catch(console.error.bind(console));
 
     $scope.$watch(function() {
       return $mdMedia('xs') || $mdMedia('sm');
@@ -42,7 +32,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
   };
 
   this.pokemon = function (event) {
-    $mdBottomSheet.show({
+    return $mdBottomSheet.show({
       templateUrl: 'add/pokemon.view.html',
       controller: ['$mdBottomSheet', 'Upload', pokemonCtrl],
       locals: {
@@ -53,8 +43,6 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       bindToController: true,
       parent: angular.element(document.body),
       targetEvent: event
-    }).then(function({pokemon}) {
-      console.log(pokemon);
     });
   }
 
