@@ -97,14 +97,20 @@ md-icon svg {
 
 @media (min-width: 600px) {
   .box-card {
-    width: 250px;
+    width: 350px;
     height: 150px;
   }
 }
 
 .box-card {
   max-height: 150px;
-  overflow: scroll;
+  overflow: auto;
+  margin-right: -100px;
+  padding-right: 100px;
+}
+
+.hide-scroll {
+  overflow: hidden;
 }
 
 .card-link {
