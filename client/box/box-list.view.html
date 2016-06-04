@@ -2,7 +2,7 @@
   <md-card-header class="box-header">{{box.name}}</md-card-header>
   <md-card-content>{{box.description}}</md-card-content>
 </md-card>
-<div layout="row" layout-xs="column" layout-wrap>
+<div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()">
   <div flex-xs ng-repeat="pokemon in box.pokemon">
     <pokemon-card data="pokemon"></pokemon-card>
   </div>

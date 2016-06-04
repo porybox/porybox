@@ -10,14 +10,16 @@ module.exports = function($scope, $routeParams, io) {
   self.description = self.box.description;
   self.pokemon = [];
 
-  io.socket.get('/b/' + self.id, function (data, res) {
-    if (res.statusCode === 200) {
-      self.name = data.name;
-      self.description = data.description;
-      self.pokemon = data.contents;
-    } else {
-      console.error(res);
-    }
-    $scope.$apply();
-  });
+  self.fetch = function () {
+    io.socket.get('/b/' + self.id, function (data, res) {
+      if (res.statusCode === 200) {
+        self.name = data.name;
+        self.description = data.description;
+        self.pokemon = data.contents;
+      } else {
+        console.error(res);
+      }
+      $scope.$apply();
+    });
+  }
 };
