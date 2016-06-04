@@ -28,7 +28,14 @@
         <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
         <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
       </div>
-      <div flex title="Level">Level {{pokemon.data.level}}</div>
+      <div layout="row" layout-align="none center">
+        <div flex title="Level">Level {{pokemon.data.level}}</div>
+        <span layout-align="end">
+          <i ng-if="pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
+          <i ng-if="pokemon.data.visibility === 'readonly'" class="material-icons visibility" title="Read-Only">remove_red_eye</i>
+          <i ng-if="pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">people</i>
+        </span>
+      </div>
       <div flex title="Nature">{{pokemon.data.natureName}}</div>
       <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
       <div flex title="OT, TID">{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
