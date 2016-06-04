@@ -28,9 +28,7 @@ describe('PokemonCtrl', function() {
         dexNo: 'pokemonDexNo',
         owner: 'boxUser',
         id: 'pokemonId',
-        tid: 0,
-        sid: 0,
-        pid: 0xffff0000
+        isShiny: false
       }});
       expect(tested.data.nickname).to.equal('pokemondNickname');
       expect(tested.data.owner).to.equal('boxUser');
@@ -63,21 +61,6 @@ describe('PokemonCtrl', function() {
       expect(tested5.paddedTid).to.equal('00001');
       const tested6 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {tid: 0}});
       expect(tested6.paddedTid).to.equal('00000');
-    });
-
-    it('determines shininess correctly', function() {
-      const tested1 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {
-        pid: 0,
-        tid: 0,
-        sid: 15}
-      });
-      expect(tested1.isShiny).to.be.true;
-      const tested2 = $controller(ctrlTest, {$scope, io, $routeParams}, {data: {
-        pid: 0,
-        tid: 0,
-        sid: 16}
-      });
-      expect(tested2.isShiny).to.be.false;
     });
   });
 });
