@@ -14,5 +14,5 @@ module.exports = function($scope, $routeParams, io) {
       self.pokemon = data.contents;
       $scope.$apply();
     }).catch(console.error.bind(console));
-  }
+  };
 };

@@ -49,7 +49,7 @@ module.exports = function serverError (data, options) {
 
   // Attempt to prettify data for views, if it's a non-error object
   let viewData = data;
-  if (!(viewData instanceof Error) && 'object' == typeof viewData) {
+  if (!(viewData instanceof Error) && 'object' === typeof viewData) {
     try {
       viewData = require('util').inspect(data, {depth: null});
     } catch (e) {

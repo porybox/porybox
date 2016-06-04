@@ -22,7 +22,7 @@ module.exports = function ($scope, $http) {
         password: $scope.registerPassword,
         email: $scope.registerEmail
       }
-    }).then(res => {
+    }).then(() => {
       window.location = '/';
     }).catch(res => {
       if (res.status === 401 && ERRORS_MAP[res.data]) {
@@ -32,7 +32,7 @@ module.exports = function ($scope, $http) {
         this.registerError = 'An unknown error occured.';
       }
     });
-  }
+  };
   this.login = () => {
     return $http({
       method: 'POST',
@@ -41,7 +41,7 @@ module.exports = function ($scope, $http) {
         identifier: $scope.loginName,
         password: $scope.loginPassword
       }
-    }).then(res => {
+    }).then(() => {
       window.location = '/';
     }).catch(res => {
       if (res.status === 401 && ERRORS_MAP[res.data]) {
@@ -51,5 +51,5 @@ module.exports = function ($scope, $http) {
         this.loginError = 'An unknown error occured.';
       }
     });
-  }
-}
+  };
+};

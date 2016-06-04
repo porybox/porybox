@@ -71,9 +71,11 @@
   "devDependencies": {
     "angular-mocks": "^1.5.0",
     "chai": "^3.5.0",
+    "dirty-chai": "^1.2.2",
     "karma": "^0.13.21",
     "karma-browserify": "^5.0.1",
     "karma-chai": "^0.1.0",
+    "karma-dirty-chai": "^1.0.2",
     "karma-mocha": "^1.0.1",
     "karma-phantomjs-launcher": "^1.0.0",
     "mocha": "^2.5.0",

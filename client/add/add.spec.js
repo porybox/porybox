@@ -21,7 +21,7 @@ describe('AddCtrl', function() {
     };
     io = {
       socket: {
-        postAsync: function (url, data) {
+        postAsync: function () {
           return Promise.resolve().then(() => ({}));
         }
       }
@@ -32,7 +32,7 @@ describe('AddCtrl', function() {
           then: function (fn) {
             fn({name: 'name', description: 'description'});
           }
-        }
+        };
       }
     };
     $mdBottomSheet = {
@@ -41,7 +41,7 @@ describe('AddCtrl', function() {
           then: function (fn) {
             fn({name: 'name', description: 'description'});
           }
-        }
+        };
       }
     };
     $mdMedia = function () {};

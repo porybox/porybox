@@ -121,7 +121,7 @@ exports.connect = function (req, res, next) {
         protocol: 'local',
         password: password,
         user: user.name
-      }, function (err, passport) {
+      }, function (err) {
         next(err, user);
       });
     } else {

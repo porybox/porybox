@@ -21,7 +21,7 @@ module.exports.passport = {
 
   bearer: {
     strategy: require('passport-http-bearer').Strategy
-  },
+  }
 
   /*twitter: {
     name: 'Twitter',

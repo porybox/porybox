@@ -122,7 +122,7 @@ passport.connect = function (req, query, profile, next) {
 
           query.user = user.name;
 
-          Passport.create(query, function (err, passport) {
+          Passport.create(query, function (err) {
             // If a passport wasn't created, bail out
             if (err) {
               return next(err);
@@ -157,7 +157,7 @@ passport.connect = function (req, query, profile, next) {
       if (!passport) {
         query.user = req.user.name;
 
-        Passport.create(query, function (err, passport) {
+        Passport.create(query, function (err) {
           // If a passport wasn't created, bail out
           if (err) {
             return next(err);
@@ -350,8 +350,8 @@ passport.disconnect = function (req, res, next) {
     }
 
     Passport.destroy(passport.id, function (error) {
-      if (err) {
-        return next(err);
+      if (error) {
+        return next(error);
       }
 
       next(null, user);

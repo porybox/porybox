@@ -21,7 +21,7 @@ describe('LoginCtrl', function() {
       expect(controller.login).to.be.a('function');
       return controller.login().then(() => {
         expect(controller.loginError).to.equal('incorrect password');
-        expect(controller.registerError).to.not.be.ok;
+        expect(controller.registerError).to.not.be.ok();
       });
     });
   });
@@ -32,7 +32,7 @@ describe('LoginCtrl', function() {
       expect(controller.register).to.be.a('function');
       return controller.register().then(() => {
         expect(controller.registerError).to.equal('invalid email address');
-        expect(controller.loginError).to.not.be.ok;
+        expect(controller.loginError).to.not.be.ok();
       });
     });
   });

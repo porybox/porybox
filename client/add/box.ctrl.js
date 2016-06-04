@@ -12,7 +12,7 @@ module.exports = function ($mdDialog) {
   };
   this.canAdd = function () {
     return Boolean(this.name);
-  }
+  };
   this.answer = function() {
     if (!this.name) {
       return;
@@ -22,4 +22,4 @@ module.exports = function ($mdDialog) {
       description: this.description
     });
   };
-}
+};
