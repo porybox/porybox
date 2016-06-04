@@ -25,7 +25,7 @@
       </div>
       <div layout="row" layout-align="none center">
         <div flex style="font-weight:bold;">{{pokemon.data.speciesName}}</div>
-        <md-icon ng-if="pokemon.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny"></md-icon>
+        <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny"></md-icon>
         <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb"></md-icon>
       </div>
       <div flex>Level {{pokemon.data.level}}</div>
