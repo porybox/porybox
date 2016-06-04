@@ -39,10 +39,13 @@ porybox.config(['$mdThemingProvider','$routeProvider',function(
   $routeProvider
 ) {
   $mdThemingProvider.theme('default')
-    .primaryPalette('light-blue')
-    .accentPalette('pink', {
-      default: 'A200'
+    .primaryPalette('light-blue', {
+      'default': '600',
+      'hue-1': '900'
     })
+    .accentPalette('pink', {
+      'default': 'A100'
+    });
 
   $routeProvider.otherwise({ redirectTo: '/' });
 }]);

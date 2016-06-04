@@ -1,33 +1,37 @@
-<md-card>
+<md-card class="pokemon-card-mini">
   <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link">
     <md-card-header>
       <md-card-avatar>
-        <img ng-src="https://pokeapi.co/media/sprites/pokemon/{{pokemon.iconUrl}}.png" />
+        <div class="icon-container">
+          <img ng-if="pokemon.data.isEgg" style="margin-left:-5px" src="https://github.com/msikma/pokesprite/blob/master/icons/etc/egg.png?raw=true" />
+          <img ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
+        </div>
       </md-card-avatar>
-      <span class="md-headline">{{pokemon.data.speciesName}}</span>
+      <span class="md-headline">{{pokemon.data.nickname}}</span>
     </md-card-header>
+  </a>
     <md-card-content layout="column">
       <div layout="row" layout-align="none center">
         <img class="pokeball"
           ng-if="pokemon.ballNameUrl"
           ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
-          title="{{pokemon.ballName}}" />
-        <img class="helditem"
+          title="{{pokemon.data.ballName}}" />
+        <img class="held-item"
           ng-if="pokemon.heldItemUrl"
           ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
           title="{{pokemon.data.heldItemName}}" />
-        <span class="pokemonShiny" flex ng-if="pokemon.isShiny">&#x2605;</span>
-        <span class="pokemonKB" flex ng-if="pokemon.isKB">&#x2B1F;</span>
-
-
         <span flex></span>
-        <span flex>{{pokemon.data.language}}</span>
+        <span class="language-tag" layout-align="end">{{pokemon.data.language}}</span>
+      </div>
+      <div layout="row" layout-align="none center">
+        <div flex style="font-weight:bold;">{{pokemon.data.speciesName}}</div>
+        <md-icon ng-if="pokemon.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny"></md-icon>
+        <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb"></md-icon>
       </div>
       <div flex>Level {{pokemon.data.level}}</div>
       <div flex>{{pokemon.data.natureName}}</div>
-      <div flex>{{pokemon.data.abilityName}}</div>
-      <div flex>{{pokemon.data.ot}}/{{pokemon.paddedTid}}</div>
+      <div flex ng-class="{'pokemon-ha': pokemon.data.abilityNum === 4}">{{pokemon.data.abilityName}}</div>
+      <div flex>{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
       <div flex>{{pokemon.ivs}}</div>
     </md-card-content>
-  </a>
 </md-card>

@@ -1,5 +1,9 @@
-<div layout="row" layout-align="start stretch" layout-wrap>
-  <div flex="20" ng-repeat="pokemon in box.pokemon">
+<md-card>
+  <md-card-header class="box-header">{{box.name}}</md-card-header>
+  <md-card-content>{{box.description}}</md-card-content>
+</md-card>
+<div layout="row" layout-xs="column" layout-wrap>
+  <div flex-xs ng-repeat="pokemon in box.pokemon">
     <pokemon-card data="pokemon"></pokemon-card>
   </div>
 </div>

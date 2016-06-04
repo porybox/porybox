@@ -13,10 +13,11 @@ module.exports = function($scope, $routeParams, io) {
   io.socket.get('/b/' + self.id, function (data, res) {
     if (res.statusCode === 200) {
       self.name = data.name;
+      self.description = data.description;
       self.pokemon = data.contents;
     } else {
-      console.log(res);
+      console.error(res);
     }
     $scope.$apply();
   });
-}
+};
