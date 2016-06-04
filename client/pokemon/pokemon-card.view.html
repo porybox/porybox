@@ -15,23 +15,23 @@
         <img class="pokeball"
           ng-if="pokemon.ballNameUrl"
           ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
-          title="{{pokemon.data.ballName}}" />
+          title="In a {{pokemon.data.ballName}}" />
         <img class="held-item"
           ng-if="pokemon.heldItemUrl"
           ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
-          title="{{pokemon.data.heldItemName}}" />
+          title="Holding {{pokemon.data.heldItemName}}" />
         <span flex></span>
-        <span class="language-tag" layout-align="end">{{pokemon.data.language}}</span>
+        <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
       </div>
       <div layout="row" layout-align="none center">
-        <div flex style="font-weight:bold;">{{pokemon.data.speciesName}}</div>
-        <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny"></md-icon>
-        <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb"></md-icon>
+        <div flex style="font-weight:bold;" title="Species">{{pokemon.data.speciesName}}<span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
+        <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
+        <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
       </div>
-      <div flex>Level {{pokemon.data.level}}</div>
-      <div flex>{{pokemon.data.natureName}}</div>
-      <div flex ng-class="{'pokemon-ha': pokemon.data.abilityNum === 4}">{{pokemon.data.abilityName}}</div>
-      <div flex>{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
+      <div flex title="Level">Level {{pokemon.data.level}}</div>
+      <div flex title="Nature">{{pokemon.data.natureName}}</div>
+      <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
+      <div flex title="OT, TID">{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
       <div flex>{{pokemon.ivs}}</div>
     </md-card-content>
 </md-card>
