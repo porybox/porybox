@@ -19,7 +19,8 @@ module.exports = function($routeParams, $http, $scope) {
   this.isShiny = this.tsv === this.esv && !this.data.isEgg;
   this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
 
-  this.iconUrl = `pokemon/${this.isShiny ? 'shiny' : 'regular'}/${this.data.speciesName.toLowerCase()}`;
+  this.iconUrl = `pokemon/${this.isShiny ? 'shiny' : 'regular'}/${
+    this.data.speciesName && this.data.speciesName.toLowerCase()}`;
 
   this.ballNameUrl = this.data.ballName
     ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()

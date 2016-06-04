@@ -23,15 +23,20 @@ describe('PokemonCtrl', function() {
         io: io, $routeParams:
         $routeParams
       }, {data: {
+        speciesName: 'Pelipper',
         nickname: 'pokemondNickname',
         dexNo: 'pokemonDexNo',
         owner: 'boxUser',
-        id: 'pokemonId'
+        id: 'pokemonId',
+        tid: 0,
+        sid: 0,
+        pid: 0xffff0000
       }});
       expect(tested.data.nickname).to.equal('pokemondNickname');
       expect(tested.data.owner).to.equal('boxUser');
       expect(tested.data.dexNo).to.equal('pokemonDexNo');
       expect(tested.data.id).to.equal('pokemonId');
+      expect(tested.iconUrl).to.equal('pokemon/regular/pelipper');
     });
 
     it('are correctly instantiated when not provided at construction', function() {
