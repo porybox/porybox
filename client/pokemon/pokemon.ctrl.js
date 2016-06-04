@@ -30,6 +30,7 @@ module.exports = function($routeParams, $scope, io) {
 
     this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
 
+    this.hasFullData = true;
     return this;
   }
 
