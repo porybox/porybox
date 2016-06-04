@@ -106,16 +106,24 @@ describe('BoxController', () => {
     });
   });
   describe("getting a user's boxes", () => {
-    let box1Id;
-    before(async () => {
-      box1Id = (await agent.post('/box').send({name: 'Jukebox'})).body.id;
-      await agent.post('/box').send({name: 'Sandbox'});
-      await agent.post('/box').send({name: 'Penalty Box', visibility: 'unlisted'});
-      await otherAgent.post('/box').send({name: "Pandora's Box"});
+    let box1, box2, unlistedBox, otherBox;
+    beforeEach(async () => {
+      const res = await agent.post('/box').send({name: 'Jukebox'});
+      expect(res.statusCode).to.equal(201);
+      box1 = res.body;
+      const res2 = await agent.post('/box').send({name: 'Sandbox'});
+      expect(res2.statusCode).to.equal(201);
+      box2 = res2.body;
+      const res3 = await agent.post('/box').send({name: 'Penalty Box', visibility: 'unlisted'});
+      expect(res3.statusCode).to.equal(201);
+      unlistedBox = res3.body;
+      const res4 = await otherAgent.post('/box').send({name: "Pandora's Box"});
+      expect(res4.statusCode).to.equal(201);
+      otherBox = res4.body;
       await Promise.each(['readonly', 'public', 'private'], async visibility => {
         const res = await agent.post('/uploadpk6')
           .attach('pk6', __dirname + '/pkmn1.pk6')
-          .field('box', box1Id)
+          .field('box', box1.id)
           .field('visibility', visibility);
         expect(res.statusCode).to.equal(201);
       });
@@ -125,46 +133,57 @@ describe('BoxController', () => {
       expect(res.statusCode).to.equal(302);
       expect(res.header.location).to.equal('/user/boxtester/boxes');
       const myBoxes = (await agent.get('/user/boxtester/boxes')).body;
-      const boxNames = _.map(myBoxes, 'name');
-      expect(boxNames).to.include('Jukebox');
-      expect(boxNames).to.include('Sandbox');
-      expect(boxNames).to.include('Penalty Box');
-      expect(boxNames).to.not.include("Pandora's Box");
-      const boxContents = _.find(myBoxes, {id: box1Id}).contents;
+      const boxIds = _.map(myBoxes, 'id');
+      expect(boxIds).to.include(box1.id);
+      expect(boxIds).to.include(box2.id);
+      expect(boxIds).to.include(unlistedBox.id);
+      expect(boxIds).to.not.include(otherBox.id);
+      const boxContents = _.find(myBoxes, {id: box1.id}).contents;
       expect(boxContents).to.eql([]);
     });
     it("allows a third party to get a user's listed boxes", async () => {
       const boxes = (await otherAgent.get('/user/boxtester/boxes')).body;
-      const listedBoxNames = _.map(boxes, 'name');
-      expect(listedBoxNames).to.include('Jukebox');
-      expect(listedBoxNames).to.include('Sandbox');
-      expect(listedBoxNames).to.not.include('Penalty Box');
-      const boxContents = _.find(boxes, {id: box1Id}).contents;
+      const listedBoxIds = _.map(boxes, 'id');
+      expect(listedBoxIds).to.include(box1.id);
+      expect(listedBoxIds).to.include(box2.id);
+      expect(listedBoxIds).to.not.include(unlistedBox.id);
+      expect(listedBoxIds).to.not.include(otherBox.id);
+      const boxContents = _.find(boxes, {id: box1.id}).contents;
       expect(boxContents).to.eql([]);
     });
     it("allows an unauthenticated user to get a user's listed boxes", async () => {
       const boxes = (await noAuthAgent.get('/user/boxtester/boxes')).body;
-      const listedBoxNames = _.map(boxes, 'name');
-      expect(listedBoxNames).to.include('Jukebox');
-      expect(listedBoxNames).to.include('Sandbox');
-      expect(listedBoxNames).to.not.include('Penalty Box');
-      const boxContents = _.find(boxes, {id: box1Id}).contents;
+      const listedBoxIds = _.map(boxes, 'id');
+      expect(listedBoxIds).to.include(box1.id);
+      expect(listedBoxIds).to.include(box2.id);
+      expect(listedBoxIds).to.not.include(unlistedBox.id);
+      expect(listedBoxIds).to.not.include(otherBox.id);
+      const boxContents = _.find(boxes, {id: box1.id}).contents;
       expect(boxContents).to.eql([]);
     });
     it("allows an admin to get all of a user's boxes", async () => {
       const boxes = (await adminAgent.get('/user/boxtester/boxes')).body;
-      const boxNames = _.map(boxes, 'name');
-      expect(boxNames).to.include('Jukebox');
-      expect(boxNames).to.include('Sandbox');
-      expect(boxNames).to.include('Penalty Box');
-      expect(boxNames).to.not.include("Pandora's Box");
-      const boxContents = _.find(boxes, {id: box1Id}).contents;
+      const boxIds = _.map(boxes, 'id');
+      expect(boxIds).to.include(box1.id);
+      expect(boxIds).to.include(box2.id);
+      expect(boxIds).to.include(unlistedBox.id);
+      expect(boxIds).to.not.include(otherBox.id);
+      const boxContents = _.find(boxes, {id: box1.id}).contents;
       expect(boxContents).to.eql([]);
     });
     it('does not leak internal properties of a box to the client', async () => {
-      const box = (await agent.get(`/b/${box1Id}`)).body;
+      const box = (await agent.get(`/b/${box1.id}`)).body;
       expect(box._markedForDeletion).to.not.exist;
       expect(box._orderedIds).to.not.exist;
+    });
+    it('adds newly-created boxes to the end of the box list', async () => {
+      const res = await agent.get('/user/boxtester/boxes');
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.post('/box').send({name: 'Shadowbox'});
+      expect(res2.statusCode).to.equal(201);
+      const res3 = await agent.get('/user/boxtester/boxes');
+      expect(res3.statusCode).to.equal(200);
+      expect(res3.body).to.eql(res.body.concat(res2.body));
     });
   });
   describe('deleting a box', () => {
@@ -186,10 +205,10 @@ describe('BoxController', () => {
       pkmn = res2.body;
     });
     it('does not allow a user to delete their last box', async () => {
-      await Promise.all(_.times(5, async () => {
+      for (let i = 0; i < 5; i++) {
         const res = await agent.post('/box').send({name: 'Fare Box'});
         expect(res.statusCode).to.equal(201);
-      }));
+      }
       const res2 = await agent.get('/user/boxtester/boxes');
       expect(res2.body.length).to.be.at.least(5);
       expect(res2.statusCode).to.equal(200);
