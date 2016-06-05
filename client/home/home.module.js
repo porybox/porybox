@@ -16,7 +16,7 @@ ng.module('porybox.home', ['porybox.box', 'porybox.pokemon'])
     templateUrl: 'home/home.view.html',
     controller: controller,
     controllerAs: 'home'
-  }).config(['$routeProvider', function($routeProvider) {
+  }).config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
       when('/', {
         templateUrl: '/home/index.view.html'

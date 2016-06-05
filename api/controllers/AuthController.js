@@ -7,57 +7,6 @@
  */
 module.exports = {
   /**
-   * Render the login page
-   *
-   * The login form itself is just a simple HTML form:
-   *
-      <form role="form" action="/auth/local" method="post">
-        <input type="text" name="identifier" placeholder="Username or Email">
-        <input type="password" name="password" placeholder="Password">
-        <button type="submit">Sign in</button>
-      </form>
-   *
-   * You could optionally add CSRF-protection as outlined in the documentation:
-   * http://sailsjs.org/#!documentation/config.csrf
-   *
-   * A simple example of automatically listing all available providers in a
-   * Handlebars template would look like this:
-   *
-      {{#each providers}}
-        <a href="/auth/{{slug}}" role="button">{{name}}</a>
-      {{/each}}
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  login: function (req, res) {
-    if (req.session.authenticated) {
-      return res.redirect('/');
-    }
-
-    const strategies = sails.config.passport,
-      providers  = {};
-
-    // Get a list of available providers for use in your templates.
-    Object.keys(strategies).forEach(function (key) {
-      if (key === 'local') {
-        return;
-      }
-
-      providers[key] = {
-        name: strategies[key].name,
-        slug: key
-      };
-    });
-
-    // Render the `auth/login.ext` view
-    res.view('login/view', {
-      providers: providers,
-      errors: req.flash('error')
-    });
-  },
-
-  /**
    * Log out a user and return them to the homepage
    *
    * Passport exposes a logout() function on req (also aliased as logOut()) that
@@ -74,27 +23,6 @@ module.exports = {
   logout: function (req, res) {
     req.session.destroy();
     return res.ok();
-  },
-
-  /**
-   * Render the registration page
-   *
-   * Just like the login form, the registration form is just simple HTML:
-   *
-      <form role="form" action="/auth/local/register" method="post">
-        <input type="text" name="username" placeholder="Username">
-        <input type="text" name="email" placeholder="Email">
-        <input type="password" name="password" placeholder="Password">
-        <button type="submit">Sign up</button>
-      </form>
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  register: function (req, res) {
-    res.view('login/view', {
-      errors: req.flash('error')
-    });
   },
 
   /**
@@ -130,29 +58,7 @@ module.exports = {
       // because we shouldn't expose internal authorization errors to the user.
       // We do return a generic error and the original request body.
       const flashError = req.flash('error')[0];
-
-      if (err && !flashError ) {
-        req.flash('error', 'Error.Passport.Generic');
-      } else if (flashError) {
-        req.flash('error', flashError);
-      }
-      req.flash('form', req.body);
-
-      // If an error was thrown, redirect the user to the
-      // login, register or disconnect action initiator view.
-      // These views should take care of rendering the error messages.
-      const action = req.param('action');
-
-      switch (action) {
-      case 'register':
-        res.redirect('/register');
-        break;
-      case 'disconnect':
-        res.redirect('back');
-        break;
-      default:
-        res.redirect('/login');
-      }
+      return res.status(401).json(flashError || 'Error.Passport.Generic');
     }
 
     passport.callback(req, res, function (err, user, challenges, statuses) {
@@ -167,10 +73,7 @@ module.exports = {
 
         // Mark the session as authenticated to work with default Sails sessionAuth.js policy
         req.session.authenticated = true;
-
-        // Upon successful login, send the user to the homepage were req.user
-        // will be available.
-        res.redirect('/');
+        res.ok();
       });
     });
   },

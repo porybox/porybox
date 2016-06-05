@@ -11,16 +11,14 @@ describe('UserController', () => {
       password: '********',
       email: 'usertester@usertesting.com'
     });
-    expect(res.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/');
+    expect(res.statusCode).to.equal(200);
     adminAgent = supertest.agent(sails.hooks.http.app);
     const res2 = await adminAgent.post('/auth/local/register').send({
       name: 'IM_AN_ADMIN_FEAR_ME',
       password: '***********************************************************************',
       email: 'admin@porybox.com'
     });
-    expect(res2.statusCode).to.equal(302);
-    expect(res2.header.location).to.equal('/');
+    expect(res2.statusCode).to.equal(200);
     await sails.models.user.update({name: 'IM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
     noAuthAgent = supertest.agent(sails.hooks.http.app);
 
@@ -302,13 +300,11 @@ describe('UserController', () => {
         password: 'correct-password',
         email: `${uniqueUsername}@usertesting.com`
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
     });
     it('allows an account to be deleted if the correct password is provided', async () => {
       const res = await deleteAgent.post('/deleteAccount').send({password: 'correct-password'});
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
     });
     it('does not allow an account to be deleted if an incorrect password is provided', async () => {
       const res = await deleteAgent.post('/deleteAccount').send({password: 'incorrect-password'});

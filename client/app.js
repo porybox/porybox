@@ -1,4 +1,5 @@
 // Import libraries
+require('babel-polyfill');
 const ng = require('angular');
 require('angular-material');
 require('angular-messages');
@@ -31,6 +32,9 @@ porybox.controller('MainCtrl', function () {
   this.init = function ({boxes, user, prefs}) {
     this.boxes = boxes;
     this.user = user;
+    if (!this.user && (window.location.hash === '' || window.location.hash === '#/')) {
+      window.location.hash = 'login';
+    }
     this.prefs = prefs;
   }
 });

@@ -17,34 +17,15 @@ describe('AuthController', function() {
   });
 
   describe('#login()', function(done) {
-
-    it('should redirect to /login when not logged in', async () => {
-      const res = await agent.get('/');
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/login');
-    });
-
-    it('should redirect from /login to / when logged in', async () => {
-      const res = await otherAgent.post('/auth/local/register').send({
-        name: 'redirectLoginToHome',
-        password: 'hunter22',
-        email: 'redirect@porybox.com'
-      });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
-      const res2 = await otherAgent.get('/login');
-      expect(res2.statusCode).to.equal(302);
-      expect(res2.header.location).to.equal('/');
-    });
-
     it('should be able to register an account', async () => {
       const res = await agent.post('/auth/local/register').send({
         name: 'testuser1',
         password: 'hunter22',
         email: 'testuser1@gmail.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
+      const res2 = await agent.get('/preferences');
+      expect(res2.statusCode).to.equal(200);
     });
 
     it('creates a box for the user after registering an account', async () => {
@@ -54,8 +35,7 @@ describe('AuthController', function() {
         password: 'f1rstB0xTest3r',
         email: 'firstBoxTester@porybox.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
       const res2 = await firstBoxAgent.get('/user/firstBoxTester/boxes');
       expect(res2.statusCode).to.equal(200);
       expect(res2.body).to.be.an.instanceof(Array);
@@ -66,18 +46,14 @@ describe('AuthController', function() {
       expect(res2.body[0].contents).to.eql([]);
     });
 
-    it('should redirect to / when logged in', async () => {
-      expect((await agent.get('/')).statusCode).to.equal(200);
-    });
-
     it("shouldn't register an account with an already-existing name", async () => {
       const res = await otherAgent.post('/auth/local/register').send({
         name: 'testuser1',
         password: 'beepboop',
         email: 'testuser1spoof@gmail.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/register');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Bad.Username');
     });
 
     it("shouldn't register an account with an already-existing email", async () => {
@@ -86,8 +62,8 @@ describe('AuthController', function() {
         password: 'beepboop',
         email: 'testuser1@gmail.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/register');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Email.Exists');
     });
 
     it("shouldn't register an account with a password less than 8 characters", async () => {
@@ -96,8 +72,8 @@ describe('AuthController', function() {
         password: 'one',
         email: 'testuser2@gmail.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/register');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Password.Invalid');
     });
 
     it('should not allow logins with invalid passwords', async () => {
@@ -105,8 +81,8 @@ describe('AuthController', function() {
         identifier: 'testuser1',
         password: 'not_the_correct_password'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/login');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Password.Wrong');
     });
 
     it('does not allow a login with very similar passwords up to 72 characters', async () => {
@@ -116,15 +92,14 @@ describe('AuthController', function() {
         password: '************************************************************************',
         email: 'invalid5@porybox.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
       const res2 = await invalidAgent.post('/auth/local').send({
         identifier: 'validUsername',
         // 71 asterisks followed by an 'a'
         password: '***********************************************************************a'
       });
-      expect(res2.statusCode).to.equal(302);
-      expect(res2.header.location).to.equal('/login');
+      expect(res2.statusCode).to.equal(401);
+      expect(res2.body).to.equal('Error.Passport.Password.Wrong');
     });
 
     it('should allow logins with valid passwords', async () => {
@@ -132,17 +107,16 @@ describe('AuthController', function() {
         identifier: 'testuser1',
         password: 'hunter22'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
     });
 
     it('should not allow logins with invalid user but the password of another', async () => {
-      const res = await otherAgent.post('/auth/local/login').send({
+      const res = await otherAgent.post('/auth/local').send({
         identifier: 'testuser2',
         password: 'hunter22'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/login');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Username.NotFound');
     });
 
     it('should not allow registration with usernames that contain special characters', async () => {
@@ -151,8 +125,8 @@ describe('AuthController', function() {
         password: 'blahblahblah',
         email: 'invalid@porybox.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/register');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Bad.Username');
     });
 
     it('should not allow registration with a username that has been deleted', async () => {
@@ -161,18 +135,16 @@ describe('AuthController', function() {
         password: 'blahblahblah',
         email: 'invalid3@porybox.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
       const res2 = await otherAgent.post('/deleteAccount').send({password: 'blahblahblah'});
-      expect(res2.statusCode).to.equal(302);
-      expect(res2.header.location).to.equal('/');
+      expect(res2.statusCode).to.equal(200);
       const res3 = await invalidAgent.post('/auth/local/register').send({
         name: 'CLAIMEDUSERNAME2',
         password: 'AAAAAAAAAAAAA',
         email: 'invalid4@porybox.com'
       });
-      expect(res3.statusCode).to.equal(302);
-      expect(res3.header.location).to.equal('/register');
+      expect(res3.statusCode).to.equal(401);
+      expect(res3.body).to.equal('Error.Passport.Bad.Username');
     });
 
     it('does not allow passwords longer than 72 characters', async () => {
@@ -180,10 +152,10 @@ describe('AuthController', function() {
         name: 'UNIQUE_USERNAME',
         // 73 asterisks
         password: '*************************************************************************',
-        email: 'invalid5@porybox.com'
+        email: 'invalid6@porybox.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/register');
+      expect(res.statusCode).to.equal(401);
+      expect(res.body).to.equal('Error.Passport.Password.Invalid');
     });
   });
   describe('changing a password', () => {
@@ -198,8 +170,7 @@ describe('AuthController', function() {
         password: 'Correct Horse Battery Staple',
         email: `${require('crypto').randomBytes(4).toString('hex')}@porybox.com`
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
     });
     it('allows a user to change their password', async () => {
       const res = await passAgent.post('/changePassword').send({
@@ -215,15 +186,14 @@ describe('AuthController', function() {
         identifier: username,
         password: 'Correct Llama Battery Staple'
       });
-      expect(res3.statusCode).to.equal(302);
-      expect(res3.header.location).to.equal('/');
+      expect(res3.statusCode).to.equal(200);
       // log in with the old password and make sure it doesn't work
       const res4 = await passAgent3.post('/auth/local').send({
         identifier: username,
         password: 'Correct Horse Battery Staple'
       });
-      expect(res4.statusCode).to.equal(302);
-      expect(res4.header.location).to.equal('/login');
+      expect(res4.statusCode).to.equal(401);
+      expect(res4.body).to.equal('Error.Passport.Password.Wrong');
     });
     it('does not allow users to change their password if the given password is wrong', async () => {
       const res = await passAgent.post('/changePassword').send({
@@ -236,15 +206,14 @@ describe('AuthController', function() {
         identifier: username,
         password: 'Correct Horse Battery Staple'
       });
-      expect(res2.statusCode).to.equal(302);
-      expect(res2.header.location).to.equal('/');
+      expect(res2.statusCode).to.equal(200);
       // log in with the new password and make sure it doesn't work
       const res3 = await passAgent3.post('/auth/local').send({
         identifier: username,
         password: 'invalid new password'
       });
-      expect(res3.statusCode).to.equal(302);
-      expect(res3.header.location).to.equal('/login');
+      expect(res3.statusCode).to.equal(401);
+      expect(res3.body).to.equal('Error.Passport.Password.Wrong');
     });
     it('returns a 400 error if a user omits either parameter', async () => {
       const res = await passAgent.post('/changePassword').send({newPassword: 'new password yay'});
@@ -266,8 +235,7 @@ describe('AuthController', function() {
         identifier: username,
         password: 'Correct Horse Battery Staple'
       });
-      expect(res3.statusCode).to.equal(302);
-      expect(res3.header.location).to.equal('/');
+      expect(res3.statusCode).to.equal(200);
     });
     it('returns a 400 error and keeps the old password valid if new one is invalid', async () => {
       const res = await passAgent.post('/changePassword').send({
@@ -283,8 +251,7 @@ describe('AuthController', function() {
         identifier: username,
         password: 'Correct Horse Battery Staple'
       });
-      expect(res3.statusCode).to.equal(302);
-      expect(res3.header.location).to.equal('/');
+      expect(res3.statusCode).to.equal(200);
     });
   });
 
@@ -297,8 +264,7 @@ describe('AuthController', function() {
         password: "I can't think of any funny placeholder passwords right now",
         email: 'logoutTester@porybox.com'
       });
-      expect(res.statusCode).to.equal(302);
-      expect(res.header.location).to.equal('/');
+      expect(res.statusCode).to.equal(200);
     });
     it('allows the user to log themselves out', async () => {
       const res = await logoutAgent.post('/logout');
@@ -306,8 +272,7 @@ describe('AuthController', function() {
 
       // Do a request to make sure it doesn't work
       const res2 = await logoutAgent.get('/boxes/mine');
-      expect(res2.statusCode).to.equal(302);
-      expect(res2.header.location.startsWith('/login')).to.be.true;
+      expect(res2.statusCode).to.equal(403);
     });
   });
 
