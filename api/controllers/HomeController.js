@@ -21,9 +21,5 @@ module.exports = _.mapValues({
         ? await UserPreferences.findOne({user: req.user.name})
         : null
     });
-  },
-
-  faq (req, res) {
-    return res.view('home/faq');
   }
 }, CatchAsyncErrors);

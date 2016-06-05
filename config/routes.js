@@ -22,8 +22,16 @@
 
 module.exports.routes = {
 
-  '/': 'HomeController.index',
-  '/faq': 'HomeController.faq',
+  'get /': 'HomeController.index',
+  'get /faq': {view: 'static/faq'},
+  'get /about': {view: 'static/about'},
+  'get /privacy-policy': {view: 'static/privacy-policy'},
+  'get /tos': {view: 'static/tos'},
+  'get /extracting-pk6-files': {view: 'static/extracting-pk6-files'},
+  'get /how-to-pk6-1-bvs': {view: 'static/how-to-pk6-1-bvs'},
+  'get /how-to-pk6-2-homebrew': {view: 'static/how-to-pk6-2-homebrew'},
+  'get /how-to-pk6-3-4-save-files': {view: 'static/how-to-pk6-3-4-save-files'},
+  'get /how-to-pk6-6-decrypted-powersaves': {view: 'static/how-to-pk6-6-decrypted-powersaves'},
 
   // Boxes
 
