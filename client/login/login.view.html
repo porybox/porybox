@@ -5,16 +5,17 @@
     </md-card-title-text>
   </md-card-title>
   <md-card-content>
-    <form role="form" action="/auth/local" method="post">
+    <form role="form" ng-submit="auth.login()">
       <md-input-container class="md-block">
-        <input type="text" name="identifier">
+        <input type="text" name="identifier" ng-model="loginName">
         <label>Username</label>
       </md-input-container>
       <md-input-container class="md-block">
-        <input type="password" name="password" >
+        <input type="password" name="password" ng-model="loginPassword">
         <label>Password</label>
       </md-input-container>
-      <md-button type="submit"  class="md-raised">Sign in</md-button>
+      <span ng-if="auth.loginError">{{auth.loginError}}<br></span>
+      <md-button type="submit" class="md-raised">Sign in</md-button>
     </form>
   </md-card-content>
 </md-card>

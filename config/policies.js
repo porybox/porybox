@@ -25,16 +25,14 @@ module.exports.policies = {
   '*': admin,
 
   AuthController: {
-    login: anyone,
     logout: user,
-    register: anyone,
     provider: anyone,
     callback: anyone,
     disconnect: anyone
   },
 
   HomeController: {
-    index: user,
+    index: anyone,
     faq: anyone
   },
 

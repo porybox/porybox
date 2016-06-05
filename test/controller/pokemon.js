@@ -15,24 +15,21 @@ describe('PokemonController', () => {
       password: '********',
       email: 'pk6tester@pk6testing.com'
     });
-    expect(res.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/');
+    expect(res.statusCode).to.equal(200);
 
     const res2 = await otherAgent.post('/auth/local/register').send({
       name: 'EXPLOUD_BOT',
       password: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
       email: 'AAAAAAAA@AAAAAAAA.com'
     });
-    expect(res2.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/');
+    expect(res2.statusCode).to.equal(200);
 
     const res3 = await adminAgent.post('/auth/local/register').send({
       name: 'pokemon_admin',
       password: 'correct horse battery staple',
       email: 'pokemon_admin@porybox.com'
     });
-    expect(res3.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/');
+    expect(res3.statusCode).to.equal(200);
 
     const res4 = await agent.post('/box').send({name: 'Boxers'});
     expect(res4.statusCode).to.equal(201);
