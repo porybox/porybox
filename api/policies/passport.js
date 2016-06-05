@@ -28,8 +28,16 @@ module.exports = function (req, res, next) {
     passport.session()(req, res, function () {
       // Make the user available throughout the frontend
       res.locals.user = req.user;
-
-      next();
+      if (req.user) {
+        Promise.all([
+          User.findOne({name: req.user.name}).populate('boxes').then(BoxOrdering.getOrderedBoxList),
+          UserPreferences.findOne({user: req.user.name})
+        ]).then(([boxes, prefs]) => {
+          _.assign(res.locals, {boxes, prefs});
+        }).asCallback(next);
+      } else {
+        next();
+      }
     });
   });
 };
