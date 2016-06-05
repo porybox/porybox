@@ -23,15 +23,15 @@
 module.exports.routes = {
 
   'get /': 'HomeController.index',
-  'get /faq': {view: 'static/faq'},
-  'get /about': {view: 'static/about'},
-  'get /privacy-policy': {view: 'static/privacy-policy'},
-  'get /tos': {view: 'static/tos'},
-  'get /extracting-pk6-files': {view: 'static/extracting-pk6-files'},
-  'get /how-to-pk6-1-bvs': {view: 'static/how-to-pk6-1-bvs'},
-  'get /how-to-pk6-2-homebrew': {view: 'static/how-to-pk6-2-homebrew'},
-  'get /how-to-pk6-3-4-save-files': {view: 'static/how-to-pk6-3-4-save-files'},
-  'get /how-to-pk6-6-decrypted-powersaves': {view: 'static/how-to-pk6-6-decrypted-powersaves'},
+  'get /faq': 'HomeController.faq',
+  'get /about': 'HomeController.about',
+  'get /privacy-policy': 'HomeController.privacyPolicy',
+  'get /tos': 'HomeController.tos',
+  'get /extracting-pk6-files': 'HomeController.extractingPk6Files',
+  'get /how-to-pk6-1-bvs': 'HomeController.howToPk6Bvs',
+  'get /how-to-pk6-2-homebrew': 'HomeController.howToPk6Homebrew',
+  'get /how-to-pk6-3-4-save-files': 'HomeController.howToPk6SaveFiles',
+  'get /how-to-pk6-6-decrypted-powersaves': 'HomeController.howToPk6DecryptedPowersaves',
 
   // Boxes
 
