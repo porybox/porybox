@@ -1,7 +1,7 @@
 'use strict';
 const supertest = require('supertest-as-promised');
 const _ = require('lodash');
-const expect = require('chai').expect;
+const expect = require('chai').use(require('dirty-chai')).expect;
 const Promise = require('bluebird');
 describe('PokemonController', () => {
   let agent, otherAgent, noAuthAgent, adminAgent, generalPurposeBox;
@@ -58,12 +58,12 @@ describe('PokemonController', () => {
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/pkmn2.pk6`);
       expect(res1.statusCode).to.equal(201);
-      expect(res1.body.isUnique).to.be.true;
+      expect(res1.body.isUnique).to.be.true();
       const res2 = await agent.post('/uploadpk6')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/pkmn2.pk6`);
       expect(res2.statusCode).to.equal(201);
-      expect(res2.body.isUnique).to.be.false;
+      expect(res2.body.isUnique).to.be.false();
     });
     it("should reject uploads that aren't pk6 files", async () => {
       const res = await agent.post('/uploadpk6')
@@ -101,7 +101,7 @@ describe('PokemonController', () => {
     it('allows third parties to view all the data on a public pokemon', async () => {
       const res = await otherAgent.get(`/p/${publicId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.pid).to.exist;
+      expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.equal('Pelipper');
       expect(res.body.abilityName).to.equal('Keen Eye');
       expect(res.body.natureName).to.equal('Modest');
@@ -110,15 +110,15 @@ describe('PokemonController', () => {
     it('allows the uploader to view all the data on a readonly pokemon', async () => {
       const res = await agent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.pid).to.exist;
-      expect(res.body.speciesName).to.exist;
+      expect(res.body.pid).to.exist();
+      expect(res.body.speciesName).to.exist();
     });
     it('allows third parties to view only public data on a readonly pokemon', async () => {
       const res = await otherAgent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.dexNo).to.exist;
-      expect(res.body.pid).to.not.exist;
-      expect(res.body.speciesName).to.exist;
+      expect(res.body.dexNo).to.exist();
+      expect(res.body.pid).to.not.exist();
+      expect(res.body.speciesName).to.exist();
       expect(res.body.tsv).to.be.a('number');
       expect(res.body.esv).to.be.a('number');
       expect(res.body.isShiny).to.be.a('boolean');
@@ -126,8 +126,8 @@ describe('PokemonController', () => {
     it('allows the uploader to view all the data on a private pokemon', async () => {
       const res = await agent.get(`/p/${privateId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.pid).to.exist;
-      expect(res.body.speciesName).to.exist;
+      expect(res.body.pid).to.exist();
+      expect(res.body.speciesName).to.exist();
     });
     it('does not allow third parties to view a private pokemon', async () => {
       const res = await otherAgent.get(`/p/${privateId}`);
@@ -136,23 +136,23 @@ describe('PokemonController', () => {
     it('allows an admin to view all the data on a public pokemon', async () => {
       const res = await adminAgent.get(`/p/${publicId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.dexNo).to.exist;
-      expect(res.body.pid).to.exist;
-      expect(res.body.speciesName).to.exist;
+      expect(res.body.dexNo).to.exist();
+      expect(res.body.pid).to.exist();
+      expect(res.body.speciesName).to.exist();
     });
     it('allows an admin to view all the data on a readonly pokemon', async () => {
       const res = await adminAgent.get(`/p/${readOnlyId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.dexNo).to.exist;
-      expect(res.body.pid).to.exist;
-      expect(res.body.speciesName).to.exist;
+      expect(res.body.dexNo).to.exist();
+      expect(res.body.pid).to.exist();
+      expect(res.body.speciesName).to.exist();
     });
     it('allows an admin to view all the data on a private pokemon', async () => {
       const res = await adminAgent.get(`/p/${privateId}`);
       expect(res.statusCode).to.equal(200);
-      expect(res.body.dexNo).to.exist;
-      expect(res.body.pid).to.exist;
-      expect(res.body.speciesName).to.exist;
+      expect(res.body.dexNo).to.exist();
+      expect(res.body.pid).to.exist();
+      expect(res.body.speciesName).to.exist();
     });
     it("can return a list of all the requester's pokemon", async () => {
       const res = await agent.get('/pokemon/mine');
@@ -160,8 +160,8 @@ describe('PokemonController', () => {
     });
     it('does not leak internal properties of a a pokemon to the client', async () => {
       const pkmn = (await agent.get(`/pokemon/${publicId}`)).body;
-      expect(pkmn._markedForDeletion).to.not.exist;
-      expect(pkmn._rawPk6).to.not.exist;
+      expect(pkmn._markedForDeletion).to.not.exist();
+      expect(pkmn._rawPk6).to.not.exist();
     });
   });
 
@@ -234,7 +234,7 @@ describe('PokemonController', () => {
       await agent.del(`/p/${pkmn.id}`);
       const timer = Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
       await agent.get('/');
-      expect(timer.isFulfilled()).to.be.false;
+      expect(timer.isFulfilled()).to.be.false();
     });
     it('does not show a deleted pokemon in the "my pokemon" listing', async () => {
       const res = await agent.get('/pokemon/mine');
@@ -535,7 +535,7 @@ describe('PokemonController', () => {
         expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id]);
         expect(_.map(res3.body.contents, 'id')).to.eql([pkmn4.id, pkmn5.id, pkmn6.id]);
         expect(res.statusCode).to.equal(400);
-      })
+      });
     });
     it("does not allow a pokemon to be moved if it's marked for deletion", async () => {
       const res = await agent.del(`/p/${pkmn.id}`);
@@ -565,9 +565,9 @@ describe('PokemonController', () => {
       const res2 = await agent.get(`/p/${pkmn.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.notes).to.be.an.instanceof(Array);
-      expect(res2.body.notes).to.not.be.empty;
+      expect(res2.body.notes).to.not.be.empty();
       expect(_.last(res2.body.notes)).to.eql(res.body);
-      expect(_.last(res2.body.notes)._markedForDeletion).to.not.exist;
+      expect(_.last(res2.body.notes)._markedForDeletion).to.not.exist();
     });
     it('allows users to set the visibility of their notes when uploading', async () => {
       const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'c', visibility: 'private'});

@@ -18,9 +18,9 @@ describe('PokemonCtrl', function() {
       upload: function () {
         return {
           then: function () {}
-        }
+        };
       }
-    }
+    };
     $controller = _$controller_;
     tested = $controller(ctrlTest, {$mdBottomSheet: $mdBottomSheet, Upload: Upload}, {boxes: []});
     cancelSpy = sinon.spy($mdBottomSheet, 'cancel');

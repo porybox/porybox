@@ -1,6 +1,6 @@
 'use strict';
 const supertest = require('supertest-as-promised');
-const expect = require('chai').expect;
+const expect = require('chai').use(require('dirty-chai')).expect;
 require('babel-polyfill');
 
 describe('AuthController', function() {
@@ -16,7 +16,7 @@ describe('AuthController', function() {
     invalidAgent = supertest.agent(sails.hooks.http.app);
   });
 
-  describe('#login()', function(done) {
+  describe('#login()', function () {
     it('should be able to register an account', async () => {
       const res = await agent.post('/auth/local/register').send({
         name: 'testuser1',
@@ -280,7 +280,7 @@ describe('AuthController', function() {
     it('sends an x-frame-options: SAMEORIGIN header on every request', async () => {
       const res = await agent.get('/faq');
       expect(res.statusCode).to.equal(200);
-      expect(res.header['x-frame-options']).to.equal('SAMEORIGIN')
+      expect(res.header['x-frame-options']).to.equal('SAMEORIGIN');
     });
   });
 });
