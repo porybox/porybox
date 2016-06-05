@@ -34,8 +34,8 @@ porybox.controller('MainCtrl', function () {
   this.init = function ({boxes, user, prefs}) {
     this.boxes = boxes;
     this.user = user;
-    if (!this.user && (window.location.hash === '' || window.location.hash === '#/')) {
-      window.location.hash = 'login';
+    if (!this.user && location.pathname === '/' && ['', '#/'].indexOf(location.hash) !== -1) {
+      location.hash = 'login';
     }
     this.prefs = prefs;
   };
