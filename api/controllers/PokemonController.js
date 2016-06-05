@@ -227,4 +227,4 @@ module.exports = _.mapValues({
     await pokemon.save();
     return res.ok(pokemon);
   }
-}, CatchAsyncErrors);
+}, catchAsyncErrors);

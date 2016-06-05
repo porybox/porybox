@@ -126,4 +126,4 @@ module.exports = _.mapValues({
     Validation.requireParams(params, 'name');
     return res.ok(await Validation.usernameAvailable(params.name));
   }
-}, CatchAsyncErrors);
+}, catchAsyncErrors);

@@ -38,7 +38,7 @@ module.exports = _.mapValues({
   async func2 (req, res) {
     doMoreActualLogic();
   }
-}, CatchAsyncErrors);
+}, catchAsyncErrors);
 
 This also allows custom errors to be thrown (e.g. from services that don't have access to the `res`
 object). If a thrown error has the `statusCode` property (and optionally a `message` property), that
