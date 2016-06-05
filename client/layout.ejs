@@ -20,6 +20,7 @@
     <main flex layout="column">
       <%- body %>
     </main>
+    <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
     <script src="/bundle.js"></script>
   </body>
 </html>

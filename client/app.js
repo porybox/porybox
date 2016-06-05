@@ -7,6 +7,8 @@ require('angular-route');
 require('ng-file-upload');
 const Promise = require('bluebird');
 
+const CSRF_TOKEN = document.getElementById('csrf-token').innerHTML;
+
 // Import modules
 require('./login/login.module.js');
 require('./home/home.module.js');
@@ -55,9 +57,14 @@ porybox.config(['$mdThemingProvider','$routeProvider',function(
   $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
+porybox.config(['$httpProvider', function ($httpProvider) {
+  $httpProvider.defaults.headers.common['x-csrf-token'] = CSRF_TOKEN;
+}]);
+
 porybox.service('io', function () {
   const socket = require('socket.io-client');
   const io = require('sails.io.js')(socket);
+  io.sails.headers = {'x-csrf-token': CSRF_TOKEN};
   // create versions of the io.socket functions that return Promises.
   // e.g. io.socket.getAsync('/foo').then(handleResponse).catch(handleErrors)
   Promise.promisifyAll(io.socket, {
@@ -66,12 +73,12 @@ porybox.service('io', function () {
         return new Promise((resolve, reject) => {
           // Resolve the promise if the status code is 2xx.
           fn.call(this, ...args, (d, res) => {
-            return /^2/.test(res.statusCode) ? resolve(d) : reject(new Error(res));
+            return /^2/.test(res.statusCode) ? resolve(d) : reject(Object.assign(new Error, res));
           })
         });
       }
     }
-  })
+  });
   return io;
 });
 
