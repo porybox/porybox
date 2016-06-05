@@ -21,4 +21,4 @@ exports.computeCloneHash = pkmn => {
   return require('crypto').createHash('sha256').update(buf).digest('base64');
 };
 
-exports.isStaticPidEvent = pokemonData => false; // TODO: Implement this
+exports.isStaticPidEvent = () => false; // TODO: Implement this

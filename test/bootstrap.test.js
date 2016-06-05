@@ -19,7 +19,7 @@ before(function(done) {
         user: '',
         password: '',
         database: 'porybox-test'
-      },
+      }
     },
     models: {
       connection: 'testDB',
@@ -31,7 +31,7 @@ before(function(done) {
     every request that gets made, which makes CSRF a bit annoying to deal with. Since it's handled internally
     by sails anyway, there is not a great deal of benefit to testing with it. */
     csrf: false
-  }, function(err, server) {
+  }, function(err) {
     if (err) return done(err);
     // here you can load fixtures, etc.
     done(err, sails);

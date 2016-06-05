@@ -5,7 +5,7 @@
 module.exports = function(io) {
   this.logout = function () {
     io.socket.postAsync('/logout', {}).then(() => {
-      window.location = '/'
+      window.location = '/';
     }).catch(console.error.bind(console));
   };
-}
+};

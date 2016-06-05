@@ -52,7 +52,7 @@ module.exports = {
    * @param {Object} res
    */
   callback: function (req, res) {
-    function tryAgain (err) {
+    function tryAgain () {
 
       // Only certain error messages are returned via req.flash('error', someError)
       // because we shouldn't expose internal authorization errors to the user.
@@ -61,7 +61,7 @@ module.exports = {
       return res.status(401).json(flashError || 'Error.Passport.Generic');
     }
 
-    passport.callback(req, res, function (err, user, challenges, statuses) {
+    passport.callback(req, res, function (err, user, challenges) {
       if (err || !user) {
         return tryAgain(challenges);
       }

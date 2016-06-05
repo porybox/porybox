@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('lodash');
 const supertest = require('supertest-as-promised');
-const expect = require('chai').expect;
+const expect = require('chai').use(require('dirty-chai')).expect;
 describe('UserController', () => {
   let agent, adminAgent, noAuthAgent, generalPurposeBox;
   before(async () => {
@@ -36,9 +36,9 @@ describe('UserController', () => {
       const res = await agent.get('/user/usertester');
       expect(res.statusCode).to.equal(200);
       expect(res.body.name).to.equal('usertester');
-      expect(res.body.isAdmin).to.be.false;
+      expect(res.body.isAdmin).to.be.false();
       expect(res.body.email).to.equal('usertester@usertesting.com');
-      expect(res.body.preferences).to.exist;
+      expect(res.body.preferences).to.exist();
       expect(res.body.friendCodes).to.be.an.instanceof(Array);
       expect(res.body.inGameNames).to.be.an.instanceof(Array);
       expect(res.body.trainerShinyValues).to.be.an.instanceof(Array);
@@ -47,34 +47,34 @@ describe('UserController', () => {
       const res = await agent.get('/user/IM_AN_ADMIN_FEAR_ME');
       expect(res.statusCode).to.equal(200);
       expect(res.body.name).to.equal('IM_AN_ADMIN_FEAR_ME');
-      expect(res.body.isAdmin).to.be.true;
-      expect(res.body.email).to.not.exist;
-      expect(res.body.preferences).to.not.exist;
-      expect(res.body.friendCodes).to.exist;
-      expect(res.body.inGameNames).to.exist;
-      expect(res.body.trainerShinyValues).exist;
+      expect(res.body.isAdmin).to.be.true();
+      expect(res.body.email).to.not.exist();
+      expect(res.body.preferences).to.not.exist();
+      expect(res.body.friendCodes).to.exist();
+      expect(res.body.inGameNames).to.exist();
+      expect(res.body.trainerShinyValues).exist();
     });
     it("returns full information when an admin gets someone else's profile", async () => {
       const res = await adminAgent.get('/user/usertester');
       expect(res.statusCode).to.equal(200);
       expect(res.body.name).to.equal('usertester');
-      expect(res.body.isAdmin).to.be.false;
+      expect(res.body.isAdmin).to.be.false();
       expect(res.body.email).to.equal('usertester@usertesting.com');
-      expect(res.body.preferences).to.exist;
-      expect(res.body.friendCodes).to.exist;
-      expect(res.body.inGameNames).to.exist;
-      expect(res.body.trainerShinyValues).exist;
+      expect(res.body.preferences).to.exist();
+      expect(res.body.friendCodes).to.exist();
+      expect(res.body.inGameNames).to.exist();
+      expect(res.body.trainerShinyValues).exist();
     });
     it('omits private information when an unauthenticated user gets a profile', async () => {
       const res = await noAuthAgent.get('/user/usertester');
       expect(res.statusCode).to.equal(200);
       expect(res.body.name).to.equal('usertester');
-      expect(res.body.isAdmin).to.be.false;
-      expect(res.body.email).to.not.exist;
-      expect(res.body.preferences).to.not.exist;
-      expect(res.body.friendCodes).to.exist;
-      expect(res.body.inGameNames).to.exist;
-      expect(res.body.trainerShinyValues).exist;
+      expect(res.body.isAdmin).to.be.false();
+      expect(res.body.email).to.not.exist();
+      expect(res.body.preferences).to.not.exist();
+      expect(res.body.friendCodes).to.exist();
+      expect(res.body.inGameNames).to.exist();
+      expect(res.body.trainerShinyValues).exist();
     });
   });
   describe('preferences', () => {
@@ -270,18 +270,18 @@ describe('UserController', () => {
     it('allows admins to grant/revoke admin status to other users', async () => {
       const res = await adminAgent.post('/user/usertester/grantAdminStatus');
       expect(res.statusCode).to.equal(200);
-      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.true;
+      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.true();
       const res2 = await adminAgent.post('/user/usertester/revokeAdminStatus');
       expect(res2.statusCode).to.equal(200);
-      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false();
     });
     it('does not allow non-admins to grant/revoke admin status', async () => {
       const res = await agent.post('/user/usertester/grantAdminStatus');
       expect(res.statusCode).to.equal(403);
-      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false;
+      expect((await noAuthAgent.get('/user/usertester')).body.isAdmin).to.be.false();
       const res2 = await agent.post('/user/IM_AN_ADMIN_FEAR_ME/revokeAdminStatus');
       expect(res2.statusCode).to.equal(403);
-      expect((await noAuthAgent.get('/user/IM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true;
+      expect((await noAuthAgent.get('/user/IM_AN_ADMIN_FEAR_ME')).body.isAdmin).to.be.true();
     });
     it('returns a 404 error if the specified user does not exist', async () => {
       const res = await adminAgent.post('/user/nonexistent_username/grantAdminStatus');

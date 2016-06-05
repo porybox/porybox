@@ -1,6 +1,6 @@
 'use strict';
 const supertest = require('supertest-as-promised');
-const expect = require('chai').expect;
+const expect = require('chai').use(require('dirty-chai')).expect;
 const _ = require('lodash');
 const Promise = require('bluebird');
 describe('BoxController', () => {
@@ -47,9 +47,9 @@ describe('BoxController', () => {
       boxId = (await agent.post('/box').send({name: 'Inbox'})).body.id;
       await Promise.each(['readonly', 'public', 'private'], async visibility => {
         const res = await agent.post('/uploadpk6')
-          .attach('pk6', __dirname + '/pkmn1.pk6')
           .field('box', boxId)
-          .field('visibility', visibility);
+          .field('visibility', visibility)
+          .attach('pk6', __dirname + '/pkmn1.pk6');
         expect(res.statusCode).to.equal(201);
       });
     });
@@ -57,36 +57,36 @@ describe('BoxController', () => {
       const box = (await agent.get(`/b/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents).to.have.lengthOf(3);
-      expect(box.contents[0].pid).to.exist;
-      expect(box.contents[0].speciesName).to.exist;
-      expect(box.contents[1].pid).to.exist;
-      expect(box.contents[1].speciesName).to.exist;
-      expect(box.contents[2].pid).to.exist;
-      expect(box.contents[2].speciesName).to.exist;
+      expect(box.contents[0].pid).to.exist();
+      expect(box.contents[0].speciesName).to.exist();
+      expect(box.contents[1].pid).to.exist();
+      expect(box.contents[1].speciesName).to.exist();
+      expect(box.contents[2].pid).to.exist();
+      expect(box.contents[2].speciesName).to.exist();
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/b/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('readonly');
-      expect(box.contents[0].pid).to.not.exist;
-      expect(box.contents[0].speciesName).to.exist;
+      expect(box.contents[0].pid).to.not.exist();
+      expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[1].visibility).to.equal('public');
-      expect(box.contents[1].pid).to.exist;
-      expect(box.contents[1].speciesName).to.exist;
-      expect(box.contents[2]).to.not.exist;
+      expect(box.contents[1].pid).to.exist();
+      expect(box.contents[1].speciesName).to.exist();
+      expect(box.contents[2]).to.not.exist();
     });
     it('allows admins to view the full contents of a box by ID', async () => {
       const box = (await adminAgent.get(`/b/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('readonly');
-      expect(box.contents[0].pid).to.exist;
-      expect(box.contents[0].speciesName).to.exist;
+      expect(box.contents[0].pid).to.exist();
+      expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[1].visibility).to.equal('public');
-      expect(box.contents[1].pid).to.exist;
-      expect(box.contents[1].speciesName).to.exist;
+      expect(box.contents[1].pid).to.exist();
+      expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2].visibility).to.equal('private');
-      expect(box.contents[2].pid).to.exist;
-      expect(box.contents[2].speciesName).to.exist;
+      expect(box.contents[2].pid).to.exist();
+      expect(box.contents[2].speciesName).to.exist();
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
       const res = await noAuthAgent.get(`/b/${boxId}`);
@@ -94,12 +94,12 @@ describe('BoxController', () => {
       const box = res.body;
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('readonly');
-      expect(box.contents[0].pid).to.not.exist;
-      expect(box.contents[0].speciesName).to.exist;
+      expect(box.contents[0].pid).to.not.exist();
+      expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[1].visibility).to.equal('public');
-      expect(box.contents[1].pid).to.exist;
-      expect(box.contents[1].speciesName).to.exist;
-      expect(box.contents[2]).to.not.exist;
+      expect(box.contents[1].pid).to.exist();
+      expect(box.contents[1].speciesName).to.exist();
+      expect(box.contents[2]).to.not.exist();
     });
   });
   describe("getting a user's boxes", () => {
@@ -170,8 +170,8 @@ describe('BoxController', () => {
     });
     it('does not leak internal properties of a box to the client', async () => {
       const box = (await agent.get(`/b/${box1.id}`)).body;
-      expect(box._markedForDeletion).to.not.exist;
-      expect(box._orderedIds).to.not.exist;
+      expect(box._markedForDeletion).to.not.exist();
+      expect(box._orderedIds).to.not.exist();
     });
     it('adds newly-created boxes to the end of the box list', async () => {
       const res = await agent.get('/user/boxtester/boxes');
@@ -296,7 +296,7 @@ describe('BoxController', () => {
       await agent.del(`/b/${box.id}`);
       const timer = Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
       await agent.get('/');
-      expect(timer.isFulfilled()).to.be.false;
+      expect(timer.isFulfilled()).to.be.false();
     });
     it('does not show deleted boxes in box listings', async () => {
       const res = await agent.get('/user/boxtester/boxes');

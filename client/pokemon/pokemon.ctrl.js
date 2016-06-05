@@ -32,7 +32,7 @@ module.exports = function($routeParams, $scope, io) {
 
     this.hasFullData = true;
     return this;
-  }
+  };
 
   this.fetch = () => {
     return io.socket.getAsync(`/p/${this.id}`).then(data => {

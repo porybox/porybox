@@ -23,11 +23,11 @@ module.exports = function ($mdBottomSheet, Upload) {
   this.answer = function() {
     this.file.upload = Upload.upload({
       url: '/uploadpk6',
-      data: {visibility: this.visibility, pk6: this.file, box: this.box},
+      data: {visibility: this.visibility, pk6: this.file, box: this.box}
     }).then(function (response) {
       $mdBottomSheet.hide(response.data);
     }, function (response) {
       console.log(response.status + ': ' + response.data);
     });
-  }
-}
+  };
+};

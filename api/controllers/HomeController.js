@@ -8,7 +8,7 @@
 module.exports = _.mapValues({
   async index (req, res) {
     if (req.user && !req.user._orderedBoxIds) {
-      req.user._orderedBoxIds = _.map(await Box.find({owner: req.user.name}), 'id')
+      req.user._orderedBoxIds = _.map(await Box.find({owner: req.user.name}), 'id');
       await req.user.save();
     }
     res.view('home/view', {

@@ -6,7 +6,7 @@ module.exports = function(config) {
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
-    frameworks: ['browserify', 'mocha', 'chai'],
+    frameworks: ['browserify', 'mocha', 'chai', 'dirty-chai'],
     files: [
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
@@ -32,5 +32,5 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     singleRun: false,
     concurrency: Infinity
-  })
-}
+  });
+};

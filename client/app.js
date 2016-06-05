@@ -38,7 +38,7 @@ porybox.controller('MainCtrl', function () {
       window.location.hash = 'login';
     }
     this.prefs = prefs;
-  }
+  };
 });
 
 porybox.config(['$mdThemingProvider','$routeProvider',function(
@@ -74,9 +74,9 @@ porybox.service('io', function () {
           // Resolve the promise if the status code is 2xx.
           fn.call(this, ...args, (d, res) => {
             return /^2/.test(res.statusCode) ? resolve(d) : reject(Object.assign(new Error, res));
-          })
+          });
         });
-      }
+      };
     }
   });
   return io;

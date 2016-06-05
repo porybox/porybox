@@ -10,6 +10,11 @@ const pokemonCtrl = require('./pokemon.ctrl.js');
 module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
   this.box = event => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+    $scope.$watch(function() {
+      return $mdMedia('xs') || $mdMedia('sm');
+    }, function(wantsFullScreen) {
+      $scope.customFullscreen = (wantsFullScreen === true);
+    });
     return Promise.resolve($mdDialog.show({
       controller: ['$mdDialog', boxCtrl],
       controllerAs: 'dialog',
@@ -23,12 +28,6 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
     })).then(res => {
       this.boxes.push(res);
     }).catch(console.error.bind(console));
-
-    $scope.$watch(function() {
-      return $mdMedia('xs') || $mdMedia('sm');
-    }, function(wantsFullScreen) {
-      $scope.customFullscreen = (wantsFullScreen === true);
-    });
   };
 
   this.pokemon = function (event) {
@@ -44,6 +43,6 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       parent: angular.element(document.body),
       targetEvent: event
     });
-  }
+  };
 
 };
