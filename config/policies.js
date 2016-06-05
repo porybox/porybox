@@ -32,8 +32,7 @@ module.exports.policies = {
   },
 
   HomeController: {
-    index: anyone,
-    faq: anyone
+    index: anyone
   },
 
   PokemonController: {
