@@ -84,4 +84,4 @@ module.exports = _.mapValues({
     await box.save();
     return res.ok(box);
   }
-}, CatchAsyncErrors);
+}, catchAsyncErrors);

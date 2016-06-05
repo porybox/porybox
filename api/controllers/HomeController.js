@@ -22,4 +22,4 @@ module.exports = _.mapValues({
         : null
     });
   }
-}, CatchAsyncErrors);
+}, catchAsyncErrors);

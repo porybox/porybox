@@ -10,7 +10,7 @@
     'Constants': true,
     'UserPreferences': true,
     'PokemonNote': true,
-    'CatchAsyncErrors': true,
+    'catchAsyncErrors': true,
     'Validation': true,
     'DeletedUser': true,
     'BoxOrdering': true,
