@@ -310,4 +310,12 @@ describe('AuthController', function() {
       expect(res2.header.location.startsWith('/login')).to.be.true;
     });
   });
+
+  describe('misc. security', async () => {
+    it('sends an x-frame-options: SAMEORIGIN header on every request', async () => {
+      const res = await agent.get('/faq');
+      expect(res.statusCode).to.equal(200);
+      expect(res.header['x-frame-options']).to.equal('SAMEORIGIN')
+    });
+  });
 });
