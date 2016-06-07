@@ -1,1 +1,59 @@
-<h1 style="text-align:center;">PLACEHOLDER PAGE</h1>
+<h1>Decrypted PowerSaves save files</h1>
+
+<p>
+You can partially decrypt a PowerSaves backup and open the save with PKHeX to extract your Pokémon’s pk6 files.
+</p>
+
+<h2>Requirements</h2>
+
+<p>
+
+<ol>
+<li>A Datel PowerSaves</li>
+<li><a href="http://x.co/4JBgp" target="_blank">XORpad</a> for Windows (requires .Net 3.5). <a href="http://x.co/4JBf0" target="_blank">XORpad</a> for Mac OSX (requires Mono)</li>
+<li>Kaphotics’ <a href="https://github.com/kwsch/PKHeX" target="_blank">PKHeX</a></li>
+</ol>
+
+</p>
+
+<h2>Initial decryption</h2>
+
+<p>
+You will only need to complete the following steps once.
+
+<ol>
+<li>Make an initial backup of your game.</li>
+<li>Make a second backup of your game. Name it “decryption”.</li>
+<li>Go to the directory where your PS backups are saved. On Windows, it should be <i>C:\Users\Your Windows Username\Powersaves3DS</i>.</li>
+<li>Locate your backup and move it to a directory of your choice. It should be named "XXXX_YYYY-MM-DD_HH-mm-ss_(decryption).bin".</li>
+<li>Open XORpad, click Open Save 1 and select the copy of the decryption save. Then, click on Clean Save 1. A new save file will be created with -Fixed appended to its name.</li>
+<li>Move that copy to the PowerSaves folder and remove the <i>-Fixed</i> from its name.</li>
+<li>Restore this cleaned save file to your game with PowerSaves.</li>
+<li>Launch your game. The game should start as if no save were present on the cartridge.</li>
+<li>When you reach the language selection screen, exit the game.</li>
+<li>Plug the game back in the PowerSaves.</li>
+<li>Select and apply the "Slot 1 x999 modifier code".</li>
+<li>Remove the game from the PowerSaves dongle and reinsert it (do not skip this step).</li>
+<li>Create a new backup and name it keystream.</li>
+<li>Restore the initial backup.</li>
+</ol>
+
+</p>
+
+<h2>Save decryption</h2>
+
+<p>
+
+<ol>
+<li>Open XORpad, click on Open Save 1 and open the save that you want to decrypt.</li>
+<li>Click on Open Save 2 and load the keystream.</li>
+<li>Click on XOR Saves.</li>
+<li>Save the decrypted save on your computer.</li>
+<li>Open PKHeX and load the decrypted save. Click on Yes when warned that the save is not fully decrypted, then on Yes to open the regular save (not the backup).</li>
+</ol>
+
+</p>
+
+<p>
+Adapted from <a href="https://projectpokemon.org/forums/showthread.php?37269-X-Y-Save-File-Research&p=183224#post183224" target="_blank">Project Pokémon</a> and <a href="http://www.pokemontrash.com/club/logiciels/pkhex-un-editeur-de-sauvegardes-6g-presque-parfait" target="_blank">Pokémon Trash</a>.
+</p>
