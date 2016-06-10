@@ -14,6 +14,15 @@
   position: absolute;
 }
 
+.hide-scroll {
+  overflow: hidden;
+}
+
+i.material-icons.visibility {
+  font-size: 14px;
+  margin-right: -3px;
+}
+
 /*******************************
  * Overrides
  *******************************/
@@ -28,11 +37,6 @@ md-card md-card-header {
   white-space: nowrap;
 }
 
-.box-header {
-  background-color: rgba(45, 45, 45, .2);
-  padding: 7px 10px;
-}
-
 md-card md-card-content {
   padding: 14px;
   font-size: 14px;
@@ -43,8 +47,9 @@ md-card md-card-content {
   max-height: 3em;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 18px;
+  font-size: 16px;
   max-width: 100px;
+  margin: 0 0 5px 10px;
 }
 
 md-card-title-text {
@@ -62,6 +67,29 @@ md-icon svg {
 .md-toolbar-tools img {
   height: 74px;
   margin: 0 7px 0px -5px;
+}
+
+/*******************************
+ * Box cards
+ *******************************/
+
+.box-header {
+  background-color: rgba(45, 45, 45, .2);
+  padding: 7px 10px;
+}
+
+@media (min-width: 600px) {
+  .box-card {
+    width: 350px;
+    height: 150px;
+  }
+}
+
+.box-card {
+  max-height: 150px;
+  overflow: auto;
+  margin-right: -100px;
+  padding-right: 100px;
 }
 
  /*******************************
@@ -93,24 +121,6 @@ md-icon svg {
 
 .pokemon-egg {
   margin-left: 5px;
-}
-
-@media (min-width: 600px) {
-  .box-card {
-    width: 350px;
-    height: 150px;
-  }
-}
-
-.box-card {
-  max-height: 150px;
-  overflow: auto;
-  margin-right: -100px;
-  padding-right: 100px;
-}
-
-.hide-scroll {
-  overflow: hidden;
 }
 
 .card-link {
@@ -172,10 +182,6 @@ md-icon svg {
   margin-right: -2px;
 }
 
-i.material-icons.visibility {
-  font-size: 14px;
-  margin-right: -3px;
-}
 
  /*******************************
   * Error pages
