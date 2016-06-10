@@ -10,16 +10,20 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
   </head>
 
-  <body layout="column" ng-controller="MainCtrl as main" ng-cloak
+  <body flex layout="column" ng-controller="MainCtrl as main" ng-cloak
     ng-init="main.init({
       boxes: <%=(typeof boxes !== 'undefined' ? JSON.stringify(boxes) : '[]')%>,
       user: <%=(typeof user !== 'undefined' ? JSON.stringify(user) : 'null')%>,
       prefs: <%=(typeof prefs !== 'undefined' ? JSON.stringify(prefs) : '{}')%>
     })">
     <%- include header.ejs %>
-    <main flex layout="column">
-      <%- body %>
-    </main>
+    <div flex layout="column">
+      <main flex="none">
+        <%- body %>
+      </main>
+      <div flex></div>
+      <%- include footer.ejs %>
+    </div>
     <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
     <script src="/bundle.js"></script>
   </body>
