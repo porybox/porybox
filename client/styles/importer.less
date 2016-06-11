@@ -58,7 +58,9 @@ md-card md-card-content {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 16px;
-  max-width: 100px;
+}
+
+.summary > md-card-header > .md-headline {
   margin: 0 0 5px 10px;
 }
 
@@ -111,6 +113,10 @@ md-icon svg {
     width: 166px;
     height: 214px;
   }
+
+  .summary {
+    width: 344px;
+  }
 }
 
 @media (max-width: 599px) {
@@ -118,7 +124,12 @@ md-icon svg {
     display: block;
     width: auto;
   }
+
+  .summary {
+    display: block;
+  }
 }
+
 
 .icon-container {
   position: relative;
