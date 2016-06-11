@@ -119,6 +119,19 @@
     </md-tab-body>
 
   </md-tab>
+  <md-tab label="Analysis">
+    <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card-header><span class="md-headline">Hidden data</span></md-card-header>
+      <md-card-content>
+      </md-card-content>
+    </md-card>
+
+    <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card-header><span class="md-headline">Porybox clone status</span></md-card-header>
+      <md-card-content>
+      </md-card-content>
+    </md-card>
+  </md-tab>
 
 </md-tabs>
 
