@@ -1,7 +1,7 @@
 <md-tabs md-border-bottom md-swipe-content md-dynamic-height>
   <md-tab label="Main Summary">
-    <md-tab-body>
-      <div>
+    <md-tab-body> <!-- everything within a tab should probably get its own view to not overload this -->
+      <div> <!-- this is for later, eventually need to fix to be responsive -->
         <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
           <md-card-content>
             <img ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
