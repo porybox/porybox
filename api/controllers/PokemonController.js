@@ -21,6 +21,12 @@ module.exports = _.mapValues({
     if (_.isError(parsed)) {
       return res.status(400).json('Failed to parse the provided file');
     }
+
+    const prohibitReason = PokemonHandler.checkProhibited(parsed);
+    if (prohibitReason !== null) {
+      return res.status(400).json(prohibitReason);
+    }
+
     Validation.requireParams(params, 'box');
     const box = await Box.findOne({id: params.box});
     Validation.verifyUserIsOwner(box, req.user, {allowAdmin: false});
