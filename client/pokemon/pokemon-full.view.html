@@ -1,8 +1,8 @@
-<md-tabs md-border-bottom md-swipe-content md-dynamic-height>
+<md-tabs md-border-bottom md-swipe-content ng-init="pokemon.fetch()" md-dynamic-height>
   <md-tab label="Main Summary">
     <md-tab-body> <!-- everything within a tab should probably get its own view to not overload this -->
       <div> <!-- this is for later, eventually need to fix to be responsive -->
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-content>
             <img ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
             <div layout="row" layout-align="none center">
@@ -38,7 +38,7 @@
           </md-card-content>
         </md-card>
 
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-header><span class="md-headline">Level Info</span></md-card-header>
           <md-card-content>
             <div flex>Level {{pokemon.data.level}}</div>
@@ -46,32 +46,32 @@
           </md-card-content>
         </md-card>
 
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-header><span class="md-headline">Original Trainer Info</span></md-card-header>
           <md-card-content>
             <div flex>{{pokemon.data.ot}} {{pokemon.data.otGender}}</div>
           </md-card-content>
         </md-card>
 
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-header><span class="md-headline">Stats</span></md-card-header>
           <md-card-content>
           </md-card-content>
         </md-card>
 
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-header><span class="md-headline">Moves</span></md-card-header>
           <md-card-content>
           </md-card-content>
         </md-card>
 
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-header><span class="md-headline">Encounter Info</span></md-card-header>
           <md-card-content>
           </md-card-content>
         </md-card>
 
-        <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+        <md-card class="summary" ng-show="pokemon.hasFullData">
           <md-card-header><span class="md-headline">Region Info</span></md-card-header>
           <md-card-content>
           </md-card-content>
@@ -81,37 +81,37 @@
   </md-tab>
   <md-tab label="Misc. Info">
     <md-tab-body>
-      <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="md-headline">Contest Info</span></md-card-header>
         <md-card-content>
         </md-card-content>
       </md-card>
 
-      <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="md-headline">Ribbon Info</span></md-card-header>
         <md-card-content>
         </md-card-content>
       </md-card>
 
-      <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="md-headline">Memories</span></md-card-header>
         <md-card-content>
         </md-card-content>
       </md-card>
 
-      <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="md-headline">Amie Info</span></md-card-header>
         <md-card-content>
         </md-card-content>
       </md-card>
 
-      <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="md-headline">Pokérus Info</span></md-card-header>
         <md-card-content>
         </md-card-content>
       </md-card>
 
-      <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="md-headline">Super Training</span></md-card-header>
         <md-card-content>
         </md-card-content>
@@ -120,13 +120,13 @@
 
   </md-tab>
   <md-tab label="Analysis">
-    <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+    <md-card class="summary" ng-show="pokemon.hasFullData">
       <md-card-header><span class="md-headline">Hidden data</span></md-card-header>
       <md-card-content>
       </md-card-content>
     </md-card>
 
-    <md-card class="summary" ng-init="pokemon.fetch()" ng-show="pokemon.hasFullData">
+    <md-card class="summary" ng-show="pokemon.hasFullData">
       <md-card-header><span class="md-headline">Porybox clone status</span></md-card-header>
       <md-card-content>
       </md-card-content>
@@ -134,5 +134,3 @@
   </md-tab>
 
 </md-tabs>
-
-
