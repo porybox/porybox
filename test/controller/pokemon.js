@@ -87,6 +87,13 @@ describe('PokemonController', () => {
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(403);
     });
+    it('should not allow kyurem-white to be uploaded', async () => {
+      const res = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/kyurem-w.pk6`);
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Kyurem-White may not be uploaded');
+    });
   });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, readOnlyId;

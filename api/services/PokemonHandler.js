@@ -21,4 +21,12 @@ exports.computeCloneHash = pkmn => {
   return require('crypto').createHash('sha256').update(buf).digest('base64');
 };
 
+// Returns the reason that a given pokemon is prohibited from being uploaded, or `null` if it is allowed to be uploaded.
+exports.checkProhibited = pkmn => {
+  const matchedProps = Constants.PROHIBITED_UPLOADS.find(prohibitedUpload => {
+    return _.keys(prohibitedUpload.props).every(key => prohibitedUpload.props[key] === pkmn[key]);
+  });
+  return matchedProps ? matchedProps.reason : null;
+};
+
 exports.isStaticPidEvent = () => false; // TODO: Implement this
