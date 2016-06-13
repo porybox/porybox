@@ -1,9 +1,9 @@
 <md-card>
-  <md-card-header class="box-header">{{box.name}}</md-card-header>
-  <md-card-content>{{box.description}}</md-card-content>
+  <md-card-header class="box-header">{{box.data.name}}</md-card-header>
+  <md-card-content>{{box.data.description}}</md-card-content>
 </md-card>
 <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()">
-  <div flex-xs ng-repeat="pokemon in box.pokemon">
+  <div flex-xs ng-repeat="pokemon in box.data.contents">
     <pokemon-card data="pokemon"></pokemon-card>
   </div>
 </div>
