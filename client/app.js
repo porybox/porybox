@@ -6,6 +6,7 @@ require('angular-messages');
 require('angular-route');
 require('ng-file-upload');
 const Promise = require('bluebird');
+Promise.config({warnings: false});
 
 const CSRF_TOKEN = document.getElementById('csrf-token').innerHTML;
 
@@ -73,7 +74,7 @@ porybox.service('io', function () {
         return new Promise((resolve, reject) => {
           // Resolve the promise if the status code is 2xx.
           fn.call(this, ...args, (d, res) => {
-            return /^2/.test(res.statusCode) ? resolve(d) : reject(Object.assign(new Error, res));
+            return /^2/.test(res.statusCode) ? resolve(d) : reject(res);
           });
         });
       };
