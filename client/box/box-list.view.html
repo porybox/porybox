@@ -2,8 +2,23 @@
   <md-card-header class="box-header">{{box.data.name}}</md-card-header>
   <md-card-content>{{box.data.description}}</md-card-content>
 </md-card>
-<div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()">
+<div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
   <div flex-xs ng-repeat="pokemon in box.data.contents">
     <pokemon-card data="pokemon"></pokemon-card>
   </div>
+</div>
+<div ng-show="box.data.owner === main.user.name || main.user.isAdmin">
+  edit this box:<br>
+  <!-- note: it would also be possible to make this auto-update rather than requiring the user to click 'save'. -->
+  <!-- (or just make the name/description at the top editable, sort of like how github allows you to edit PR titles) -->
+  name: <input type="text" ng-model="box.editedName" />
+  description: <input ng-model="box.editedDescription" />
+  visibilty: <select required ng-model="box.editedVisibility">
+    <option value="listed" ng-selected="box.data.visibility === 'listed'">listed</option>
+    <option value="unlisted" ng-selected="box.data.visibility === 'unlisted'">unlisted</option>
+  </select>
+  <button ng-click="box.saveEdits()">save</button>
+  <br>
+  <button ng-if="!box.isDeleted" ng-click="box.delete()">delete this box</button>
+  <button ng-if="box.isDeleted" ng-click="box.undelete()">undo deletion</button>
 </div>
