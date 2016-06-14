@@ -1,81 +1,162 @@
 <md-tabs md-border-bottom md-swipe-content ng-init="pokemon.fetch()" md-dynamic-height>
   <md-tab label="Main Summary">
     <md-tab-body> <!-- everything within a tab should probably get its own view to not overload this -->
-      <div> <!-- this is for later, eventually need to fix to be responsive -->
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-content>
-            <img ng-src="https://github.com/msikma/pokesprite/blob/master/icons/{{pokemon.iconUrl}}.png?raw=true" />
-            <div layout="row" layout-align="none center">
+      <div layout="row" layout-xs="column" layout-wrap> <!-- this is for later, eventually need to fix to be responsive -->
+        <div layout-gt-xs="column">
+          <md-card class="summary" style="height: 222px;" ng-show="pokemon.hasFullData">
+            <md-card-content>
+              <div layout="row" layout-align="none center">
               <img class="pokeball"
                    ng-if="pokemon.ballNameUrl"
                    ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
-                   title="In a {{pokemon.data.ballName}}" />
-              <img class="held-item"
-                   ng-if="pokemon.heldItemUrl"
-                   ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
-                   title="Holding {{pokemon.data.heldItemName}}" />
-              <span flex></span>
-              <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
-            </div>
-            <div layout="row" layout-align="none center">
-              <div flex style="font-weight:bold;" title="Species">{{pokemon.data.speciesName}}<span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
-              <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
-              <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
-            </div>
-            <div layout="row" layout-align="none center">
-              <div flex title="Level">Level {{pokemon.data.level}}</div>
-          <span layout-align="end">
-            <i ng-if="pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
-            <i ng-if="pokemon.data.visibility === 'readonly'" class="material-icons visibility" title="Read-Only">remove_red_eye</i>
-            <i ng-if="pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">people</i>
-          </span>
-            </div>
-            <div flex title="Nature">{{pokemon.data.natureName}}</div>
-            <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
-            <div flex title="OT, TID">{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
-            <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
-                        'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
-          </md-card-content>
-        </md-card>
+                   title="{{pokemon.data.ballName}}" /><span class="md-headline">{{pokemon.data.nickname}}</span>
+                <span flex></span>
+                <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
+              </div>
+              <div class="pokemon-container" layout-align="center">
+                <img class="pokemon-bg" ng-src="/img/large/ballbg.png" />
+                <img ng-src="/img/large/{{pokemon.iconUrl}}.png" />
+              </div>
+              <div layout="row" layout-align="none center">
+                <div flex title="Species">{{pokemon.data.speciesName}}
+                  <span class="male" ng-if="pokemon.data.gender == 'M'">&#9794;</span><span class="female" ng-if="pokemon.data.gender == 'F'">&#9792;</span>
+                  <span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
+              </div>
+              <div layout="row" layout-align="none center">
+                <div flex title="Level">Level {{pokemon.data.level}}</div>
+              </div>
+              <div flex title="Nature">{{pokemon.data.natureName}}</div>
+              <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
+              <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
+                          'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
+              <div flex ng-if="pokemon.heldItemUrl">
+                <img class="held-item"
+                     ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
+                     title="{{pokemon.data.heldItemName}}" />
+                <span>{{pokemon.data.heldItemName}}</span>
+              </div>
+              <div flex ng-if="!pokemon.heldItemUrl">
+                <br />
+                <span>No held item</span>
+              </div>
+              <div layout="row" layout-align="start center">
+                <span flex>
+                  <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/shiny.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
+                  <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
+                </span>
+                <span>
+                  <i ng-if="pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
+                  <i ng-if="pokemon.data.visibility === 'readonly'" class="material-icons visibility" title="Read-Only">remove_red_eye</i>
+                  <i ng-if="pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">people</i>
+                </span>
+              </div>
+            </md-card-content>
+          </md-card>
 
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-header><span class="md-headline">Level Info</span></md-card-header>
-          <md-card-content>
-            <div flex>Level {{pokemon.data.level}}</div>
-            <div flex>{{pokemon.data.exp}} experience</div>
-          </md-card-content>
-        </md-card>
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Level Info</span></md-card-header>
+            <md-card-content>
+              <div flex>Level {{pokemon.data.level}}</div>
+              <div flex>{{pokemon.data.exp}} experience</div>
+            </md-card-content>
+          </md-card>
 
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-header><span class="md-headline">Original Trainer Info</span></md-card-header>
-          <md-card-content>
-            <div flex>{{pokemon.data.ot}} {{pokemon.data.otGender}}</div>
-          </md-card-content>
-        </md-card>
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Original Trainer Info</span></md-card-header>
+            <md-card-content>
+              <div flex>{{pokemon.data.ot}}
+                <span class="male" ng-if="pokemon.data.otGender == 'M'">&#9794;</span><span class="female" ng-if="pokemon.data.otGender == 'F'">&#9792;</span>
+              </div>
+              <div layout="row" layout-align="center">
+                <span flex title="Trainer ID"><strong>TID</strong> {{pokemon.paddedTid}}</span>
+                <span flex title="Trainer Shiny Value"><strong>TSV</strong> {{pokemon.paddedTsv}}</span>
+              </div>
+              <div title="Secret ID"><strong>SID</strong> {{pokemon.paddedSid}}</div>
+            </md-card-content>
+          </md-card>
+        </div>
 
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-header><span class="md-headline">Stats</span></md-card-header>
-          <md-card-content>
-          </md-card-content>
-        </md-card>
+        <div layout-gt-xs="column">
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Stats</span></md-card-header>
+            <md-card-content>
+              <div layout="row" style="font-weight:bold;">
+                <span flex>Stat</span>
+                <span flex>Base</span>
+                <span flex>IVs</span>
+                <span flex>EVs</span>
+                <span flex>Total</span>
+              </div>
+              <div ng-repeat="(statName, statData) in pokemon.stats track by $index" layout="row">
+                <span flex ng-attr-title="{{statData.fullName}}" ng-class="{'increased-stat': $index === pokemon.natureStats[0],
+                          'decreased-stat': $index === pokemon.natureStats[1]}">{{statName}}</span>
+                <span flex>Base</span>
+                <span flex>{{statData.iv}}</span>
+                <span flex>{{statData.ev}}</span>
+                <span flex>Total</span>
+              </div>
 
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-header><span class="md-headline">Moves</span></md-card-header>
-          <md-card-content>
-          </md-card-content>
-        </md-card>
+            </md-card-content>
+          </md-card>
 
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-header><span class="md-headline">Encounter Info</span></md-card-header>
-          <md-card-content>
-          </md-card-content>
-        </md-card>
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Moves</span></md-card-header>
+            <md-card-content>
+              <div layout="row" style="font-weight:bold;">
+                <span flex="35">Move</span>
+                <span flex="25">Type</span>
+                <span flex>Power</span>
+                <span flex="10">PP</span>
+                <span flex="10">PP+</span>
+              </div>
+              <div ng-repeat="move in pokemon.moves track by $index" layout="row">
+                <span flex="35">{{move.moveName}}</span>
+                <span flex="25">Type</span>
+                <span flex>Power</span>
+                <span flex="10">{{move.Pp}}</span>
+                <span flex="10">{{move.Ppu}}</span>
+              </div>
+              <hr />
+              <div>
+                <strong>Relearnable</strong>
+                <div><span flex="25" ng-repeat="move in pokemon.eggMoves track by $index">{{move || 'N/A'}}{{$last ? '' : ', '}}</span></div>
+              </div>
+            </md-card-content>
+          </md-card>
+        </div>
 
-        <md-card class="summary" ng-show="pokemon.hasFullData">
-          <md-card-header><span class="md-headline">Region Info</span></md-card-header>
-          <md-card-content>
-          </md-card-content>
-        </md-card>
+        <div layout-gt-xs="column">
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Encounter Info</span></md-card-header>
+            <md-card-content>
+              <div>
+                <strong>Game of Origin</strong>
+                <span ng-class="pokemon.gameLabel">{{pokemon.data.otGameName}}</span>
+              </div>
+              <div ng-if="pokemon.data.isFatefulEncounter">Fateful Encounter</div>
+              <div ng-if="pokemon.data.eggLocationId == 0">
+                Met at <span>{{pokemon.data.metLocationName}}</span>
+              </div>
+              <div>
+                Met at level {{pokemon.data.levelMet}} on {{pokemon.data.metDate}}
+              </div>
+              <div ng-if="pokemon.data.eggLocationId != 0">
+                <div>Egg received from <span>{{pokemon.data.eggLocationName}} on {{pokemon.data.eggDate}}</span></div>
+                <div>Hatched at <span>{{pokemon.data.metLocationName}}</span></div>
+              </div>
+            </md-card-content>
+          </md-card>
+
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Region Info</span></md-card-header>
+            <md-card-content>
+              <div><strong>Language</strong> <span>{{pokemon.data.language}}</span></div>
+              <div><strong>Country</strong> <span>{{pokemon.data.countryId}}</span></div>
+              <div><strong>Subregion</strong> <span>{{pokemon.data.regionId}}</span></div>
+              <div><strong>3DS Region</strong> <span>{{pokemon.data.consoleRegion}}</span></div>
+            </md-card-content>
+          </md-card>
+        </div>
       </div>
     </md-tab-body>
   </md-tab>
@@ -132,5 +213,4 @@
       </md-card-content>
     </md-card>
   </md-tab>
-
 </md-tabs>
