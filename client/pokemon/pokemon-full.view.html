@@ -19,7 +19,8 @@
               </div>
               <div layout="row" layout-align="none center">
                 <div flex title="Species">{{pokemon.data.speciesName}}
-                  <span class="male" ng-if="pokemon.data.gender == 'M'">&#9794;</span><span class="female" ng-if="pokemon.data.gender == 'F'">&#9792;</span>
+                  <span class="male" ng-if="pokemon.data.gender == 'M'">&#9794;</span>
+                  <span class="female" ng-if="pokemon.data.gender == 'F'">&#9792;</span>
                   <span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
               </div>
               <div layout="row" layout-align="none center">
@@ -106,11 +107,11 @@
                 <span flex="10">PP+</span>
               </div>
               <div ng-repeat="move in pokemon.moves track by $index" layout="row">
-                <span flex="35">{{move.moveName}}</span>
+                <span flex="35">{{move.moveName || '-'}}</span>
                 <span flex="25">Type</span>
                 <span flex>Power</span>
-                <span flex="10">{{move.Pp}}</span>
-                <span flex="10">{{move.Ppu}}</span>
+                <span flex="10">{{move.Pp || '-'}}</span>
+                <span flex="10">{{move.Ppu || '-'}}</span>
               </div>
               <hr />
               <div>
