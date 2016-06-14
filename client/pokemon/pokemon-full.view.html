@@ -29,15 +29,11 @@
               <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
               <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
                           'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
-              <div flex ng-if="pokemon.heldItemUrl">
-                <img class="held-item"
+              <div flex>
+                <img ng-if="pokemon.data.heldItemName" class="held-item"
                      ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
                      title="{{pokemon.data.heldItemName}}" />
-                <span>{{pokemon.data.heldItemName}}</span>
-              </div>
-              <div flex ng-if="!pokemon.heldItemUrl">
-                <br />
-                <span>No held item</span>
+                <span>{{pokemon.data.heldItemName || 'No item'}}</span>
               </div>
               <div layout="row" layout-align="start center">
                 <span flex>
