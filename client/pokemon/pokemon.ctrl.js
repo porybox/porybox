@@ -20,32 +20,32 @@ module.exports = function($routeParams, $scope, io) {
 
     this.stats = {
       HP: {
-        fullName: "Hit Points",
+        fullName: 'Hit Points',
         iv: this.data.ivHp,
         ev: this.data.evHp
       },
       Atk: {
-        fullName: "Attack",
+        fullName: 'Attack',
         iv: this.data.ivAtk,
         ev: this.data.evAtk
       },
       Def: {
-        fullName: "Defense",
+        fullName: 'Defense',
         iv: this.data.ivDef,
         ev: this.data.evDef
       },
       SpAtk: {
-        fullName: "Special Attack",
+        fullName: 'Special Attack',
         iv: this.data.ivSpAtk,
         ev: this.data.evSpAtk
       },
       SpDef: {
-        fullName: "Special Defense",
+        fullName: 'Special Defense',
         iv: this.data.ivSpDef,
         ev: this.data.evSpDef
       },
       Spe: {
-        fullName: "Speed",
+        fullName: 'Speed',
         iv: this.data.ivSpe,
         ev: this.data.evSpe
       }
