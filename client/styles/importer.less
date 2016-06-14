@@ -50,7 +50,7 @@ md-card md-card-header {
 md-card md-card-content {
   padding: 14px;
   font-size: 14px;
-  line-height: 21px;
+  line-height: 22px;
 }
 
 .md-headline {
@@ -61,7 +61,7 @@ md-card md-card-content {
 }
 
 .summary > md-card-header > .md-headline {
-  margin: 0 0 5px 10px;
+  margin: 0 0 5px 12px;
 }
 
 md-card-title-text {
@@ -130,6 +130,9 @@ md-icon svg {
   }
 }
 
+.summary {
+  position: relative;
+}
 
 .icon-container {
   position: relative;
@@ -138,6 +141,19 @@ md-icon svg {
 .icon-container > img {
   position: absolute;
   width: 40px;
+}
+
+.pokemon-container {
+  position: absolute;
+  right: 170px;
+}
+
+.pokemon-container > img {
+  position: absolute;
+}
+
+.pokemon-bg {
+  width: 120px;
 }
 
 .pokemon-egg {
@@ -156,6 +172,32 @@ md-icon svg {
 
 .decreased-stat {
   color: #4A90E2;
+}
+
+.label-x {
+  color: #025DA6;
+}
+
+.label-y {
+  color: #EA1A3E;
+}
+
+.label-o {
+  color: #AB2813;
+}
+
+.label-a {
+  color: #194166;
+}
+
+.male {
+  font-size: 12px;
+  color: #4A90E2;
+}
+
+.female {
+  font-size: 12px;
+  color: #D0021B;
 }
 
 .pokemon-kb, .pokemon-shiny {
@@ -182,6 +224,7 @@ md-icon svg {
 .pokeball, .held-item {
   width: 32px;
   height: 32px;
+  vertical-align: middle;
 }
 
 .pokeball {
