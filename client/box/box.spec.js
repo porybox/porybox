@@ -22,16 +22,16 @@ describe('BoxCtrl', function() {
         $scope: $scope,
         io: io, $routeParams:
         $routeParams
-      }, {box: {
+      }, {data: {
         name: 'boxName',
         description: 'boxDescription',
-        user: 'boxUser',
+        owner: 'boxUser',
         id: 'boxId'
       }});
-      expect(tested.name).to.equal('boxName');
-      expect(tested.user).to.equal('boxUser');
-      expect(tested.description).to.equal('boxDescription');
-      expect(tested.id).to.equal('boxId');
+      expect(tested.data.name).to.equal('boxName');
+      expect(tested.data.owner).to.equal('boxUser');
+      expect(tested.data.description).to.equal('boxDescription');
+      expect(tested.data.id).to.equal('boxId');
     });
 
     it('are correctly instantiated when not provided at construction', function() {
@@ -43,8 +43,7 @@ describe('BoxCtrl', function() {
         $routeParams
       }, {});
       expect(tested.id).to.equal('routeParamId');
-      expect(tested.pokemon.length).to.equal(0);
-      expect(Object.keys(tested.box).length).to.equal(0);
+      expect(tested.data.contents).to.eql([]);
     });
   });
 });

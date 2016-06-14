@@ -1,5 +1,5 @@
 module.exports = function($scope, $routeParams, io) {
-  this.data = this.data || {};
+  this.data = this.data || {contents: []};
   this.id = $routeParams.boxid || this.data.id;
 
   this.fetch = () => {
