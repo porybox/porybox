@@ -1,4 +1,5 @@
 'use strict';
+import moment from 'moment';
 const statIndex = {'Hp': 0, 'Atk': 1, 'Def': 2, 'SpAtk': 3, 'SpDef': 4, 'Spe': 5};
 
 module.exports = function($routeParams, $scope, io) {
@@ -99,6 +100,9 @@ module.exports = function($routeParams, $scope, io) {
 
     this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
 
+    this.displayMetDate = parseDate(this.data.metDate);
+    this.displayEggDate = parseDate(this.data.eggDate);
+
     this.hasFullData = true;
     return this;
   };
@@ -109,3 +113,7 @@ module.exports = function($routeParams, $scope, io) {
     }).then(this.parseProps).then(() => $scope.$apply());
   };
 };
+
+function parseDate(timestamp) {
+  return timestamp && moment.utc(timestamp).format('MMMM Do, YYYY');
+}

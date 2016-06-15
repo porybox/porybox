@@ -135,10 +135,10 @@
                 Met at <span>{{pokemon.data.metLocationName}}</span>
               </div>
               <div>
-                Met at level {{pokemon.data.levelMet}} on {{pokemon.data.metDate}}
+                Met at level {{pokemon.data.levelMet}} on {{pokemon.displayMetDate}}
               </div>
               <div ng-if="pokemon.data.eggLocationId != 0">
-                <div>Egg received from <span>{{pokemon.data.eggLocationName}} on {{pokemon.data.eggDate}}</span></div>
+                <div>Egg received from <span>{{pokemon.data.eggLocationName}} on {{pokemon.displayEggDate}}</span></div>
                 <div>Hatched at <span>{{pokemon.data.metLocationName}}</span></div>
               </div>
             </md-card-content>
