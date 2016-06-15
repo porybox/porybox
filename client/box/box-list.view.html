@@ -1,7 +1,17 @@
+<md-toolbar class="md-hue-1">
+  <div class="md-toolbar-tools">
+    <h3><span>{{box.data.name}}</span></h3>
+    <span flex></span>
+    <md-button class="md-icon-button" aria-label="Box settings">
+      <i class="material-icons">more_vert</i>
+    </md-button>
+  </div>
+</md-toolbar>
+
 <md-card>
-  <md-card-header class="box-header">{{box.data.name}}</md-card-header>
   <md-card-content>{{box.data.description}}</md-card-content>
 </md-card>
+  
 <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
   <div flex-xs ng-repeat="pokemon in box.data.contents">
     <pokemon-card data="pokemon"></pokemon-card>
