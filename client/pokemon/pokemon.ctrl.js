@@ -82,8 +82,7 @@ module.exports = function($routeParams, $scope, io) {
       this.data.eggMove4Name
     ];
 
-
-    this.gameLabel = 'label-' + this.data.otGameName.charAt(0).toLowerCase();
+    this.gameLabel = 'label-' + (this.data.otGameName || '').charAt(0).toLowerCase();
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
