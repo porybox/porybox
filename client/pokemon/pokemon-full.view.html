@@ -66,7 +66,7 @@
               </div>
               <div layout="row" layout-align="center">
                 <span flex title="Trainer ID"><strong>TID</strong> {{pokemon.paddedTid}}</span>
-                <span flex title="Trainer Shiny Value"><strong>TSV</strong> {{pokemon.paddedTsv}}</span>
+                <span flex ng-if="pokemon.isKB" title="Trainer Shiny Value"><strong>TSV</strong> {{pokemon.paddedTsv}}</span>
               </div>
               <div title="Secret ID"><strong>SID</strong> {{pokemon.paddedSid}}</div>
             </md-card-content>
