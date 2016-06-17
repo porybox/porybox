@@ -52,6 +52,15 @@ module.exports = function($routeParams, $scope, io) {
       }
     };
 
+    this.contestStats = {
+      cool: this.data.contestStatCool,
+      beauty: this.data.contestStatBeauty,
+      cute: this.data.contestStatCute,
+      clever: this.data.contestStatSmart,
+      tough: this.data.contestStatTough,
+      sheen: this.data.contestStatSheen
+    };
+
     this.moves = [
       {
         moveName: this.data.move1Name,
