@@ -153,6 +153,19 @@
               <div><strong>3DS Region</strong> <span>{{pokemon.data.consoleRegion}}</span></div>
             </md-card-content>
           </md-card>
+
+          <md-card class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Upload Info</span></md-card-header>
+            <md-card-content>
+              <!-- add link to owner's profile -->
+              <div><strong>Owner</strong> {{pokemon.data.owner}}</div>
+              <div><strong>Unique in Porybox database?</strong>
+                <span ng-if="pokemon.data.isUnique">Yes</span>
+                <span ng-if="!pokemon.data.isUnique">No</span>
+              </div>
+              <div><a ng-href="/#/box/{{pokemon.data.box}}">Back to box</a></div>
+            </md-card-content>
+          </md-card>
         </div>
       </div>
     </md-tab-body>
