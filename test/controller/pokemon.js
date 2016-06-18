@@ -109,6 +109,7 @@ describe('PokemonController', () => {
       const res = await otherAgent.get(`/p/${publicId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
+      expect(res.body.encryptionConstant).to.exist();
       expect(res.body.speciesName).to.equal('Pelipper');
       expect(res.body.abilityName).to.equal('Keen Eye');
       expect(res.body.natureName).to.equal('Modest');
@@ -125,6 +126,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.not.exist();
+      expect(res.body.encryptionConstant).to.not.exist();
       expect(res.body.speciesName).to.exist();
       expect(res.body.tsv).to.be.a('number');
       expect(res.body.esv).to.be.a('number');

@@ -1,5 +1,6 @@
 const pk6parse = require('pk6parse');
 const attributes = {
+  encryptionConstant: {},
   dexNo: {},
   heldItemId: {},
   tid: {},
