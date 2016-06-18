@@ -42,20 +42,6 @@ module.exports =  {
       defaultsTo: false
     },
 
-    omitPrivateContents () {
-      return _.assign(this.omitDeletedContents(), {
-        contents: _.reject(this.contents, pkmn => pkmn.visibility === 'private').map(pkmn => {
-          return pkmn.visibility === 'public' ? pkmn : pkmn.omitPrivateData();
-        })
-      });
-    },
-
-    omitDeletedContents () {
-      return _.assign(this, {
-        contents: _.reject(this.contents, pkmn => pkmn._markedForDeletion)
-      });
-    },
-
     async markForDeletion () {
       const populated = await Box.findOne({id: this.id}).populate('contents');
       populated._markedForDeletion = true;
