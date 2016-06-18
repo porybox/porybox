@@ -33,14 +33,7 @@ module.exports = _.mapValues({
       id: params.id,
       _markedForDeletion: false
     }).populate('contents');
-    if (!box) {
-      return res.notFound();
-    }
-    box.contents = BoxOrdering.getOrderedPokemonList(box).map(pkmn => pkmn.assignParsedNames());
-    if (req.user && (box.owner === req.user.name || req.user.isAdmin)) {
-      return res.ok(box.omitDeletedContents());
-    }
-    return res.ok(box.omitPrivateContents());
+    return PokemonHandler.getSafeBoxForUser(box, req.user).then(res.ok);
   },
 
   mine (req, res) {

@@ -30,3 +30,42 @@ exports.checkProhibited = pkmn => {
 };
 
 exports.isStaticPidEvent = () => false; // TODO: Implement this
+
+exports.getSafePokemonForUser = async (pkmn, user, {checkUnique = false, parse = true} = {}) => {
+  if (!pkmn) {
+    throw {statusCode: 404};
+  }
+  pkmn.notes = pkmn.notes.filter(note => !note._markedForDeletion);
+  if (checkUnique) {
+    pkmn.isUnique = await pkmn.checkIfUnique();
+  }
+  if (parse) {
+    pkmn.assignParsedNames();
+  }
+  const pokemonIsPublic = pkmn.visibility === 'public';
+  const userIsOwner = !!user && user.name === pkmn.owner;
+  const userIsAdmin = !!user && user.isAdmin;
+  if (userIsOwner || userIsAdmin) {
+    return pkmn;
+  }
+  if (pokemonIsPublic) {
+    return pkmn.omitBoxInfo();
+  }
+  if (pkmn.visibility === 'private') {
+    throw {statusCode: 403};
+  }
+  return pkmn.omitBoxInfo().omitPrivateData();
+};
+
+exports.getSafeBoxForUser = async (box, user) => {
+  if (!box) {
+    throw {statusCode: 404};
+  }
+  box.contents = await Promise.all(BoxOrdering.getOrderedPokemonList(box)
+    .filter(p => !p._markedForDeletion)
+    .filter(p => {
+      return user && user.name === p.owner || p.visibility !== 'private' || user && user.isAdmin;
+    })
+    .map(p => PokemonHandler.getSafePokemonForUser(p, user, {parse: true})));
+  return box;
+};

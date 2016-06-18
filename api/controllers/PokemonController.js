@@ -45,22 +45,7 @@ module.exports = _.mapValues({
       id: req.param('id'),
       _markedForDeletion: false
     }).populate('notes');
-    if (!pokemon) {
-      return res.notFound();
-    }
-    pokemon.notes = pokemon.notes.filter(note => !note._markedForDeletion);
-    pokemon.isUnique = await pokemon.checkIfUnique();
-    pokemon.assignParsedNames();
-    const pokemonIsPublic = pokemon.visibility === 'public';
-    const userIsOwner = !!req.user && req.user.name === pokemon.owner;
-    const userIsAdmin = !!req.user && req.user.isAdmin;
-    if (pokemonIsPublic || userIsOwner || userIsAdmin) {
-      return res.ok(pokemon);
-    }
-    if (pokemon.visibility === 'private') {
-      return res.forbidden();
-    }
-    return res.ok(pokemon.omitPrivateData());
+    return PokemonHandler.getSafePokemonForUser(pokemon, req.user, {checkUnique: true}).then(res.ok);
   },
 
   async delete (req, res) {

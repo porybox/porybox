@@ -59,19 +59,24 @@ describe('BoxController', () => {
       expect(box.contents).to.have.lengthOf(3);
       expect(box.contents[0].pid).to.exist();
       expect(box.contents[0].speciesName).to.exist();
+      expect(box.contents[0].box).to.equal(box.id);
       expect(box.contents[1].pid).to.exist();
       expect(box.contents[1].speciesName).to.exist();
+      expect(box.contents[1].box).to.equal(box.id);
       expect(box.contents[2].pid).to.exist();
       expect(box.contents[2].speciesName).to.exist();
+      expect(box.contents[2].box).to.equal(box.id);
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/b/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('readonly');
       expect(box.contents[0].pid).to.not.exist();
+      expect(box.contents[0].box).to.not.exist();
       expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[1].visibility).to.equal('public');
       expect(box.contents[1].pid).to.exist();
+      expect(box.contents[1].box).to.not.exist();
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2]).to.not.exist();
     });
@@ -81,12 +86,15 @@ describe('BoxController', () => {
       expect(box.contents[0].visibility).to.equal('readonly');
       expect(box.contents[0].pid).to.exist();
       expect(box.contents[0].speciesName).to.exist();
+      expect(box.contents[0].box).to.equal(box.id);
       expect(box.contents[1].visibility).to.equal('public');
       expect(box.contents[1].pid).to.exist();
       expect(box.contents[1].speciesName).to.exist();
+      expect(box.contents[1].box).to.equal(box.id);
       expect(box.contents[2].visibility).to.equal('private');
       expect(box.contents[2].pid).to.exist();
       expect(box.contents[2].speciesName).to.exist();
+      expect(box.contents[2].box).to.equal(box.id);
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
       const res = await noAuthAgent.get(`/b/${boxId}`);
@@ -96,9 +104,11 @@ describe('BoxController', () => {
       expect(box.contents[0].visibility).to.equal('readonly');
       expect(box.contents[0].pid).to.not.exist();
       expect(box.contents[0].speciesName).to.exist();
+      expect(box.contents[0].box).to.not.exist();
       expect(box.contents[1].visibility).to.equal('public');
       expect(box.contents[1].pid).to.exist();
       expect(box.contents[1].speciesName).to.exist();
+      expect(box.contents[1].box).to.not.exist();
       expect(box.contents[2]).to.not.exist();
     });
   });

@@ -132,6 +132,9 @@ const attributes = {
     const filteredNotes = _.filter(this.notes, note => note.visibility === 'public');
     return _(this).omit(secretProperties).assign({notes: filteredNotes}).value();
   },
+  omitBoxInfo () {
+    return _.omit(this, 'box');
+  },
   async markForDeletion () {
     this._markedForDeletion = true;
     await PokemonNote.update({id: this.notes}, {_markedForDeletion: true});
