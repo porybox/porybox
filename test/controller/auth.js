@@ -56,16 +56,6 @@ describe('AuthController', function() {
       expect(res.body).to.equal('Error.Passport.Bad.Username');
     });
 
-    it("shouldn't register an account with an already-existing email", async () => {
-      const res = await otherAgent.post('/auth/local/register').send({
-        name: 'testuser2',
-        password: 'beepboop',
-        email: 'testuser1@gmail.com'
-      });
-      expect(res.statusCode).to.equal(401);
-      expect(res.body).to.equal('Error.Passport.Email.Exists');
-    });
-
     it("shouldn't register an account with a password less than 8 characters", async () => {
       const res = await otherAgent.post('/auth/local/register').send({
         name: 'testuser2',

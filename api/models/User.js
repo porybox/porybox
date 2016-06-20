@@ -22,8 +22,7 @@ module.exports =  {
       primaryKey: true
     },
     email: {
-      type: 'email',
-      unique: true
+      type: 'email'
     },
     passports: {
       collection: 'Passport',
