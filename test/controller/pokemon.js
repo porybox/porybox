@@ -94,6 +94,13 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Kyurem-White may not be uploaded');
     });
+    it('should not allow a pokemon with invalid move IDs to be uploaded', async () => {
+      const res = await agent.post('/uploadpk6')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/invalid-moves.pk6`);
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Failed to parse the provided file');
+    });
   });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, readOnlyId;
