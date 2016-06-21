@@ -33,6 +33,10 @@ module.exports = _.mapValues({
     parsed.box = box.id;
     parsed.owner = req.user.name;
     parsed.visibility = visibility;
+    // Attempt to parse the move IDs, etc. make sure that the IDs are valid
+    if (_.isError(_.attempt(pk6parse.assignReadableNames, _.clone(parsed)))) {
+      return res.status(400).json('Failed to parse the provided file');
+    }
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
     box._orderedIds.push(result.id);
@@ -45,7 +49,9 @@ module.exports = _.mapValues({
       id: req.param('id'),
       _markedForDeletion: false
     }).populate('notes');
-    return PokemonHandler.getSafePokemonForUser(pokemon, req.user, {checkUnique: true}).then(res.ok);
+    return PokemonHandler.getSafePokemonForUser(pokemon, req.user, {
+      checkUnique: true
+    }).then(res.ok);
   },
 
   async delete (req, res) {
