@@ -1,6 +1,7 @@
 'use strict';
 import moment from 'moment';
 const statIndex = {'Hp': 0, 'Atk': 1, 'Def': 2, 'SpAtk': 3, 'SpDef': 4, 'Spe': 5};
+const genderDifferences = [3, 12, 19, 20, 25, 26, 41, 42, 44, 45, 64, 65, 85, 97, 111, 112, 118, 119, 123, 129, 130, 154, 165, 166, 185, 186, 190, 194, 198, 202, 203, 207, 208, 212, 214, 215, 221, 224, 229, 232, 255, 256, 257, 267, 269, 272, 274, 275, 307, 308, 315, 316, 317, 322, 323, 332, 350, 369, 396, 397, 398, 399, 400, 401, 402, 405, 407, 415, 417, 419, 424, 443, 444, 445, 449, 450, 453, 454, 456, 457, 459, 460, 461, 464, 465, 473, 521, 592, 593, 668, 678];
 
 module.exports = function($routeParams, $scope, io) {
   this.data = this.data || {};
@@ -98,6 +99,8 @@ module.exports = function($routeParams, $scope, io) {
 
     this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
       this.data.speciesName && this.data.speciesName.toLowerCase()}`;
+    this.spriteUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${this.data.gender === 'F' &&
+      genderDifferences.indexOf(this.data.dexNo) > -1 ? 'female/' : ''}${this.data.dexNo}`;
     this.ballNameUrl = this.data.ballName
       ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null;
