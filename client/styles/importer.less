@@ -267,9 +267,13 @@ progress {
   fill: #f9262f;
 }
 
-.box-marking path {
-  fill: #000000;
-  opacity: .5;
+.box-marking path, .box-marking circle, .box-marking rect, .box-marking polygon {
+  fill: #000;
+  opacity: .25;
+}
+
+.marked path, .marked circle, .marked rect, .marked polygon {
+  opacity: 1;
 }
 
 .male {

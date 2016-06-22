@@ -41,10 +41,10 @@
                 <span flex>
                   <md-icon md-svg-icon="/img/icons/circle.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasCircleMarking}"></md-icon>
                   <md-icon md-svg-icon="/img/icons/triangle.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasTriangleMarking}"></md-icon>
-                  <md-icon md-svg-icon="/img/icons/square.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasSquareMarking}"></md-icon>
+                  <md-icon md-svg-icon="/img/icons/square.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasSquareMarking}" style="width:8px;"></md-icon>
                   <md-icon md-svg-icon="/img/icons/heart.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasHeartMarking}"></md-icon>
-                  <md-icon md-svg-icon="/img/icons/star.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasStarMarking}" style="width:11px;"></md-icon>
-                  <md-icon md-svg-icon="/img/icons/diamond.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasDiamondMarking}"></md-icon>
+                  <md-icon md-svg-icon="/img/icons/star.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasStarMarking}" style="width:11px;margin-left:-1px;margin-top:-2px;"></md-icon>
+                  <md-icon md-svg-icon="/img/icons/diamond.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasDiamondMarking}" style="margin-left:-1px;margin-top:-1px;"></md-icon>
                 </span>
                 <span flex>
                   <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
