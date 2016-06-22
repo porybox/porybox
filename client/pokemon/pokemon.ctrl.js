@@ -29,6 +29,8 @@ module.exports = function($routeParams, $scope, io) {
       this.data.ivSpe
     ];
 
+    this.totalExpToNextLevel = this.data.expFromPreviousLevel + this.data.expToNextLevel;
+
     this.stats = {
       HP: {
         fullName: 'Hit Points',

@@ -64,6 +64,10 @@
             <md-card-content>
               <div flex>Level {{pokemon.data.level}}</div>
               <div flex>{{pokemon.data.exp}} experience</div>
+              <div class="bar-container">
+                <div class="progress-bar" ng-attr-style="width: calc(({{pokemon.data.expFromPreviousLevel}} / {{pokemon.totalExpToNextLevel}}) * 100%);"></div>
+                <div class="progress-bar-label">{{pokemon.data.expFromPreviousLevel}} / {{pokemon.totalExpToNextLevel}} exp to next level</div>
+              </div>
             </md-card-content>
           </md-card>
 
@@ -198,8 +202,8 @@
                 </span>
                 <span flex>
                   <div class="bar-container">
-                    <div class="contest-bar {{statName}}" ng-attr-style="width: calc(({{statValue}} / 255) * 100%);"></div>
-                    <div class="contest-bar-label">{{statValue}}/255</div>
+                    <div class="progress-bar {{statName}}" ng-attr-style="width: calc(({{statValue}} / 255) * 100%);"></div>
+                    <div class="progress-bar-label">{{statValue}}/255</div>
                   </div>
                 </span>
               </div>
