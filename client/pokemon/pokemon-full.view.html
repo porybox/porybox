@@ -151,6 +151,9 @@
                 <strong>Game of Origin</strong>
                 <span ng-class="pokemon.gameLabel">{{pokemon.data.otGameName}}</span>
               </div>
+              <div ng-if="pokemon.isFromGen4">
+                <strong>Encounter Type</strong> {{pokemon.data.encounterTypeName}}
+              </div>
               <div ng-if="pokemon.data.isFatefulEncounter">Fateful Encounter</div>
               <div ng-if="pokemon.data.eggLocationId == 0">
                 Met at <span>{{pokemon.data.metLocationName}}</span>
