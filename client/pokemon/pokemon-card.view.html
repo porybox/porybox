@@ -36,7 +36,8 @@
           <i ng-if="pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">people</i>
         </span>
       </div>
-      <div flex title="Nature">{{pokemon.data.natureName}}</div>
+      <div flex ng-if="!pokemon.data.increasedStat" title="Neutral nature">{{pokemon.data.natureName}}</div>
+      <div flex ng-if="pokemon.data.increasedStat" ng-attr-title="+{{pokemon.data.increasedStat}}, -{{pokemon.data.decreasedStat}}">{{pokemon.data.natureName}}</div>
       <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
       <div flex title="OT, TID">{{pokemon.data.ot}}, {{pokemon.paddedTid}}</div>
       <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="-293 280 874 795" style="enable-background:new -293 280 874 795;" xml:space="preserve">
+	 viewBox="-5 97 600 600" style="enable-background:new -5 97 600 600;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#043575;}
+	.st0{fill:#000000;}
 </style>
-<path class="st0" d="M-257,583l419-303l419,303l-160,492H-97L-257,583z"/>
+<circle cx="295" cy="397" r="300"/>
 </svg>
