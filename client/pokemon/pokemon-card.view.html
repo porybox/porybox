@@ -1,5 +1,6 @@
 <md-card class="pokemon-card-mini" ng-init="pokemon.parseProps()">
-  <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link">
+  <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link" ng-attr-title="{{pokemon.data.isEgg ?
+  pokemon.data.nickname + ' (ESV: ' + pokemon.paddedEsv + ')' : pokemon.data.nickname}}">
     <md-card-header>
       <md-card-avatar>
         <div class="icon-container">
@@ -8,6 +9,7 @@
         </div>
       </md-card-avatar>
       <span class="md-headline">{{pokemon.data.nickname}}</span>
+      <span ng-if="pokemon.data.isEgg" class="esv">{{pokemon.paddedEsv}}</span>
     </md-card-header>
   </a>
     <md-card-content layout="column">
