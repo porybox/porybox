@@ -255,7 +255,11 @@
                 </div>
               </md-tab>
               <md-tab label="Regions">
-
+                <div style="padding-top: 10px; font-size: 14px; font-weight:bold;">Physical region history</div>
+                <div ng-repeat="place in pokemon.places track by $index" layout="row">
+                  <span flex>Country {{$index+1}} {{place.country}}</span>
+                  <span flex>Region {{$index+1}} {{place.region}}</span>
+                </div>
               </md-tab>
             </md-tabs>
           </md-card-content>
