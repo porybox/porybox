@@ -33,7 +33,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
   this.pokemon = function (event) {
     return $mdBottomSheet.show({
       templateUrl: 'add/pokemon.view.html',
-      controller: ['$mdBottomSheet', 'Upload', pokemonCtrl],
+      controller: ['$mdBottomSheet', '$routeParams', 'Upload', pokemonCtrl],
       locals: {
         boxes: this.boxes,
         defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
