@@ -123,6 +123,7 @@ module.exports = function($routeParams, $scope, io) {
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
+    this.isFromGen4 = [7, 8, 10, 11, 12].indexOf(this.data.otGameId) > -1;
 
     this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
       this.data.speciesName && this.data.speciesName.toLowerCase()}`;
