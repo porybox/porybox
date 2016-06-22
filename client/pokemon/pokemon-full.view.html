@@ -100,10 +100,10 @@
               <div ng-repeat="(statName, statData) in pokemon.stats track by $index" layout="row">
                 <span flex ng-attr-title="{{statData.fullName}}" ng-class="{'increased-stat': $index === pokemon.natureStats[0],
                           'decreased-stat': $index === pokemon.natureStats[1]}">{{statName}}</span>
-                <span flex>Base</span>
+                <span flex>{{statData.base}}</span>
                 <span flex>{{statData.iv}}</span>
                 <span flex>{{statData.ev}}</span>
-                <span flex>Total</span>
+                <span flex>{{statData.total}}</span>
               </div>
 
             </md-card-content>
