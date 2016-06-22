@@ -117,7 +117,7 @@
               </div>
               <div ng-repeat="move in pokemon.moves track by $index" layout="row">
                 <span flex="35">{{move.moveName || '-'}}</span>
-                <span flex="25">Type</span>
+                <span flex="25" class="type" ng-class="'type-' + move.moveType">{{move.moveType || '-'}}</span>
                 <span flex>Power</span>
                 <span flex="10">{{move.Pp || '-'}}</span>
                 <span flex="10">{{move.Ppu || '-'}}</span>

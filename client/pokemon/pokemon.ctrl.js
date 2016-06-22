@@ -74,21 +74,25 @@ module.exports = function($routeParams, $scope, io) {
     this.moves = [
       {
         moveName: this.data.move1Name,
+        moveType: this.data.move1Type,
         Pp: this.data.move1Pp,
         Ppu: this.data.move1Ppu
       },
       {
         moveName: this.data.move2Name,
+        moveType: this.data.move2Type,
         Pp: this.data.move2Pp,
         Ppu: this.data.move2Ppu
       },
       {
         moveName: this.data.move3Name,
+        moveType: this.data.move3Type,
         Pp: this.data.move3Pp,
         Ppu: this.data.move3Ppu
       },
       {
         moveName: this.data.move4Name,
+        moveType: this.data.move4Type,
         Pp: this.data.move4Pp,
         Ppu: this.data.move4Ppu
       }
@@ -101,7 +105,7 @@ module.exports = function($routeParams, $scope, io) {
       this.data.eggMove4Name
     ];
 
-    this.gameLabel = 'label-' + (this.data.otGameName || '').replace(' ', '-').toLowerCase();
+    this.gameLabel = 'game-' + (this.data.otGameName || '').replace(' ', '-').toLowerCase();
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
