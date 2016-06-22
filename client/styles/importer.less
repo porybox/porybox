@@ -247,26 +247,6 @@ progress {
   width: 100%;
 }
 
-/*******************************
- * Colors
- *******************************/
-
-.increased-stat {
-  color: #D0021B;
-}
-
-.decreased-stat {
-  color: #4A90E2;
-}
-
-.pokemon-kb path {
-  fill: #043575;
-}
-
-.pokemon-shiny path {
-  fill: #f9262f;
-}
-
 .box-marking path, .box-marking circle, .box-marking rect, .box-marking polygon {
   fill: #000;
   opacity: .25;
@@ -276,116 +256,51 @@ progress {
   opacity: 1;
 }
 
-.male {
+span[class^='gender-'] {
   font-size: 12px;
-  color: #4A90E2;
 }
 
-.female {
-  font-size: 12px;
-  color: #D0021B;
+.type {
+  text-transform: capitalize;
 }
 
-.cool {
-  background-color: #F08030;
-}
+/*******************************
+ * Colors
+ *******************************/
 
-.beauty {
-  background-color: #6890F0;
-}
+.increased-stat, .gender-female {color: #D0021B}
+.decreased-stat, .gender-male {color: #4A90E2}
 
-.cute {
-  background-color: #F85888;
-}
+.pokemon-kb path {fill: #043575}
+.pokemon-shiny path {fill: #f9262f}
 
-.clever {
-  background-color: #78C850;
-}
+.cool {background-color: #F08030}
+.beauty {background-color: #6890F0}
+.cute {background-color: #F85888}
+.clever {background-color: #78C850}
+.tough {background-color: #F8D030}
+.sheen {background-color: #eee}
 
-.tough {
-  background-color: #F8D030;
-}
+.pokerus {color: #A475C4}
 
-.sheen {
-  background-color: #eee;
-}
-
-.pokerus {
-  color: #A475C4;
-}
-
-.label-ruby {
-  color: #a00000;
-}
-
-.label-sapphire {
-  color: #0000a0;
-}
-
-.label-emerald {
-  color: #00a000;
-}
-
-.label-firered {
-  color: #ff7327;
-}
-
-.label-leafgreen {
-  color: #00dd00;
-}
-
-.label-diamond {
-  color: #aaaaff;
-}
-
-.label-pearl {
-  color: #ffaaaa;
-}
-
-.label-platinum {
-  color: #999;
-}
-
-.label-heartgold {
-  color: #b69e00;
-}
-
-.label-soulsilver {
-  color: #7d7d92;
-}
-
-.label-black {
-  color: #444;
-}
-
-.label-white {
-  color: #929292;
-}
-
-.label-black-2 {
-  color: #424b50;
-}
-
-.label-white-2 {
-  color: #e3ced0;
-}
-
-.label-x {
-  color: #025DA6;
-}
-
-.label-y {
-  color: #EA1A3E;
-}
-
-.label-omega-ruby {
-  color: #AB2813;
-}
-
-.label-alpha-sapphire {
-  color: #194166;
-}
-
+.game-ruby {color: #a00000}
+.game-sapphire {color: #0000a0}
+.game-emerald {color: #00a000}
+.game-firered {color: #ff7327}
+.game-leafgreen {color: #00dd00}
+.game-diamond {color: #aaaaff}
+.game-pearl {color: #ffaaaa}
+.game-platinum {color: #999}
+.game-heartgold {color: #b69e00}
+.game-soulsilver {color: #7d7d92}
+.game-black {color: #444}
+.game-white {color: #929292}
+.game-black-2 {color: #424b50}
+.game-white-2 {color: #e3ced0;}
+.game-x {color: #025DA6}
+.game-y {color: #EA1A3E}
+.game-omega-ruby {color: #AB2813}
+.game-alpha-sapphire {color: #194166}
 
  /*******************************
   * Error pages
