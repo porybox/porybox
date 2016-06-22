@@ -7,6 +7,7 @@ describe('PokemonCtrl', function() {
   let $mdBottomSheet = {},
     Upload = {},
     $controller = {},
+    $routeParams = {},
     tested, cancelSpy, uploadSpy;
 
   beforeEach(inject(function(_$controller_){
@@ -22,7 +23,7 @@ describe('PokemonCtrl', function() {
       }
     };
     $controller = _$controller_;
-    tested = $controller(ctrlTest, {$mdBottomSheet: $mdBottomSheet, Upload: Upload}, {boxes: []});
+    tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: []});
     cancelSpy = sinon.spy($mdBottomSheet, 'cancel');
     uploadSpy = sinon.spy(Upload, 'upload');
   }));
@@ -43,5 +44,31 @@ describe('PokemonCtrl', function() {
       expect(uploadSpy.called).to.equal(true);
     });
 
+  });
+
+  describe('default box', function() {
+    it('uses the most-recently-edited box if not on a box page', function() {
+      tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: [
+        {updatedAt: 0, id: 'foo'},
+        {updatedAt: 1, id: 'bar'}
+      ]});
+      expect(tested.box).to.equal('bar');
+    });
+    it('uses the most-recently-edited box if on a box page not belonging to the user', function() {
+      $routeParams = {boxid: 'baz'};
+      tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: [
+        {updatedAt: 0, id: 'foo'},
+        {updatedAt: 1, id: 'bar'}
+      ]});
+      expect(tested.box).to.equal('bar');
+    });
+    it('uses the current box if on a box page belonging to the user', function() {
+      $routeParams = {boxid: 'foo'};
+      tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: [
+        {updatedAt: 0, id: 'foo'},
+        {updatedAt: 1, id: 'bar'}
+      ]});
+      expect(tested.box).to.equal('foo');
+    });
   });
 });

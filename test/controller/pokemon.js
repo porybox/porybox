@@ -50,6 +50,10 @@ describe('PokemonController', () => {
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       expect(res.body.dexNo).to.equal(279);
+      expect(res.body.speciesName).to.equal('Pelipper');
+      expect(res.body.box).to.equal(generalPurposeBox);
+      expect(res.body.pid).to.exist();
+      expect(res.body._cloneHash).to.not.exist();
       expect(res.body.owner).to.equal('pk6tester');
       expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
     });

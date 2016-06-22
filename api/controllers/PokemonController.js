@@ -41,7 +41,7 @@ module.exports = _.mapValues({
     result.isUnique = await result.checkIfUnique();
     box._orderedIds.push(result.id);
     await box.save();
-    return res.created(result);
+    return PokemonHandler.getSafePokemonForUser(result, req.user).then(res.created);
   },
 
   async get (req, res) {
