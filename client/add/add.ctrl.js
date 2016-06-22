@@ -27,6 +27,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       return io.socket.postAsync('/box', {name, description});
     })).then(res => {
       this.boxes.push(res);
+      $scope.$apply();
     }).catch(console.error.bind(console));
   };
 
