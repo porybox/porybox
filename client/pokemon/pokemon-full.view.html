@@ -59,6 +59,14 @@
             </md-card-content>
           </md-card>
 
+          <md-card ng-if="pokemon.data.isEgg" class="summary" ng-show="pokemon.hasFullData">
+            <md-card-header><span class="md-headline">Egg Info</span></md-card-header>
+            <md-card-content>
+              <div flex><strong>ESV</strong> {{pokemon.paddedEsv}}</div>
+              <div flex><strong>Hatch cycles remaining</strong> {{pokemon.data.otFriendship}}</div>
+            </md-card-content>
+          </md-card>
+
           <md-card class="summary" ng-show="pokemon.hasFullData">
             <md-card-header><span class="md-headline">Level Info</span></md-card-header>
             <md-card-content>
@@ -147,12 +155,12 @@
               <div ng-if="pokemon.data.eggLocationId == 0">
                 Met at <span>{{pokemon.data.metLocationName}}</span>
               </div>
-              <div>
+              <div ng-if="!pokemon.data.isEgg">
                 Met at level {{pokemon.data.levelMet}} on {{pokemon.displayMetDate}}
               </div>
               <div ng-if="pokemon.data.eggLocationId != 0">
                 <div>Egg received from <span>{{pokemon.data.eggLocationName}} on {{pokemon.displayEggDate}}</span></div>
-                <div>Hatched at <span>{{pokemon.data.metLocationName}}</span></div>
+                <div ng-if="!pokemon.data.isEgg">Hatched at <span>{{pokemon.data.metLocationName}}</span></div>
               </div>
             </md-card-content>
           </md-card>
