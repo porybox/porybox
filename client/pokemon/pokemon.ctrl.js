@@ -17,6 +17,9 @@ module.exports = function($routeParams, $scope, io) {
     this.paddedSid = ('00000' + this.data.sid).slice(-5);
     this.paddedEsv = ('0000' + this.data.esv).slice(-4);
     this.paddedTsv = ('0000' + this.data.tsv).slice(-4);
+
+    this.speciesWithForme = this.data.speciesName + `${this.data.formName ? '-' + this.data.formName : ''}`;
+
     this.ivs = [
       this.data.ivHp,
       this.data.ivAtk,
@@ -106,7 +109,8 @@ module.exports = function($routeParams, $scope, io) {
     this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
       this.data.speciesName && this.data.speciesName.toLowerCase()}`;
     this.spriteUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${this.data.gender === 'F'
-      && genderDifferences.has(this.data.dexNo) ? 'female/' : ''}${this.data.dexNo}`;
+      && genderDifferences.has(this.data.dexNo) ? 'female/' : ''}${this.data.dexNo}${this.data.formId > 0 &&
+      this.data.dexNo !== 664 && this.data.dexNo !== 665 ? '-' + this.data.formId : ''}`;
     this.ballNameUrl = this.data.ballName
       ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null;

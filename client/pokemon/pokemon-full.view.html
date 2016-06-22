@@ -18,7 +18,7 @@
                 <img ng-src="/img/large/{{pokemon.spriteUrl}}.png" />
               </div>
               <div layout="row" layout-align="none center">
-                <div flex title="Species">{{pokemon.data.speciesName}}
+                <div flex title="Species">{{pokemon.speciesWithForme}}
                   <span class="male" ng-if="pokemon.data.gender == 'M'">&#9794;</span>
                   <span class="female" ng-if="pokemon.data.gender == 'F'">&#9792;</span>
                   <span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
