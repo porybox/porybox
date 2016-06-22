@@ -172,7 +172,7 @@
                 <span ng-if="pokemon.data.isUnique">Yes</span>
                 <span ng-if="!pokemon.data.isUnique">No</span>
               </div>
-              <div><a ng-href="/#/box/{{pokemon.data.box}}">Back to box</a></div>
+              <div ng-if="pokemon.data.box"><a ng-href="/#/box/{{pokemon.data.box}}">Back to box</a></div>
             </md-card-content>
           </md-card>
         </div>
