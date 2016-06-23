@@ -7,8 +7,8 @@
         <i class="material-icons">more_vert</i>
       </md-button>
       <md-menu-content width="4">
-        <md-menu-item>
-          <md-button ng-click="" >
+        <md-menu-item ng-show="box.data.owner === main.user.name || main.user.isAdmin">
+          <md-button ng-click="box.edit()" >
               <div layout="row">
                 <p flex="">Edit</p>
               </div>
@@ -42,17 +42,4 @@
   <div flex-xs ng-repeat="pokemon in box.data.contents">
     <pokemon-card data="pokemon"></pokemon-card>
   </div>
-</div>
-<div ng-show="box.data.owner === main.user.name || main.user.isAdmin">
-  edit this box:<br>
-  <!-- note: it would also be possible to make this auto-update rather than requiring the user to click 'save'. -->
-  <!-- (or just make the name/description at the top editable, sort of like how github allows you to edit PR titles) -->
-  name: <input type="text" ng-model="box.editedName" />
-  description: <input ng-model="box.editedDescription" />
-  visibilty: <select required ng-model="box.editedVisibility">
-    <option value="listed" ng-selected="box.data.visibility === 'listed'">listed</option>
-    <option value="unlisted" ng-selected="box.data.visibility === 'unlisted'">unlisted</option>
-  </select>
-  <button ng-click="box.saveEdits()">save</button>
-  <br>
 </div>

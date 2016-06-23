@@ -1,8 +1,8 @@
-<md-dialog aria-label="Add new box" ng-cloak>
-  <form name="addBox">
+<md-dialog aria-label="Edit Box" ng-cloak>
+  <form name="editBox">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Add new box</h2>
+        <h2>Edit Box</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="dialog.cancel()">
           <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
@@ -39,7 +39,7 @@
        Cancel
       </md-button>
       <md-button ng-click="dialog.answer()" ng-disabled="!dialog.canAdd()" type="submit">
-        Add
+        Save
       </md-button>
     </md-dialog-actions>
   </form>
