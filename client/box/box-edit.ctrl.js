@@ -4,9 +4,9 @@
  */
 module.exports = function ($mdDialog) {
 
-  this.name = '';
-  this.description = '';
-  this.visibility = 'unlisted';
+  this.name = this.data.name;
+  this.description = this.data.description;
+  this.visibility = this.data.visibility;
 
   this.cancel = function() {
     $mdDialog.cancel();

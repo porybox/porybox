@@ -23,12 +23,10 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       targetEvent: event,
       clickOutsideToClose: true,
       fullscreen: useFullScreen
-    }).then(({name, description}) => {
-      return io.socket.postAsync('/box', {name, description});
-    })).then(res => {
-      this.boxes.push(res);
-      $scope.$apply();
-    }).catch(console.error.bind(console));
+    })
+    .then((boxInfo) => io.socket.postAsync('/box', boxInfo)))
+    .then(res => $scope.$apply(this.boxes.push(res)))
+    .catch(console.error.bind(console));
   };
 
   this.pokemon = function (event) {
