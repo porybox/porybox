@@ -137,7 +137,7 @@
               <hr />
               <div>
                 <strong>Relearnable</strong>
-                <div><span flex="25" ng-repeat="move in pokemon.eggMoves track by $index">{{move || 'N/A'}}{{$last ? '' : ', '}}</span></div>
+                <div layout="row" layout-align="center start"><div flex="noshrink" ng-repeat="move in pokemon.eggMoves track by $index">{{move || '-'}}</span></div></div>
               </div>
             </md-card-content>
           </md-card>
