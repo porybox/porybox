@@ -38,10 +38,8 @@ module.exports.session = {
   autoReconnect: true,
 
 
-  adapter: 'mongo',
-  host: 'localhost',
-  port: 27017,
-  db: 'fapp',
+  adapter: 'connect-mongo',
+  url: 'mongodb://localhost:27017/porybox',
   collection: 'sessions'
 
 };
