@@ -129,7 +129,7 @@ module.exports = function($routeParams, $scope, io) {
       this.data.speciesName && this.data.speciesName.toLowerCase()}`;
     this.spriteUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${this.data.gender === 'F'
       && genderDifferences.has(this.data.dexNo) ? 'female/' : ''}${this.data.dexNo}${this.data.formId > 0 &&
-      this.data.dexNo !== 664 && this.data.dexNo !== 665 ? '-' + this.data.formId : ''}`;
+      [25, 664, 665].indexOf(this.data.dexNo) === -1 ? '-' + this.data.formId : ''}`;
     this.ballNameUrl = this.data.ballName
       ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null;
