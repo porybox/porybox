@@ -316,8 +316,8 @@
             <md-card-header><span class="md-headline">Hidden data</span></md-card-header>
             <md-card-content>
               <div ng-if="pokemon.data.visibility === 'public' || pokemon.data.owner === main.user.name || main.user.isAdmin">
-                <div><strong>PID</strong> {{pokemon.data.pid.toString(16).toUpperCase()}}</div>
-                <div><strong>Encryption constant</strong> {{pokemon.data.encryptionConstant.toString(16).toUpperCase()}}</div>
+                <div><strong>PID</strong> {{pokemon.data.pid.toString(16).toUpperCase().padStart(8, '0')}}</div>
+                <div><strong>Encryption constant</strong> {{pokemon.data.encryptionConstant.toString(16).toUpperCase().padStart(8, '0')}}</div>
               </div>
             </md-card-content>
           </md-card>

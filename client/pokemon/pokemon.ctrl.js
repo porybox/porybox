@@ -13,10 +13,10 @@ module.exports = function($routeParams, $scope, io) {
   this.data = this.data || {};
   this.id = $routeParams.pokemonid || this.data.id;
   this.parseProps = () => {
-    this.paddedTid = ('00000' + this.data.tid).slice(-5);
-    this.paddedSid = ('00000' + this.data.sid).slice(-5);
-    this.paddedEsv = ('0000' + this.data.esv).slice(-4);
-    this.paddedTsv = ('0000' + this.data.tsv).slice(-4);
+    this.paddedTid = this.data.tid.toString().padStart(5, '0');
+    this.paddedSid = this.data.sid.toString().padStart(5, '0');
+    this.paddedEsv = this.data.esv.toString().padStart(4, '0');
+    this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
 
     this.speciesWithForme = this.data.speciesName + `${this.data.formName ? '-' + this.data.formName : ''}`;
 
