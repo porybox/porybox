@@ -16,9 +16,15 @@ ng.module('porybox.home', ['porybox.box', 'porybox.pokemon'])
     templateUrl: 'home/home.view.html',
     controller: controller,
     controllerAs: 'home'
+  }).component('index',
+  {
+    bindings: {},
+    templateUrl: 'home/index.view.html',
+    controller: controller,
+    controllerAs: 'home'
   }).config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
       when('/', {
-        templateUrl: '/home/index.view.html'
+        templateUrl: '/home/main.view.html'
       });
   }]);
