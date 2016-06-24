@@ -78,4 +78,10 @@ describe('PokemonCtrl', function() {
       expect(tested6.paddedTid).to.equal('00000');
     });
   });
+  it('parses unicode characters correctly', function() {
+    const dangerbug = $controller(ctrlTest, {$scope, io, $routeParams},
+      {data: {tid: 12345, sid: 1, esv: 1, tsv: 1, ot: 'Filthy'}});
+    dangerbug.parseProps();
+    expect(dangerbug.parsedOt).to.equal('♥︎Filthy♥︎');
+  });
 });

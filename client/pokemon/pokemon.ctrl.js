@@ -20,6 +20,10 @@ module.exports = function($routeParams, $scope, io) {
 
     this.speciesWithForme = this.data.speciesName + `${this.data.formName ? '-' + this.data.formName : ''}`;
 
+    this.parsedOt = replace3dsUnicodeChars(this.data.ot);
+    this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
+    this.parsedNotOt = replace3dsUnicodeChars(this.data.notOt);
+
     this.ivs = [
       this.data.ivHp,
       this.data.ivAtk,
@@ -164,4 +168,9 @@ module.exports = function($routeParams, $scope, io) {
 
 function parseDate(timestamp) {
   return timestamp && moment.utc(timestamp).format('MMMM Do, YYYY');
+}
+
+function replace3dsUnicodeChars(str) {
+  return str &&
+    str.replace(/[\ue08e-\ue09d]/g, c => '♂♀♠♣♥♦★◎○□△◇♪☀☁☂'[c.charCodeAt(0) - 0xe08e] + '\ufe0e');
 }
