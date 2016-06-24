@@ -12,6 +12,7 @@ const genderDifferences = new Set([
 module.exports = function($routeParams, $scope, io) {
   this.data = this.data || {};
   this.id = $routeParams.pokemonid || this.data.id;
+  this.errorStatusCode = null;
   this.parseProps = () => {
     this.paddedTid = this.data.tid.toString().padStart(5, '0');
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
@@ -162,7 +163,9 @@ module.exports = function($routeParams, $scope, io) {
   this.fetch = () => {
     return io.socket.getAsync(`/p/${this.id}`).then(data => {
       Object.assign(this.data, data);
-    }).then(this.parseProps).then(() => $scope.$apply());
+    }).then(this.parseProps).catch(err => {
+      this.errorStatusCode = err.statusCode;
+    }).then(() => $scope.$apply());
   };
 };
 
