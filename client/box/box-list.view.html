@@ -3,18 +3,18 @@
     <h3><span>{{box.data.name}}</span></h3>
     <span flex></span>
     <md-menu md-position-mode="target-right target">
-      <md-button class="md-icon-button" aria-label="Box settings" ng-click="$mdOpenMenu($event)">
+      <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
         <i class="material-icons">more_vert</i>
       </md-button>
       <md-menu-content width="4">
-        <md-menu-item ng-show="box.data.owner === main.user.name || main.user.isAdmin">
+        <md-menu-item>
           <md-button ng-click="box.edit()" >
               <div layout="row">
                 <p flex="">Edit</p>
               </div>
           </md-button>
         </md-menu-item>
-        <md-menu-item ng-if="!box.isDeleted" >
+        <md-menu-item ng-if="!box.isDeleted">
           <md-button ng-click="box.delete()">
               <div layout="row">
                 <p flex="">Delete Box</p>
