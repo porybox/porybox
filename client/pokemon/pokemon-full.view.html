@@ -9,7 +9,7 @@
               <img class="pokeball"
                    ng-if="pokemon.ballNameUrl"
                    ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
-                   title="{{pokemon.data.ballName}}" /><span class="md-headline">{{pokemon.data.nickname}}</span>
+                   title="{{pokemon.data.ballName}}" /><span class="md-headline">{{pokemon.parsedNickname}}</span>
                 <span flex></span>
                 <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
               </div>
@@ -82,7 +82,7 @@
           <md-card class="summary" ng-show="pokemon.hasFullData">
             <md-card-header><span class="md-headline">Original Trainer Info</span></md-card-header>
             <md-card-content>
-              <div flex>{{pokemon.data.ot}}
+              <div flex>{{pokemon.parsedOt}}
                 <span class="gender-male" ng-if="pokemon.data.otGender == 'M'">&#9794;</span><span class="gender-female" ng-if="pokemon.data.otGender == 'F'">&#9792;</span>
               </div>
               <div layout="row" layout-align="center">
@@ -253,14 +253,14 @@
               <md-tab label="Non-OT">
                 <div style="padding-top: 10px;">
                   <div>
-                    <strong>Last non-OT handler</strong> {{pokemon.data.notOt}}
+                    <strong>Last non-OT handler</strong> {{pokemon.parsedNotOt}}
                     <span ng-if="pokemon.data.notOt === ''" style="font-style: italic">Never left OT</span>
                     <span class="gender-male" ng-if="pokemon.data.notOtGender == 'M'">&#9794;</span>
                     <span class="gender-female" ng-if="pokemon.data.notOtGender == 'F'">&#9792;</span>
                   </div>
                   <div><strong>Friendship</strong> {{pokemon.data.notOtFriendship}}</div>
                   <div><strong>Affection</strong> {{pokemon.data.notOtAffection}}</div>
-                  <span ng-if="!pokemon.data.currentHandlerIsOt">Current handler is {{pokemon.data.notOt}}</span>
+                  <span ng-if="!pokemon.data.currentHandlerIsOt">Current handler is {{pokemon.parsedNotOt}}</span>
                   <hr />
                   <!-- insert memory text here -->
                 </div>
