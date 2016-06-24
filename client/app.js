@@ -35,7 +35,7 @@ porybox.controller('MainCtrl', function () {
     this.boxes = boxes;
     this.user = user;
     if (!this.user && location.pathname === '/' && ['', '#/'].indexOf(location.hash) !== -1) {
-      location.hash = 'login';
+      location.hash = 'home';
     }
     this.prefs = prefs;
   };
