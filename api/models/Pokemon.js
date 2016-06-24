@@ -12,6 +12,7 @@ const attributes = {
   superTrainingBag: {},
   pid: {},
   natureId: {},
+  isFatefulEncounter: {type: 'boolean'},
   gender: {type: 'json', required: false},
   formId: {},
   evHp: {},
