@@ -4,14 +4,16 @@ const angular = require('angular');
 module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
   this.data = this.data || {contents: []};
   this.id = $routeParams.boxid || this.data.id;
+  this.errorStatusCode = null;
   this.isDeleted = false;
 
   this.fetch = () => {
     io.socket.getAsync('/b/' + this.id).then(data => {
       Object.assign(this.data, data);
       this.hasFullData = true;
-      $scope.$apply();
-    }).catch(console.error.bind(console));
+    }).catch(err => {
+      this.errorStatusCode = err.statusCode;
+    }).then(() => $scope.$apply());
   };
 
   this.edit = event => {
