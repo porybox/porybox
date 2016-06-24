@@ -20,7 +20,7 @@ ng.module('porybox.box', ['ngRoute'])
     $routeProvider.
       when('/box/:boxid', {
         templateUrl: '/box/box-list.view.html',
-        controller: ['$scope', '$routeParams', 'io', boxController],
+        controller: ['$scope', '$routeParams', 'io', '$mdMedia', '$mdDialog', boxController],
         controllerAs: 'box'
       });
   }]);
