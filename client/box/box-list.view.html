@@ -1,45 +1,48 @@
-<md-toolbar class="md-hue-1">
-  <div class="md-toolbar-tools">
-    <h3><span>{{box.data.name}}</span></h3>
-    <span flex></span>
-    <md-menu md-position-mode="target-right target">
-      <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
-        <i class="material-icons">settings</i>
-      </md-button>
-      <md-menu-content width="4">
-        <md-menu-item>
-          <md-button ng-click="box.edit()" >
-              <div layout="row">
-                <p flex="">Edit</p>
-              </div>
-          </md-button>
-        </md-menu-item>
-        <md-menu-item ng-if="!box.isDeleted">
-          <md-button ng-click="box.delete()">
-              <div layout="row">
-                <p flex="">Delete Box</p>
-              </div>
-          </md-button>
-        </md-menu-item>
-        <md-menu-item ng-if="box.isDeleted" >
-          <md-button ng-click="box.undelete()">
-              <div layout="row">
-                <p flex="">Undo Box Deletion</p>
-              </div>
-          </md-button>
-        </md-menu-item>
-      </md-menu-content>
-    </md-menu>
+<div ng-show="box.data.id">
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+      <h3><span>{{box.data.name}}</span></h3>
+      <span flex></span>
+      <md-menu md-position-mode="target-right target">
+        <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
+          <i class="material-icons">settings</i>
+        </md-button>
+        <md-menu-content width="4">
+          <md-menu-item>
+            <md-button ng-click="box.edit()" >
+                <div layout="row">
+                  <p flex="">Edit</p>
+                </div>
+            </md-button>
+          </md-menu-item>
+          <md-menu-item ng-if="!box.isDeleted">
+            <md-button ng-click="box.delete()">
+                <div layout="row">
+                  <p flex="">Delete Box</p>
+                </div>
+            </md-button>
+          </md-menu-item>
+          <md-menu-item ng-if="box.isDeleted" >
+            <md-button ng-click="box.undelete()">
+                <div layout="row">
+                  <p flex="">Undo Box Deletion</p>
+                </div>
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
 
-  </div>
-</md-toolbar>
+    </div>
+  </md-toolbar>
 
-<md-card>
-  <md-card-content>{{box.data.description}}</md-card-content>
-</md-card>
+  <md-card>
+    <md-card-content>{{box.data.description}}</md-card-content>
+  </md-card>
 
-<div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
-  <div flex-xs ng-repeat="pokemon in box.data.contents">
-    <pokemon-card data="pokemon"></pokemon-card>
+  <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
+    <div flex-xs ng-repeat="pokemon in box.data.contents">
+      <pokemon-card data="pokemon"></pokemon-card>
+    </div>
   </div>
 </div>
+<div ng-if="box.errorStatusCode" ng-include="'/errors/' + box.errorStatusCode + '.html'"></div>
