@@ -1,3 +1,27 @@
+<md-toolbar class="md-hue-1">
+  <div class="md-toolbar-tools">
+    <div ng-if="pokemon.data.box" style="margin-left:-15px;">
+      <a ng-href="/#/box/{{pokemon.data.box}}">
+        <md-button class="md-icon-button" aria-label="Back to box">
+          <i class="material-icons">arrow_back</i>
+        </md-button>
+      </a>
+    </div>
+    <div class="icon-container">
+      <span>
+        <img ng-if="pokemon.data.isEgg" style="left:-10px" src="/img/icons/egg.png" />
+        <img ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="/img/icons/{{pokemon.iconUrl}}.png" />
+        <h3 style="margin-left:40px;">{{pokemon.parsedNickname}}</h3>
+      </span>
+    </div>
+    <span flex></span> <!-- can remove this when we add menu -->
+    <md-button class="md-icon-button" aria-label="Pokémon settings" ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin">
+      <md-tooltip md-direction="left">{{pokemon.parsedNickname}}'s settings</md-tooltip>
+      <i class="material-icons">settings</i>
+    </md-button>
+  </div>
+</md-toolbar>
+
 <md-tabs md-border-bottom md-swipe-content ng-init="pokemon.fetch()" ng-show="pokemon.data.id" md-dynamic-height>
   <md-tab label="Main Summary">
     <md-tab-body> <!-- everything within a tab should probably get its own view to not overload this -->
@@ -187,7 +211,6 @@
                 <span ng-if="pokemon.data.isUnique">Yes</span>
                 <span ng-if="!pokemon.data.isUnique">No</span>
               </div>
-              <div ng-if="pokemon.data.box"><a ng-href="/#/box/{{pokemon.data.box}}">Back to box</a></div>
             </md-card-content>
           </md-card>
         </div>
