@@ -1,5 +1,5 @@
 module.exports = func => (req, res) => Promise.method(func)(req, res).catch(err => {
-  if (res.finished) {
+  if (res.headersSent) {
     return sails.log.error(err);
   }
   if (!_.isError(err) && err.statusCode) {
