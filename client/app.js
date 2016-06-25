@@ -32,13 +32,15 @@ const porybox = ng.module('porybox', [
 
 porybox.controller('MainCtrl', function () {
   this.boxes = [];
-  this.init = function ({boxes, user, prefs}) {
+  this.selected = {};
+  this.init = function ({boxes, user, prefs, selectedBox}) {
     this.boxes = boxes;
     this.user = user;
     if (!this.user && location.pathname === '/' && ['', '#/'].indexOf(location.hash) !== -1) {
       location.hash = 'home';
     }
     this.prefs = prefs;
+    this.selected.box = selectedBox;
   };
 });
 

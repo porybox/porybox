@@ -12,9 +12,10 @@ ng.module('porybox.add', ['porybox.box', 'porybox.pokemon', 'ngMessages', 'ngFil
   {
     bindings: {
       boxes: '=',
-      prefs: '='
+      prefs: '=',
+      selected: '='
     },
     templateUrl: 'add/add.view.html',
-    controller: ['$scope', 'io', '$mdDialog', '$mdMedia', '$mdBottomSheet', controller],
+    controller: ['$scope', 'io', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'Upload', controller],
     controllerAs: 'add'
   });

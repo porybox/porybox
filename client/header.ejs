@@ -10,7 +10,7 @@
     <span flex></span>
 
     <% if (typeof user !== 'undefined') {%>
-      <add-menu boxes="main.boxes" prefs="main.prefs"></add-menu>
+      <add-menu boxes="main.boxes" prefs="main.prefs" selected="main.selected"></add-menu>
       <md-button aria-label="Help & FAQ" href="/faq">Help & FAQ</md-button>
       <user-menu name="'<%= user.name %>'"></user-menu>
     <% } else { %>

@@ -11,7 +11,8 @@ ng.module('porybox.home', ['porybox.box', 'porybox.pokemon'])
   .component('homepage',
   {
     bindings: {
-      boxes: '='
+      boxes: '=',
+      selected: '='
     },
     templateUrl: 'home/home.view.html',
     controller: controller,

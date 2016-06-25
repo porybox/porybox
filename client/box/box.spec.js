@@ -7,7 +7,17 @@ describe('BoxCtrl', function() {
   beforeEach(inject(function(_$controller_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
     $controller = _$controller_;
-    $scope = {};
+    $scope = {
+      $parent: {
+        main: {
+          selected: {
+            box: {
+              id: 1
+            }
+          }
+        }
+      }
+    };
     $routeParams = {};
     $mdMedia = {};
     $mdDialog = {};
@@ -24,7 +34,8 @@ describe('BoxCtrl', function() {
         name: 'boxName',
         description: 'boxDescription',
         owner: 'boxUser',
-        id: 'boxId'
+        id: 'boxId',
+        selected: {box: {id: 1}}
       }});
       expect(tested.data.name).to.equal('boxName');
       expect(tested.data.owner).to.equal('boxUser');

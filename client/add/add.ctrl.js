@@ -7,8 +7,8 @@ const pokemonCtrl = require('./pokemon.ctrl.js');
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
-  this.box = event => {
+module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet, Upload) {
+  this.box = (event) => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $scope.$watch(function() {
       return $mdMedia('xs') || $mdMedia('sm');
@@ -29,10 +29,10 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
     .catch(console.error.bind(console));
   };
 
-  this.pokemon = function (event) {
+  this.pokemon = (event) => {
     return $mdBottomSheet.show({
       templateUrl: 'add/pokemon.view.html',
-      controller: ['$mdBottomSheet', '$routeParams', 'Upload', pokemonCtrl],
+      controller: ['$mdBottomSheet', '$routeParams', pokemonCtrl],
       locals: {
         boxes: this.boxes,
         defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
@@ -41,7 +41,18 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet) {
       bindToController: true,
       parent: angular.element(document.body),
       targetEvent: event
-    });
+    }).then(({file, visibility, box}) => {
+      return Upload.upload({
+        url: '/uploadpk6',
+        data: {pk6: file, visibility, box}
+      });
+    })
+    .then((res) => {
+      if (this.selected.selectedBox.id === res.data.box){
+        return this.selected.selectedBox.contents.push(res.data);
+      }
+    })
+    .catch(console.log.bind(console));
   };
 
 };
