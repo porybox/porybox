@@ -6,9 +6,9 @@ module.exports = {
     }
     return filtered;
   },
-  requireParams (allParams, requiredValues) {
+  requireParams (allParams, requiredValues, {requireStrings = true} = {}) {
     _.forEach(_.isArray(requiredValues) ? requiredValues : [requiredValues], param => {
-      if (!_.has(allParams, param)) {
+      if (!_.has(allParams, param) || requireStrings && !_.isString(allParams[param])) {
         throw {statusCode: 400, message: `Missing parameter ${param}`};
       }
     });
@@ -23,27 +23,30 @@ module.exports = {
       throw {statusCode: item._markedForDeletion ? 404 : 403};
     }
   },
-  verifyBoxParams (box) {
-    if (!_.isString(box.name) || _.isEmpty(box.name)) {
+  verifyBoxParams (params) {
+    if (!_.isUndefined(params.name) && (!_.isString(params.name) || _.isEmpty(params.name))) {
       throw {statusCode: 400, message: 'Invalid box name'};
     }
-    if (box.description && !_.isString(box.description)) {
+    if (!_.isUndefined(params.name) && (params.description && !_.isString(params.description))) {
       throw {statusCode: 400, message: 'Invalid box description'};
     }
-    if (!Constants.BOX_VISIBILITIES.includes(box.visibility)) {
+    if (!_.isUndefined(params.visibility)
+        && !Constants.BOX_VISIBILITIES.includes(params.visibility)) {
       throw {statusCode: 400, message: 'Invalid box visibility'};
     }
   },
-  verifyPokemonParams (pokemon) {
-    if (!Constants.POKEMON_VISIBILITIES.includes(pokemon.visibility)) {
+  verifyPokemonParams (params) {
+    if (!_.isUndefined(params.visibility)
+        && !Constants.POKEMON_VISIBILITIES.includes(params.visibility)) {
       throw {statusCode: 400, message: 'Invalid pokemon visibility'};
     }
   },
-  verifyPokemonNoteParams (note) {
-    if (!_.isString(note.text) || _.isEmpty(note.text)) {
+  verifyPokemonNoteParams (params) {
+    if (!_.isUndefined(params.text) && (!_.isString(params.text) || _.isEmpty(params.text))) {
       throw {statusCode: 400, message: 'Invalid note text'};
     }
-    if (!Constants.POKEMON_NOTE_VISIBILITIES.includes(note.visibility)) {
+    if (!_.isUndefined(params.visibility)
+        && !Constants.POKEMON_NOTE_VISIBILITIES.includes(params.visibility)) {
       throw {statusCode: 400, message: 'Invalid note visibility'};
     }
   },

@@ -68,6 +68,21 @@ module.exports =  {
     omitPrivateInformation () {
       return _.omit(this, ['passports', 'email', 'preferences', 'updatedAt']);
     },
+    addBoxId (id, position) {
+      return Promise.fromCallback(User.native.bind(User)).then(collection => {
+        const query = {$push: {_orderedBoxIds: {$each: [id]}}};
+        if (_.isNumber(position)) {
+          query.$push._orderedBoxIds.$position = position;
+        }
+        return collection.update({_id: this.name}, query);
+      });
+    },
+
+    removeBoxId (id) {
+      return Promise.fromCallback(User.native.bind(User)).then(collection => {
+        return collection.update({_id: this.name}, {$pull: {_orderedBoxIds: id}});
+      });
+    },
     async deleteAccount () {
       await Promise.all([
         UserPreferences.destroy({user: this.name}),

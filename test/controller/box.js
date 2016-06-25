@@ -212,12 +212,13 @@ describe('BoxController', () => {
       pkmn = res2.body;
     });
     it('does not allow a user to delete their last box', async () => {
-      for (let i = 0; i < 5; i++) {
+      const initialLength = (await agent.get('/user/boxtester/boxes')).body.length;
+      await Promise.all(_.times(5, async () => {
         const res = await agent.post('/box').send({name: 'Fare Box'});
         expect(res.statusCode).to.equal(201);
-      }
+      }));
       const res2 = await agent.get('/user/boxtester/boxes');
-      expect(res2.body.length).to.be.at.least(5);
+      expect(res2.body.length).to.equal(initialLength + 5);
       expect(res2.statusCode).to.equal(200);
       await Promise.each(res2.body.slice(1), async box => {
         const res3 = await agent.del(`/b/${box.id}`);

@@ -49,30 +49,31 @@ module.exports = _.mapValues({
     Validation.assert(_.every(filteredParams, _.isArray), 'Parameters must be arrays');
     const hasNoDupes = arr => _.uniq(arr).length === arr.length;
     Validation.assert(_.every(filteredParams, hasNoDupes), 'Arrays must not have duplicate values');
-    _.assign(req.user, filteredParams);
     try {
-      await req.user.save();
+      await User.update({name: req.user.name}, filteredParams);
     } catch (err) {
       return err.code === 'E_VALIDATION' ? res.badRequest() : res.serverError(err);
     }
     return res.ok();
   },
   async grantAdminStatus (req, res) {
-    const user = await User.findOne({name: req.param('name')});
+    const params = req.allParams();
+    Validation.requireParams(params, 'name');
+    const user = await User.findOne({name: params.name});
     if (!user) {
       return res.notFound();
     }
-    user.isAdmin = true;
-    await user.save();
+    await User.update({name: params.name}, {isAdmin: true});
     return res.ok();
   },
   async revokeAdminStatus (req, res) {
-    const user = await User.findOne({name: req.param('name')});
+    const params = req.allParams();
+    Validation.requireParams(params, 'name');
+    const user = await User.findOne({name: params.name});
     if (!user) {
       return res.notFound();
     }
-    user.isAdmin = false;
-    await user.save();
+    await User.update({name: params.name}, {isAdmin: false});
     return res.ok();
   },
   async deleteAccount (req, res) {
