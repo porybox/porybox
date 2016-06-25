@@ -1,7 +1,7 @@
 exports.BOX_VISIBILITIES = ['listed', 'unlisted'];
 exports.DEFAULT_BOX_VISIBILITY_SETTING = 'listed';
-exports.POKEMON_VISIBILITIES = ['private', 'public', 'readonly'];
-exports.DEFAULT_POKEMON_VISIBILITY_SETTING = 'readonly';
+exports.POKEMON_VISIBILITIES = ['private', 'public', 'viewable'];
+exports.DEFAULT_POKEMON_VISIBILITY_SETTING = 'viewable';
 exports.POKEMON_NOTE_VISIBILITIES = ['private', 'public'];
 exports.DEFAULT_POKEMON_NOTE_VISIBILITY_SETTING = 'public';
 

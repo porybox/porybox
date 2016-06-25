@@ -45,7 +45,7 @@ describe('BoxController', () => {
     let boxId;
     before(async () => {
       boxId = (await agent.post('/box').send({name: 'Inbox'})).body.id;
-      await Promise.each(['readonly', 'public', 'private'], async visibility => {
+      await Promise.each(['viewable', 'public', 'private'], async visibility => {
         const res = await agent.post('/uploadpk6')
           .field('box', boxId)
           .field('visibility', visibility)
@@ -70,7 +70,7 @@ describe('BoxController', () => {
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/b/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
-      expect(box.contents[0].visibility).to.equal('readonly');
+      expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.not.exist();
       expect(box.contents[0].box).to.not.exist();
       expect(box.contents[0].speciesName).to.exist();
@@ -83,7 +83,7 @@ describe('BoxController', () => {
     it('allows admins to view the full contents of a box by ID', async () => {
       const box = (await adminAgent.get(`/b/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
-      expect(box.contents[0].visibility).to.equal('readonly');
+      expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.exist();
       expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[0].box).to.equal(box.id);
@@ -101,7 +101,7 @@ describe('BoxController', () => {
       expect(res.statusCode).to.equal(200);
       const box = res.body;
       expect(box.id).to.equal(boxId);
-      expect(box.contents[0].visibility).to.equal('readonly');
+      expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.not.exist();
       expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[0].box).to.not.exist();
@@ -127,7 +127,7 @@ describe('BoxController', () => {
       const res4 = await otherAgent.post('/box').send({name: "Pandora's Box"});
       expect(res4.statusCode).to.equal(201);
       otherBox = res4.body;
-      await Promise.each(['readonly', 'public', 'private'], async visibility => {
+      await Promise.each(['viewable', 'public', 'private'], async visibility => {
         const res = await agent.post('/uploadpk6')
           .attach('pk6', __dirname + '/pkmn1.pk6')
           .field('box', box1.id)
