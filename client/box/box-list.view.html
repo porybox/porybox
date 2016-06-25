@@ -3,7 +3,7 @@
     <div class="md-toolbar-tools">
       <h3><span>{{box.data.name}}</span></h3>
       <span flex></span>
-      <md-menu md-position-mode="target-right target">
+      <md-menu md-position-mode="target-right target" md-offset="0 50">
         <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
           <md-tooltip md-direction="left">{{box.data.name}} settings</md-tooltip>
           <i class="material-icons">settings</i>
