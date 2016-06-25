@@ -14,7 +14,7 @@ ng.module('porybox.box', ['ngRoute'])
       'data': '='
     },
     templateUrl: 'box/box-card.view.html',
-    controller: boxController,
+    controller: ['$scope', '$routeParams', 'io', '$mdMedia', '$mdDialog', boxController],
     controllerAs: 'box'
   }).config(['$routeProvider', function($routeProvider) {
     $routeProvider.
