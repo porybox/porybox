@@ -16,11 +16,11 @@
       <div layout="row" layout-align="none center">
         <img class="pokeball"
           ng-if="pokemon.ballNameUrl"
-          ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
+          ng-src="img/icons/items/{{pokemon.ballNameUrl}}.png"
           title="In a {{pokemon.data.ballName}}" />
         <img class="held-item"
           ng-if="pokemon.heldItemUrl"
-          ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
+          ng-src="/img/icons/items/{{pokemon.heldItemUrl}}.png"
           title="Holding {{pokemon.data.heldItemName}}" />
         <span flex></span>
         <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
