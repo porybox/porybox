@@ -70,7 +70,7 @@
                   <span>{{pokemon.data.heldItemName || 'No item'}}</span>
                 </div>
                 <div layout="row" layout-align="start center">
-                  <span flex>
+                  <span>
                     <md-icon md-svg-icon="/img/icons/circle.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasCircleMarking}"></md-icon>
                     <md-icon md-svg-icon="/img/icons/triangle.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasTriangleMarking}"></md-icon>
                     <md-icon md-svg-icon="/img/icons/square.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasSquareMarking}" style="width:8px;"></md-icon>
@@ -78,10 +78,15 @@
                     <md-icon md-svg-icon="/img/icons/star.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasStarMarking}" style="width:11px;margin-left:-1px;margin-top:-2px;"></md-icon>
                     <md-icon md-svg-icon="/img/icons/diamond.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasDiamondMarking}" style="margin-left:-1px;margin-top:-1px;"></md-icon>
                   </span>
-                  <span flex>
+                  <span style="margin-left:10px;">
                     <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
                     <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
+                    <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration > 0" aria-title="Infected with Pokérus" class="pokerus" style="font-size:10px;">PKRS</span>
+                    <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration === 0" aria-title="Cured Pokérus">
+                      <md-icon md-svg-icon="/img/icons/pkrs_cured.svg" style="width: 9px;"></md-icon>
+                    </span>
                   </span>
+                  <span flex></span>
                   <span>
                     <i ng-if="pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
                     <i ng-if="pokemon.data.visibility === 'readonly'" class="material-icons visibility" title="Read-Only">remove_red_eye</i>
@@ -162,7 +167,7 @@
                 <div ng-repeat="move in pokemon.moves track by $index" layout="row">
                   <span flex="35">{{move.moveName || '-'}}</span>
                   <span flex="25" class="type" ng-class="'type-' + move.moveType">{{move.moveType || '-'}}</span>
-                  <span flex>Power</span>
+                  <span flex>{{move.power || '-'}}</span>
                   <span flex="10">{{move.Pp || '-'}}</span>
                   <span flex="10">{{move.Ppu || '-'}}</span>
                 </div>
@@ -324,7 +329,7 @@
                 <div><strong>Days remaining</strong> {{pokemon.data.pokerusDuration}}</div>
               </div>
               <div ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration === 0">
-                <div class="pokerus"><strong>Cured Pokérus</strong></div>
+                <div class="pokerus"><md-icon md-svg-icon="/img/icons/pkrs_cured.svg" style="width: 9px;"></md-icon> <strong>Cured Pokérus</strong></div>
                 <div><strong>Strain</strong> {{pokemon.data.pokerusStrain}}</div>
               </div>
               <div ng-if="pokemon.data.pokerusStrain === 0 && pokemon.data.pokerusDuration === 0">
