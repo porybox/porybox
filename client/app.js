@@ -84,4 +84,4 @@ porybox.service('io', function () {
   return io;
 });
 
-ng.bootstrap(document, ['porybox']);
+ng.bootstrap(document, ['porybox'], {strictDi: true});
