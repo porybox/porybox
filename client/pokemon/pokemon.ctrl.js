@@ -139,9 +139,10 @@ module.exports = function($routeParams, $scope, io) {
       ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null;
 
-    this.heldItemUrl = this.data.heldItemName
+    this.heldItemUrl = this.data.heldItemId >= 328 && this.data.heldItemId <= 445 ?
+      'tm' : (this.data.heldItemName
       ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
-      : null;
+      : null);
 
     this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
 
