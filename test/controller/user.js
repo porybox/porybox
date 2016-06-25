@@ -81,7 +81,7 @@ describe('UserController', () => {
     it("can get a user's preferences", async () => {
       const res = await agent.get('/preferences');
       expect(res.body.defaultBoxVisibility).to.equal('listed');
-      expect(res.body.defaultPokemonVisibility).to.equal('readonly');
+      expect(res.body.defaultPokemonVisibility).to.equal('viewable');
     });
     describe('modifying preferences', () => {
       it("can edit a user's preferences", async () => {
@@ -135,22 +135,22 @@ describe('UserController', () => {
           .field('box', generalPurposeBox);
         expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('public');
-        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'readonly'});
+        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'viewable'});
         const res2 = await agent.post('/uploadpk6')
           .attach('pk6', `${__dirname}/pkmn1.pk6`)
           .field('box', generalPurposeBox);
         expect(res2.statusCode).to.equal(201);
-        expect(res2.body.visibility).to.equal('readonly');
+        expect(res2.body.visibility).to.equal('viewable');
       });
       it('can be overridden by specifying a visibility while uploading a pokemon', async () => {
         await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'public'});
         const res = await agent.post('/uploadpk6')
-          .field('visibility', 'readonly')
+          .field('visibility', 'viewable')
           .field('box', generalPurposeBox)
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
-        expect(res.body.visibility).to.equal('readonly');
-        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'readonly'});
+        expect(res.body.visibility).to.equal('viewable');
+        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'viewable'});
         const res2 = await agent.post('/uploadpk6')
           .field('visibility', 'public')
           .field('box', generalPurposeBox)
