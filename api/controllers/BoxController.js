@@ -72,9 +72,8 @@ module.exports = _.mapValues({
     const filteredParams = Validation.filterParams(params, ['name', 'description', 'visibility']);
     const box = await Box.findOne({id: params.id});
     Validation.verifyUserIsOwner(box, req.user);
-    _.assign(box, filteredParams);
-    Validation.verifyBoxParams(box);
-    await box.save();
+    Validation.verifyBoxParams(filteredParams);
+    await Box.update({id: box.id}, filteredParams);
     return res.ok(box);
   }
 }, catchAsyncErrors);

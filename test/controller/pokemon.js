@@ -105,6 +105,22 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Failed to parse the provided file');
     });
+    it('can handle concurrent uploads to the same box without losing anything', async () => {
+      const res = await agent.get(`/b/${generalPurposeBox}`);
+      expect(res.statusCode).to.equal(200);
+      const initialCount = res.body.contents.length;
+      expect(initialCount).to.be.a('number');
+      const newIds = await Promise.all(_.times(10, async () => {
+        const res2 = await agent.post('/uploadpk6')
+          .field('box', generalPurposeBox)
+          .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        expect(res2.statusCode).to.equal(201);
+        return res2.body.id;
+      }));
+      const res3 = await agent.get(`/b/${generalPurposeBox}`);
+      expect(res3.body.contents.length).to.equal(initialCount + 10);
+      expect(_.map(res3.body.contents.slice(-10), 'id').sort()).to.eql(newIds.sort());
+    });
   });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, readOnlyId;
@@ -627,7 +643,9 @@ describe('PokemonController', () => {
       const res5 = await agent.get(`/p/${pkmn.id}`);
       expect(res5.statusCode).to.equal(200);
       expect(res5.body.id).to.equal(pkmn.id);
-      expect(res5.body.notes).to.eql([res.body, res2.body]);
+      const newNotes = res5.body.notes.map(note => _.omit(note, 'updatedAt'));
+      const oldNotes = [res.body, res2.body].map(note => _.omit(note, 'updatedAt'));
+      expect(newNotes).to.eql(oldNotes);
     });
     it('restores the notes of all the pokemon in a box when undeleting it', async () => {
       const res = await agent.post('/box').send({name: 'Boxcart'});
