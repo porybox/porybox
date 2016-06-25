@@ -95,25 +95,29 @@ module.exports = function($routeParams, $scope, io) {
         moveName: this.data.move1Name,
         moveType: this.data.move1Type,
         Pp: this.data.move1Pp,
-        Ppu: this.data.move1Ppu
+        Ppu: this.data.move1Ppu,
+        power: this.data.move1Power
       },
       {
         moveName: this.data.move2Name,
         moveType: this.data.move2Type,
         Pp: this.data.move2Pp,
-        Ppu: this.data.move2Ppu
+        Ppu: this.data.move2Ppu,
+        power: this.data.move2Power
       },
       {
         moveName: this.data.move3Name,
         moveType: this.data.move3Type,
         Pp: this.data.move3Pp,
-        Ppu: this.data.move3Ppu
+        Ppu: this.data.move3Ppu,
+        power: this.data.move3Power
       },
       {
         moveName: this.data.move4Name,
         moveType: this.data.move4Type,
         Pp: this.data.move4Pp,
-        Ppu: this.data.move4Ppu
+        Ppu: this.data.move4Ppu,
+        power: this.data.move4Power
       }
     ];
 
