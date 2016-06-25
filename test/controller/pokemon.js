@@ -123,9 +123,9 @@ describe('PokemonController', () => {
     });
   });
   describe('getting a pokemon by ID', () => {
-    let publicId, privateId, readOnlyId;
+    let publicId, privateId, viewableId;
     before(async () => {
-      [publicId, privateId, readOnlyId] = await Promise.map(['public', 'private', 'readonly'], v =>
+      [publicId, privateId, viewableId] = await Promise.map(['public', 'private', 'viewable'], v =>
         agent.post('/uploadpk6')
           .field('visibility', v)
           .field('box', generalPurposeBox)
@@ -143,15 +143,15 @@ describe('PokemonController', () => {
       expect(res.body.move1Name).to.equal('Agility');
       expect(res.body.box).to.not.exist();
     });
-    it('allows the uploader to view all the data on a readonly pokemon', async () => {
-      const res = await agent.get(`/p/${readOnlyId}`);
+    it('allows the uploader to view all the data on a viewable pokemon', async () => {
+      const res = await agent.get(`/p/${viewableId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
       expect(res.body.box).to.exist();
     });
-    it('allows third parties to view only public data on a readonly pokemon', async () => {
-      const res = await otherAgent.get(`/p/${readOnlyId}`);
+    it('allows third parties to view only public data on a viewable pokemon', async () => {
+      const res = await otherAgent.get(`/p/${viewableId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.not.exist();
@@ -181,8 +181,8 @@ describe('PokemonController', () => {
       expect(res.body.speciesName).to.exist();
       expect(res.body.box).to.exist();
     });
-    it('allows an admin to view all the data on a readonly pokemon', async () => {
-      const res = await adminAgent.get(`/p/${readOnlyId}`);
+    it('allows an admin to view all the data on a viewable pokemon', async () => {
+      const res = await adminAgent.get(`/p/${viewableId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
@@ -298,7 +298,7 @@ describe('PokemonController', () => {
     });
   });
   describe('downloading a pokemon', () => {
-    let publicPkmn, readonlyPkmn, privatePkmn, rawPk6;
+    let publicPkmn, viewablePkmn, privatePkmn, rawPk6;
     before(async () => {
       const res = await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
@@ -310,7 +310,7 @@ describe('PokemonController', () => {
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', generalPurposeBox);
       expect(res2.statusCode).to.equal(201);
-      readonlyPkmn = res2.body;
+      viewablePkmn = res2.body;
       const res3 = await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('visibility', 'private')
@@ -327,7 +327,7 @@ describe('PokemonController', () => {
         );
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await agent.get(`/p/${readonlyPkmn.id}/download`).buffer();
+      const res2 = await agent.get(`/p/${viewablePkmn.id}/download`).buffer();
       expect(res2.statusCode).to.equal(200);
       expect(res2.text).to.equal(rawPk6);
       const res3 = await agent.get(`/p/${privatePkmn.id}/download`).buffer();
@@ -338,7 +338,7 @@ describe('PokemonController', () => {
       const res = await otherAgent.get(`/p/${publicPkmn.id}/download`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await otherAgent.get(`/p/${readonlyPkmn.id}/download`).buffer();
+      const res2 = await otherAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
       expect(res2.statusCode).to.equal(403);
       expect(res2.text).to.not.equal(rawPk6);
       const res3 = await otherAgent.get(`/p/${privatePkmn.id}/download`).buffer();
@@ -349,7 +349,7 @@ describe('PokemonController', () => {
       const res = await noAuthAgent.get(`/p/${publicPkmn.id}/download`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await noAuthAgent.get(`/p/${readonlyPkmn.id}/download`).buffer();
+      const res2 = await noAuthAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
       expect(res2.statusCode).to.equal(403);
       expect(res2.text).to.not.equal(rawPk6);
       const res3 = await noAuthAgent.get(`/p/${privatePkmn.id}/download`).buffer();
@@ -360,7 +360,7 @@ describe('PokemonController', () => {
       const res = await adminAgent.get(`/p/${publicPkmn.id}/download`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await adminAgent.get(`/p/${readonlyPkmn.id}/download`).buffer();
+      const res2 = await adminAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
       expect(res2.statusCode).to.equal(200);
       expect(res2.text).to.equal(rawPk6);
       const res3 = await adminAgent.get(`/p/${privatePkmn.id}/download`).buffer();
@@ -390,17 +390,17 @@ describe('PokemonController', () => {
     });
     it('increases the download count on admin downloads, only for public pokemon', async () => {
       const initialPublicCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      const initialReadonlyCount = (await agent.get(`/p/${readonlyPkmn.id}`)).body.downloadCount;
+      const initialviewableCount = (await agent.get(`/p/${viewablePkmn.id}`)).body.downloadCount;
       const initialPrivateCount = (await agent.get(`/p/${privatePkmn.id}`)).body.downloadCount;
       await adminAgent.get(`/p/${publicPkmn.id}/download`).buffer();
-      await adminAgent.get(`/p/${readonlyPkmn.id}/download`).buffer();
+      await adminAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
       await adminAgent.get(`/p/${privatePkmn.id}/download`).buffer();
       await Promise.delay(500);
       const finalPublicCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      const finalReadonlyCount = (await agent.get(`/p/${readonlyPkmn.id}`)).body.downloadCount;
+      const finalviewableCount = (await agent.get(`/p/${viewablePkmn.id}`)).body.downloadCount;
       const finalPrivateCount = (await agent.get(`/p/${privatePkmn.id}`)).body.downloadCount;
       expect(finalPublicCount).to.equal(initialPublicCount + 1);
-      expect(finalReadonlyCount).to.equal(initialReadonlyCount);
+      expect(finalviewableCount).to.equal(initialviewableCount);
       expect(finalPrivateCount).to.equal(initialPrivateCount);
     });
   });
@@ -845,7 +845,7 @@ describe('PokemonController', () => {
     beforeEach(async () => {
       const res = await agent.post('/uploadpk6')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
-        .field('visibility', 'readonly')
+        .field('visibility', 'viewable')
         .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
