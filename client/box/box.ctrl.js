@@ -4,6 +4,8 @@ const angular = require('angular');
 module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
   this.data = this.data || {contents: []};
   this.id = $routeParams.boxid || this.data.id;
+  this.selected = this.selected || ($scope.$parent.main ? $scope.$parent.main.selected : {});
+  this.selected.selectedBox = this.data;
   this.errorStatusCode = null;
   this.isDeleted = false;
 
