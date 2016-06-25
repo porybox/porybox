@@ -8,24 +8,17 @@ describe('PokemonCtrl', function() {
     Upload = {},
     $controller = {},
     $routeParams = {},
-    tested, cancelSpy, uploadSpy;
+    tested, cancelSpy, hideSpy;
 
   beforeEach(inject(function(_$controller_){
     $mdBottomSheet = {
       cancel: function () {},
       hide: function () {}
     };
-    Upload = {
-      upload: function () {
-        return {
-          then: function () {}
-        };
-      }
-    };
     $controller = _$controller_;
     tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: []});
     cancelSpy = sinon.spy($mdBottomSheet, 'cancel');
-    uploadSpy = sinon.spy(Upload, 'upload');
+    hideSpy = sinon.spy($mdBottomSheet, 'hide');
   }));
 
   describe('controller.cancel', function() {
@@ -41,7 +34,7 @@ describe('PokemonCtrl', function() {
 
     it('calls upload.upload', function() {
       tested.answer();
-      expect(uploadSpy.called).to.equal(true);
+      expect(hideSpy.called).to.equal(true);
     });
 
   });
