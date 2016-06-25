@@ -5,7 +5,7 @@
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="/bundle.css" />
+    <link rel="stylesheet" href="<%= sails.config.environment === 'development' ? '/bundle.css' : '/bundle.min.css' %>" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
   </head>
@@ -25,6 +25,6 @@
       <%- include footer.ejs %>
     </div>
     <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
-    <script src="/bundle.js"></script>
+    <script src="<%= sails.config.environment === 'development' ? '/bundle.js' : '/bundle.min.js' %>"></script>
   </body>
 </html>
