@@ -338,6 +338,11 @@
             <md-card class="summary" ng-show="pokemon.hasFullData">
               <md-card-header><span class="md-headline">Super Training</span></md-card-header>
               <md-card-content>
+                <div>
+                  <strong>Secret Training enabled? </strong>
+                  <span ng-if="pokemon.data.canDoSecretSuperTraining">Yes</span>
+                  <span ng-if="!pokemon.data.canDoSecretSuperTraining">No</span>
+                </div>
                 <div ng-repeat="medal in pokemon.data.medals">{{medal}}</div>
                 <div ng-if="pokemon.data.medals.length === 0">No medals</div>
               </md-card-content>
