@@ -16,7 +16,13 @@
           <h3 style="margin-left:40px;">{{pokemon.parsedNickname}}</h3>
         </span>
       </div>
-      <span flex></span> <!-- can remove this when we add menu -->
+      <span flex></span>
+      <a ng-href="">
+        <md-button class="md-icon-button" aria-label="Download .pk6 file" ng-show="">
+          <md-tooltip md-direction="left">Download .pk6 file</md-tooltip>
+          <i class="material-icons">file_download</i>
+        </md-button>
+      </a>
       <md-button class="md-icon-button" aria-label="Pokémon settings" ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin">
         <md-tooltip md-direction="left">{{pokemon.parsedNickname}}'s settings</md-tooltip>
         <i class="material-icons">settings</i>
@@ -26,8 +32,8 @@
 
   <md-tabs md-border-bottom md-swipe-content ng-init="pokemon.fetch()" md-dynamic-height>
     <md-tab label="Main Summary">
-      <md-tab-body> <!-- everything within a tab should probably get its own view to not overload this -->
-        <div layout="row" layout-xs="column" layout-wrap> <!-- this is for later, eventually need to fix to be responsive -->
+      <md-tab-body>
+        <div layout="row" layout-xs="column" layout-wrap>
           <div layout-gt-xs="column">
             <md-card class="summary" style="height: 222px;" ng-show="pokemon.hasFullData">
               <md-card-content>
