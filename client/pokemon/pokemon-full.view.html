@@ -4,7 +4,7 @@
       <div ng-if="pokemon.data.box" style="margin-left:-15px;">
         <a ng-href="/#/box/{{pokemon.data.box}}">
           <md-button ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin" class="md-icon-button" aria-label="Back to box">
-            <md-tooltip>Back to box</md-tooltip>
+            <md-tooltip md-direction="right">Back to box</md-tooltip>
             <i class="material-icons">arrow_back</i>
           </md-button>
         </a>
