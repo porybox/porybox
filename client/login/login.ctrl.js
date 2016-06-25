@@ -4,8 +4,8 @@
  */
 'use strict';
 const ERRORS_MAP = {
-  'Error.Passport.Password.Wrong': 'incorrect password',
-  'Error.Passport.Username.NotFound': 'incorrect username',
+  'Error.Passport.Password.Wrong': 'incorrect username/password combination',
+  'Error.Passport.Username.NotFound': 'incorrect username/password combination',
   'Error.Passport.Email.Missing': 'invalid email address',
   'Error.Passport.Password.Missing': 'missing password',
   'Error.Passport.Password.Invalid': 'invalid password (must be at least 8 characters long)',
@@ -38,7 +38,7 @@ module.exports = function ($scope, $http) {
       method: 'POST',
       url: '/auth/local',
       data: {
-        identifier: $scope.loginName,
+        name: $scope.loginName,
         password: $scope.loginPassword
       }
     }).then(() => {

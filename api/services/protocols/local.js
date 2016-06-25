@@ -1,4 +1,3 @@
-const validator = require('validator');
 const crypto    = require('crypto');
 
 /**
@@ -142,52 +141,21 @@ exports.connect = function (req, res, next) {
  * @param {string}   password
  * @param {Function} next
  */
-exports.login = function (req, identifier, password, next) {
-  const isEmail = validator.isEmail(identifier),
-    query   = {};
-
-  if (isEmail) {
-    query.email = identifier;
-  } else {
-    query.name = identifier;
-  }
-
-  User.findOne(query, function (err, user) {
-    if (err) {
-      return next(err);
-    }
-
+exports.login = function (req, username, password, next) {
+  User.findOne({name: username}).then(user => {
     if (!user) {
-      if (isEmail) {
-        req.flash('error', 'Error.Passport.Email.NotFound');
-      } else {
-        req.flash('error', 'Error.Passport.Username.NotFound');
-      }
-
-      return next(null, false);
+      req.flash('error', 'Error.Passport.Username.NotFound');
+      return false;
     }
-
-    Passport.findOne({
-      protocol: 'local',
-      user: user.name
-    }, function (err, passport) {
-      if (passport) {
-        passport.validatePassword(password, function (err, res) {
-          if (err) {
-            return next(err);
-          }
-
-          if (!res) {
-            req.flash('error', 'Error.Passport.Password.Wrong');
-            return next(null, false);
-          } else {
-            return next(null, user);
-          }
-        });
-      } else {
-        req.flash('error', 'Error.Passport.Password.NotSet');
-        return next(null, false);
-      }
+    return Passport.findOne({protocol: 'local', user: user.name}).then(passport => {
+      if (!passport) return false;
+      return passport.validatePassword(password).then(isValid => {
+        if (!isValid) {
+          req.flash('error', 'Error.Passport.Password.Wrong');
+          return false;
+        }
+        return user;
+      });
     });
-  });
+  }).asCallback(next);
 };
