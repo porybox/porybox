@@ -13,6 +13,7 @@ module.exports = function($routeParams, $scope, io) {
   this.data = this.data || {};
   this.id = $routeParams.pokemonid || this.data.id;
   this.errorStatusCode = null;
+  this.isDeleted = false;
   this.parseProps = () => {
     this.paddedTid = this.data.tid.toString().padStart(5, '0');
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
@@ -171,6 +172,34 @@ module.exports = function($routeParams, $scope, io) {
     }).then(this.parseProps).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).then(() => $scope.$apply());
+  };
+
+  // (the visibility probably won't need to get passed as a parameter when there's a view for it)
+  this.edit = ({visibility}) => {
+    return io.socket.postAsync(`/p/${this.id}/edit`, {visibility}).then(editedData => {
+      Object.assign(this.data, editedData);
+    }).catch(console.error.bind(console));
+  };
+
+  this.delete = () => {
+    return io.socket.deleteAsync(`/p/${this.id}`).then(() => {
+      this.isDeleted = true;
+    }).then(() => $scope.apply()).catch(console.error.bind(console));
+  };
+
+  this.undelete = () => {
+    return io.socket.postAsync(`/p/${this.id}/undelete`).then(() => {
+      this.isDeleted = false;
+    }).then(() => $scope.$apply()).catch(console.error.bind(console));
+  };
+
+  /* box: the ID of the box to move to (can be the same as the current box)
+  ** index (optional): the index where this pokemon should be inserted in the new box.
+  ** (Defaults to the last spot in the box.) */
+  this.move = ({box, index}) => {
+    return io.socket.postAsync(`/p/${this.id}/move`, {box, index}).then(() => {
+      $scope.$apply();
+    }).catch(console.error.bind(console));
   };
 };
 
