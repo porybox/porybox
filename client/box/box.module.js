@@ -11,7 +11,8 @@ ng.module('porybox.box', ['ngRoute'])
   .component('boxCard',
   {
     bindings: {
-      'data': '='
+      'data': '=',
+      'selected': '='
     },
     templateUrl: 'box/box-card.view.html',
     controller: ['$scope', '$routeParams', 'io', '$mdMedia', '$mdDialog', boxController],
