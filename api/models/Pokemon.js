@@ -142,21 +142,23 @@ const attributes = {
     return _.omit(this, 'box');
   },
   async markForDeletion () {
-    this._markedForDeletion = true;
-    await PokemonNote.update({id: this.notes}, {_markedForDeletion: true});
-    return this.save();
+    await PokemonNote.update({pokemon: this.id}, {_markedForDeletion: true});
+    return Pokemon.update({id: this.id}, {_markedForDeletion: true});
   },
   async unmarkForDeletion () {
-    this._markedForDeletion = false;
-    await PokemonNote.update({id: this.notes}, {_markedForDeletion: false});
-    return this.save();
+    await PokemonNote.update({pokemon: this.id}, {_markedForDeletion: false});
+    return Pokemon.update({id: this.id}, {_markedForDeletion: false});
   },
   async destroy () {
     await PokemonNote.destroy({id: this.notes});
     const box = await Box.findOne({id: this.box});
-    _.remove(box._orderedIds, id => id === this.id);
-    await box.save();
+    await box.removePkmnId(this.id);
     return await Pokemon.destroy({id: this.id});
+  },
+  incrementDownloadCount () {
+    return Promise.fromCallback(Pokemon.native.bind(Pokemon)).then(collection => {
+      return collection.update({_id: this.id}, {$inc: {downloadCount: 1}});
+    });
   },
   toJSON () {
     /* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
@@ -185,5 +187,8 @@ module.exports = {
     pkmn.id = Util.generateHexId();
     pkmn._cloneHash = PokemonHandler.computeCloneHash(pkmn);
     next(null, pkmn);
+  },
+  afterCreate (pkmn, next) {
+    Box.findOne({id: pkmn.box}).then(box => box.addPkmnId(pkmn.id)).asCallback(next);
   }
 };

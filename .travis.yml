@@ -3,3 +3,9 @@ node_js:
   - "stable"
 services:
   - mongodb
+addons:
+  apt:
+    sources:
+    - mongodb-3.0-precise
+    packages:
+    - mongodb-org-server

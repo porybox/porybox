@@ -39,8 +39,6 @@ module.exports = _.mapValues({
     }
     const result = await Pokemon.create(parsed);
     result.isUnique = await result.checkIfUnique();
-    box._orderedIds.push(result.id);
-    await box.save();
     return PokemonHandler.getSafePokemonForUser(result, req.user).then(res.created);
   },
 
@@ -100,8 +98,7 @@ module.exports = _.mapValues({
     res.header('Content-Disposition', `attachment; filename=${pokemon.nickname}-${pokemon.id}.pk6`);
     res.status(200).send(Buffer.from(pokemon._rawPk6, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
-      pokemon.downloadCount++;
-      await pokemon.save();
+      await pokemon.incrementDownloadCount();
     }
   },
 
@@ -139,26 +136,27 @@ module.exports = _.mapValues({
       return res.badRequest('Invalid index parameter');
     }
 
-    let itemsToSave, oldBox;
+    let oldBox;
     if (params.box === pokemon.box) {
       oldBox = newBox;
-      itemsToSave = [pokemon, newBox];
       _.remove(orderedContents, pkmn => pkmn.id === pokemon.id);
     } else {
       oldBox = await Box.findOne({id: pokemon.box});
-      itemsToSave = [pokemon, newBox, oldBox];
     }
 
     _.remove(oldBox._orderedIds, id => id === pokemon.id);
-    pokemon.box = newBox.id;
     /* If the new box contains deleted items, the provided index of the new pokemon of the orderedContents list might not be
     the same as the index of the new pokemon in the _orderedIds list, since the _orderedIds list also contains the IDs of
     deleted contents. To fix the issue, take the pokemon ID that the new pokemon will immediately follow in the orderedContents
     list, and place the new pokemon right after that ID in the _orderedIds list. */
     const adjIndex = index > 0 ? newBox._orderedIds.indexOf(orderedContents[index - 1].id) + 1 : 0;
-    newBox._orderedIds.splice(adjIndex, 0, pokemon.id);
-
-    await Promise.all(itemsToSave.map(item => item.save()));
+    await oldBox.removePkmnId(pokemon.id);
+    pokemon.box = newBox.id;
+    const promises = [
+      newBox.addPkmnId(pokemon.id, adjIndex),
+      Pokemon.update({id: pokemon.id}, {box: newBox.id})
+    ];
+    await Promise.all(promises);
     return res.ok();
   },
   async addNote (req, res) {
@@ -208,9 +206,8 @@ module.exports = _.mapValues({
     if (!note) {
       return res.notFound();
     }
-    _.assign(note, filteredParams);
-    Validation.verifyPokemonNoteParams(note);
-    await note.save();
+    Validation.verifyPokemonNoteParams(filteredParams);
+    await PokemonNote.update({id: note.id}, filteredParams);
     return res.ok(note);
   },
 
@@ -220,9 +217,8 @@ module.exports = _.mapValues({
     const filteredParams = Validation.filterParams(params, ['visibility']);
     const pokemon = await Pokemon.findOne({id: params.id});
     Validation.verifyUserIsOwner(pokemon, req.user);
-    _.assign(pokemon, filteredParams);
-    Validation.verifyPokemonParams(pokemon);
-    await pokemon.save();
+    Validation.verifyPokemonParams(filteredParams);
+    await Pokemon.update({id: pokemon.id}, filteredParams);
     return res.ok(pokemon);
   }
 }, catchAsyncErrors);
