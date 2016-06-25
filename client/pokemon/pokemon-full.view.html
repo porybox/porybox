@@ -65,7 +65,7 @@
                             'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
                 <div flex>
                   <img ng-if="pokemon.data.heldItemName" class="held-item"
-                       ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.heldItemUrl}}.png"
+                       ng-src="/img/icons/items/{{pokemon.heldItemUrl}}.png"
                        title="{{pokemon.data.heldItemName}}" />
                   <span>{{pokemon.data.heldItemName || 'No item'}}</span>
                 </div>
