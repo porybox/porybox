@@ -31,6 +31,7 @@ module.exports = function (req, res, next) {
       // Make the user available throughout the frontend
       res.locals.user = req.user;
       res.locals.VERSION = VERSION;
+      res.locals.url = req.url;
       if (req.user) {
         Promise.all([
           User.findOne({name: req.user.name}).populate('boxes').then(BoxOrdering.getOrderedBoxList),
