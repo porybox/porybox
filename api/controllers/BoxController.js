@@ -52,7 +52,7 @@ module.exports = _.mapValues({
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.BOX_DELETION_DELAY);
     const updatedBox = await Box.findOne({id});
-    if (updatedBox._markedForDeletion) {
+    if (updatedBox && updatedBox._markedForDeletion) {
       await box.destroy();
     }
   },
