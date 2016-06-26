@@ -1,34 +1,55 @@
-<md-bottom-sheet class="md-grid md-has-header" layout="column" ng-cloak>
+<md-dialog aria-label="Add new box" ng-cloak>
   <form name="addPK6">
-    <div layout="row">
-      <md-subheader>Upload PK6</md-subheader>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Upload Pokemon</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="pkmDialog.cancel()">
+          <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" layout="column">
+        <div layout="row" ng-repeat="line in pkmDialog.lines">
+          <md-input-container class="md-block">
+            <input type="text" ng-model="line.file.name" aria-label="File name"> </input>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Visibility</label>
+            <md-select ng-model="line.visibility" name="visibility">
+              <md-option ng-value="visibility" ng-repeat="visibility in pkmDialog.visibilities">{{ visibility }}</md-option>
+            </md-select>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Box</label>
+            <md-select ng-model="line.box" name="box">
+              <md-option ng-value="box.id" ng-repeat="box in pkmDialog.boxes">{{ box.name }}</md-option>
+            </md-select>
+          </md-input-container>
+        </div>
+        <div ngf-drop ngf-select ng-model="pkmDialog.files" class="drop-box"
+            ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
+            ngf-multiple="true" ngf-allow-dir="true" ngf-capture="'other'"
+            accept=".pk6,.pkx" ngf-accept="'.pk6,.pkx'" ngf-change="pkmDialog.addFiles()"
+            ngf-pattern="'.pk6,.pkx'">Drop file/directory here</div>
+
+        Or Upload file:
+        <button ngf-select="pkmDialog.addFiles($files)" multiple accept=".pk6">iOS test 1</button>
+        iOS test 2
+        <input type="file" ngf-select ng-model="pkmDialog.file" name="file"
+             accept=".pk6" ngf-max-size="2MB" required ng-change="pkmDialog.addFile()"
+             ngf-model-invalid="errorFile">
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
       <span flex></span>
+      <md-button ng-click="pkmDialog.cancel()">
+       Cancel
+      </md-button>
       <md-button ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd()" type="submit">
         Upload
       </md-button>
-    </div>
-    <div layout="row">
-      <md-input-container class="md-block">
-          <input type="file" ngf-select ngf-model-invalid="errorFile" ng-model="pkmDialog.file" name="file" accept=".pk6,.pkx" required>
-      </md-input-container>
-      <md-input-container class="md-block">
-        <label>Visibility</label>
-        <md-select ng-model="pkmDialog.visibility" name="visibility">
-          <md-option ng-value="visibility" ng-repeat="visibility in pkmDialog.visibilities">{{ visibility }}</md-option>
-        </md-select>
-        <div ng-messages="addPK6.visibility.$error" role="alert">
-          <div ng-message="required">Please choose visibility.</div>
-        </div>
-      </md-input-container>
-      <md-input-container class="md-block">
-        <label>Box</label>
-        <md-select ng-model="pkmDialog.box" name="box">
-          <md-option ng-value="box.id" ng-repeat="box in pkmDialog.boxes">{{ box.name }}</md-option>
-        </md-select>
-        <div ng-messages="addPK6.box.$error" role="alert">
-          <div ng-message="required">Please choose box.</div>
-        </div>
-      </md-input-container>
-    </div>
+    </md-dialog-actions>
   </form>
-</md-bottom-sheet>
+</md-dialog>

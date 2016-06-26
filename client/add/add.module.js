@@ -16,6 +16,6 @@ ng.module('porybox.add', ['porybox.box', 'porybox.pokemon', 'ngMessages', 'ngFil
       selected: '='
     },
     templateUrl: 'add/add.view.html',
-    controller: ['$scope', 'io', '$mdDialog', '$mdMedia', '$mdBottomSheet', 'Upload', controller],
+    controller: ['$scope', 'io', '$mdDialog', '$mdMedia', 'Upload', controller],
     controllerAs: 'add'
   });
