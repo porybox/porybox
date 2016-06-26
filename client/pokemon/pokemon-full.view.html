@@ -13,7 +13,7 @@
         <span>
           <img ng-if="pokemon.data.isEgg" style="left:-10px" src="/img/icons/egg.png" />
           <img ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="/img/icons/{{pokemon.iconUrl}}.png" />
-          <h3 style="margin-left:40px;">{{pokemon.parsedNickname}}</h3>
+          <h3 class="summary-toolbar">{{pokemon.parsedNickname}}</h3>
         </span>
       </div>
       <span flex></span>
@@ -171,7 +171,7 @@
                   <span flex="10">{{move.Pp || '-'}}</span>
                   <span flex="10">{{move.Ppu || '-'}}</span>
                 </div>
-                <hr />
+                <md-divider></md-divider>
                 <div>
                   <strong>Relearnable</strong>
                   <div layout="row" layout-align="center start"><div flex="noshrink" ng-repeat="move in pokemon.eggMoves track by $index">{{move || '-'}}</span></div></div>
@@ -268,7 +268,7 @@
             <md-card-content>
               <md-tabs md-stretch-tabs="always">
                 <md-tab label="OT">
-                  <div style="padding-top: 10px;">
+                  <div class="handler">
                     <div><strong>Original trainer</strong> {{pokemon.data.ot}}
                       <span class="gender-male" ng-if="pokemon.data.otGender == 'M'">&#9794;</span>
                       <span class="gender-female" ng-if="pokemon.data.otGender == 'F'">&#9792;</span>
@@ -276,13 +276,13 @@
                     <div><strong>Friendship</strong> {{pokemon.data.otFriendship}}</div>
                     <div><strong>Affection</strong> {{pokemon.data.otAffection}}</div>
                     <span ng-if="pokemon.data.currentHandlerIsOt">Current handler is OT</span>
-                    <hr />
+                    <md-divider></md-divider>
                     <!-- insert memory text here -->
                   </div>
                 </md-tab>
 
                 <md-tab label="Non-OT">
-                  <div style="padding-top: 10px;">
+                  <div class="handler">
                     <div>
                       <strong>Last non-OT handler</strong> {{pokemon.parsedNotOt}}
                       <span ng-if="pokemon.data.notOt === ''" style="font-style: italic">Never left OT</span>
@@ -292,7 +292,7 @@
                     <div><strong>Friendship</strong> {{pokemon.data.notOtFriendship}}</div>
                     <div><strong>Affection</strong> {{pokemon.data.notOtAffection}}</div>
                     <span ng-if="!pokemon.data.currentHandlerIsOt">Current handler is {{pokemon.parsedNotOt}}</span>
-                    <hr />
+                    <md-divider>
                     <!-- insert memory text here -->
                   </div>
                 </md-tab>
