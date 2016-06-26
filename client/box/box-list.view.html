@@ -17,9 +17,9 @@
             </md-button>
           </md-menu-item>
           <md-menu-item ng-if="!box.isDeleted">
-            <md-button ng-click="box.delete()">
+            <md-button ng-click="box.delete()" ng-disabled="main.boxes.length === 1" ng-attr-title="{{main.boxes.length === 1 ? 'You can\'t delete your only box.' : ''}}">
                 <div layout="row">
-                  <p flex="">Delete Box</p>
+                  <p flex>Delete Box</p>
                 </div>
             </md-button>
           </md-menu-item>
