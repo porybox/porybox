@@ -68,7 +68,7 @@ describe('AuthController', function() {
 
     it('should not allow logins with invalid passwords', async () => {
       const res = await otherAgent.post('/auth/local').send({
-        identifier: 'testuser1',
+        name: 'testuser1',
         password: 'not_the_correct_password'
       });
       expect(res.statusCode).to.equal(401);
@@ -84,7 +84,7 @@ describe('AuthController', function() {
       });
       expect(res.statusCode).to.equal(200);
       const res2 = await invalidAgent.post('/auth/local').send({
-        identifier: 'validUsername',
+        name: 'validUsername',
         // 71 asterisks followed by an 'a'
         password: '***********************************************************************a'
       });
@@ -94,7 +94,7 @@ describe('AuthController', function() {
 
     it('should allow logins with valid passwords', async () => {
       const res = await otherAgent.post('/auth/local').send({
-        identifier: 'testuser1',
+        name: 'testuser1',
         password: 'hunter22'
       });
       expect(res.statusCode).to.equal(200);
@@ -102,7 +102,7 @@ describe('AuthController', function() {
 
     it('should not allow logins with invalid user but the password of another', async () => {
       const res = await otherAgent.post('/auth/local').send({
-        identifier: 'testuser2',
+        name: 'testuser2',
         password: 'hunter22'
       });
       expect(res.statusCode).to.equal(401);
@@ -173,13 +173,13 @@ describe('AuthController', function() {
       expect(res2.statusCode).to.equal(201);
       // log in with a different agent to make sure the new password works
       const res3 = await passAgent2.post('/auth/local').send({
-        identifier: username,
+        name: username,
         password: 'Correct Llama Battery Staple'
       });
       expect(res3.statusCode).to.equal(200);
       // log in with the old password and make sure it doesn't work
       const res4 = await passAgent3.post('/auth/local').send({
-        identifier: username,
+        name: username,
         password: 'Correct Horse Battery Staple'
       });
       expect(res4.statusCode).to.equal(401);
@@ -193,13 +193,13 @@ describe('AuthController', function() {
       expect(res.statusCode).to.equal(403);
       // log in with the old password and make sure it still works
       const res2 = await passAgent2.post('/auth/local').send({
-        identifier: username,
+        name: username,
         password: 'Correct Horse Battery Staple'
       });
       expect(res2.statusCode).to.equal(200);
       // log in with the new password and make sure it doesn't work
       const res3 = await passAgent3.post('/auth/local').send({
-        identifier: username,
+        name: username,
         password: 'invalid new password'
       });
       expect(res3.statusCode).to.equal(401);
@@ -222,7 +222,7 @@ describe('AuthController', function() {
       expect(res2.statusCode).to.equal(201);
       // log in with a different agent to make sure the password still works
       const res3 = await passAgent2.post('/auth/local').send({
-        identifier: username,
+        name: username,
         password: 'Correct Horse Battery Staple'
       });
       expect(res3.statusCode).to.equal(200);
@@ -238,7 +238,7 @@ describe('AuthController', function() {
       expect(res2.statusCode).to.equal(201);
       // log in with a different agent to make sure the old password still works
       const res3 = await passAgent2.post('/auth/local').send({
-        identifier: username,
+        name: username,
         password: 'Correct Horse Battery Staple'
       });
       expect(res3.statusCode).to.equal(200);

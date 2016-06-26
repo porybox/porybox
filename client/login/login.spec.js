@@ -20,7 +20,7 @@ describe('LoginCtrl', function() {
       const controller = $controller(loginCtrl, {$scope, $http: $http1});
       expect(controller.login).to.be.a('function');
       return controller.login().then(() => {
-        expect(controller.loginError).to.equal('incorrect password');
+        expect(controller.loginError).to.equal('incorrect username/password combination');
         expect(controller.registerError).to.not.be.ok();
       });
     });

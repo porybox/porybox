@@ -93,8 +93,8 @@ const Passport = {
      * @param {string}   password The password to validate
      * @param {Function} next
      */
-    validatePassword: function (password, next) {
-      bcrypt.compare(password, this.password, next);
+    validatePassword: function (password) {
+      return Promise.promisify(bcrypt.compare)(password, this.password);
     }
 
   },
