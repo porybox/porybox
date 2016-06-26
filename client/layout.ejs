@@ -33,6 +33,13 @@
       <div flex layout="column">
         <main>
           <%- body %>
+          <% if (user == null && url === '/') { %>
+            <!-- Render the landing page without angular to distract people with static content while the bundle downloads -->
+            <div id="landing-page" style="display:none;" ng-if="location.hash === '' || location.hash === '#/'">
+              <% include home/index.view.html %>
+            <div>
+            <script>if (location.hash === '' || location.hash === '#/') document.getElementById('landing-page').style.display = '';</script>
+          <% } %>
         </main>
         <div flex></div>
         <%- include footer.ejs %>
