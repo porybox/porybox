@@ -74,7 +74,7 @@ md-card md-card-content {
   font-size: 16px;
 }
 
-.summary > md-card-header > .md-headline {
+.summary > md-card-header > .md-headline, .headline-padded {
   margin: 0 0 5px 12px;
 }
 
@@ -84,6 +84,16 @@ md-card-title-text {
 
 md-icon svg {
   fill: inherit;
+}
+
+md-divider {
+  margin: 6px 0;
+}
+
+@media (min-width: 370px) {
+  md-dialog {
+    min-width: 360px;
+  }
 }
 
 /*******************************
@@ -106,7 +116,7 @@ md-icon svg {
 
 @media (min-width: 600px) {
   .box-card {
-    width: 350px;
+    width: 250px;
     height: 150px;
   }
 }
@@ -114,8 +124,6 @@ md-icon svg {
 .box-card {
   max-height: 150px;
   overflow: auto;
-  margin-right: -100px;
-  padding-right: 100px;
 }
 
  /*******************************
@@ -146,6 +154,12 @@ md-icon svg {
 
 .summary {
   position: relative;
+}
+
+h3.summary-toolbar {
+  margin-left: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon-container {
@@ -280,6 +294,10 @@ span[class^='gender-'] {
   font-size: 10px;
   right: 10px;
   bottom: 5px;
+}
+
+.handler {
+  padding-top: 10px;
 }
 
 /*******************************
