@@ -5,7 +5,7 @@
         <h2>Add new box</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="dialog.cancel()">
-          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+          <i class="material-icons">close</i>
         </md-button>
       </div>
     </md-toolbar>
@@ -21,7 +21,7 @@
 
           <md-input-container class="md-block">
               <label>Description</label>
-              <input ng-model="dialog.description">
+              <textarea ng-model="dialog.description" rows="5"></textarea>
           </md-input-container>
 
           <md-input-container class="md-block">
