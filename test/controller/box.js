@@ -323,6 +323,17 @@ describe('BoxController', () => {
       const res2 = await agent.get('/pokemon/mine');
       expect(_.map(res2.body, 'id')).to.not.include(pkmn.id);
     });
+    it('does not cause errors if the same box is deleted in two separate requests', async () => {
+      const res = await agent.del(`/b/${box.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/b/${box.id}/undelete`);
+      expect(res2.statusCode).to.equal(200);
+      const res3 = await agent.del(`/b/${box.id}`);
+      expect(res3.statusCode).to.equal(202);
+      await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
+      const res4 = await agent.get(`/b/${box.id}`);
+      expect(res4.statusCode).to.equal(404);
+    });
     after(() => {
       sails.services.constants.BOX_DELETION_DELAY = previousDeletionDelay;
     });
