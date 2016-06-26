@@ -4,21 +4,21 @@ const sinon = require('sinon');
 describe('PokemonCtrl', function() {
   // beforeEach(module('porygon'));
 
-  let $mdBottomSheet = {},
+  let $mdDialog = {},
     Upload = {},
     $controller = {},
     $routeParams = {},
     tested, cancelSpy, hideSpy;
 
   beforeEach(inject(function(_$controller_){
-    $mdBottomSheet = {
+    $mdDialog = {
       cancel: function () {},
       hide: function () {}
     };
     $controller = _$controller_;
-    tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: []});
-    cancelSpy = sinon.spy($mdBottomSheet, 'cancel');
-    hideSpy = sinon.spy($mdBottomSheet, 'hide');
+    tested = $controller(ctrlTest, {$mdDialog, $routeParams, Upload}, {boxes: []});
+    cancelSpy = sinon.spy($mdDialog, 'cancel');
+    hideSpy = sinon.spy($mdDialog, 'hide');
   }));
 
   describe('controller.cancel', function() {
@@ -41,27 +41,33 @@ describe('PokemonCtrl', function() {
 
   describe('default box', function() {
     it('uses the most-recently-edited box if not on a box page', function() {
-      tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: [
+      tested = $controller(ctrlTest, {$mdDialog, $routeParams, Upload}, {boxes: [
         {updatedAt: 0, id: 'foo'},
         {updatedAt: 1, id: 'bar'}
       ]});
-      expect(tested.box).to.equal('bar');
+      tested.files = ['test'];
+      tested.addFiles();
+      expect(tested.lines[0].box).to.equal('bar');
     });
     it('uses the most-recently-edited box if on a box page not belonging to the user', function() {
       $routeParams = {boxid: 'baz'};
-      tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: [
+      tested = $controller(ctrlTest, {$mdDialog, $routeParams, Upload}, {boxes: [
         {updatedAt: 0, id: 'foo'},
         {updatedAt: 1, id: 'bar'}
       ]});
-      expect(tested.box).to.equal('bar');
+      tested.files = ['test'];
+      tested.addFiles();
+      expect(tested.lines[0].box).to.equal('bar');
     });
     it('uses the current box if on a box page belonging to the user', function() {
       $routeParams = {boxid: 'foo'};
-      tested = $controller(ctrlTest, {$mdBottomSheet, $routeParams, Upload}, {boxes: [
+      tested = $controller(ctrlTest, {$mdDialog, $routeParams, Upload}, {boxes: [
         {updatedAt: 0, id: 'foo'},
         {updatedAt: 1, id: 'bar'}
       ]});
-      expect(tested.box).to.equal('foo');
+      tested.files = ['test'];
+      tested.addFiles();
+      expect(tested.lines[0].box).to.equal('foo');
     });
   });
 });
