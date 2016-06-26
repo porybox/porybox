@@ -1,15 +1,9 @@
-<div layout="row" layout-align="center center">
-  <div flex="30">
-    <span>
-      Welcome to Porybox. Please register or login to continue.
-    </span>
-  </div>
-</div>
-<div layout="row">
-  <div flex="25" flex-offset="25">
+<div layout="column" layout-gt-xs="row" layout-wrap>
+  <div flex-gt-xs="30" flex-offset-gt-xs="10">
     <login-form></login-form>
   </div>
-  <div flex="25">
+  <div flex-gt-xs="30">
     <registration-form></registration-form>
   </div>
+  <div flex-gt-xs></div>
 </div>
