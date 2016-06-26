@@ -80,8 +80,7 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, 'password');
     const userPassport = await Passport.findOne({user: req.user.name, protocol: 'local'});
-    const validate = userPassport.validatePassword.bind(userPassport);
-    const isValid = await Promise.promisify(validate)(params.password);
+    const isValid = await userPassport.validatePassword(params.password);
     if (!isValid) {
       return res.forbidden('Incorrect password');
     }
@@ -92,8 +91,7 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, ['oldPassword', 'newPassword']);
     const oldPassport = await Passport.findOne({user: req.user.name, protocol: 'local'});
-    const validate = oldPassport.validatePassword.bind(oldPassport);
-    const isValid = await Promise.promisify(validate)(params.oldPassword);
+    const isValid = await oldPassport.validatePassword(params.oldPassword);
     if (!isValid) {
       // If the provided oldPassword is incorrect, stop immediately.
       return res.forbidden('Incorrect password');
