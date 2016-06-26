@@ -76,6 +76,17 @@ describe('UserController', () => {
       expect(res.body.inGameNames).to.exist();
       expect(res.body.trainerShinyValues).exist();
     });
+    it('omits server-only properties when anyone gets the profile', async () => {
+      const res = await agent.get('/user/usertester');
+      expect(res.statusCode).to.equal(200);
+      expect(res.body._orderedBoxIds).to.not.exist();
+      const res2 = await adminAgent.get('/user/usertester');
+      expect(res2.statusCode).to.equal(200);
+      expect(res2.body._orderedBoxIds).to.not.exist();
+      const res3 = await noAuthAgent.get('/user/usertester');
+      expect(res3.statusCode).to.equal(200);
+      expect(res3.body._orderedBoxIds).to.not.exist();
+    });
   });
   describe('preferences', () => {
     it("can get a user's preferences", async () => {

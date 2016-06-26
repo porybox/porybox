@@ -91,6 +91,9 @@ module.exports =  {
       ]);
       await User.destroy({name: this.name});
       await DeletedUser.create({name: this.name});
+    },
+    toJSON () {
+      return _.omit(this, (value, key) => key.startsWith('_'));
     }
   }
 };
