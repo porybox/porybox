@@ -1,149 +1,193 @@
 <md-content layout-padding>
+  <div class="md-body-1">
+    <h1 class="md-display-2">Homebrew</h1>
 
-<h1 class="md-display-2">Homebrew</h1>
+    <p>
+      Running homebrew applications on your console requires a bit of tinkering and specific firmware versions, but once
+      set up you can easily extract your Pokémon. The instructions below are applicable up to firmware version 11.0.0-33
+      from May 2016.
+    </p>
 
-<p>
-Running homebrew applications on your console requires a bit of tinkering and specific firmware versions, but once set up you can easily extract your Pokémon. The instructions below are applicable up to firmware version 11.0.0-33 from May 2016.
-</p>
+    <h2 class="md-headline">Prerequisites</h2>
 
-<h2 class="md-headline">Prerequisites</h2>
+    <p>
 
-<p>
+    <ul>
+      <li>A 2DS, 3DS or New 3DS with any firmware version from 9.0 up to 11.0.0-33.</li>
+      <li>A copy of X/Y/OR/AS (either physical or digital).</li>
+      <li>A computer with an SD card reader. If you have a New Nintendo 3DS and Windows, you can use the <a
+          href="http://www.nintendo.com.au/new-nintendo-3ds/support/microsd-management/" target="_blank" rel="noreferrer">microSD
+          management feature</a> instead.
+      </li>
+      <li>Cu3PO42's latest version of <a href="https://github.com/Cu3PO42/KeySAV2/releases" target="_blank"
+                                         rel="noreferrer">KeySAV2</a>.
+      </li>
+      <li>svdt.3dsx, svdt.smdh, and svdt.xml from <a href="https://github.com/meladroit/svdt/releases" target="_blank"
+                                                     rel="noreferrer">svdt's GitHub page</a>.
+      </li>
+    </ul>
 
-<ul>
-<li>A 2DS, 3DS or New 3DS with any firmware version from 9.0 up to 11.0.0-33.</li>
-<li>A copy of X/Y/OR/AS (either physical or digital).</li>
-<li>A computer with an SD card reader. If you have a New Nintendo 3DS and Windows, you can use the <a href="http://www.nintendo.com.au/new-nintendo-3ds/support/microsd-management/" target="_blank" rel="noreferrer">microSD management feature</a> instead.</li>
-<li>Cu3PO42's latest version of <a href="https://github.com/Cu3PO42/KeySAV2/releases" target="_blank" rel="noreferrer">KeySAV2</a>.</li>
-<li>svdt.3dsx, svdt.smdh, and svdt.xml from <a href="https://github.com/meladroit/svdt/releases" target="_blank" rel="noreferrer">svdt's GitHub page</a>.</li>
-</ul>
+    </p>
 
-</p>
+    <h2 class="md-headline">Setting up homebrew</h2>
 
-<h2 class="md-headline">Setting up homebrew</h2>
+    <p>
 
-<p>
+      The homebrew scene evolves quickly. New exploits are regularly discovered, and older ones tend to be patched by
+      firmware updates. The table below shows the exploits available to you depending on your console's firmware version.
 
-The homebrew scene evolves quickly. New exploits are regularly discovered, and older ones tend to be patched by firmware updates. The table below shows the exploits available to you depending on your console's firmware version.
+    <ul>
+      <li>Current firmware version: 11.0.0-33 (May 2016)</li>
+      <li>Downgradeable firmwares: 9.2.0-20 up to 10.7.0-32</li>
+    </ul>
 
-<ul>
-<li>Current firmware version: 11.0.0-33 (May 2016)</li>
-<li>Downgradeable firmwares: 9.2.0-20 up to 10.7.0-32</li>
-</ul>
+    <table>
+      <tr>
+        <th>Exploit</th>
+        <th>Compatible firmwares</th>
+        <th>Primary/secondary?</th>
+      </tr>
+      <tr>
+        <td><a href="https://yls8.mtheall.com/3dsbrowserhax.php" target="_blank" rel="noreferrer">BrowserHax</a> + <a
+            href="https://github.com/yellows8/3ds_homemenuhax" target="_blank" rel="noreferrer">MenuHax</a></td>
+        <td>9.2.0-20 up to 9.8.0-25</td>
+        <td>Primary</td>
+      </tr>
+      <tr>
+        <td><a href="http://smealum.github.io/ninjhax2/" target="_blank" rel="noreferrer">Cubic Ninja</a></td>
+        <td>9.2.0-20 up to 11.0.0-33</td>
+        <td>Primary</td>
+      </tr>
+      <tr>
+        <td><a href="http://plutooo.github.io/freakyhax/" target="_blank" rel="noreferrer">Freakyforms Deluxe</a></td>
+        <td>Untested, up to 11.0.0-33</td>
+        <td>Primary</td>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/yellows8/oot3dhax" target="_blank" rel="noreferrer">Zelda OoT</a></td>
+        <td>9.2.0-20 up to 11.0.0-33</td>
+        <td>Secondary</td>
+      </tr>
+      <tr>
+        <td><a href="https://vvvvvv.salthax.org/" target="_blank" rel="noreferrer">VVVVVV</a></td>
+        <td>9.2.0-20 up to 11.0.0-33</td>
+        <td>Secondary</td>
+      </tr>
+      <tr>
+        <td><a href="https://citizens.salthax.org/" target="_blank" rel="noreferrer">Citizens of Earth</a></td>
+        <td>9.2.0-20 up to 11.0.0-33</td>
+        <td>Secondary</td>
+      </tr>
+      <tr>
+        <td><a href="http://mrnbayoh.github.io/basehaxx/" target="_blank" rel="noreferrer">Pokémon OR/AS</a></td>
+        <td>9.0.0-20 up to 11.0.0-33</td>
+        <td>Secondary</td>
+      </tr>
+      <tr>
+        <td><a href="https://smd.salthax.org/" target="_blank" rel="noreferrer">Pokémon Super Mystery Dungeon</a></td>
+        <td>9.9.0-26 (NA/JP), 10.2.0-28 (EU) up to 11.0.0-33</td>
+        <td>Secondary</td>
+      </tr>
+      <tr>
+        <td><a href="https://github.com/yellows8/3ds_smashbroshax" target="_blank" rel="noreferrer">Super Smash Bros</a>
+        </td>
+        <td>9.2.0-20 up to 11.0.0-33</td>
+        <td>Secondary</td>
+      </tr>
+    </table>
 
-<table>
-  <tr>
-    <th>Exploit</th>
-    <th>Compatible firmwares</th>
-    <th>Primary/secondary?</th>
-  </tr>
-  <tr>
-    <td><a href="https://yls8.mtheall.com/3dsbrowserhax.php" target="_blank" rel="noreferrer">BrowserHax</a> + <a href="https://github.com/yellows8/3ds_homemenuhax" target="_blank" rel="noreferrer">MenuHax</a></td>
-    <td>9.2.0-20 up to 9.8.0-25</td>
-    <td>Primary</td>
-  </tr>
-  <tr>
-    <td><a href="http://smealum.github.io/ninjhax2/" target="_blank" rel="noreferrer">Cubic Ninja</a></td>
-    <td>9.2.0-20 up to 11.0.0-33</td>
-    <td>Primary</td>
-  </tr>
-  <tr>
-    <td><a href="http://plutooo.github.io/freakyhax/" target="_blank" rel="noreferrer">Freakyforms Deluxe</a></td>
-    <td>Untested, up to 11.0.0-33</td>
-    <td>Primary</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/yellows8/oot3dhax" target="_blank" rel="noreferrer">Zelda OoT</a></td>
-    <td>9.2.0-20 up to 11.0.0-33</td>
-    <td>Secondary</td>
-  </tr>
-  <tr>
-    <td><a href="https://vvvvvv.salthax.org/" target="_blank" rel="noreferrer">VVVVVV</a></td>
-    <td>9.2.0-20 up to 11.0.0-33</td>
-    <td>Secondary</td>
-  </tr>
-  <tr>
-    <td><a href="https://citizens.salthax.org/" target="_blank" rel="noreferrer">Citizens of Earth</a></td>
-    <td>9.2.0-20 up to 11.0.0-33</td>
-    <td>Secondary</td>
-  </tr>
-  <tr>
-    <td><a href="http://mrnbayoh.github.io/basehaxx/" target="_blank" rel="noreferrer">Pokémon OR/AS</a></td>
-    <td>9.0.0-20 up to 11.0.0-33</td>
-    <td>Secondary</td>
-  </tr>
-  <tr>
-    <td><a href="https://smd.salthax.org/" target="_blank" rel="noreferrer">Pokémon Super Mystery Dungeon</a></td>
-    <td>9.9.0-26 (NA/JP), 10.2.0-28 (EU) up to 11.0.0-33</td>
-    <td>Secondary</td>
-  </tr>
-  <tr>
-    <td><a href="https://github.com/yellows8/3ds_smashbroshax" target="_blank" rel="noreferrer">Super Smash Bros</a></td>
-    <td>9.2.0-20 up to 11.0.0-33</td>
-    <td>Secondary</td>
-  </tr>
-</table>
+    <ul>
+      <li>Primary exploit: a self-contained exploit that requires nothing else but a game.</li>
+      <li>Secondary exploit: an exploit that requires another primary exploit, or a console where homebrew applications
+        are already installed.
+      </li>
+    </ul>
 
-<ul>
-<li>Primary exploit: a self-contained exploit that requires nothing else but a game.</li>
-<li>Secondary exploit: an exploit that requires another primary exploit, or a console where homebrew applications are already installed.</li>
-</ul>
+    Note that in order to guarantee future access to homebrew applications, you should always aim to downgrade your
+    console to 9.2.0-20, and setup EmuNAND, RedNAND or arm9loaderhax (preferred).<br>
 
-Note that in order to guarantee future access to homebrew applications, you should always aim to downgrade your console to 9.2.0-20, and setup EmuNAND, RedNAND or arm9loaderhax (preferred).<br>
+    The following websites explain in detail how to setup the exploits, install homebrew applications, or downgrade your
+    console:
 
-The following websites explain in detail how to setup the exploits, install homebrew applications, or downgrade your console:
+    <ul>
+      <li><a href="https://github.com/Plailect/Guide/wiki" target="_blank" rel="noreferrer">Plailect's Guide</a>. An
+        exhaustive guide on how to setup homebrew and a9lh. Time-consuming, but future-proof.
+      </li>
+      <li><a href="https://gbatemp.net/threads/tutorial-installing-rxtools-custom-firmware-3ds-and-2ds.390867/"
+             target="_blank" rel="noreferrer">Installing a Custom Firmware</a>. How to setup EmuNAND. Easy to do, but not
+        as stable as a9lh.
+      </li>
+      <li><a href="http://smealum.github.io/3ds/" target="_blank" rel="noreferrer">Smealum's Homebrew Laucher</a>. Quick
+        to setup, but more vulnerable to patching.
+    </ul>
 
-<ul>
-<li><a href="https://github.com/Plailect/Guide/wiki" target="_blank" rel="noreferrer">Plailect's Guide</a>. An exhaustive guide on how to setup homebrew and a9lh. Time-consuming, but future-proof.</li>
-<li><a href="https://gbatemp.net/threads/tutorial-installing-rxtools-custom-firmware-3ds-and-2ds.390867/" target="_blank" rel="noreferrer">Installing a Custom Firmware</a>. How to setup EmuNAND. Easy to do, but not as stable as a9lh.</li>
-<li><a href="http://smealum.github.io/3ds/" target="_blank" rel="noreferrer">Smealum's Homebrew Laucher</a>. Quick to setup, but more vulnerable to patching.
-</ul>
+    Once one of the exploits listed above has been installed, you should be able to launch the Homebrew Channel. From it,
+    you can run a save manager.
 
-Once one of the exploits listed above has been installed, you should be able to launch the Homebrew Channel. From it, you can run a save manager.
+    </p>
 
-</p>
+    <h2 class="md-headline">Installing a save manager</h2>
 
-<h2 class="md-headline">Installing a save manager</h2>
+    <p>
 
-<p>
+    <ol>
+      <li>You should have a 3ds folder on your SD card. Open this folder and create a svdt folder within it.</li>
+      <li>Get <i>svdt.3dsx</i>, <i>svdt.smdh</i>, and <i>svdt.xml</i> from <a
+          href="https://github.com/meladroit/svdt/releases" target="_blank" rel="noreferrer">svdt's GitHub page</a>, and
+        place them into your newly created svdt folder. When you are done, the <i>svdt.3dsx</i> file should be located at
+        <i>X:\3ds\svdt\svdt.3dsx</i> (replace X: with your SD card's drive letter) and the other two files in the same
+        folder.
+      </li>
+      <li>If you have the ability to install CIA files, you can use <a
+          href="https://gbatemp.net/threads/release-jks-savemanager-homebrew-cia-save-manager.413143/" target="_blank"
+          rel="noreferrer">JK’s Save Manager</a> instead.
+      </li>
+    </ol>
 
-<ol>
-<li>You should have a 3ds folder on your SD card. Open this folder and create a svdt folder within it.</li>
-<li>Get <i>svdt.3dsx</i>, <i>svdt.smdh</i>, and <i>svdt.xml</i> from <a href="https://github.com/meladroit/svdt/releases" target="_blank" rel="noreferrer">svdt's GitHub page</a>, and place them into your newly created svdt folder. When you are done, the <i>svdt.3dsx</i> file should be located at <i>X:\3ds\svdt\svdt.3dsx</i> (replace X: with your SD card's drive letter) and the other two files in the same folder.</li>
-<li>If you have the ability to install CIA files, you can use <a href="https://gbatemp.net/threads/release-jks-savemanager-homebrew-cia-save-manager.413143/" target="_blank" rel="noreferrer">JK’s Save Manager</a> instead.</li>
-</ol>
+    </p>
 
-</p>
+    <h2 class="md-headline">Extracting the save file</h2>
 
-<h2 class="md-headline">Extracting the save file</h2>
+    <p>
 
-<p>
+    <ol>
+      <li>Run the Homebrew Launcher, then select svdt.</li>
+      <li>As soon as you select svdt, you should be presented with another screen labeled the "Target title selector". On
+        this screen, use the D-pad or circle pad’s left or right controls to select your game, and then press A to
+        confirm.
+      </li>
+      <li>Once svdt loads, move the cursor over “main” on the left side of the screen (the game side). Press Y to copy the
+        game's save file over to the SD card.
+      </li>
+      <li>Turn off your console and insert the SD card into your computer.</li>
+    </ol>
 
-<ol>
-<li>Run the Homebrew Launcher, then select svdt.</li>
-<li>As soon as you select svdt, you should be presented with another screen labeled the "Target title selector". On this screen, use the D-pad or circle pad’s left or right controls to select your game, and then press A to confirm.</li>
-<li>Once svdt loads, move the cursor over “main” on the left side of the screen (the game side). Press Y to copy the game's save file over to the SD card.</li>
-<li>Turn off your console and insert the SD card into your computer.</li>
-</ol>
+    </p>
 
-</p>
+    <h2 class="md-headline">Extracting the pk6 files</h2>
 
-<h2 class="md-headline">Extracting the pk6 files</h2>
+    <p>
 
-<p>
+    <ol>
+      <li>On the top directory of your SD card, there should be a new file named main, which you can save to your
+        computer. Once you have it on your computer, we recommend removing it from your SD card so you will not be
+        prompted to overwrite it the next time you perform this procedure.
+      </li>
+      <li>Run KeySAV2. On the SAV tab, click on Open SAV and make sure that the file type dropdown in the bottom right is
+        switched from SAV 1MB to Main file. Open your main file.
+      </li>
+      <li>In the Options tab, select Select “To PK6 file” as the export style. On the SAV tab, choose the box number or
+        range you wish to view, and click Go to extract the PK6 files.
+      </li>
+    </ol>
 
-<ol>
-<li>On the top directory of your SD card, there should be a new file named main, which you can save to your computer. Once you have it on your computer, we recommend removing it from your SD card so you will not be prompted to overwrite it the next time you perform this procedure.</li>
-<li>Run KeySAV2. On the SAV tab, click on Open SAV and make sure that the file type dropdown in the bottom right is switched from SAV 1MB to Main file. Open your main file.</li>
-<li>In the Options tab, select Select “To PK6 file” as the export style. On the SAV tab, choose the box number or range you wish to view, and click Go to extract the PK6 files.</li>
-</ol>
+    </p>
 
-</p>
+    <h2 class="md-headline">Upload the pk6 files on Porybox</h2>
 
-<h2 class="md-headline">Upload the pk6 files on Porybox</h2>
-
-<p>
-You can now upload the pk6 files in the box of your choice.
-</p>
+    <p>
+      You can now upload the pk6 files in the box of your choice.
+    </p>
+    </div>
 
 </md-content>
