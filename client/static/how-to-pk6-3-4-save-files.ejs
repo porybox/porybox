@@ -1,104 +1,131 @@
 <md-content layout-padding>
+  <div class="md-body-1">
+    <h1 class="md-display-2">Save files through KeySAV2</h1>
 
-<h1>Save files through KeySAV2</h1>
+    <p>The game's saves are encrypted, however it is possible to decrypt them by comparing the differences between two
+      saves taken at different times.</p>
 
-<p>The game's saves are encrypted, however it is possible to decrypt them by comparing the differences between two saves taken at different times.</p>
+    <h2 class="md-headline">Prerequisites</h2>
 
-<h2>Prerequisites</h2>
+    <p>
+      You will need the following:
 
-<p>
-You will need the following:
+    <ul>
+      <li><a href="https://github.com/Cu3PO42/KeySAV2/releases" target="_blank" rel="noreferrer">Cu3PO42's latest version
+          of KeySAV2</a>.
+      </li>
+      <li>A Datel Action Replay 3DS PowerSaves if you have a <b>physical</b> copy of X/Y or OR/AS.</li>
+      <li>An SD card reader if you have a <b>digital</b> copy of X/Y or OR/AS. If you have a New Nintendo 3DS and Windows,
+        you can use the <a href="http://www.nintendo.com.au/new-nintendo-3ds/support/microsd-management/" target="_blank"
+                           rel="noreferrer">microSD management feature</a> without an SD card reader.
+      </li>
+    </ul>
 
-<ul>
-<li><a href="https://github.com/Cu3PO42/KeySAV2/releases" target="_blank" rel="noreferrer">Cu3PO42's latest version of KeySAV2</a>.</li>
-<li>A Datel Action Replay 3DS PowerSaves if you have a <b>physical</b> copy of X/Y or OR/AS.</li>
-<li>An SD card reader if you have a <b>digital</b> copy of X/Y or OR/AS. If you have a New Nintendo 3DS and Windows, you can use the <a href="http://www.nintendo.com.au/new-nintendo-3ds/support/microsd-management/" target="_blank" rel="noreferrer">microSD management feature</a> without an SD card reader.</li>
-</ul>
+    </p>
 
-</p>
+    <h2 class="md-headline">Extracting the save files</h2>
 
-<h2>Extracting the save files</h2>
+    <p>
 
-<p>
+      If you have a <b>physical</b> game:
+    <ul>
+      <li>Use the program that ships with the PowerSaves to make a backup of your save file.</li>
+      <li>The save files are stored in C:\Users\<i>Your Windows username</i>\Powersaves3DS.</li>
+    </ul>
 
-If you have a <b>physical</b> game:
-<ul>
-<li>Use the program that ships with the PowerSaves to make a backup of your save file.</li>
-<li>The save files are stored in C:\Users\<i>Your Windows username</i>\Powersaves3DS.</li>
-</ul>
+    If you have a <b>digital</b> game:
+    <ul>
+      <li>The saves are stored on the SD card in your 3DS.</li>
+      <li>If you own a New Nintendo 3DS, you must unscrew the battery cover to remove the microSD. Alternatively, you can
+        use the <a href="http://www.nintendo.com.au/new-nintendo-3ds/support/microsd-management/" target="_blank"
+                   rel="noreferrer">microSD management tool</a> in System Settings to access the files through your
+        network.
+      </li>
+    </ul>
+    The save files can be found in the following directories on the SD or microSD card:
+    <ul>
+      <li>Pokémon X: \Nintendo 3DS\*\*\extdata\00000000\0000055d\00000000\</li>
+      <li>Pokémon Y: \Nintendo 3DS\*\*\extdata\00000000\0000055e\00000000\</li>
+      <li>Pokémon Omega Ruby: \Nintendo 3DS\*\*\extdata\00000000\0011c400\00000000\</li>
+      <li>Pokémon Alapha Sapphire: \Nintendo 3DS\*\*\extdata\00000000\0011c500\00000000\</li>
+    </ul>
 
-If you have a <b>digital</b> game:
-<ul>
-<li>The saves are stored on the SD card in your 3DS.</li>
-<li>If you own a New Nintendo 3DS, you must unscrew the battery cover to remove the microSD. Alternatively, you can use the <a href="http://www.nintendo.com.au/new-nintendo-3ds/support/microsd-management/" target="_blank" rel="noreferrer">microSD management tool</a> in System Settings to access the files through your network.</li>
-</ul>
-The save files can be found in the following directories on the SD or microSD card:
-<ul>
-<li>Pokémon X: \Nintendo 3DS\*\*\extdata\00000000\0000055d\00000000\</li>
-<li>Pokémon Y: \Nintendo 3DS\*\*\extdata\00000000\0000055e\00000000\</li>
-<li>Pokémon Omega Ruby: \Nintendo 3DS\*\*\extdata\00000000\0011c400\00000000\</li>
-<li>Pokémon Alapha Sapphire: \Nintendo 3DS\*\*\extdata\00000000\0011c500\00000000\</li>
-</ul>
+    </p>
 
-</p>
+    <h2 class="md-headline">Breaking the initial encryption</h2>
 
-<h2>Breaking the initial encryption</h2>
+    <p>
 
-<p>
+      You will only need to do the following steps once.
 
-You will only need to do the following steps once.
+    <ol>
+      <li>Clear out boxes 1 & 2 by moving the Pokémon to other boxes.</li>
+      <li>Capture or hatch 6 Pokémon. They must come from your game.</li>
+      <li>Put those 6 Pokémon on the top row of the first box.</li>
+      <li>Save the game and switch off your console.</li>
+      <li>Export your save. Locate your save on your PC. Rename the first save save1.bin or save1.sav, depending on its
+        original extension. If you are using a digital game, remember to copy the save file to another location before
+        renaming. Do not rename the save file that is on your SD card.
+      </li>
+      <li>Run the game, and move all 6 Pokémon to the top row of box 2.</li>
+      <li>Export your save. Locate your exported save on your PC and rename the second save save2.bin or save2.sav,
+        depending on its original extension.
+      </li>
+      <li>Run KeySAV2. On the Options tab, click on File 1 and load one of the saves. Click on File 2 and load the other.
+        Click on Break.
+      </li>
+      <li>Save the key file in the suggested folder.</li>
+    </ol>
 
-<ol>
-<li>Clear out boxes 1 & 2 by moving the Pokémon to other boxes.</li>
-<li>Capture or hatch 6 Pokémon. They must come from your game.</li>
-<li>Put those 6 Pokémon on the top row of the first box.</li>
-<li>Save the game and switch off your console.</li>
-<li>Export your save. Locate your save on your PC. Rename the first save save1.bin or save1.sav, depending on its original extension. If you are using a digital game, remember to copy the save file to another location before renaming. Do not rename the save file that is on your SD card.</li>
-<li>Run the game, and move all 6 Pokémon to the top row of box 2.</li>
-<li>Export your save. Locate your exported save on your PC and rename the second save save2.bin or save2.sav, depending on its original extension.</li>
-<li>Run KeySAV2. On the Options tab, click on File 1 and load one of the saves. Click on File 2 and load the other. Click on Break.</li>
-<li>Save the key file in the suggested folder.</li>
-</ol>
+    </p>
 
-</p>
+    <h2 class="md-headline">Breaking encryption for more boxes (optional)</h2>
 
-<h2>Breaking encryption for more boxes (optional)</h2>
+    <p>
 
-<p>
+      KeySAV2 is capable of viewing the contents of all of your boxes, but in order for it to do so, it must gather more
+      information. Every time KeySAV2 reads a save, it will update its key file with the information gathered from that
+      save.<br>
+      For the program to be 100% sure what is in each slot, it must have seen the slot in three different states: empty,
+      filled with a Pokémon, and filled with a different Pokémon.<br><br>
+      To unlock more boxes:
 
-KeySAV2 is capable of viewing the contents of all of your boxes, but in order for it to do so, it must gather more information. Every time KeySAV2 reads a save, it will update its key file with the information gathered from that save.<br>
-For the program to be 100% sure what is in each slot, it must have seen the slot in three different states: empty, filled with a Pokémon, and filled with a different Pokémon.<br><br>
-To unlock more boxes:
+    <ul>
+      <li>Empty every box you want to unlock for use with KeySAV2. Create a backup of this save.</li>
+      <li>Completely fill the boxes with any Pokémon (they do not have to be yours). Create a backup of this save.</li>
+      <li>Move the Pokémon around, so that each slot contains a different Pokémon than it did in the previous save. Create
+        a backup of this save.
+      </li>
+      <li>For each of the saves you created, open it in KeySAV2 and click Go. The key file should update, and you will be
+        able to view the contents of these boxes accurately.
+      </li>
+    </ul>
 
-<ul>
-<li>Empty every box you want to unlock for use with KeySAV2. Create a backup of this save.</li>
-<li>Completely fill the boxes with any Pokémon (they do not have to be yours). Create a backup of this save.</li>
-<li>Move the Pokémon around, so that each slot contains a different Pokémon than it did in the previous save. Create a backup of this save.</li>
-<li>For each of the saves you created, open it in KeySAV2 and click Go. The key file should update, and you will be able to view the contents of these boxes accurately.</li>
-</ul>
+    </p>
 
-</p>
+    <h2 class="md-headline">Extracting the pk6 files</h2>
 
-<h2>Extracting the pk6 files</h2>
+    <p>
 
-<p>
+      Follow these steps every time you want to extract Pokémon.
 
-Follow these steps every time you want to extract Pokémon.
+    <ol>
+      <li>Have your Pokémon laid out in a box that you have unlocked before.</li>
+      <li>Export your save.</li>
+      <li>Run KeySAV2. On the SAV tab, click on Open SAV to load the newly-exported save file. Make sure your export style
+        under Options is set to To PK6 file.
+      </li>
+      <li>Select the box number or range you wish to extract.</li>
+      <li>Click on Go.</li>
+    </ol>
 
-<ol>
-<li>Have your Pokémon laid out in a box that you have unlocked before.</li>
-<li>Export your save.</li>
-<li>Run KeySAV2. On the SAV tab, click on Open SAV to load the newly-exported save file. Make sure your export style under Options is set to To PK6 file.</li>
-<li>Select the box number or range you wish to extract.</li>
-<li>Click on Go.</li>
-</ol>
+    </p>
 
-</p>
+    <h2 class="md-headline">Upload the pk6 files on Porybox</h2>
 
-<h2>Upload the pk6 files on Porybox</h2>
-
-<p>
-You can now upload the pk6 files in the box of your choice.
-</p>
+    <p>
+      You can now upload the pk6 files in the box of your choice.
+    </p>
+    </div>
 
 </md-content>
