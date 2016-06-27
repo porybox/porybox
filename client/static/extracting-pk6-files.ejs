@@ -1,91 +1,88 @@
 <md-content layout-padding>
 
-<h1 class="md-display-2">Extracting Pokémon From Your Game</h1>
+  <div class="md-body-1">
+    <h1 class="md-display-2">Extracting Pokémon from your game</h1>
 
-<div>
+    <p>
+      To upload and display a Pokémon on Porybox, you need to extract its information from your game. This information
+      is stored as a pk6, which is simply a small file that contains all the data related to your Pokémon. You can
+      upload the pk6 file to Porybox to have the Pokémon appear in one of your boxes.
+    </p>
 
-<p>
-To upload and display a Pokémon on Porybox, you need to extract its information from your game. This information is stored as a pk6, which is simply a small file that contains all the data related to your Pokémon. You can upload the pk6 file to Porybox to have the Pokémon appear in one of your boxes.
-</p>
+    <p>
+      There are several ways to obtain pk6 files from your games. Some require extra hardware or a console with a
+      specific firmware version. Others require nothing more than an SD card reader.
+    </p>
 
-<p>
-There are several ways to obtain pk6 files from your games. Some require extra hardware or a console with a specific firmware version. Others require nothing more than an SD card reader.
-</p>
+    <p>
+      The most common methods for obtaining the pk6 files of your Pokémon are:<br>
+    <ul>
+      <li>Reading Battle Videos</li>
+      <li>Running homebrew applications: svdt or JK’s save manager</li>
+      <li>Reading save files through KeySAV2 (Windows) or KeySAVe (Windows, Mac OS, Linux)</li>
+      <li>Using PowerSaves through the keystream method</li>
+    </ul>
 
-<p>
-The most common methods for obtaining the pk6 files of your Pokémon are:<br>
-<ul>
-<li>Reading Battle Videos</li>
-<li>Running homebrew applications: svdt or JK’s save manager</li>
-<li>Reading save files through KeySAV2 (Windows) or KeySAVe (Windows, Mac OS, Linux)</li>
-<li>Using PowerSaves through the keystream method</li>
-</ul>
+    <p>Here is a handy table that lists the requirement for each of the methods above:</p>
 
-</div>
-
-<div>
-
-Here is a handy table that lists the requirement for each of the methods above:<br>
-
-<table>
-  <tr>
-    <th>#</th>
-    <th>Method</th>
-    <th>Game version</th>
-    <th>Required hardware</th>
-    <th>Specific firmware?</th>
-    <th>Notes</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td><a href="/how-to-pk6-1-bvs">Battle Videos</a></td>
-    <td>Digital/retail</td>
-    <td>Internet access or another console, SD card reader</td>
-    <td>No</td>
-    <td><b>New to this? Start here!</b></td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td><a href="/how-to-pk6-2-homebrew">Homebrew</a></td>
-    <td>Digital/retail</td>
-    <td>SD card reader, Cubic Ninja (optional), Zelda OoT3D (optional), Freakyforms Deluxe (optional)</td>
-    <td>=<11.0.0-33</td>
-    <td>Required hardware depends on firmware version</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td><a href="/how-to-pk6-3-4-save-files">Save files through KeySAV2 (1)</a></td>
-    <td>Retail</td>
-    <td>Datel PowerSaves</td>
-    <td>No</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td><a href="/how-to-pk6-3-4-save-files">Save files through KeySAV2 (2)</a></td>
-    <td>Digital</td>
-    <td>SD card reader</td>
-    <td>No</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td><a href="https://cu3po42.gitbooks.io/keysave/content/">Save files through KeySAVe</a></td>
-    <td>Digital/retail</td>
-    <td>Datel PowerSaves or SD card reader</td>
-    <td>No</td>
-    <td>Works on Mac & Linux</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td><a href="/how-to-pk6-6-decrypted-powersaves">Decrypted PowerSaves backups</a></td>
-    <td>Retail</td>
-    <td>Datel PowerSaves</td>
-    <td>No</td>
-    <td>KeySAV2 method is preferred</td>
-  </tr>
-</table>
-
-</div>
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Method</th>
+        <th>Game version</th>
+        <th>Required hardware</th>
+        <th>Specific firmware?</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td><a href="/how-to-pk6-1-bvs">Battle Videos</a></td>
+        <td>Digital/retail</td>
+        <td>Internet access or another console, SD card reader</td>
+        <td>No</td>
+        <td><b>New to this? Start here!</b></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><a href="/how-to-pk6-2-homebrew">Homebrew</a></td>
+        <td>Digital/retail</td>
+        <td>SD card reader, Cubic Ninja (optional), Zelda OoT3D (optional), Freakyforms Deluxe (optional)</td>
+        <td>=<11.0.0-33</td>
+        <td>Required hardware depends on firmware version</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><a href="/how-to-pk6-3-4-save-files">Save files through KeySAV2 (1)</a></td>
+        <td>Retail</td>
+        <td>Datel PowerSaves</td>
+        <td>No</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><a href="/how-to-pk6-3-4-save-files">Save files through KeySAV2 (2)</a></td>
+        <td>Digital</td>
+        <td>SD card reader</td>
+        <td>No</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><a href="https://cu3po42.gitbooks.io/keysave/content/">Save files through KeySAVe</a></td>
+        <td>Digital/retail</td>
+        <td>Datel PowerSaves or SD card reader</td>
+        <td>No</td>
+        <td>Works on Mac & Linux</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><a href="/how-to-pk6-6-decrypted-powersaves">Decrypted PowerSaves backups</a></td>
+        <td>Retail</td>
+        <td>Datel PowerSaves</td>
+        <td>No</td>
+        <td>KeySAV2 method is preferred</td>
+      </tr>
+    </table>
+  </div>
 
 </md-content>
