@@ -41,7 +41,7 @@
                 <img class="pokeball"
                      ng-if="pokemon.ballNameUrl"
                      ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
-                     title="{{pokemon.data.ballName}}" /><span class="md-headline">{{pokemon.parsedNickname}}</span>
+                     title="{{pokemon.data.ballName}}" /><span class="card-headline" style="margin: 0;">{{pokemon.parsedNickname}}</span>
                   <span flex></span>
                   <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
                 </div>
@@ -97,7 +97,7 @@
             </md-card>
 
             <md-card ng-if="pokemon.data.isEgg" class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Egg Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Egg Info</span></md-card-header>
               <md-card-content>
                 <div flex><strong>ESV</strong> {{pokemon.paddedEsv}}</div>
                 <div flex><strong>Hatch cycles remaining</strong> {{pokemon.data.otFriendship}}</div>
@@ -105,7 +105,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Level Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Level Info</span></md-card-header>
               <md-card-content>
                 <div flex>Level {{pokemon.data.level}}</div>
                 <div flex>{{pokemon.data.exp}} experience</div>
@@ -117,7 +117,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Original Trainer Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Original Trainer Info</span></md-card-header>
               <md-card-content>
                 <div flex>{{pokemon.parsedOt}}
                   <span class="gender-male" ng-if="pokemon.data.otGender == 'M'">&#9794;</span><span class="gender-female" ng-if="pokemon.data.otGender == 'F'">&#9792;</span>
@@ -133,7 +133,7 @@
 
           <div layout-gt-xs="column">
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Stats</span></md-card-header>
+              <md-card-header><span class="card-headline">Stats</span></md-card-header>
               <md-card-content>
                 <div layout="row" style="font-weight:bold;">
                   <span flex>Stat</span>
@@ -155,7 +155,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Moves</span></md-card-header>
+              <md-card-header><span class="card-headline">Moves</span></md-card-header>
               <md-card-content>
                 <div layout="row" style="font-weight:bold;">
                   <span flex="35">Move</span>
@@ -182,7 +182,7 @@
 
           <div layout-gt-xs="column">
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Encounter Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Encounter Info</span></md-card-header>
               <md-card-content>
                 <div>
                   <strong>Game of Origin</strong>
@@ -206,7 +206,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Region Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Region Info</span></md-card-header>
               <md-card-content>
                 <div><strong>Language</strong> <span>{{pokemon.data.language}}</span></div>
                 <div><strong>Country</strong> <span>{{pokemon.data.countryId}}</span></div>
@@ -216,7 +216,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Upload Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Upload Info</span></md-card-header>
               <md-card-content>
                 <!-- add link to owner's profile -->
                 <div><strong>Owner</strong> {{pokemon.data.owner}}</div>
@@ -236,7 +236,7 @@
           <div layout-gt-xs="column">
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Contest Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Contest Info</span></md-card-header>
               <md-card-content>
                 <div layout="row" ng-repeat="(statName, statValue) in pokemon.contestStats" >
                   <span flex="20" style="text-transform:capitalize;">
@@ -254,7 +254,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Ribbon Info</span></md-card-header>
+              <md-card-header><span class="card-headline">Ribbon Info</span></md-card-header>
               <md-card-content>
                 <div ng-repeat="ribbon in pokemon.data.ribbons">{{ribbon}}</div>
                 <div ng-if="pokemon.data.ribbons.length === 0">No ribbons</div>
@@ -264,7 +264,7 @@
 
           <div layout-gt-xs="column">
           <md-card class="summary" ng-show="pokemon.hasFullData">
-            <md-card-header><span class="md-headline">Memories</span></md-card-header>
+            <md-card-header><span class="card-headline">Memories</span></md-card-header>
             <md-card-content>
               <md-tabs md-stretch-tabs="always">
                 <md-tab label="OT">
@@ -308,7 +308,7 @@
           </md-card>
 
           <md-card class="summary" ng-show="pokemon.hasFullData">
-            <md-card-header><span class="md-headline">Amie Info</span></md-card-header>
+            <md-card-header><span class="card-headline">Amie Info</span></md-card-header>
             <md-card-content>
               <div><strong>Fullness</strong> {{pokemon.data.fullness}}</div>
               <div><strong>Enjoyment</strong> {{pokemon.data.enjoyment}}</div>
@@ -316,7 +316,7 @@
           </md-card>
 
           <md-card class="summary" ng-show="pokemon.hasFullData">
-            <md-card-header><span class="md-headline">Pokérus Info</span></md-card-header>
+            <md-card-header><span class="card-headline">Pokérus Info</span></md-card-header>
             <md-card-content>
               <div ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration > 0">
                 <div class="pokerus"><strong>Infected with Pokérus</strong></div>
@@ -336,7 +336,7 @@
 
           <div layout-gt-xs="column">
             <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="md-headline">Super Training</span></md-card-header>
+              <md-card-header><span class="card-headline">Super Training</span></md-card-header>
               <md-card-content>
                 <div>
                   <strong>Secret Training enabled? </strong>
@@ -350,7 +350,7 @@
             </md-card>
 
             <md-card class="summary" ng-show="pokemon.hasFullData" ng-if="pokemon.data.visibility === 'public' || pokemon.data.owner === main.user.name || main.user.isAdmin">
-              <md-card-header><span class="md-headline">Hidden data</span></md-card-header>
+              <md-card-header><span class="card-headline">Hidden data</span></md-card-header>
               <md-card-content>
                 <div>
                   <div><strong>PID</strong> {{pokemon.data.pid.toString(16).toUpperCase().padStart(8, '0')}}</div>
