@@ -1,5 +1,6 @@
 const ng = require('angular');
 const pokemonController = require('./pokemon.ctrl');
+const controllerDeps = ['$routeParams', '$scope', 'io', '$mdMedia', '$mdDialog', '$mdToast'];
 
 /**
  * [module description]
@@ -14,13 +15,13 @@ ng.module('porybox.pokemon', ['ngRoute'])
       data: '='
     },
     templateUrl: 'pokemon/pokemon-card.view.html',
-    controller: ['$routeParams', '$scope', 'io', pokemonController],
+    controller: [...controllerDeps, pokemonController],
     controllerAs: 'pokemon'
   }).config(['$routeProvider', function($routeProvider) {
     $routeProvider.
       when('/pokemon/:pokemonid', {
         templateUrl: '/pokemon/pokemon-full.view.html',
-        controller: ['$routeParams', '$scope', 'io', pokemonController],
+        controller: [...controllerDeps, pokemonController],
         controllerAs: 'pokemon'
       });
   }]);
