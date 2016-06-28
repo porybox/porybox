@@ -42,6 +42,16 @@ footer a {
   margin-right: 3px;
 }
 
+body {
+  // Toasts need their parent to be static
+  overflow: hidden;
+}
+
+#scroll-container {
+  // But we still want to be able to scroll
+  overflow: scroll;
+}
+
 /*******************************
  * Overrides
  *******************************/

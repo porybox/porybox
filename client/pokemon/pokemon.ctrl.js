@@ -1,5 +1,7 @@
 'use strict';
 import moment from 'moment';
+import angular from 'angular';
+import editCtrl from './pokemon-edit.ctrl';
 const statIndex = {'Hp': 0, 'Atk': 1, 'Def': 2, 'SpAtk': 3, 'SpDef': 4, 'Spe': 5};
 const genderDifferences = new Set([
   3, 12, 19, 20, 25, 26, 41, 42, 44, 45, 64, 65, 85, 97, 111, 112, 118, 119, 123, 129, 130, 154,
@@ -9,17 +11,19 @@ const genderDifferences = new Set([
   457, 459, 460, 461, 464, 465, 473, 521, 592, 593, 668, 678
 ]);
 
-module.exports = function($routeParams, $scope, io) {
+module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToast) {
   this.data = this.data || {};
   this.id = $routeParams.pokemonid || this.data.id;
   this.errorStatusCode = null;
+  this.isDeleted = false;
   this.parseProps = () => {
     this.paddedTid = this.data.tid.toString().padStart(5, '0');
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
 
-    this.speciesWithForme = this.data.speciesName + `${this.data.formName ? '-' + this.data.formName : ''}`;
+    this.speciesWithForme = this.data.speciesName +
+      `${this.data.formName ? '-' + this.data.formName : ''}`;
 
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
@@ -171,6 +175,76 @@ module.exports = function($routeParams, $scope, io) {
     }).then(this.parseProps).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).then(() => $scope.$apply());
+  };
+
+  // (the visibility probably won't need to get passed as a parameter when there's a view for it)
+  this.edit = (event) => {
+    const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+    $scope.$watch(function() {
+      return $mdMedia('xs') || $mdMedia('sm');
+    }, function(wantsFullScreen) {
+      $scope.customFullscreen = (wantsFullScreen === true);
+    });
+    return Promise.resolve($mdDialog.show({
+      locals: {data: this.data},
+      bindToController: true,
+      controller: ['$mdDialog', editCtrl],
+      controllerAs: 'dialog',
+      templateUrl: 'pokemon/pokemon-edit.view.html',
+      parent: angular.element(document.body),
+      targetEvent: event,
+      clickOutsideToClose: true,
+      fullscreen: useFullScreen
+    }).then((editedData) => {
+      return io.socket.postAsync(`/p/${this.id}/edit`, editedData).then(() => {
+        Object.assign(this.data, editedData);
+        $mdToast.show(
+          $mdToast.simple()
+            .textContent(this.parsedNickname + ' edited successfully')
+            .position('top right'));
+        $scope.$apply();
+        $scope.$apply();
+      });
+    })).catch(console.error.bind(console));
+  };
+
+  this.delete = () => {
+    return io.socket.deleteAsync(`/p/${this.id}`).then(() => {
+      this.isDeleted = true;
+    }).then(() => {
+      const toast = $mdToast.simple()
+            .textContent(this.parsedNickname + ' deleted')
+            .action('Undo')
+            .highlightAction(true)
+            .position('top right');
+      $mdToast.show(toast).then((response) => {
+        if ( response === 'ok' ) {
+          this.undelete();
+        }
+      });
+      $scope.$apply();
+    }).catch(console.error.bind(console));
+  };
+
+  this.undelete = () => {
+    return io.socket.postAsync(`/p/${this.id}/undelete`).then(() => {
+      this.isDeleted = false;
+    }).then(() => {
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent(this.parsedNickname + ' undeleted.')
+          .position('top right'));
+      $scope.$apply();
+    }).catch(console.error.bind(console));
+  };
+
+  /* box: the ID of the box to move to (can be the same as the current box)
+  ** index (optional): the index where this pokemon should be inserted in the new box.
+  ** (Defaults to the last spot in the box.) */
+  this.move = ({box, index}) => {
+    return io.socket.postAsync(`/p/${this.id}/move`, {box, index}).then(() => {
+      $scope.$apply();
+    }).catch(console.error.bind(console));
   };
 };
 
