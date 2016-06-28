@@ -1,4 +1,3 @@
-const pk6parse = require('pk6parse');
 module.exports = _.mapValues({
   async uploadpk6 (req, res) {
     const params = req.allParams();
@@ -11,35 +10,22 @@ module.exports = _.mapValues({
         user: req.user.name
       })).defaultPokemonVisibility;
     }
+    Validation.requireParams(params, 'box');
     const files = await new Promise((resolve, reject) => {
       req.file('pk6').upload((err, files) => err ? reject(err) : resolve(files));
     });
     if (!files.length) {
       return res.status(400).json('No files uploaded');
     }
-    const parsed = _.attempt(pk6parse.parseFile, files[0].fd);
-    if (_.isError(parsed)) {
-      return res.status(400).json('Failed to parse the provided file');
-    }
-
-    const prohibitReason = PokemonHandler.checkProhibited(parsed);
-    if (prohibitReason !== null) {
-      return res.status(400).json(prohibitReason);
-    }
-
-    Validation.requireParams(params, 'box');
-    const box = await Box.findOne({id: params.box});
-    Validation.verifyUserIsOwner(box, req.user, {allowAdmin: false});
-    parsed.box = box.id;
-    parsed.owner = req.user.name;
-    parsed.visibility = visibility;
-    // Attempt to parse the move IDs, etc. make sure that the IDs are valid
-    if (_.isError(_.attempt(pk6parse.assignReadableNames, _.clone(parsed)))) {
-      return res.status(400).json('Failed to parse the provided file');
-    }
-    const result = await Pokemon.create(parsed);
-    result.isUnique = await result.checkIfUnique();
-    return PokemonHandler.getSafePokemonForUser(result, req.user).then(res.created);
+    return PokemonHandler.createPokemonFromPk6({
+      user: req.user,
+      visibility,
+      boxId: params.box,
+      file: files[0].fd
+    }).then(parsed => Pokemon.create(parsed))
+      .tap(result => BoxOrdering.addPkmnIdsToBox(result.box, [result.id]))
+      .then(result => PokemonHandler.getSafePokemonForUser(result, req.user, {checkUnique: true}))
+      .then(res.created);
   },
 
   async get (req, res) {
@@ -150,10 +136,10 @@ module.exports = _.mapValues({
     deleted contents. To fix the issue, take the pokemon ID that the new pokemon will immediately follow in the orderedContents
     list, and place the new pokemon right after that ID in the _orderedIds list. */
     const adjIndex = index > 0 ? newBox._orderedIds.indexOf(orderedContents[index - 1].id) + 1 : 0;
-    await oldBox.removePkmnId(pokemon.id);
+    await BoxOrdering.removePkmnIdFromBox(oldBox.id, pokemon.id);
     pokemon.box = newBox.id;
     const promises = [
-      newBox.addPkmnId(pokemon.id, adjIndex),
+      BoxOrdering.addPkmnIdsToBox(newBox.id, [pokemon.id], adjIndex),
       Pokemon.update({id: pokemon.id}, {box: newBox.id})
     ];
     await Promise.all(promises);
