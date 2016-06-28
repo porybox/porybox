@@ -69,3 +69,20 @@ exports.getSafeBoxForUser = async (box, user) => {
     .map(p => PokemonHandler.getSafePokemonForUser(p, user, {parse: true})));
   return box;
 };
+
+exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
+  const parsed = _.attempt(pk6parse.parseFile, file, {parseNames: true});
+  if (_.isError(parsed)) {
+    throw {statusCode: 400, message: 'Failed to parse the provided file'};
+  }
+  const prohibitReason = PokemonHandler.checkProhibited(parsed);
+  if (prohibitReason !== null) {
+    throw {statusCode: 400, message: prohibitReason};
+  }
+  const box = await Box.findOne({id: boxId});
+  Validation.verifyUserIsOwner(box, user, {allowAdmin: false});
+  parsed.box = box.id;
+  parsed.owner = user.name;
+  parsed.visibility = visibility;
+  return parsed;
+};
