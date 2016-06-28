@@ -10,19 +10,21 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
   </head>
 
-  <body flex layout="column" ng-controller="MainCtrl as main" ng-cloak
+  <body flex layout="column" ng-controller="MainCtrl as main" ng-cloak layout-fill
     ng-init="main.init({
       boxes: <%=(typeof boxes !== 'undefined' ? JSON.stringify(boxes) : '[]')%>,
       user: <%=(typeof user !== 'undefined' ? JSON.stringify(user) : 'null')%>,
       prefs: <%=(typeof prefs !== 'undefined' ? JSON.stringify(prefs) : '{}')%>
     })">
-    <%- include header.ejs %>
-    <div flex layout="column">
-      <main flex="none">
-        <%- body %>
-      </main>
-      <div flex></div>
-      <%- include footer.ejs %>
+    <div id="scroll-container">
+      <%- include header.ejs %>
+      <div flex layout="column">
+        <main flex="none">
+          <%- body %>
+        </main>
+        <div flex></div>
+        <%- include footer.ejs %>
+      </div>
     </div>
     <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
     <script src="<%= sails.config.environment === 'development' ? '/bundle.js' : '/bundle.min.js' %>"></script>
