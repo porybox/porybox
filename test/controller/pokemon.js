@@ -122,6 +122,24 @@ describe('PokemonController', () => {
       expect(_.map(res3.body.contents.slice(-10), 'id').sort()).to.eql(newIds.sort());
     });
   });
+  describe('multi upload', () => {
+    it('allows multiple files to be uploaded simultaneously', async () => {
+      const pk6Data = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
+      const files = [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: pk6Data}
+      ];
+      const res = await agent.post('/pk6/multi').send({files});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.be.an.instanceof(Array);
+      expect(res.body).to.have.lengthOf(3);
+      expect(_.map(res.body, 'success')).to.eql([true, true, true]);
+      expect(_.map(res.body, 'error')).to.eql([null, null, null]);
+      expect(_.map(res.body, 'created.visibility')).to.eql(['viewable', 'public', 'private']);
+      expect(_.map(res.body, 'created.speciesName')).to.eql(['Pelipper', 'Pelipper', 'Pelipper']);
+    });
+  });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, viewableId;
     before(async () => {
