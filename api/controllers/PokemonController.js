@@ -28,6 +28,76 @@ module.exports = _.mapValues({
       .then(res.created);
   },
 
+  /**
+  * POST /pk6/multi
+  * @param {Array} files
+  * `files` must be an array of up to 50 elements, in the following format:
+  * [
+  *   {box: 'a box id', visibility: 'a visibility setting', data: 'a base64 string representing the pk6 file'},
+  *   { ... },
+  *   ...
+  * ]
+  * The `visibility` parameter for each file is optional, and defaults to the user's default visibility setting if
+  not provided.
+  *
+  * The endpoint will usually return a 200 response in the following format:
+  * [
+  *   {success: true, created: <pokemon data>, error: null},
+  *   {success: false, created: null, error: 'Missing box'},
+  *   { ... },
+  *   ...
+  * ]
+  */
+  async uploadMultiPk6 (req, res) {
+    const files = req.param('files');
+    if (!Array.isArray(files)) {
+      return res.status(400).json('Invalid files array');
+    }
+
+    if (files.length > Constants.MAX_MULTI_UPLOAD_SIZE) {
+      return res.status(400).json('A maximum of 50 files may be uploaded at a time');
+    }
+
+    const defaultVisibility = (await UserPreferences.findOne({
+      user: req.user.name
+    })).defaultPokemonVisibility;
+    const parsePromises = _.map(files, Promise.method(file => {
+      Validation.assert(_.isString(file.box), 'Missing box');
+      Validation.assert(_.isString(file.data), 'Invalid file data');
+      if (!_.isUndefined(file.visibility)) {
+        Validation.verifyPokemonParams({visibility: file.visibility});
+      }
+      const fileBuf = _.attempt(Buffer.from, file.data, 'base64');
+      if (_.isError(fileBuf)) {
+        throw {statusCode: 400, message: 'Invalid file data'};
+      }
+      return PokemonHandler.createPokemonFromPk6({
+        user: req.user,
+        visibility: file.visibility || defaultVisibility,
+        boxId: file.box,
+        file: fileBuf
+      });
+    }));
+
+    await Promise.all(parsePromises.map(promise => promise.reflect()));
+
+    const created = await Promise.map(Pokemon.create(
+      parsePromises.filter(promise => promise.isFulfilled()).map(promise => promise.value())
+    ), pkmn => PokemonHandler.getSafePokemonForUser(pkmn, req.user));
+
+    await Promise.all(_.values(_.groupBy(created, 'box')).map(pkmnArray => {
+      return BoxOrdering.addPkmnIdsToBox(pkmnArray[0].box, _.map(pkmnArray, 'id'));
+    }));
+
+    let successCount = 0;
+    return res.ok(parsePromises.map(promise => {
+      if (promise.isFulfilled()) {
+        return {success: true, created: created[successCount++], error: null};
+      }
+      return {success: false, created: null, error: promise.reason().message || 'Unknown error'};
+    }));
+  },
+
   async get (req, res) {
     const pokemon = await Pokemon.findOne({
       id: req.param('id'),

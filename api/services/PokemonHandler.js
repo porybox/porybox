@@ -71,7 +71,8 @@ exports.getSafeBoxForUser = async (box, user) => {
 };
 
 exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
-  const parsed = _.attempt(pk6parse.parseFile, file, {parseNames: true});
+  const parseFunc = Buffer.isBuffer(file) ? pk6parse.parseBuffer : pk6parse.parseFile;
+  const parsed = _.attempt(parseFunc, file, {parseNames: true});
   if (_.isError(parsed)) {
     throw {statusCode: 400, message: 'Failed to parse the provided file'};
   }

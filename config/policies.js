@@ -46,6 +46,7 @@ module.exports.policies = {
 
   PokemonController: {
     uploadpk6: user,
+    uploadMultiPk6: user,
     get: anyone,
     delete: user,
     undelete: user,
