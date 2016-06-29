@@ -15,12 +15,14 @@ module.exports = {
   },
   verifyUserIsOwner (item, user, {allowAdmin = true, allowDeleted = false} = {}) {
     if (!item || !allowDeleted && item._markedForDeletion) {
-      throw {statusCode: 404};
+      throw {statusCode: 404, message: 'Not Found'};
     }
     if (item.owner !== user.name && !(user.isAdmin && allowAdmin)) {
       /* If anyone other than the owner tries to undelete an item, return a 404 error.
       That way, the server doesn't leak information on whether an item with the given ID ever existed. */
-      throw {statusCode: item._markedForDeletion ? 404 : 403};
+      throw item._markedForDeletion
+        ? {statusCode: 404, message: 'Not found'}
+        : {statusCode: 403, message: 'Forbidden'};
     }
   },
   verifyBoxParams (params) {
@@ -48,7 +50,7 @@ module.exports = {
   verifyPokemonParams (params) {
     if (!_.isUndefined(params.visibility)
         && !Constants.POKEMON_VISIBILITIES.includes(params.visibility)) {
-      throw {statusCode: 400, message: 'Invalid pokemon visibility'};
+      throw {statusCode: 400, message: 'Invalid Pokémon visibility'};
     }
   },
   verifyPokemonNoteParams (params) {
