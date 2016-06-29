@@ -40,7 +40,7 @@ module.exports = _.mapValues({
   * The `visibility` parameter for each file is optional, and defaults to the user's default visibility setting if
   not provided.
   *
-  * The endpoint will usually return a 200 response in the following format:
+  * The endpoint will usually return a 201 response in the following format:
   * [
   *   {success: true, created: <pokemon data>, error: null},
   *   {success: false, created: null, error: 'Missing box'},
@@ -54,22 +54,24 @@ module.exports = _.mapValues({
       return res.status(400).json('Invalid files array');
     }
 
+    if (files.length === 0) {
+      return res.status(400).json('No files uploaded');
+    }
+
     if (files.length > Constants.MAX_MULTI_UPLOAD_SIZE) {
       return res.status(400).json('A maximum of 50 files may be uploaded at a time');
     }
+
+    files.forEach(file => Validation.verifyPokemonParams({visibility: file.visibility}));
+    files.forEach(file => Validation.assert(_.isString(file.box), 'Missing/invalid box ID'));
 
     const defaultVisibility = (await UserPreferences.findOne({
       user: req.user.name
     })).defaultPokemonVisibility;
     const parsePromises = _.map(files, Promise.method(file => {
-      Validation.assert(_.isString(file.box), 'Missing box');
-      Validation.assert(_.isString(file.data), 'Invalid file data');
-      if (!_.isUndefined(file.visibility)) {
-        Validation.verifyPokemonParams({visibility: file.visibility});
-      }
       const fileBuf = _.attempt(Buffer.from, file.data, 'base64');
       if (_.isError(fileBuf)) {
-        throw {statusCode: 400, message: 'Invalid file data'};
+        throw {statusCode: 400, message: 'Failed to parse the provided file'};
       }
       return PokemonHandler.createPokemonFromPk6({
         user: req.user,
@@ -90,7 +92,7 @@ module.exports = _.mapValues({
     }));
 
     let successCount = 0;
-    return res.ok(parsePromises.map(promise => {
+    return res.created(parsePromises.map(promise => {
       if (promise.isFulfilled()) {
         return {success: true, created: created[successCount++], error: null};
       }
