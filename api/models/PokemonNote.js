@@ -8,7 +8,9 @@ module.exports = {
     },
     text: {
       type: 'string',
-      required: true
+      required: true,
+      minLength: 1,
+      maxLength: Constants.POKEMON_NOTE_LENGTH_LIMIT
     },
     visibility: {
       enum: Constants.POKEMON_NOTE_VISIBILITIES
