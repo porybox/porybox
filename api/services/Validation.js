@@ -9,7 +9,7 @@ module.exports = {
   requireParams (allParams, requiredValues, {requireStrings = true} = {}) {
     _.forEach(_.isArray(requiredValues) ? requiredValues : [requiredValues], param => {
       if (!_.has(allParams, param) || requireStrings && !_.isString(allParams[param])) {
-        throw {statusCode: 400, message: `Missing parameter ${param}`};
+        throw {statusCode: 400, message: `Invalid/missing required parameter '${param}'`};
       }
     });
   },
@@ -24,11 +24,21 @@ module.exports = {
     }
   },
   verifyBoxParams (params) {
-    if (!_.isUndefined(params.name) && (!_.isString(params.name) || _.isEmpty(params.name))) {
-      throw {statusCode: 400, message: 'Invalid box name'};
+    if (!_.isUndefined(params.name)) {
+      if (!_.isString(params.name || _.isEmpty(params.name))) {
+        throw {statusCode: 400, message: 'Invalid/missing box name'};
+      }
+      if (params.name.length > Constants.MAX_BOX_NAME_LENGTH) {
+        throw {statusCode: 400, message: 'Box name too long'};
+      }
     }
-    if (!_.isUndefined(params.name) && (params.description && !_.isString(params.description))) {
-      throw {statusCode: 400, message: 'Invalid box description'};
+    if (!_.isUndefined(params.description)) {
+      if (params.description && !_.isString(params.description)) {
+        throw {statusCode: 400, message: 'Invalid box description'};
+      }
+      if (params.description.length > Constants.MAX_BOX_DESCRIPTION_LENGTH) {
+        throw {statusCode: 400, message: 'Box description too long'};
+      }
     }
     if (!_.isUndefined(params.visibility)
         && !Constants.BOX_VISIBILITIES.includes(params.visibility)) {
@@ -42,8 +52,13 @@ module.exports = {
     }
   },
   verifyPokemonNoteParams (params) {
-    if (!_.isUndefined(params.text) && (!_.isString(params.text) || _.isEmpty(params.text))) {
-      throw {statusCode: 400, message: 'Invalid note text'};
+    if (!_.isUndefined(params.text)) {
+      if (!_.isString(params.text) || _.isEmpty(params.text)) {
+        throw {statusCode: 400, message: 'Invalid/missing note text'};
+      }
+      if (params.text.length > Constants.MAX_POKEMON_NOTE_LENGTH) {
+        throw {statusCode: 400, message: 'Note text too long'};
+      }
     }
     if (!_.isUndefined(params.visibility)
         && !Constants.POKEMON_NOTE_VISIBILITIES.includes(params.visibility)) {

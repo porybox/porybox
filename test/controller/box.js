@@ -40,6 +40,34 @@ describe('BoxController', () => {
       expect(res.body.description).to.equal('A box');
       expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
     });
+    it('does not allow a box to be created with an invalid/missing name', async () => {
+      const res = await agent.post('/box').send({description: 'A box', name: 5});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal("Invalid/missing required parameter 'name'");
+
+      const res2 = await agent.post('/box').send({description: 'A box', name: ''});
+      expect(res2.statusCode).to.equal(400);
+      expect(res2.body).to.equal('Invalid/missing box name');
+    });
+    it('does not allow a box to be created with an invalid description', async () => {
+      const res = await agent.post('/box').send({name: 'Pizza Box', description: 5});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Invalid box description');
+    });
+    it('does not allow box names longer than 300 characters', async () => {
+      const res = await agent.post('/box').send({name: 'A'.repeat(300)});
+      expect(res.statusCode).to.equal(201);
+      const res2 = await agent.post('/box').send({name: 'A'.repeat(301)});
+      expect(res2.statusCode).to.equal(400);
+      expect(res2.body).to.equal('Box name too long');
+    });
+    it('does not allow box descriptions longer than 1000 characters', async () => {
+      const res = await agent.post('/box').send({name: 'myBox', description: 'A'.repeat(1000)});
+      expect(res.statusCode).to.equal(201);
+      const res2 = await agent.post('/box').send({name: 'myBox', description: 'A'.repeat(1001)});
+      expect(res2.statusCode).to.equal(400);
+      expect(res2.body).to.equal('Box description too long');
+    });
   });
   describe('getting a box', () => {
     let boxId;
@@ -415,6 +443,14 @@ describe('BoxController', () => {
     });
     it("does not allow a box's name to be edited to the empty string", async () => {
       const res = await agent.post(`/b/${box.id}/edit`).send({name: ''});
+      expect(res.statusCode).to.equal(400);
+    });
+    it("does not allow a box's name to be edited to longer than 300 chars", async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'A'.repeat(301)});
+      expect(res.statusCode).to.equal(400);
+    });
+    it("does not allow a box's description to be edited to longer than 1000 chars", async () => {
+      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'A'.repeat(1001)});
       expect(res.statusCode).to.equal(400);
     });
   });
