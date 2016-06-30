@@ -55,8 +55,11 @@ module.exports = {
       throw {statusCode: 400, message};
     }
   },
+  usernameValid (name) {
+    return _.isString(name) && Constants.VALID_USERNAME_REGEX.test(name);
+  },
   async usernameAvailable (name) {
-    if (!_.isString(name) || !Constants.VALID_USERNAME_REGEX.test(name)) {
+    if (!Validation.usernameValid(name)) {
       return false;
     }
     const existingUser = await User.findOne({name});

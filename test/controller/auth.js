@@ -53,7 +53,7 @@ describe('AuthController', function() {
         email: 'testuser1spoof@gmail.com'
       });
       expect(res.statusCode).to.equal(401);
-      expect(res.body).to.equal('Error.Passport.Bad.Username');
+      expect(res.body).to.equal('Error.Passport.Username.Taken');
     });
 
     it("shouldn't register an account with a password less than 8 characters", async () => {
@@ -134,7 +134,7 @@ describe('AuthController', function() {
         email: 'invalid4@porybox.com'
       });
       expect(res3.statusCode).to.equal(401);
-      expect(res3.body).to.equal('Error.Passport.Bad.Username');
+      expect(res3.body).to.equal('Error.Passport.Username.Taken');
     });
 
     it('does not allow passwords longer than 72 characters', async () => {

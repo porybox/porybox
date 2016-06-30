@@ -10,7 +10,7 @@ const ERRORS_MAP = {
   'Error.Passport.Password.Missing': 'missing password',
   'Error.Passport.Password.Invalid': 'invalid password (must be at least 8 characters long)',
   'Error.Passport.Bad.Username': 'invalid username (must be 1-20 alphanumeric characters)',
-  'Error.Passport.Email.Exists': 'an account with that email already exists'
+  'Error.Passport.Username.Taken': 'a user with that name already exists'
 };
 module.exports = function ($scope, $http) {
   this.register = () => {

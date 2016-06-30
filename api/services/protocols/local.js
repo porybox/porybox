@@ -41,10 +41,14 @@ exports.register = async function (req, res, next) {
     req.flash('error', 'Error.Passport.Password.Missing');
     return next(new Error('No password was entered.'));
   }
+  if (!Validation.usernameValid(name)) {
+    req.flash('error', 'Error.Passport.Bad.Username');
+    return next(new Error('Invalid username'));
+  }
   try {
     const nameAvailable = await Validation.usernameAvailable(name);
     if (!nameAvailable) {
-      req.flash('error', 'Error.Passport.Bad.Username');
+      req.flash('error', 'Error.Passport.Username.Taken');
       return next(new Error('That username is unavailable.'));
     }
   } catch (err) {
