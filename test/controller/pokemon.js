@@ -631,6 +631,16 @@ describe('PokemonController', () => {
       const res = await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'public'});
       expect(res.statusCode).to.equal(400);
     });
+    it('returns a 400 error if a note with an empty string as text is sent', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({text: ''});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Invalid/missing note text');
+    });
+    it('returns a 400 error if a note longer than 1000 characters is sent', async () => {
+      const res = await agent.post(`/p/${pkmn.id}/note`).send({text: 'A'.repeat(1001)});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Note text too long');
+    });
     it("does not allow users to add notes on other peoples' pokemon", async () => {
       const res = await otherAgent.post(`/p/${pkmn.id}/note`).send({text: 'f'});
       expect(res.statusCode).to.equal(403);
@@ -820,6 +830,9 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(400);
       const res2 = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: ['cookies']});
       expect(res2.statusCode).to.equal(400);
+      const longString = 'A'.repeat(1001);
+      const res3 = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({text: longString});
+      expect(res3.statusCode).to.equal(400);
     });
     it('returns a 400 error when no valid parameters are provided', async () => {
       const res = await agent.post(`/p/${pkmn.id}/n/${note.id}/edit`).send({pokemon: 'aaaaa'});

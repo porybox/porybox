@@ -5,7 +5,9 @@ module.exports =  {
   attributes: {
     name: {
       type: 'string',
-      required: true
+      required: true,
+      minLength: 1,
+      maxLength: Constants.BOX_NAME_LENGTH_LIMIT
     },
     owner: {
       model: 'user',
@@ -13,7 +15,8 @@ module.exports =  {
     },
     description: {
       type: 'string',
-      defaultsTo: ''
+      defaultsTo: '',
+      maxLength: Constants.BOX_DESCRIPTION_LENGTH_LIMIT
     },
     visibility: {
       enum: Constants.BOX_VISIBILITIES,
