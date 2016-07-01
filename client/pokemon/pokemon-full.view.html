@@ -117,7 +117,8 @@
                 <div flex>{{pokemon.data.exp}} experience</div>
                 <div class="bar-container">
                   <div class="progress-bar exp-gained" ng-attr-style="width: calc(({{pokemon.data.expFromPreviousLevel}} / {{pokemon.totalExpToNextLevel}}) * 100%);"></div>
-                  <div class="progress-bar-label">{{pokemon.data.expFromPreviousLevel}} / {{pokemon.totalExpToNextLevel}} exp to next level</div>
+                  <div ng-if="pokemon.data.level < 100" class="progress-bar-label">{{pokemon.data.expFromPreviousLevel}} / {{pokemon.totalExpToNextLevel}} exp to next level</div>
+                  <div ng-if="pokemon.data.level === 100" class="progress-bar-label">No next level</div>
                 </div>
               </md-card-content>
             </md-card>
