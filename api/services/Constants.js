@@ -41,3 +41,7 @@ exports.PROHIBITED_UPLOADS = [
   {props: {dexNo: 646, formId: 1}, reason: 'Kyurem-White may not be uploaded'},
   {props: {dexNo: 646, formId: 2}, reason: 'Kyurem-Black may not be uploaded'}
 ];
+
+exports.FIRST_BOX_NAME = 'Box 1';
+// eslint-disable-next-line
+exports.FIRST_BOX_DESCRIPTION = 'This is your first box! Select it to view/edit its information, or use the + button to add Pokémon.'
