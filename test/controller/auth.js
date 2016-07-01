@@ -40,8 +40,8 @@ describe('AuthController', function() {
       expect(res2.statusCode).to.equal(200);
       expect(res2.body).to.be.an.instanceof(Array);
       expect(res2.body).to.have.lengthOf(1);
-      expect(res2.body[0].name).to.equal('Box 1');
-      expect(res2.body[0].description).to.equal('');
+      expect(res2.body[0].name).to.equal(sails.services.constants.FIRST_BOX_NAME);
+      expect(res2.body[0].description).to.equal(sails.services.constants.FIRST_BOX_DESCRIPTION);
       expect(res2.body[0].visibility).to.equal('listed');
       expect(res2.body[0].contents).to.eql([]);
     });
