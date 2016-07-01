@@ -89,7 +89,12 @@ exports.register = async function (req, res, next) {
 
   try {
     await UserPreferences.create({user});
-    await Box.create({name: 'Box 1', description: '', visibility: 'listed', owner: user.name});
+    await Box.create({
+      name: Constants.FIRST_BOX_NAME,
+      description: Constants.FIRST_BOX_DESCRIPTION,
+      visibility: 'listed',
+      owner: user.name
+    });
   } catch (err) {
     return next(err);
   }
