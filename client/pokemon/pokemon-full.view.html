@@ -216,8 +216,8 @@
               <md-card-header><span class="card-headline">Region Info</span></md-card-header>
               <md-card-content>
                 <div><strong>Language</strong> <span>{{pokemon.data.language}}</span></div>
-                <div><strong>Country</strong> <span>{{pokemon.data.countryId}}</span></div>
-                <div><strong>Subregion</strong> <span>{{pokemon.data.regionId}}</span></div>
+                <div><strong>Country</strong> <span>{{pokemon.data.countryName}}</span></div>
+                <div><strong>Subregion</strong> <span>{{pokemon.data.regionName}}</span></div>
                 <div><strong>3DS Region</strong> <span>{{pokemon.data.consoleRegion}}</span></div>
               </md-card-content>
             </md-card>
@@ -306,8 +306,8 @@
                 <md-tab label="Regions">
                   <div style="padding-top: 10px; font-size: 14px; font-weight:bold;">Physical region history</div>
                   <div ng-repeat="place in pokemon.places track by $index" layout="row">
-                    <span flex>Country {{$index+1}} {{place.country}}</span>
-                    <span flex>Region {{$index+1}} {{place.region}}</span>
+                    <span flex="25"><strong>Location {{$index+1}}</strong></span>
+                    <span flex>{{place.country || '-'}} <span ng-if="place.country">({{place.region || '-'}})</span></span>
                   </div>
                 </md-tab>
               </md-tabs>

@@ -158,11 +158,11 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
     this.displayEggDate = parseDate(this.data.eggDate);
 
     this.places = [
-      {country: this.data.geoLocation1CountryId, region: this.data.geoLocation1RegionId},
-      {country: this.data.geoLocation2CountryId, region: this.data.geoLocation2RegionId},
-      {country: this.data.geoLocation3CountryId, region: this.data.geoLocation3RegionId},
-      {country: this.data.geoLocation4CountryId, region: this.data.geoLocation4RegionId},
-      {country: this.data.geoLocation5CountryId, region: this.data.geoLocation5RegionId}
+      {country: this.data.geoLocation1CountryName, region: this.data.geoLocation1RegionName},
+      {country: this.data.geoLocation2CountryName, region: this.data.geoLocation2RegionName},
+      {country: this.data.geoLocation3CountryName, region: this.data.geoLocation3RegionName},
+      {country: this.data.geoLocation4CountryName, region: this.data.geoLocation4RegionName},
+      {country: this.data.geoLocation5CountryName, region: this.data.geoLocation5RegionName}
     ];
 
     this.hasFullData = true;
