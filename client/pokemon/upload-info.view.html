@@ -1,0 +1,19 @@
+<!-- add link to owner's profile -->
+<md-dialog aria-label="Upload Info" ng-cloak>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Upload info</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="dialog.cancel()">
+        <i class="material-icons">close</i>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content class="md-dialog-content">
+    <div><strong>Owner</strong></div>
+    <div>{{dialog.data.owner}}</div>
+    <br/>
+    <div><strong>Notes</strong></div>
+    <div ng-repeat="note in dialog.data.notes">{{note}}</div>
+  </md-dialog-content>
+</md-dialog>
