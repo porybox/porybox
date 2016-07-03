@@ -1,6 +1,34 @@
 const editCtrl = require('./box-edit.ctrl.js');
 const angular = require('angular');
 
+const POKEMON_FIELDS_USED = [
+  'abilityName',
+  'abilityNum',
+  'ballName',
+  'decreasedStat',
+  'esv',
+  'heldItemName',
+  'id',
+  'increasedStat',
+  'isEgg',
+  'isShiny',
+  'ivHp',
+  'ivAtk',
+  'ivDef',
+  'ivSpAtk',
+  'ivSpDef',
+  'ivSpe',
+  'language',
+  'level',
+  'natureName',
+  'nickname',
+  'ot',
+  'otGameId',
+  'speciesName',
+  'tid',
+  'visibility',
+].join(',');
+
 module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
   this.data = this.data || {contents: []};
   this.id = $routeParams.boxid || this.data.id;
@@ -10,7 +38,7 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
   this.isDeleted = false;
 
   this.fetch = () => {
-    io.socket.getAsync('/b/' + this.id).then(data => {
+    io.socket.getAsync('/b/' + this.id, {pokemonFields: POKEMON_FIELDS_USED}).then(data => {
       Object.assign(this.data, data);
       this.hasFullData = true;
     }).catch(err => {
