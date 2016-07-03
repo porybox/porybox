@@ -425,6 +425,27 @@ describe('PokemonController', () => {
       expect(pkmn._markedForDeletion).to.not.exist();
       expect(pkmn._rawPk6).to.not.exist();
     });
+    it('allows a list of fields to be specified as a query parameter', async () => {
+      const res = await agent.get(`/p/${viewableId}`).query({pokemonFields: 'id,visibility,ivHp'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.eql({id: viewableId, visibility: 'viewable', ivHp: 31});
+    });
+    it('does not allow private fields to be sent even if specified in the query', async () => {
+      const res = await otherAgent.get(`/p/${viewableId}`).query({pokemonFields: 'id,pid'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.eql({id: viewableId});
+      expect(res.body.pid).not.to.exist();
+    });
+    it('allows private fields to be sent to the owner if specified in the query', async () => {
+      const res = await agent.get(`/p/${viewableId}`).query({pokemonFields: 'pid'});
+      expect(res.statusCode).to.equal(200);
+      expect(Object.keys(res.body)).to.eql(['pid']);
+    });
+    it('does not leak internal properties of a pokemon if specified in the query', async () => {
+      const res = await agent.get(`/p/${viewableId}`).query({pokemonFields: '_rawPk6'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.eql({});
+    });
   });
 
   describe('deleting a pokemon', () => {

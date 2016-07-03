@@ -87,3 +87,7 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
   parsed.visibility = visibility;
   return parsed;
 };
+
+exports.pickPokemonFields = (pkmn, fieldString) => {
+  return _.isString(fieldString) ? _.pick(pkmn, fieldString.split(',').concat('toJSON')) : pkmn;
+};
