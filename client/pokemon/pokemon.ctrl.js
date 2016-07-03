@@ -233,6 +233,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       this.isDeleted = true;
     }).then(() => {
       const toast = $mdToast.simple()
+            .hideDelay(10000)
             .textContent(this.parsedNickname + ' deleted')
             .action('Undo')
             .highlightAction(true)
