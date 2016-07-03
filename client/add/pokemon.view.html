@@ -34,9 +34,7 @@
             accept=".pk6,.pkx" ngf-accept="'.pk6,.pkx'" ngf-change="pkmDialog.addFiles()"
             ngf-pattern="'.pk6,.pkx'">Drop file/directory here</div>
 
-        Or Upload file:
-        <button ngf-select="pkmDialog.addFiles($files)" multiple accept=".pk6">iOS test 1</button>
-        iOS test 2
+        Or upload a file:
         <input type="file" ngf-select ng-model="pkmDialog.file" name="file"
              accept=".pk6" ngf-max-size="2MB" required ng-change="pkmDialog.addFile()"
              ngf-model-invalid="errorFile">
