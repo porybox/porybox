@@ -1,4 +1,5 @@
 import {maxBy} from 'lodash';
+import Promise from 'bluebird';
 
 /**
  * Controller for handling the dialog to add a new pokemon
@@ -22,7 +23,8 @@ module.exports = function ($mdDialog, $routeParams) {
   this.addFiles = (files) => {
     files = files || this.files;
     files.forEach((file) => this.addLine({
-      file,
+      filename: file.name,
+      data: fileToBase64(file),
       visibility: this.defaultPokemonVisibility,
       box: this.defaultBox
     }));
@@ -32,7 +34,8 @@ module.exports = function ($mdDialog, $routeParams) {
   this.addFile = () => {
     if (this.file && this.file !== {}) {
       this.addLine({
-        file: this.file,
+        filename: this.file.name,
+        data: fileToBase64(this.file),
         visibility: this.defaultPokemonVisibility,
         box: this.defaultBox
       });
@@ -45,10 +48,23 @@ module.exports = function ($mdDialog, $routeParams) {
   };
 
   this.canAdd = function () {
-    return this.lines.every((line) => line.visibility && line.file && line.file.size && line.box);
+    return this.lines.every((line) => line.visibility && line.data && line.box);
   };
 
   this.answer = function() {
     return $mdDialog.hide(this.lines);
   };
 };
+
+function fileToBase64 (file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = evt => {
+      resolve(btoa(
+        new Uint8Array(evt.target.result).reduce((acc, next) => acc + String.fromCharCode(next), '')
+      ));
+    };
+    fr.onerror = reject;
+    fr.readAsArrayBuffer(file);
+  });
+}

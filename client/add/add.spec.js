@@ -11,7 +11,6 @@ describe('AddCtrl', function() {
     $controller = {},
     $mdDialog = {},
     $mdMedia = {},
-    Upload = {},
     tested, postSpy;
   beforeEach(inject(function(_$controller_){
     $scope = {
@@ -42,7 +41,6 @@ describe('AddCtrl', function() {
       io: io,
       $mdDialog: $mdDialog,
       $mdMedia: $mdMedia,
-      Upload: Upload
     }, {boxes: []});
     postSpy = sinon.spy(io.socket, 'postAsync');
   }));
