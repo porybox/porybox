@@ -122,6 +122,225 @@ describe('PokemonController', () => {
       expect(_.map(res3.body.contents.slice(-10), 'id').sort()).to.eql(newIds.sort());
     });
   });
+  describe('multi upload', () => {
+    let pk6Data, invalidPk6Data1, invalidPk6Data2, kyuremW, verifyValidUpload;
+    before(() => {
+      const fs = require('fs');
+      pk6Data = fs.readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
+      // (prepend a random string)
+      invalidPk6Data1 = '44444444444444444' + pk6Data;
+      // (valid structure with invalid move IDs)
+      invalidPk6Data2 = fs.readFileSync(`${__dirname}/invalid-moves.pk6`, {encoding: 'base64'});
+
+      kyuremW = fs.readFileSync(`${__dirname}/kyurem-w.pk6`, {encoding: 'base64'});
+
+      verifyValidUpload = data => {
+        expect(data.success).to.be.true();
+        expect(data.error).to.be.null();
+        expect(data.created.speciesName).to.equal('Pelipper');
+        expect(data.created.pid).to.exist();
+      };
+    });
+    it('allows multiple files to be uploaded simultaneously', async () => {
+      const files = [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: pk6Data}
+      ];
+      const res = await agent.post('/pk6/multi').send({files});
+      expect(res.statusCode).to.equal(201);
+      expect(res.body).to.be.an.instanceof(Array);
+      expect(res.body).to.have.lengthOf(3);
+      expect(_.map(res.body, 'success')).to.eql([true, true, true]);
+      expect(_.map(res.body, 'error')).to.eql([null, null, null]);
+      expect(_.map(res.body, 'created.visibility')).to.eql(['viewable', 'public', 'private']);
+      expect(_.map(res.body, 'created.speciesName')).to.eql(_.times(3, () => 'Pelipper'));
+      expect(_.map(res.body, 'created.box')).to.eql(_.times(3, () => generalPurposeBox));
+    });
+    it("defaults to the user's default upload visibility if none is provided", async () => {
+      const res = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, data: pk6Data}
+      ]});
+      expect(res.statusCode).to.equal(201);
+      expect(res.body).to.be.an.instanceof(Array);
+      expect(res.body).to.have.lengthOf(1);
+      expect(res.body[0].success).to.be.true();
+      expect(res.body[0].error).to.be.null();
+      const res2 = await agent.get('/preferences');
+      expect(res2.statusCode).to.equal(200);
+      const userDefaultVisibility = res2.body.defaultPokemonVisibility;
+      expect(res.body[0].created.visibility).to.equal(userDefaultVisibility);
+    });
+    it('returns a 400 error if the `files` argument is not an array', async () => {
+      const notAnArray = {length: 3, 0: 'foo', 1: 'bar', 2: 'baz'};
+      const res = await agent.post('/pk6/multi').send({files: notAnArray});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Invalid files array');
+    });
+    it('returns a 400 error if the `files` array is empty', async () => {
+      const res = await agent.post('/pk6/multi').send({files: []});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('No files uploaded');
+    });
+    it('returns a 400 error if the `files` array has a length greater than 50', async () => {
+      const res = await agent.post('/pk6/multi').send({files: _.times(51, () => ({}))});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('A maximum of 50 files may be uploaded at a time');
+    });
+    it('returns a 400 error if any provided visibility is invalid', async () => {
+      const res = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'HI THANKS FOR READING THE UNIT TESTS', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Invalid Pokémon visibility');
+    });
+    it('returns a 400 error if any box IDs are missing/invalid', async () => {
+      const res = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Missing/invalid box ID');
+
+      const res2 = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: ['this is an array'], visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res2.statusCode).to.equal(400);
+      expect(res2.body).to.equal('Missing/invalid box ID');
+    });
+    it('does not accept Pokémon with invalid pk6 data', async () => {
+      const res = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: invalidPk6Data1},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      const res2 = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: invalidPk6Data2},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      [res, res2].forEach(response => {
+        expect(response.statusCode).to.equal(201);
+        expect(response.body).to.be.an.instanceof(Array);
+        expect(response.body).to.have.lengthOf(3);
+        verifyValidUpload(response.body[0]);
+        expect(response.body[0].created.visibility).to.equal('viewable');
+        verifyValidUpload(response.body[2]);
+        expect(response.body[2].created.visibility).to.equal('public');
+        expect(response.body[1].success).to.be.false();
+        expect(response.body[1].created).to.be.null();
+        expect(response.body[1].error).to.equal('Failed to parse the provided file');
+      });
+    });
+    it("does not accept box IDs that don't exist", async () => {
+      const res = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox + 'extra not-box-id bit', visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res.statusCode).to.equal(201);
+      expect(res.body).to.be.an.instanceof(Array);
+      expect(res.body).to.have.lengthOf(3);
+      verifyValidUpload(res.body[0]);
+      expect(res.body[0].created.visibility).to.equal('viewable');
+      verifyValidUpload(res.body[2]);
+      expect(res.body[2].created.visibility).to.equal('public');
+      expect(res.body[1].success).to.be.false();
+      expect(res.body[1].created).to.be.null();
+      expect(res.body[1].error).to.equal('Not Found');
+    });
+    it('does not accept box IDs that belong to another user', async () => {
+      const res = await otherAgent.post('/box').send({name: 'Outbox'});
+      expect(res.statusCode).to.equal(201);
+      const otherBox = res.body;
+      const res2 = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: otherBox.id, visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res2.statusCode).to.equal(201);
+      expect(res2.body).to.be.an.instanceof(Array);
+      expect(res2.body).to.have.lengthOf(3);
+      verifyValidUpload(res2.body[0]);
+      expect(res2.body[0].created.visibility).to.equal('viewable');
+      verifyValidUpload(res2.body[2]);
+      expect(res2.body[2].created.visibility).to.equal('public');
+      expect(res2.body[1].success).to.be.false();
+      expect(res2.body[1].created).to.be.null();
+      expect(res2.body[1].error).to.equal('Forbidden');
+    });
+    it('does not accept kyurem-w or kyurem-b', async () => {
+      const res = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: kyuremW},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res.statusCode).to.equal(201);
+      expect(res.body).to.be.an.instanceof(Array);
+      expect(res.body).to.have.lengthOf(3);
+      verifyValidUpload(res.body[0]);
+      expect(res.body[0].created.visibility).to.equal('viewable');
+      verifyValidUpload(res.body[2]);
+      expect(res.body[2].created.visibility).to.equal('public');
+      expect(res.body[1].success).to.be.false();
+      expect(res.body[1].created).to.be.null();
+      expect(res.body[1].error).to.equal('Kyurem-White may not be uploaded');
+    });
+    it('enters the results into the correct boxes with the correct settings', async () => {
+      const res = await agent.post('/box').send({name: 'Checkbox'});
+      expect(res.statusCode).to.equal(201);
+      const box1 = res.body;
+
+      const res2 = await agent.post('/box').send({name: 'Bounding Box'});
+      expect(res2.statusCode).to.equal(201);
+      const box2 = res2.body;
+
+      const res3 = await agent.get(`/b/${generalPurposeBox}`);
+      expect(res3.statusCode).to.equal(200);
+      const initialContents = res3.body.contents;
+
+      const res4 = await agent.post('/pk6/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: box1.id, visibility: 'public', data: pk6Data},
+        {box: box2.id, visibility: 'private', data: pk6Data},
+        {box: box1.id, visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data},
+        {box: box2.id, visibility: 'viewable', data: invalidPk6Data1},
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data}
+      ]});
+
+      expect(res4.statusCode).to.equal(201);
+      expect(res4.body).to.be.an.instanceof(Array);
+      expect(res4.body).to.have.lengthOf(7);
+      expect(_.map(res4.body, 'success')).to.eql([true, true, true, true, true, false, true]);
+      _.forEach([0, 1, 2, 3, 4, 6], index => verifyValidUpload(res4.body[index]));
+      expect(res4.body[5].created).to.be.null();
+      expect(res4.body[5].error).to.equal('Failed to parse the provided file');
+
+      const res5 = await agent.get(`/b/${box1.id}`);
+      expect(res5.statusCode).to.equal(200);
+      const updatedBox1 = res5.body;
+      const res6 = await agent.get(`/b/${box2.id}`);
+      expect(res6.statusCode).to.equal(200);
+      const updatedBox2 = res6.body;
+      const res7 = await agent.get(`/b/${generalPurposeBox}`);
+      expect(res7.statusCode).to.equal(200);
+      const updatedInitialBox = res7.body;
+      expect(updatedBox1.contents).to.eql(_.map([res4.body[1], res4.body[3]], 'created'));
+      expect(updatedBox2.contents).to.eql([res4.body[2].created]);
+      expect(updatedInitialBox.contents).to.eql(
+        initialContents.concat(_.map([res4.body[0], res4.body[4], res4.body[6]], 'created'))
+      );
+    });
+  });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, viewableId;
     before(async () => {
