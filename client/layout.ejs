@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="<%= sails.config.environment === 'development' ? '/bundle.css' : '/bundle.min.css' %>" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+
+    <script>
+      !function(p,O,r,y,b,o,x){p.GoogleAnalyticsObject=r;p[r]||(p[r]=function(){
+        (p[r].q=p[r].q||[]).push(arguments)});p[r].l=+new Date;o=O.createElement(y);
+        x=O.getElementsByTagName(y)[0];o.src=b;x.parentNode.insertBefore(o,x)}
+      (window,document,'ga','script','//www.google-analytics.com/analytics.js');
+
+      ga('create', 'UA-80255318-1', 'auto');
+      ga('send', 'pageview');
+    </script>
   </head>
 
   <body flex layout="column" ng-controller="MainCtrl as main" ng-cloak layout-fill
