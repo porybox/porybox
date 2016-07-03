@@ -23,15 +23,32 @@
           <i class="material-icons">file_download</i>
         </md-button>
       </a>
-      <md-button class="md-icon-button" aria-label="Pokémon settings" ng-click="pokemon.edit()"
-        ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin">
-        <md-tooltip md-direction="left">{{pokemon.parsedNickname}}'s settings</md-tooltip>
-        <i class="material-icons">settings</i>
-      </md-button>
-      <md-button class="md-icon-button" aria-label="Delete Pokémon" ng-click="pokemon.delete()"
-        ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin">
-        <md-tooltip md-direction="left">Delete {{pokemon.parsedNickname}}</md-tooltip>
-        <i class="material-icons">delete</i>
+      <md-menu md-position-mode="target-right target" md-offset="0 50">
+        <md-button class="md-icon-button" aria-label="Pokémon settings" ng-click="$mdOpenMenu($event)"
+          ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin">
+          <md-tooltip md-direction="left">{{pokemon.parsedNickname}}'s settings</md-tooltip>
+          <i class="material-icons">settings</i>
+        </md-button>
+        <md-menu-content width="4">
+          <md-menu-item>
+            <md-button ng-click="pokemon.edit()" >
+              <div layout="row">
+                <p flex>Edit</p>
+              </div>
+            </md-button>
+          </md-menu-item>
+          <md-menu-item ng-if="!pokemon.isDeleted">
+            <md-button aria-label="Delete Pokémon" ng-click="pokemon.delete()">
+              <div layout="row">
+                <p flex>Delete {{pokemon.parsedNickname}}</p>
+              </div>
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+      <md-button class="md-icon-button" aria-label="Upload info" ng-click="pokemon.uploadInfo()">
+        <md-tooltip md-direction="left">Upload info</md-tooltip>
+        <i class="material-icons">info</i>
       </md-button>
     </div>
   </md-toolbar>
@@ -221,18 +238,6 @@
                 <div><strong>3DS Region</strong> <span>{{pokemon.data.consoleRegion}}</span></div>
               </md-card-content>
             </md-card>
-
-            <md-card class="summary" ng-show="pokemon.hasFullData">
-              <md-card-header><span class="card-headline">Upload Info</span></md-card-header>
-              <md-card-content>
-                <!-- add link to owner's profile -->
-                <div><strong>Owner</strong> {{pokemon.data.owner}}</div>
-                <div><strong>Unique in Porybox database?</strong>
-                  <span ng-if="pokemon.data.isUnique">Yes</span>
-                  <span ng-if="!pokemon.data.isUnique">No</span>
-                </div>
-              </md-card-content>
-            </md-card>
           </div>
         </div>
       </md-tab-body>
@@ -371,10 +376,19 @@
       </md-tab-body>
 
     </md-tab>
-    <!-- We'll bring this tab back if/when we implement static PIDs or PS dates
+
     <md-tab label="Analysis">
+      <md-card class="summary" ng-show="pokemon.hasFullData">
+        <md-card-header><span class="card-headline">Porybox clone status</span></md-card-header>
+        <md-card-content>
+          <div><strong>Unique in Porybox database?</strong>
+            <span ng-if="pokemon.data.isUnique">Yes</span>
+            <span ng-if="!pokemon.data.isUnique">No</span>
+          </div>
+        </md-card-content>
+      </md-card>
     </md-tab>
-    -->
+
   </md-tabs>
 </div>
 <div ng-if="pokemon.errorStatusCode" ng-include="'/errors/' + pokemon.errorStatusCode + '.html'"></div>
