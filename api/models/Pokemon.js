@@ -151,8 +151,7 @@ const attributes = {
   },
   async destroy () {
     await PokemonNote.destroy({id: this.notes});
-    const box = await Box.findOne({id: this.box});
-    await box.removePkmnId(this.id);
+    await BoxOrdering.removePkmnIdFromBox(this.box, this.id);
     return await Pokemon.destroy({id: this.id});
   },
   incrementDownloadCount () {
@@ -187,8 +186,5 @@ module.exports = {
     pkmn.id = Util.generateHexId();
     pkmn._cloneHash = PokemonHandler.computeCloneHash(pkmn);
     next(null, pkmn);
-  },
-  afterCreate (pkmn, next) {
-    Box.findOne({id: pkmn.box}).then(box => box.addPkmnId(pkmn.id)).asCallback(next);
   }
 };

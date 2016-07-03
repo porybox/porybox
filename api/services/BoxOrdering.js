@@ -9,5 +9,36 @@ function _getOrderedItemList (parent, contentsKey, orderedIdsKey) {
 }
 module.exports = {
   getOrderedPokemonList: _.partial(_getOrderedItemList, _, 'contents', '_orderedIds'),
-  getOrderedBoxList: _.partial(_getOrderedItemList, _, 'boxes', '_orderedBoxIds')
+  getOrderedBoxList: _.partial(_getOrderedItemList, _, 'boxes', '_orderedBoxIds'),
+  addPkmnIdsToBox (boxId, pkmnIds, position) {
+    return Promise.fromCallback(Box.native.bind(Box)).then(collection => {
+      const query = {$push: {_orderedIds: {$each: pkmnIds}}};
+      if (_.isNumber(position)) {
+        query.$push._orderedIds.$position = position;
+      }
+      return collection.update({_id: boxId}, query);
+    });
+  },
+
+  removePkmnIdFromBox (boxId, pkmnId) {
+    return Promise.fromCallback(Box.native.bind(Box)).then(collection => {
+      return collection.update({_id: boxId}, {$pull: {_orderedIds: pkmnId}});
+    });
+  },
+
+  addBoxIdsToUser (username, boxIds, position) {
+    return Promise.fromCallback(User.native.bind(User)).then(collection => {
+      const query = {$push: {_orderedBoxIds: {$each: boxIds}}};
+      if (_.isNumber(position)) {
+        query.$push._orderedBoxIds.$position = position;
+      }
+      return collection.update({_id: username}, query);
+    });
+  },
+
+  removeBoxIdFromUser (username, boxId) {
+    return Promise.fromCallback(User.native.bind(User)).then(collection => {
+      return collection.update({_id: username}, {$pull: {_orderedBoxIds: boxId}});
+    });
+  }
 };

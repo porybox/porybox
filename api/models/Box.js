@@ -68,22 +68,6 @@ module.exports =  {
       ]).get(0);
     },
 
-    addPkmnId (id, position) {
-      return Promise.fromCallback(Box.native.bind(Box)).then(collection => {
-        const query = {$push: {_orderedIds: {$each: [id]}}};
-        if (_.isNumber(position)) {
-          query.$push._orderedIds.$position = position;
-        }
-        return collection.update({_id: this.id}, query);
-      });
-    },
-
-    removePkmnId (id) {
-      return Promise.fromCallback(Box.native.bind(Box)).then(collection => {
-        return collection.update({_id: this.id}, {$pull: {_orderedIds: id}});
-      });
-    },
-
     /* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
     Conveniently, this means that the internal properties are never sent to the client.
     (Not to be confused with the omitPrivateContents function, which removes *confidential* data.) */
@@ -96,11 +80,11 @@ module.exports =  {
     next(null, box);
   },
   afterCreate (box, next) {
-    User.findOne({name: box.owner}).then(user => user.addBoxId(box.id)).asCallback(next);
+    BoxOrdering.addBoxIdsToUser(box.owner, [box.id]).asCallback(next);
   },
   afterDestroy (destroyedBoxes, next) {
     Promise.each(destroyedBoxes, box => {
-      return User.findOne({name: box.owner}).then(user => user.removeBoxId(box.id)).asCallback(next);
-    });
+      return BoxOrdering.removeBoxIdFromUser(box.owner, box.id);
+    }).asCallback(next);
   }
 };

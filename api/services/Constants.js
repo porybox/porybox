@@ -45,3 +45,5 @@ exports.PROHIBITED_UPLOADS = [
 exports.FIRST_BOX_NAME = 'Box 1';
 // eslint-disable-next-line
 exports.FIRST_BOX_DESCRIPTION = 'This is your first box! Select it to view/edit its information, or use the + button to add Pokémon.'
+
+exports.MAX_MULTI_UPLOAD_SIZE = 50;
