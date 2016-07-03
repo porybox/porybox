@@ -63,7 +63,7 @@
                 <div layout="row" layout-align="none center">
                 <img class="pokeball"
                      ng-if="pokemon.ballNameUrl"
-                     ng-src="https://pokeapi.co/media/sprites/items/{{pokemon.ballNameUrl}}.png"
+                     ng-src="img/icons/items/{{pokemon.ballNameUrl}}.png"
                      title="{{pokemon.data.ballName}}" /><span class="card-headline" style="margin: 0;">{{pokemon.parsedNickname}}</span>
                   <span flex></span>
                   <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
@@ -281,16 +281,16 @@
               <md-tabs md-stretch-tabs="always">
                 <md-tab label="OT">
                   <div class="handler">
-                    <div><strong>Original trainer</strong> {{pokemon.data.ot}}
+                    <div><strong>OT</strong> {{pokemon.data.ot}}
                       <span class="gender-male" ng-if="pokemon.data.otGender == 'M'">&#9794;</span>
                       <span class="gender-female" ng-if="pokemon.data.otGender == 'F'">&#9792;</span>
+                      <span ng-if="pokemon.data.currentHandlerIsOt">(current handler)</span>
                     </div>
                     <div><strong>Friendship</strong> {{pokemon.data.otFriendship}}</div>
                     <div><strong>Affection</strong> {{pokemon.data.otAffection}}</div>
-                    <span ng-if="pokemon.data.currentHandlerIsOt">Current handler is OT</span>
-                    <md-divider></md-divider>
-                    <!-- insert memory text here -->
                   </div>
+                  <md-divider></md-divider>
+                  <div>{{pokemon.data.otMemory}}</div>
                 </md-tab>
 
                 <md-tab label="Non-OT">
@@ -300,13 +300,13 @@
                       <span ng-if="pokemon.data.notOt === ''" style="font-style: italic">Never left OT</span>
                       <span class="gender-male" ng-if="pokemon.data.notOtGender == 'M'">&#9794;</span>
                       <span class="gender-female" ng-if="pokemon.data.notOtGender == 'F'">&#9792;</span>
+                      <span ng-if="!pokemon.data.currentHandlerIsOt">(current handler)</span>
                     </div>
                     <div><strong>Friendship</strong> {{pokemon.data.notOtFriendship}}</div>
                     <div><strong>Affection</strong> {{pokemon.data.notOtAffection}}</div>
-                    <span ng-if="!pokemon.data.currentHandlerIsOt">Current handler is {{pokemon.parsedNotOt}}</span>
-                    <md-divider>
-                    <!-- insert memory text here -->
                   </div>
+                  <md-divider></md-divider>
+                  <div>{{pokemon.data.notOtMemory}}</div>
                 </md-tab>
                 <md-tab label="Regions">
                   <div style="padding-top: 10px; font-size: 14px; font-weight:bold;">Physical region history</div>
