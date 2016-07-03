@@ -1,4 +1,4 @@
-<md-card class="pokemon-card-mini" ng-init="pokemon.parseProps()">
+<md-card class="pokemon-card-mini" ng-init="pokemon.parseBoxViewProps()">
   <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link" ng-attr-title="{{pokemon.data.isEgg ?
   pokemon.parsedNickname + ' (ESV: ' + pokemon.paddedEsv + ')' : pokemon.parsedNickname}}">
     <md-card-header>

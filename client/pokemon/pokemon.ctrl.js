@@ -16,18 +16,26 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   this.id = $routeParams.pokemonid || this.data.id;
   this.errorStatusCode = null;
   this.isDeleted = false;
-  this.parseProps = () => {
-    this.paddedTid = this.data.tid.toString().padStart(5, '0');
-    this.paddedSid = this.data.sid.toString().padStart(5, '0');
-    this.paddedEsv = this.data.esv.toString().padStart(4, '0');
-    this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
-
-    this.speciesWithForme = this.data.speciesName +
-      `${this.data.formName ? '-' + this.data.formName : ''}`;
-
+  this.parseBoxViewProps = () => {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
+    this.paddedTid = this.data.tid.toString().padStart(5, '0');
+    this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
-    this.parsedNotOt = replace3dsUnicodeChars(this.data.notOt);
+
+    this.ballNameUrl = this.data.ballName
+      ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
+      : null;
+
+    this.heldItemUrl = this.data.heldItemId >= 328 && this.data.heldItemId <= 445 ?
+      'tm' : (this.data.heldItemName
+      ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
+      : null);
+
+    this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
+      this.data.speciesName && this.data.speciesName.toLowerCase()}`;
+
+    this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
+    this.hasHA = this.data.abilityNum === 4;
 
     this.ivs = [
       this.data.ivHp,
@@ -37,6 +45,18 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       this.data.ivSpDef,
       this.data.ivSpe
     ];
+
+    this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
+  };
+  this.parseAllProps = () => {
+    this.parseBoxViewProps();
+    this.paddedSid = this.data.sid.toString().padStart(5, '0');
+    this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
+
+    this.speciesWithForme = this.data.speciesName +
+      `${this.data.formName ? '-' + this.data.formName : ''}`;
+
+    this.parsedNotOt = replace3dsUnicodeChars(this.data.notOt);
 
     this.totalExpToNextLevel = this.data.expFromPreviousLevel + this.data.expToNextLevel;
 
@@ -134,25 +154,11 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
 
     this.gameLabel = 'game-' + (this.data.otGameName || '').replace(' ', '-').toLowerCase();
 
-    this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
-    this.hasHA = this.data.abilityNum === 4;
     this.isFromGen4 = [7, 8, 10, 11, 12].indexOf(this.data.otGameId) > -1;
 
-    this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
-      this.data.speciesName && this.data.speciesName.toLowerCase()}`;
     this.spriteUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${this.data.gender === 'F'
       && genderDifferences.has(this.data.dexNo) ? 'female/' : ''}${this.data.dexNo}${this.data.formId > 0 &&
       [25, 664, 665].indexOf(this.data.dexNo) === -1 ? '-' + this.data.formId : ''}`;
-    this.ballNameUrl = this.data.ballName
-      ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
-      : null;
-
-    this.heldItemUrl = this.data.heldItemId >= 328 && this.data.heldItemId <= 445 ?
-      'tm' : (this.data.heldItemName
-      ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
-      : null);
-
-    this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
 
     this.displayMetDate = parseDate(this.data.metDate);
     this.displayEggDate = parseDate(this.data.eggDate);
@@ -172,7 +178,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   this.fetch = () => {
     return io.socket.getAsync(`/p/${this.id}`).then(data => {
       Object.assign(this.data, data);
-    }).then(this.parseProps).catch(err => {
+    }).then(this.parseAllProps).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).then(() => $scope.$apply());
   };
