@@ -5,7 +5,7 @@
     </md-card-title-text>
   </md-card-title>
   <md-card-content>
-    <form role="form" ng-submit="auth.login()">
+    <form role="form" ng-submit="auth.login()" method="POST">
       <md-input-container class="md-block">
         <input type="text" name="username" ng-model="loginName">
         <label>Username</label>
