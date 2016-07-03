@@ -102,13 +102,16 @@ module.exports = _.mapValues({
   },
 
   async get (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'id');
     const pokemon = await Pokemon.findOne({
-      id: req.param('id'),
+      id: params.id,
       _markedForDeletion: false
     }).populate('notes');
-    return PokemonHandler.getSafePokemonForUser(pokemon, req.user, {
+    const safePkmn = await PokemonHandler.getSafePokemonForUser(pokemon, req.user, {
       checkUnique: true
-    }).then(res.ok);
+    });
+    return res.ok(PokemonHandler.pickPokemonFields(safePkmn, params.pokemonFields));
   },
 
   async delete (req, res) {
