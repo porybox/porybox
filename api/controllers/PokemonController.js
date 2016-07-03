@@ -81,6 +81,7 @@ module.exports = _.mapValues({
       });
     }));
 
+    parsePromises.forEach(p => p.suppressUnhandledRejections());
     await Promise.all(parsePromises.map(promise => promise.reflect()));
 
     const created = await Promise.map(Pokemon.create(

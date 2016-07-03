@@ -2,12 +2,14 @@ const angular = require('angular');
 const Promise = require('bluebird');
 const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
+const maxMultiUploadSize = require('../../api/services/Constants.js').MAX_MULTI_UPLOAD_SIZE;
+import {chunk} from 'lodash';
 
 /**
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet, Upload) {
+module.exports = function($scope, io, $mdDialog, $mdMedia) {
   this.box = (event) => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $scope.$watch(function() {
@@ -30,29 +32,30 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdBottomSheet, Uploa
   };
 
   this.pokemon = (event) => {
-    return $mdBottomSheet.show({
+    const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+    return Promise.resolve($mdDialog.show({
+      controller: ['$mdDialog', '$routeParams', pokemonCtrl],
+      controllerAs: 'pkmDialog',
       templateUrl: 'add/pokemon.view.html',
-      controller: ['$mdBottomSheet', '$routeParams', pokemonCtrl],
+      parent: angular.element(document.body),
+      targetEvent: event,
+      clickOutsideToClose: true,
+      fullscreen: useFullScreen,
+      bindToController: true,
       locals: {
         boxes: this.boxes,
         defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
-      },
-      controllerAs: 'pkmDialog',
-      bindToController: true,
-      parent: angular.element(document.body),
-      targetEvent: event
-    }).then(({file, visibility, box}) => {
-      return Upload.upload({
-        url: '/uploadpk6',
-        data: {pk6: file, visibility, box}
-      });
-    })
-    .then((res) => {
-      if (this.selected.selectedBox.id === res.data.box){
-        return this.selected.selectedBox.contents.push(res.data);
       }
-    })
-    .catch(console.log.bind(console));
+    })).map(Promise.props)
+      .map(result => ({data: result.data, box: result.box, visibility: result.visibility}))
+      .then(files => chunk(files, maxMultiUploadSize))
+      .mapSeries(files => io.socket.postAsync('/pk6/multi', {files}))
+      .reduce((acc, nextGroup) => acc.concat(nextGroup), [])
+      .filter(line => line.success && line.created.box === this.selected.selectedBox.id)
+      .map(line => line.created)
+      .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
+      .catch(console.error.bind(console))
+      .then(() => $scope.$apply());
   };
 
 };
