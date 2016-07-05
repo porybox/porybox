@@ -56,15 +56,12 @@ module.exports =  {
     },
 
     async destroy () {
-      /* Find all the pokemon and note IDs rather than calling pokemon.destroy() on each pokemon. This
-      allows all the notes to be deleted with one database query. */
+      /* Find all the pokemon and note IDs rather than calling pokemon.destroy() on each pokemon. */
       const contents = (await Box.findOne({id: this.id}).populate('contents')).contents;
       const allContentIds = _.map(contents, 'id');
-      const allNoteIds = _.flatten(_.map(contents, 'notes'));
       return Promise.all([
         Box.destroy({id: this.id}),
         Pokemon.destroy({id: allContentIds}),
-        PokemonNote.destroy({id: allNoteIds})
       ]).get(0);
     },
 

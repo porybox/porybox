@@ -2,12 +2,10 @@ exports.BOX_VISIBILITIES = ['listed', 'unlisted'];
 exports.DEFAULT_BOX_VISIBILITY_SETTING = 'listed';
 exports.POKEMON_VISIBILITIES = ['private', 'public', 'viewable'];
 exports.DEFAULT_POKEMON_VISIBILITY_SETTING = 'viewable';
-exports.POKEMON_NOTE_VISIBILITIES = ['private', 'public'];
-exports.DEFAULT_POKEMON_NOTE_VISIBILITY_SETTING = 'public';
 
 exports.MAX_BOX_NAME_LENGTH = 300;
 exports.MAX_BOX_DESCRIPTION_LENGTH = 1000;
-exports.MAX_POKEMON_NOTE_LENGTH = 1000;
+exports.MAX_POKEMON_NOTE_LENGTH = 2000;
 
 /* This defines the preferences that are allowed to be changed by the user. Having them here is
 * better than simply referencing the UserPreferences model, because that model also contains
@@ -21,10 +19,6 @@ exports.CHANGEABLE_PREFERENCES = {
   defaultPokemonVisibility: {
     enum: exports.POKEMON_VISIBILITIES,
     defaultsTo: exports.DEFAULT_POKEMON_VISIBILITY_SETTING
-  },
-  defaultPokemonNoteVisibility: {
-    enum: exports.POKEMON_NOTE_VISIBILITIES,
-    defaultsTo: exports.DEFAULT_POKEMON_NOTE_VISIBILITY_SETTING
   }
 };
 

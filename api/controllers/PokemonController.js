@@ -104,10 +104,7 @@ module.exports = _.mapValues({
   async get (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, 'id');
-    const pokemon = await Pokemon.findOne({
-      id: params.id,
-      _markedForDeletion: false
-    }).populate('notes');
+    const pokemon = await Pokemon.findOne({id: req.param('id'), _markedForDeletion: false});
     const safePkmn = await PokemonHandler.getSafePokemonForUser(pokemon, req.user, {
       checkUnique: true
     });
@@ -137,14 +134,6 @@ module.exports = _.mapValues({
     }
     await pokemon.unmarkForDeletion();
     return res.ok();
-  },
-
-  async mine (req, res) {
-    const myPokemon = await Pokemon.find({owner: req.user.name, _markedForDeletion: false});
-    await Promise.map(myPokemon, async pkmn => {
-      pkmn.isUnique = await pkmn.checkIfUnique();
-    });
-    return res.ok(myPokemon);
   },
 
   async download (req, res) {
@@ -221,62 +210,15 @@ module.exports = _.mapValues({
     await Promise.all(promises);
     return res.ok();
   },
-  async addNote (req, res) {
-    const params = req.allParams();
-    Validation.requireParams(params, ['id', 'text']);
-    const pokemon = await Pokemon.findOne({id: params.id});
-    Validation.verifyUserIsOwner(pokemon, req.user);
-    let visibility;
-    if (params.visibility) {
-      visibility = params.visibility;
-    } else {
-      visibility = (await UserPreferences.findOne({
-        user: req.user.name
-      })).defaultPokemonNoteVisibility;
-    }
-    const newNoteParams = {text: params.text, visibility, pokemon};
-    Validation.verifyPokemonNoteParams(newNoteParams);
-    const newNote = await PokemonNote.create(newNoteParams);
-    return res.created(newNote);
-  },
-
-  async deleteNote (req, res) {
-    const params = req.allParams();
-    Validation.requireParams(params, ['id', 'noteId']);
-    const pokemon = await Pokemon.findOne({id: params.id, _markedForDeletion: false});
-    if (!pokemon) {
-      return res.notFound();
-    }
-    if (pokemon.owner !== req.user.name && !req.user.isAdmin) {
-      return res.forbidden();
-    }
-    const note = await PokemonNote.findOne({id: params.noteId, pokemon: params.id});
-    if (!note) {
-      return res.notFound();
-    }
-    await note.destroy();
-    return res.ok();
-  },
-
-  async editNote (req, res) {
-    const params = req.allParams();
-    Validation.requireParams(params, ['id', 'noteId']);
-    const filteredParams = Validation.filterParams(params, ['text', 'visibility']);
-    const pokemon = await Pokemon.findOne({id: params.id});
-    Validation.verifyUserIsOwner(pokemon, req.user);
-    const note = await PokemonNote.findOne({id: params.noteId, pokemon: params.id});
-    if (!note) {
-      return res.notFound();
-    }
-    Validation.verifyPokemonNoteParams(filteredParams);
-    await PokemonNote.update({id: note.id}, filteredParams);
-    return res.ok(note);
-  },
 
   async edit (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, 'id');
-    const filteredParams = Validation.filterParams(params, ['visibility']);
+    const filteredParams = Validation.filterParams(params, [
+      'visibility',
+      'publicNotes',
+      'privateNotes'
+    ]);
     const pokemon = await Pokemon.findOne({id: params.id});
     Validation.verifyUserIsOwner(pokemon, req.user);
     Validation.verifyPokemonParams(filteredParams);

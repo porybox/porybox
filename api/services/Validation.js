@@ -52,19 +52,21 @@ module.exports = {
         && !Constants.POKEMON_VISIBILITIES.includes(params.visibility)) {
       throw {statusCode: 400, message: 'Invalid Pokémon visibility'};
     }
-  },
-  verifyPokemonNoteParams (params) {
-    if (!_.isUndefined(params.text)) {
-      if (!_.isString(params.text) || _.isEmpty(params.text)) {
-        throw {statusCode: 400, message: 'Invalid/missing note text'};
+    if (!_.isUndefined(params.publicNotes)) {
+      if (!_.isString(params.publicNotes)) {
+        throw {statusCode: 400, message: 'Invalid publicNotes'};
       }
-      if (params.text.length > Constants.MAX_POKEMON_NOTE_LENGTH) {
-        throw {statusCode: 400, message: 'Note text too long'};
+      if (params.publicNotes.length > Constants.MAX_POKEMON_NOTE_LENGTH) {
+        throw {statusCode: 400, message: 'Public notes too long'};
       }
     }
-    if (!_.isUndefined(params.visibility)
-        && !Constants.POKEMON_NOTE_VISIBILITIES.includes(params.visibility)) {
-      throw {statusCode: 400, message: 'Invalid note visibility'};
+    if (!_.isUndefined(params.privateNotes)) {
+      if (!_.isString(params.privateNotes)) {
+        throw {statusCode: 400, message: 'Invalid privateNotes'};
+      }
+      if (params.privateNotes.length > Constants.MAX_POKEMON_NOTE_LENGTH) {
+        throw {statusCode: 400, message: 'Private notes too long'};
+      }
     }
   },
   assert (value, message) {
