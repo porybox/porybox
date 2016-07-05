@@ -62,11 +62,7 @@ module.exports.routes = {
   'get /p/:id/download': 'PokemonController.download',
   'delete /p/:id': 'PokemonController.delete',
   'post /p/:id/undelete': 'PokemonController.undelete',
-  'get /pokemon/mine': 'PokemonController.mine',
   'post /p/:id/move': 'PokemonController.move',
-  'post /p/:id/note': 'PokemonController.addNote',
-  'delete /p/:id/n/:noteId': 'PokemonController.deleteNote',
-  'post /p/:id/n/:noteId/edit': 'PokemonController.editNote',
   'post /p/:id/edit': 'PokemonController.edit',
 
   // Users

@@ -9,7 +9,6 @@
     'PokemonHandler': true,
     'Constants': true,
     'UserPreferences': true,
-    'PokemonNote': true,
     'catchAsyncErrors': true,
     'Validation': true,
     'DeletedUser': true,
