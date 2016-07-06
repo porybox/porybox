@@ -2,7 +2,7 @@
   <form name="addPK6">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Upload Pokemon</h2>
+        <h2>Upload Pokémon</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="pkmDialog.cancel()">
           <i class="material-icons">close</i>
@@ -38,6 +38,9 @@
         <input type="file" ngf-select ng-model="pkmDialog.file" name="file"
              accept=".pk6" ngf-max-size="2MB" required ng-change="pkmDialog.addFile()"
              ngf-model-invalid="errorFile">
+        <md-divider></md-divider>
+        <div>
+          <i class="material-icons">help_outline</i> <a href="/extracting-pk6-files" target="_blank" rel="noreferrer">How to obtain Pokémon files</a></div>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
