@@ -68,10 +68,10 @@ module.exports.routes = {
   // Users
   'get /user/:name': 'UserController.get',
   'get /user/:name/boxes': 'UserController.boxes',
-  'get /api/v1/me': 'UserController.me',
+  'get /me': 'UserController.me',
   'get /preferences': 'UserController.getPreferences',
   'post /preferences/edit': 'UserController.editPreferences',
-  'post /editAccountInfo': 'UserController.editAccountInfo',
+  'post /me': 'UserController.editAccountInfo',
   'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
   'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
   'post /deleteAccount': 'UserController.deleteAccount',
