@@ -1,0 +1,42 @@
+<md-dialog aria-label="Edit profile" ng-cloak>
+  <form name="editProfile">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Edit Profile</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="dialog.cancel()">
+          <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" layout="column">
+        <!-- YMK pls make better --> Edit your information by entering it here as a series of comma-separated strings.
+
+        <md-input-container class="md-block">
+          <label>Friend codes</label>
+          <input ng-model="dialog.friendCodes" type="text" name="fc" class="dialog-close">
+        </md-input-container>
+
+        <md-input-container class="md-block">
+          <label>In-game names (IGNs)</label>
+          <input ng-model="dialog.inGameNames" type="text" name="ign" class="dialog-close">
+        </md-input-container>
+
+        <md-input-container class="md-block">
+          <label>Trainer shiny values (TSVs)</label>
+          <input ng-model="dialog.trainerShinyValues" type="text" name="tsv" class="dialog-close">
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="dialog.cancel()">
+        Cancel
+      </md-button>
+      <md-button ng-click="dialog.answer()" type="submit">
+        Save
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
