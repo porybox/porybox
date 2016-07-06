@@ -1,11 +1,12 @@
 module.exports = function($scope, $routeParams, io) {
   this.data = this.data || {};
-  this.name = this.data.name || $routeParams.username;
+  this.data.name = this.data.name || $routeParams.username;
   this.errorStatusCode = null;
 
   this.fetch = () => {
-    return io.socket.getAsync(`/user/${this.name}`).then(res => {
+    return io.socket.getAsync(`/user/${this.data.name}`).then(res => {
       Object.assign(this.data, res);
+      console.log(this.data.name);
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).then(() => $scope.$apply());
