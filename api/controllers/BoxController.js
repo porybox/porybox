@@ -29,11 +29,16 @@ module.exports = _.mapValues({
 
   async get (req, res) {
     const params = req.allParams();
+    Validation.requireParams(params, 'id');
     const box = await Box.findOne({
       id: params.id,
       _markedForDeletion: false
     }).populate('contents');
-    return PokemonHandler.getSafeBoxForUser(box, req.user).then(res.ok);
+    const safeBox = await PokemonHandler.getSafeBoxForUser(box, req.user);
+    safeBox.contents = safeBox.contents.map(
+      pkmn => PokemonHandler.pickPokemonFields(pkmn, params.pokemonFields)
+    );
+    return res.ok(safeBox);
   },
 
   mine (req, res) {
