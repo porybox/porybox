@@ -78,7 +78,9 @@ module.exports =  {
       await DeletedUser.create({name: this.name});
     },
     toJSON () {
-      return _.omit(this, (value, key) => key.startsWith('_'));
+      return _.omit(this, (value, key) => {
+        return key.startsWith('_') || ['updatedAt', 'passports'].includes(key);
+      });
     }
   }
 };
