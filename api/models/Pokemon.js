@@ -163,7 +163,9 @@ const attributes = {
     /* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
     Conveniently, this means that the internal properties are never sent to the client.
     (Not to be confused with the omitPrivateData function, which removes *confidential* data.) */
-    return _.omit(this, (value, key) => key.startsWith('_'));
+    return _.omit(this, (value, key) => {
+      return key.startsWith('_') || ['updatedAt'].includes(key);
+    });
   },
   assignParsedNames () {
     return pk6parse.assignReadableNames(this);
