@@ -1,22 +1,33 @@
-<div ng-init="profile.fetch()" ng-show=profile.data.name>
-  <h1>{{profile.data.name}}'s profile</h1>
-  <h3 ng-if="profile.data.name === main.user.name">That's you! :D</h3>
-  <h3 ng-if="profile.data.name !== main.user.name">That's someone else :(</h3>
+<div ng-init="profile.fetch()" ng-show="profile.data.name">
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+      <h3><span>{{profile.data.name}}'s profile</span></h3>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-if="profile.data.name === main.user.name" ng-click="profile.edit()">
+        <md-tooltip md-direction="left">Edit information</md-tooltip>
+        <i class="material-icons">edit</i>
+      </md-button>
 
-  <p>This user's friend codes are: {{profile.data.friendCodes.join(',')}}</p>
+    </div>
+  </md-toolbar>
+  <md-content layout-padding>
+    <div class="md-body-1">
+      <div>
+        <strong>Friend codes </strong>
+        <span ng-repeat="fc in profile.data.friendCodes">{{fc}}{{$last ? '' : ', '}}</span>
+      </div>
 
-  <p>This user's TSVs are: {{profile.data.trainerShinyValues.join(',')}}</p>
+      <div>
+        <strong>IGNs </strong>
+        <span ng-repeat="ign in profile.data.inGameNames">{{ign}}{{$last ? '' : ', '}}</span>
+      </div>
 
-  <p>This user's IGNs are: {{profile.data.inGameNames.join(',')}}</p>
-
-  <div ng-if="profile.data.name === main.user.name">
-    <p>Edit your information by entering it here as a series of comma-separated strings.</p>
-    <p>TODO: Make this UI less awful</p>
-    IGNs: <input type="text" ng-model="profile.editedIgns"></input>
-    FCs: <input type="text" ng-model="profile.editedFcs"></input>
-    TSVs: <input type="text" ng-model="profile.editedTsvs"></input>
-    <button ng-click="profile.edit()">Update</button>
+      <div>
+        <strong>TSVs </strong>
+        <span ng-repeat="tsv in profile.data.trainerShinyValues">{{tsv}}{{$last ? '' : ', '}}</span>
+      </div>
+    </div>
+  </md-content>
   </div>
-</div>
 
 <div ng-if="profile.errorStatusCode" ng-include="'/errors/' + profile.errorStatusCode + '.html'"></div>
