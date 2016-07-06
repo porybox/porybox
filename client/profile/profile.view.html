@@ -1,7 +1,7 @@
 <div ng-init="profile.fetch()" ng-show=profile.data.name>
-  <h1>{{profile.name}}'s profile</h1>
-  <h3 ng-if="profile.name === main.user.name">That's you! :D</h3>
-  <h3 ng-if="profile.name !== main.user.name">That's someone else :(</h3>
+  <h1>{{profile.data.name}}'s profile</h1>
+  <h3 ng-if="profile.data.name === main.user.name">That's you! :D</h3>
+  <h3 ng-if="profile.data.name !== main.user.name">That's someone else :(</h3>
 
   <p>This user's friend codes are: {{profile.data.friendCodes.join(',')}}</p>
 
@@ -9,7 +9,7 @@
 
   <p>This user's IGNs are: {{profile.data.inGameNames.join(',')}}</p>
 
-  <div ng-if="profile.name === main.user.name">
+  <div ng-if="profile.data.name === main.user.name">
     <p>Edit your information by entering it here as a series of comma-separated strings.</p>
     <p>TODO: Make this UI less awful</p>
     IGNs: <input type="text" ng-model="profile.editedIgns"></input>
