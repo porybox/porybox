@@ -10,6 +10,7 @@
 
     </div>
   </md-toolbar>
+  <md-subheader class="md-primary">{{profile.data.name}}'s info</md-subheader>
   <md-content layout-padding>
     <div class="md-body-1">
       <div>
@@ -28,12 +29,7 @@
       </div>
     </div>
   </md-content>
-  <md-toolbar class="md-hue-1">
-    <div class="md-toolbar-tools">
-      <h3><span>{{profile.data.name}}'s boxes</span></h3>
-      <span flex></span>
-    </div>
-  </md-toolbar>
+  <md-subheader class="md-primary">{{profile.data.name}}'s boxes</md-subheader>
   <div layout="column" layout-gt-xs="row" layout-align="start" layout-wrap ng-show="profile.data.boxes">
     <div flex-xs ng-repeat="box in profile.data.boxes track by box.id" class="hide-scroll">
       <box-card data="box"></box-card>
