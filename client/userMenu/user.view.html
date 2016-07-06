@@ -1,9 +1,12 @@
 
 <md-menu md-position-mode="target-right target" md-offset="0 50">
-  <md-button aria-label="Open demo menu" ng-click="$mdOpenMenu($event)">
+  <md-button aria-label="Open menu" ng-click="$mdOpenMenu($event)">
     {{userMenu.name}}
   </md-button>
   <md-menu-content width="4">
+    <md-menu-item>
+      <md-button ng-href="/#/user/{{userMenu.name}}">Profile</md-button>
+    </md-menu-item>
     <md-menu-item>
       <md-button ng-click="userMenu.logout()">
         <div layout="row">
