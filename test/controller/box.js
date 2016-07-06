@@ -141,6 +141,36 @@ describe('BoxController', () => {
       expect(box.contents[1].box).to.not.exist();
       expect(box.contents[2]).to.not.exist();
     });
+    it('allows the properties of the Pokémon in the box to be specified by query', async () => {
+      const res = await agent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.id).to.equal(boxId);
+      expect(res.body.contents).to.eql([
+        {speciesName: 'Pelipper'},
+        {speciesName: 'Pelipper'},
+        {speciesName: 'Pelipper'}
+      ]);
+    });
+    it('does not allow private properties of Pokémon to be accessed by the query', async () => {
+      const publicPid = (await agent.get(`/b/${boxId}`)).body.contents[1].pid;
+      const res = await otherAgent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName,pid'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.id).to.equal(boxId);
+      expect(res.body.contents).to.eql([
+        {speciesName: 'Pelipper'},
+        {speciesName: 'Pelipper', pid: publicPid}
+      ]);
+    });
+    it('does not allow internal properties of Pokémon to be accessed by the query', async () => {
+      const res = await agent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName,_rawPk6'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.id).to.equal(boxId);
+      expect(res.body.contents).to.eql([
+        {speciesName: 'Pelipper'},
+        {speciesName: 'Pelipper'},
+        {speciesName: 'Pelipper'}
+      ]);
+    });
   });
   describe("getting a user's boxes", () => {
     let box1, box2, unlistedBox, otherBox;

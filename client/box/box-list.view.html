@@ -41,7 +41,7 @@
   </md-card>
 
   <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
-    <div flex-xs ng-repeat="pokemon in box.data.contents">
+    <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id">
       <pokemon-card data="pokemon"></pokemon-card>
     </div>
   </div>
