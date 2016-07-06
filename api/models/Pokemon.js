@@ -113,6 +113,8 @@ const attributes = {
   visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
   _markedForDeletion: {type: 'boolean', defaultsTo: false},
   downloadCount: {defaultsTo: 0},
+  publicNotes: {type: 'string', defaultsTo: '', maxLength: Constants.MAX_POKEMON_NOTE_LENGTH},
+  privateNotes: {type: 'string', defaultsTo: '', maxLength: Constants.MAX_POKEMON_NOTE_LENGTH},
   tsv () {
     return (this.tid ^ this.sid) >>> 4;
   },
@@ -131,26 +133,22 @@ const attributes = {
   omitPrivateData () {
     /* Omit the PID to prevent people from making clones. Also omit the clone hash, because if the clone hash is known then
     it's possible to brute-force the PID. */
-    const secretProperties = ['pid', 'encryptionConstant', '_rawPk6'];
+    const secretProperties = ['pid', 'encryptionConstant'];
     if (PokemonHandler.isStaticPidEvent(this)) {
       secretProperties.push('ivHp', 'ivAtk', 'ivDef', 'ivSpe', 'ivSpAtk', 'ivSpDef');
     }
-    const filteredNotes = _.filter(this.notes, note => note.visibility === 'public');
-    return _(this).omit(secretProperties).assign({notes: filteredNotes}).value();
+    return _.omit(this, secretProperties);
   },
-  omitBoxInfo () {
-    return _.omit(this, 'box');
+  omitOwnerOnlyInfo () {
+    return _.omit(this, ['box', 'privateNotes']);
   },
   async markForDeletion () {
-    await PokemonNote.update({pokemon: this.id}, {_markedForDeletion: true});
     return Pokemon.update({id: this.id}, {_markedForDeletion: true});
   },
   async unmarkForDeletion () {
-    await PokemonNote.update({pokemon: this.id}, {_markedForDeletion: false});
     return Pokemon.update({id: this.id}, {_markedForDeletion: false});
   },
   async destroy () {
-    await PokemonNote.destroy({id: this.notes});
     await BoxOrdering.removePkmnIdFromBox(this.box, this.id);
     return await Pokemon.destroy({id: this.id});
   },
@@ -174,12 +172,13 @@ const attributes = {
 
 _.forEach(attributes, attr => {
   // i.e. by default all of the above properties must be integers and are required, unless specified otherwise
-  attr.required = attr.required !== undefined ? attr.required : true;
+  if (_.isUndefined(attr.required) && _.isUndefined(attr.defaultsTo)) {
+    attr.required = true;
+  }
   attr.type = attr.type || 'float';
 });
 
 attributes.box = {model: 'box'};
-attributes.notes = {collection: 'PokemonNote', via: 'pokemon', defaultsTo: []};
 
 module.exports = {
   schema: true,
