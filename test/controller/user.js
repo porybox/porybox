@@ -42,6 +42,12 @@ describe('UserController', () => {
       expect(res.body.friendCodes).to.be.an.instanceof(Array);
       expect(res.body.inGameNames).to.be.an.instanceof(Array);
       expect(res.body.trainerShinyValues).to.be.an.instanceof(Array);
+      expect(res.body.createdAt).to.be.a('string');
+      expect(res.body.updatedAt).not.to.exist();
+      expect(res.body.passports).not.to.exist();
+      expect(res.body.preferences.createdAt).to.not.exist();
+      expect(res.body.preferences.updatedAt).to.not.exist();
+      expect(res.body.preferences.id).to.not.exist();
     });
     it("omits private information when a user gets someone else's profile", async () => {
       const res = await agent.get('/user/IM_AN_ADMIN_FEAR_ME');
@@ -53,6 +59,9 @@ describe('UserController', () => {
       expect(res.body.friendCodes).to.exist();
       expect(res.body.inGameNames).to.exist();
       expect(res.body.trainerShinyValues).exist();
+      expect(res.body.createdAt).to.be.a('string');
+      expect(res.body.updatedAt).not.to.exist();
+      expect(res.body.passports).not.to.exist();
     });
     it("returns full information when an admin gets someone else's profile", async () => {
       const res = await adminAgent.get('/user/usertester');
