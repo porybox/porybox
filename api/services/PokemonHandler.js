@@ -35,7 +35,6 @@ exports.getSafePokemonForUser = async (pkmn, user, {checkUnique = false, parse =
   if (!pkmn) {
     throw {statusCode: 404};
   }
-  pkmn.notes = pkmn.notes.filter(note => !note._markedForDeletion);
   if (checkUnique) {
     pkmn.isUnique = await pkmn.checkIfUnique();
   }
@@ -49,12 +48,12 @@ exports.getSafePokemonForUser = async (pkmn, user, {checkUnique = false, parse =
     return pkmn;
   }
   if (pokemonIsPublic) {
-    return pkmn.omitBoxInfo();
+    return pkmn.omitOwnerOnlyInfo();
   }
   if (pkmn.visibility === 'private') {
     throw {statusCode: 403};
   }
-  return pkmn.omitBoxInfo().omitPrivateData();
+  return pkmn.omitOwnerOnlyInfo().omitPrivateData();
 };
 
 exports.getSafeBoxForUser = async (box, user) => {

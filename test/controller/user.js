@@ -1,5 +1,4 @@
 'use strict';
-const _ = require('lodash');
 const supertest = require('supertest-as-promised');
 const expect = require('chai').use(require('dirty-chai')).expect;
 describe('UserController', () => {
@@ -177,36 +176,6 @@ describe('UserController', () => {
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
         expect(res2.body.visibility).to.equal('public');
-      });
-    });
-    describe('defaultPokemonNoteVisibility', () => {
-      let pkmn;
-      before(async () => {
-        const res = await agent.post('/uploadpk6')
-          .field('box', generalPurposeBox)
-          .attach('pk6', `${__dirname}/pkmn1.pk6`);
-        expect(res.statusCode).to.equal(201);
-        pkmn = res.body;
-      });
-      it('sets the default visibility of uploaded pokemon notes', async () => {
-        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'public'});
-        await agent.post(`/p/${pkmn.id}/note`).send({text: 'aaa'});
-        const notes = (await agent.get(`/p/${pkmn.id}`)).body.notes;
-        expect(_.last(notes).visibility).to.equal('public');
-        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'private'});
-        await agent.post(`/p/${pkmn.id}/note`).send({text: 'aaa'});
-        const notes2 = (await agent.get(`/p/${pkmn.id}`)).body.notes;
-        expect(_.last(notes2).visibility).to.equal('private');
-      });
-      it('can be overridden by specifying a visibility while creating a note', async () => {
-        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'public'});
-        await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'private', text: 'aaa'});
-        const notes = (await agent.get(`/p/${pkmn.id}`)).body.notes;
-        expect(_.last(notes).visibility).to.equal('private');
-        await agent.post('/preferences/edit').send({defaultPokemonNoteVisibility: 'private'});
-        await agent.post(`/p/${pkmn.id}/note`).send({visibility: 'public', text: 'aaa'});
-        const notes2 = (await agent.get(`/p/${pkmn.id}`)).body.notes;
-        expect(_.last(notes2).visibility).to.equal('public');
       });
     });
   });

@@ -376,13 +376,6 @@ describe('BoxController', () => {
       const res2 = await agent.get('/user/boxtester/boxes');
       expect(_.map(res2.body, 'id')).to.not.include(box.id);
     });
-    it('does not show pokemon from deleted boxes in the "my pokemon" listing', async () => {
-      const res = await agent.get('/pokemon/mine');
-      expect(_.map(res.body, 'id')).to.include(pkmn.id);
-      await agent.del(`/b/${box.id}`);
-      const res2 = await agent.get('/pokemon/mine');
-      expect(_.map(res2.body, 'id')).to.not.include(pkmn.id);
-    });
     it('does not cause errors if the same box is deleted in two separate requests', async () => {
       const res = await agent.del(`/b/${box.id}`);
       expect(res.statusCode).to.equal(202);
