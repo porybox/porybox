@@ -1,4 +1,4 @@
-<div ng-init="profile.fetch()" ng-show="profile.data.name">
+<div ng-init="profile.fetchInfo(); profile.fetchBoxes()" ng-show="profile.data.name">
   <md-toolbar class="md-hue-1">
     <div class="md-toolbar-tools">
       <h3><span>{{profile.data.name}}'s profile</span></h3>
@@ -28,6 +28,17 @@
       </div>
     </div>
   </md-content>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+      <h3><span>{{profile.data.name}}'s boxes</span></h3>
+      <span flex></span>
+    </div>
+  </md-toolbar>
+  <div layout="column" layout-gt-xs="row" layout-align="start" layout-wrap ng-show="profile.data.boxes">
+    <div flex-xs ng-repeat="box in profile.data.boxes track by box.id" class="hide-scroll">
+      <box-card data="box"></box-card>
+    </div>
   </div>
+</div>
 
 <div ng-if="profile.errorStatusCode" ng-include="'/errors/' + profile.errorStatusCode + '.html'"></div>
