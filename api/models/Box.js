@@ -72,7 +72,9 @@ module.exports =  {
     Conveniently, this means that the internal properties are never sent to the client.
     (Not to be confused with the omitPrivateContents function, which removes *confidential* data.) */
     toJSON () {
-      return _.omit(this, (value, key) => key.startsWith('_'));
+      return _.omit(this, (value, key) => {
+        return key.startsWith('_') || ['updatedAt'].includes(key);
+      });
     }
   },
   beforeCreate (box, next) {

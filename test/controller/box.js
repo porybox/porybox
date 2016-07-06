@@ -94,6 +94,8 @@ describe('BoxController', () => {
       expect(box.contents[2].pid).to.exist();
       expect(box.contents[2].speciesName).to.exist();
       expect(box.contents[2].box).to.equal(box.id);
+      expect(box.createdAt).to.be.a('string');
+      expect(box.updatedAt).to.not.exist();
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/b/${boxId}`)).body;
