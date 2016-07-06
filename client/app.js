@@ -17,12 +17,14 @@ require('./box/box.module.js');
 require('./pokemon/pokemon.module.js');
 require('./add/add.module.js');
 require('./userMenu/user.module.js');
+require('./profile/profile.module.js');
 
 const porybox = ng.module('porybox', [
   // Porybox modules
   'porybox.login',
   'porybox.home',
   'porybox.add',
+  'porybox.profile',
   'porybox.userMenu',
 
   // Third party
