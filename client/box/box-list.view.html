@@ -1,7 +1,7 @@
 <div ng-show="box.data.id">
   <md-toolbar class="md-hue-1">
     <div class="md-toolbar-tools">
-      <h3><span>{{box.data.name}}</span></h3>
+      <h1><span>{{box.data.name}}</span></h1>
       <span flex></span>
       <md-menu md-position-mode="target-right target" md-offset="0 50">
         <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
