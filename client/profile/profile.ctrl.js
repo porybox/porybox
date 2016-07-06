@@ -6,16 +6,23 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
   this.data.name = this.data.name || $routeParams.username;
   this.errorStatusCode = null;
 
-  this.fetch = () => {
+  this.fetch = () => Promise.all([this.fetchInfo, this.fetchBoxes]);
+
+  this.fetchInfo = () => {
     return io.socket.getAsync(`/user/${this.data.name}`).then(res => {
       Object.assign(this.data, res);
-      console.log(this.data.name);
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).then(() => $scope.$apply());
   };
 
-    this.edit = event => {
+  this.fetchBoxes = () => {
+    return io.socket.getAsync(`/user/${this.data.name}/boxes`).then(res => {
+      this.data.boxes = res;
+    }).catch(console.error.bind(console)).then(() => $scope.$apply());
+  };
+
+  this.edit = event => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $scope.$watch(function() {
       return $mdMedia('xs') || $mdMedia('sm');

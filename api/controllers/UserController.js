@@ -2,7 +2,7 @@ module.exports = _.mapValues({
   async get (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, 'name');
-    const user = await User.findOne({name: params.name}).populate('preferences');
+    const user = _.omit(await User.findOne({name: params.name}).populate('preferences'), 'boxes');
     if (!user) {
       return res.notFound();
     }
