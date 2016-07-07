@@ -96,6 +96,8 @@ describe('BoxController', () => {
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.createdAt).to.be.a('string');
       expect(box.updatedAt).to.exist();
+      expect(box.updatedAt).to.not.exist();
+      expect(box.pageNum).to.equal(1);
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/b/${boxId}`)).body;
@@ -110,6 +112,7 @@ describe('BoxController', () => {
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
+      expect(box.pageNum).to.equal(1);
     });
     it('allows admins to view the full contents of a box by ID', async () => {
       const box = (await adminAgent.get(`/b/${boxId}`)).body;
@@ -127,6 +130,7 @@ describe('BoxController', () => {
       expect(box.contents[2].speciesName).to.exist();
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.updatedAt).to.exist();
+      expect(box.pageNum).to.equal(1);
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
       const res = await noAuthAgent.get(`/b/${boxId}`);
@@ -143,6 +147,7 @@ describe('BoxController', () => {
       expect(box.contents[1].box).to.not.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
+      expect(box.pageNum).to.equal(1);
     });
     it('allows the properties of the Pokémon in the box to be specified by query', async () => {
       const res = await agent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName'});
@@ -173,6 +178,72 @@ describe('BoxController', () => {
         {speciesName: 'Pelipper'},
         {speciesName: 'Pelipper'}
       ]);
+    });
+  });
+  describe('box pagination', () => {
+    let pkmnList, box, pageSize;
+    before(async () => {
+      pageSize = sails.services.constants.BOX_PAGE_SIZE;
+      expect(pageSize).to.be.a('number');
+      expect(pageSize).to.be.above(0);
+      const res = await agent.post('/box').send({name: 'multibox'});
+      expect(res.statusCode).to.equal(201);
+      box = res.body;
+      const pkmnData = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
+      pkmnList = [];
+      for (const amount of [pageSize, pageSize, 1]) {
+        const res2 = await agent.post('/pk6/multi').send({files: _.times(amount, () => ({
+          box: box.id, visibility: _.sample(['public', 'private', 'viewable']), data: pkmnData
+        }))});
+        expect(res2.statusCode).to.equal(201);
+        expect(_.map(res2.body, 'success')).to.eql(_.times(amount, () => true));
+        expect(_.map(res2.body, 'error')).to.eql(_.times(amount, () => null));
+        pkmnList.push(..._.map(res2.body, 'created'));
+      }
+    });
+    it('returns the first 50 items if no page parameter is provided', async () => {
+      const res = await agent.get(`/b/${box.id}`);
+      expect(res.statusCode).to.equal(200);
+      expect(_.map(res.body.contents, 'id')).to.eql(_.map(pkmnList.slice(0, pageSize), 'id'));
+      expect(res.body.pageNum).to.equal(1);
+      expect(res.body.totalPageCount).to.equal(3);
+      expect(res.body.totalItemCount).to.equal(2 * pageSize + 1);
+    });
+    it('adjusts the results for privacy if the user is not the owner', async () => {
+      const res = await otherAgent.get(`/b/${box.id}`);
+      expect(res.statusCode).to.equal(200);
+      const nonPrivatePkmn = pkmnList.filter(pkmn => pkmn.visibility !== 'private');
+      expect(_.map(res.body.contents, 'id')).to.eql(_.map(nonPrivatePkmn.slice(0, pageSize), 'id'));
+      expect(res.body.pageNum).to.equal(1);
+      expect(res.body.totalPageCount).to.be.below(3);
+      expect(res.body.totalItemCount).to.equal(nonPrivatePkmn.length);
+    });
+    it('returns returns different contents depending on a page parameter', async () => {
+      const res = await agent.get(`/b/${box.id}`).query({page: 2});
+      expect(res.statusCode).to.equal(200);
+      const expectedList = pkmnList.slice(pageSize, pageSize * 2);
+      expect(_.map(res.body.contents, 'id')).to.eql(_.map(expectedList, 'id'));
+      expect(res.body.pageNum).to.equal(2);
+      expect(res.body.totalPageCount).to.equal(3);
+      expect(res.body.totalItemCount).to.equal(2 * pageSize + 1);
+
+      const res2 = await agent.get(`/b/${box.id}`).query({page: 3});
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql([pkmnList[pageSize * 2].id]);
+      expect(res2.body.pageNum).to.equal(3);
+      expect(res2.body.totalPageCount).to.equal(3);
+      expect(res2.body.totalItemCount).to.equal(2 * pageSize + 1);
+    });
+    it('returns a 404 error if the page parameter is too large', async () => {
+      const res = await agent.get(`/b/${box.id}`).query({page: 4});
+      expect(res.statusCode).to.equal(404);
+
+      const res2 = await otherAgent.get(`/b/${box.id}`).query({page: 3});
+      expect(res2.statusCode).to.equal(404);
+    });
+    it('returns a 404 error if the page parameter is invalid', async () => {
+      const res = await agent.get(`/b/${box.id}`).query({page: 'foo'});
+      expect(res.statusCode).to.equal(404);
     });
   });
   describe("getting a user's boxes", () => {
