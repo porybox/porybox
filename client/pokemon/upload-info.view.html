@@ -9,11 +9,18 @@
       </md-button>
     </div>
   </md-toolbar>
-  <md-dialog-content class="md-dialog-content">
-    <div><strong>Owner</strong></div>
-    <div>{{dialog.data.owner}}</div>
-    <br/>
-    <div><strong>Notes</strong></div>
-    <div ng-repeat="note in dialog.data.notes">{{note}}</div>
+  <md-dialog-content class="md-dialog-content md-body-1">
+    <div style="font-weight: bold;">Owner</div>
+    <div><a class="md-body-1" href="/#/user/{{dialog.data.owner}}">{{dialog.data.owner}}</a></div>
+    <div ng-if="dialog.data.publicNotes">
+      <br />
+      <strong>Public Notes</strong>
+      <div>{{dialog.data.publicNotes}}</div>
+    </div>
+    <div ng-if="dialog.data.privateNotes">
+      <br />
+      <strong>Private Notes</strong>
+      <div>{{dialog.data.privateNotes}}</div>
+    </div>
   </md-dialog-content>
 </md-dialog>
