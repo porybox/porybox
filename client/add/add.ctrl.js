@@ -9,7 +9,7 @@ import {chunk} from 'lodash';
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, io, $mdDialog, $mdMedia) {
+module.exports = function($scope, io, $mdDialog, $mdMedia, $mdToast) {
   this.box = (event) => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $scope.$watch(function() {
@@ -55,7 +55,13 @@ module.exports = function($scope, io, $mdDialog, $mdMedia) {
       .map(line => line.created)
       .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
       .catch(console.error.bind(console))
-      .then(() => $scope.$apply());
+      .then(() => {
+        $mdToast.show(
+          $mdToast.simple()
+            .textContent('Pokemon uploaded successfully')
+            .position('top right'));
+        $scope.$apply();
+      });
   };
 
 };
