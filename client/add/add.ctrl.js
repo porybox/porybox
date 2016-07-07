@@ -58,7 +58,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdToast) {
       .then(() => {
         $mdToast.show(
           $mdToast.simple()
-            .textContent('Pokemon uploaded successfully')
+            .textContent('Pokémon uploaded successfully')
             .position('top right'));
         $scope.$apply();
       });
