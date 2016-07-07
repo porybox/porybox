@@ -32,7 +32,7 @@
   <md-subheader class="md-primary">{{profile.data.name}}'s boxes</md-subheader>
   <div layout="column" layout-gt-xs="row" layout-align="start" layout-wrap ng-show="profile.data.boxes">
     <div flex-xs ng-repeat="box in profile.data.boxes track by box.id" class="hide-scroll">
-      <box-card data="box"></box-card>
+      <box-card data="box" selected="home.selected"></box-card>
     </div>
   </div>
 </div>
