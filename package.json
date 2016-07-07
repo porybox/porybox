@@ -33,6 +33,7 @@
     "lodash": "^4.13.1",
     "moment": "^2.14.0",
     "ng-file-upload": "^12.0.4",
+    "ngsilent": "git://github.com/garakh/ngSilent/#a03fc023be4e154de9a1b4351e722e971e90384d",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",

@@ -1,7 +1,7 @@
 <div ng-show="box.data.id">
   <md-toolbar class="md-hue-1">
     <div class="md-toolbar-tools">
-      <h1><span>{{box.data.name}}</span></h1>
+      <h1><span>{{box.data.name}} (page {{box.data.pageNum}} of {{box.data.totalPageCount}})</span></h1>
       <span flex></span>
       <md-menu md-position-mode="target-right target" md-offset="0 50">
         <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
@@ -39,7 +39,10 @@
   <md-card ng-if="box.data.description">
     <md-card-content>{{box.data.description}}</md-card-content>
   </md-card>
-
+  <span>
+    <button ng-click="box.prevPage()" ng-disabled="box.isLoading() || !box.hasPrevPage()">Previous page</button>
+    <button ng-click="box.nextPage()" ng-disabled="box.isLoading() || !box.hasNextPage()">Next page</button>
+  </span>
   <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
     <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id">
       <pokemon-card data="pokemon"></pokemon-card>

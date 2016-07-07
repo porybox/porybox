@@ -5,7 +5,7 @@ exports.DEFAULT_POKEMON_VISIBILITY_SETTING = 'viewable';
 
 exports.MAX_BOX_NAME_LENGTH = 300;
 exports.MAX_BOX_DESCRIPTION_LENGTH = 1000;
-exports.MAX_POKEMON_NOTE_LENGTH = 1000;
+exports.MAX_POKEMON_NOTE_LENGTH = 2000;
 exports.BOX_PAGE_SIZE = 50;
 
 /* This defines the preferences that are allowed to be changed by the user. Having them here is

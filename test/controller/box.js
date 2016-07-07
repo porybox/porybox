@@ -96,7 +96,6 @@ describe('BoxController', () => {
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.createdAt).to.be.a('string');
       expect(box.updatedAt).to.exist();
-      expect(box.updatedAt).to.not.exist();
       expect(box.pageNum).to.equal(1);
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
