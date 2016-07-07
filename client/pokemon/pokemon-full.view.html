@@ -367,6 +367,7 @@
                 <div>
                   <div><strong>PID</strong> {{pokemon.data.pid.toString(16).toUpperCase().padStart(8, '0')}}</div>
                   <div><strong>Encryption constant</strong> {{pokemon.data.encryptionConstant.toString(16).toUpperCase().padStart(8, '0')}}</div>
+                  <div ng-if="pokemon.data.visibility !=='public'" style="font-style: italic">Only visible to you unless Pokémon is public.</div>
                 </div>
               </md-card-content>
             </md-card>
@@ -378,6 +379,7 @@
     </md-tab>
 
     <md-tab label="Analysis">
+      <md-toolbar class="md-warn"><div class="md-toolbar-tools"><h3>Legality analysis coming soon!</h3></div></md-toolbar>
       <md-card class="summary" ng-show="pokemon.hasFullData">
         <md-card-header><span class="card-headline">Porybox clone status</span></md-card-header>
         <md-card-content>

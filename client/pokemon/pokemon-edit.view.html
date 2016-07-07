@@ -1,8 +1,8 @@
-<md-dialog aria-label="Edit Pokemon" ng-cloak>
+<md-dialog aria-label="Edit Pokémon" ng-cloak>
   <form name="editPokemon">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Edit Pokemon Settings</h2>
+        <h2>Edit Pokémon Settings</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="dialog.cancel()">
           <i class="material-icons">close</i>
@@ -18,6 +18,18 @@
                   ng-repeat="visibility in dialog.visibilities">{{ visibility }}</md-option>
               </md-select>
           </md-input-container>
+
+          <md-input-container class="md-block">
+            <label>Public Notes</label>
+            <textarea ng-model="dialog.publicNotes" rows="5"></textarea>
+          </md-input-container>
+
+          <md-input-container class="md-block">
+            <label>Private Notes</label>
+            <textarea ng-model="dialog.privateNotes" rows="5"></textarea>
+          </md-input-container>
+
+
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
