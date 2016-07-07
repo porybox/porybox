@@ -30,21 +30,46 @@ const POKEMON_FIELDS_USED = [
   'heldItemId'
 ].join(',');
 
-module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
+module.exports = function($scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog) {
   this.data = this.data || {contents: []};
   this.id = $routeParams.boxid || this.data.id;
   this.selected = this.selected || ($scope.$parent.main ? $scope.$parent.main.selected : {});
   this.selected.selectedBox = this.data;
   this.errorStatusCode = null;
   this.isDeleted = false;
+  this.currentPageNum = +$routeParams.pageNum || this.data.pageNum || 1;
 
   this.fetch = () => {
-    io.socket.getAsync('/b/' + this.id, {pokemonFields: POKEMON_FIELDS_USED}).then(data => {
+    return io.socket.getAsync('/b/' + this.id, {
+      pokemonFields: POKEMON_FIELDS_USED,
+      page: this.currentPageNum
+    }).then(data => {
       Object.assign(this.data, data);
       this.hasFullData = true;
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).then(() => $scope.$apply());
+  };
+
+  this.isLoading = () => this.currentPageNum !== this.data.pageNum;
+  this.hasPrevPage = () => this.currentPageNum > 1;
+  this.hasNextPage = () => this.currentPageNum < this.data.totalPageCount;
+
+  this.prevPage = () => {
+    if (this.hasPrevPage()) {
+      // Update the location hash without reloading the controller
+      // Unfortunately it doesn't seem to be possible to do this natively with angular.
+      // https://github.com/angular/angular.js/issues/1699
+      $ngSilentLocation.silent(`/box/${this.id}/${--this.currentPageNum}`);
+      return this.fetch();
+    }
+  };
+
+  this.nextPage = () => {
+    if (this.hasNextPage()) {
+      $ngSilentLocation.silent(`/box/${this.id}/${++this.currentPageNum}`);
+      return this.fetch();
+    }
   };
 
   this.edit = event => {

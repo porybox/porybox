@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
 const maxMultiUploadSize = require('../../api/services/Constants.js').MAX_MULTI_UPLOAD_SIZE;
+const boxPageSize = require('../../api/services/Constants.js').BOX_PAGE_SIZE;
 import {chunk} from 'lodash';
 
 /**
@@ -52,6 +53,12 @@ module.exports = function($scope, io, $mdDialog, $mdMedia) {
       .mapSeries(files => io.socket.postAsync('/pk6/multi', {files}))
       .reduce((acc, nextGroup) => acc.concat(nextGroup), [])
       .filter(line => line.success && line.created.box === this.selected.selectedBox.id)
+      .tap(lines => this.selected.selectedBox.totalItemCount += lines.length)
+      .tap(lines => this.selected.selectedBox.totalPageCount = Math.ceil(
+        (this.selected.selectedBox.contents.length + lines.length) / boxPageSize
+      ))
+      .then(lines => this.selected.selectedBox.contents.length < boxPageSize ? lines : [])
+      .then(lines => lines.slice(0, boxPageSize - this.selected.selectedBox.contents.length))
       .map(line => line.created)
       .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
       .catch(console.error.bind(console))
