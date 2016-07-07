@@ -27,6 +27,7 @@ const POKEMON_FIELDS_USED = [
   'speciesName',
   'tid',
   'visibility',
+  'heldItemId'
 ].join(',');
 
 module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
