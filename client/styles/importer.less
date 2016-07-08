@@ -23,9 +23,16 @@ i.material-icons.visibility {
   margin-right: -3px;
 }
 
+
+html, body {
+  height: 100%;
+}
+
 footer {
   height: 20px;
   font-size: small;
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
 }
 
 footer a {
@@ -50,6 +57,16 @@ body {
 #scroll-container {
   // But we still want to be able to scroll
   overflow: auto;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto;
+  -webkit-flex: 1 0 auto;
 }
 
 /*******************************
