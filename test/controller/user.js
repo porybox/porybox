@@ -26,7 +26,7 @@ describe('UserController', () => {
     generalPurposeBox = res3.body.id;
   });
   it('can redirect users to information about their own profile', async () => {
-    const res = await agent.get('/api/v1/me');
+    const res = await agent.get('/me');
     expect(res.statusCode).to.equal(302);
     expect(res.header.location).to.equal('/user/usertester');
   });
