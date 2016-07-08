@@ -26,7 +26,7 @@ describe('UserController', () => {
     generalPurposeBox = res3.body.id;
   });
   it('can redirect users to information about their own profile', async () => {
-    const res = await agent.get('/api/v1/me');
+    const res = await agent.get('/me');
     expect(res.statusCode).to.equal(302);
     expect(res.header.location).to.equal('/user/usertester');
   });
@@ -181,7 +181,7 @@ describe('UserController', () => {
   });
   describe('editing account information', async () => {
     beforeEach(async () => {
-      const res = await agent.post('/editAccountInfo').send({
+      const res = await agent.post('/me').send({
         friendCodes: [],
         inGameNames: [],
         trainerShinyValues: []
@@ -189,7 +189,7 @@ describe('UserController', () => {
       expect(res.statusCode).to.equal(200);
     });
     it('allows a user to edit their account information', async () => {
-      const res = await agent.post('/editAccountInfo').send({
+      const res = await agent.post('/me').send({
         friendCodes: ['0000-0000-0000', '1111-1111-1111'],
         inGameNames: ['Joe', 'Steve', 'Bob'],
         trainerShinyValues: ['0000', '4095', '1337']
@@ -202,7 +202,7 @@ describe('UserController', () => {
       expect(res2.body.trainerShinyValues).to.eql(['0000', '4095', '1337']);
     });
     it('allows the user to edit a subset of their information by omitting parameters', async () => {
-      const res = await agent.post('/editAccountInfo').send({
+      const res = await agent.post('/me').send({
         friendCodes: ['0000-0000-0135']
       });
       expect(res.statusCode).to.equal(200);
@@ -238,7 +238,7 @@ describe('UserController', () => {
         {friendCodes: ['0123-4567-8901'], inGameNames: ['Joe'], trainerShinyValues: ['9999']}
       ];
       return Promise.each(invalidParameterSets, async params => {
-        const res = await agent.post('/editAccountInfo').send(params);
+        const res = await agent.post('/me').send(params);
         const res2 = await agent.get('/user/usertester');
         expect(res2.body.friendCodes).to.eql([]);
         expect(res2.body.inGameNames).to.eql([]);

@@ -1,0 +1,56 @@
+<md-dialog aria-label="Edit profile" ng-cloak>
+  <form name="editProfile">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Edit Profile</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="dialog.cancel()">
+          <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" layout="column">
+        <md-content layout="row" layout-padding layout-wrap>
+          <md-input-container class="md-block" ng-repeat="code in dialog.friendCodes track by $index">
+            <label ng-if="$index === 0">Friend codes</label>
+            <input ng-model="dialog.friendCodes[$index]" type="text" name="fc" aria-label="Enter friendcode">
+          </md-input-container>
+          <md-button class="md-fab md-mini" ng-click="dialog.addFC()">
+            <i class="material-icons">add</i>
+          </md-button>
+        </md-content>
+
+        <md-content layout="row" layout-padding layout-wrap>
+          <md-input-container class="md-block" ng-repeat="code in dialog.inGameNames track by $index">
+            <label ng-if="$index === 0">In-game names (IGNs)</label>
+            <input ng-model="dialog.inGameNames[$index]" type="text" name="ign" aria-label="Enter IGN">
+          </md-input-container>
+          <md-button class="md-fab md-mini" ng-click="dialog.addIGN()">
+            <i class="material-icons">add</i>
+          </md-button>
+        </md-content>
+
+        <md-content layout="row" layout-padding layout-wrap>
+          <md-input-container class="md-block" ng-repeat="code in dialog.tsvs track by $index">
+            <label ng-if="$index === 0">Trainer shiny values (TSVs)</label>
+            <input ng-model="dialog.tsvs[$index]" type="text" name="tsv" aria-label="Enter TSV">
+          </md-input-container>
+          <md-button class="md-fab md-mini" ng-click="dialog.addTSV()">
+            <i class="material-icons">add</i>
+          </md-button>
+        </md-content>
+
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="dialog.cancel()">
+        Cancel
+      </md-button>
+      <md-button ng-click="dialog.answer()" type="submit">
+        Save
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
