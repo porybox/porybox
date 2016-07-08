@@ -34,8 +34,22 @@ module.exports = _.mapValues({
       id: params.id,
       _markedForDeletion: false
     }).populate('contents');
+    /* Parse contents of the box before slicing to get the page. This ensures that the slicing is done correctly
+    for the given user, without leaking information about the private contents of the box. However, it does result
+    in the server parsing some things that don't need to be parsed since they won't be sent to the client anyway.*/
     const safeBox = await PokemonHandler.getSafeBoxForUser(box, req.user);
-    safeBox.contents = safeBox.contents.map(
+    const pageParam = req.param('page');
+    const pageNum = _.isUndefined(pageParam) ? 1 : +pageParam;
+    const totalPageCount = Math.ceil(safeBox.contents.length / Constants.BOX_PAGE_SIZE) || 1;
+    if (Number.isNaN(pageNum) || pageNum < 1 || pageNum > totalPageCount || pageNum % 1) {
+      return res.notFound();
+    }
+    safeBox.totalItemCount = safeBox.contents.length;
+    safeBox.totalPageCount = totalPageCount;
+    safeBox.pageNum = pageNum;
+    const startIndex = Constants.BOX_PAGE_SIZE * (pageNum - 1);
+    const endIndex = startIndex + Constants.BOX_PAGE_SIZE;
+    safeBox.contents = safeBox.contents.slice(startIndex, endIndex).map(
       pkmn => PokemonHandler.pickPokemonFields(pkmn, params.pokemonFields)
     );
     return res.ok(safeBox);

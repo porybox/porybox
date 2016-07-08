@@ -45,5 +45,17 @@
       <pokemon-card data="pokemon"></pokemon-card>
     </div>
   </div>
+
+  <div class="pagination-container">
+    <md-button class="md-icon-button" ng-click="box.prevPage()" ng-disabled="box.isLoading() || !box.hasPrevPage()">
+      <i class="material-icons">navigate_before</i>
+      <md-tooltip md-direction="left">Previous page</md-tooltip>
+    </md-button>
+    <span class="md-subhead">Page {{box.data.pageNum}} of {{box.data.totalPageCount}}</span>
+    <md-button class="md-icon-button" ng-click="box.nextPage()" ng-disabled="box.isLoading() || !box.hasNextPage()">
+      <i class="material-icons">navigate_next</i>
+      <md-tooltip md-direction="right">Next page</md-tooltip>
+    </md-button>
+  </div>
 </div>
 <div ng-if="box.errorStatusCode" ng-include="'/errors/' + box.errorStatusCode + '.html'"></div>
