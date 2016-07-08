@@ -23,9 +23,28 @@ i.material-icons.visibility {
   margin-right: -3px;
 }
 
+main {
+  flex: 1 0 auto;
+  -webkit-flex: 1 0 auto;
+}
 
 html, body {
   height: 100%;
+}
+
+body {
+  // Toasts need their parent to be static
+  overflow: hidden;
+}
+
+#scroll-container {
+  // But we still want to be able to scroll
+  overflow: auto;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  min-height: 100vh;
 }
 
 footer {
@@ -49,25 +68,10 @@ footer a {
   margin-right: 3px;
 }
 
-body {
-  // Toasts need their parent to be static
-  overflow: hidden;
+.pagination-container {
+  text-align: center;
 }
 
-#scroll-container {
-  // But we still want to be able to scroll
-  overflow: auto;
-  display: flex;
-  display: -webkit-flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  min-height: 100vh;
-}
-
-main {
-  flex: 1 0 auto;
-  -webkit-flex: 1 0 auto;
-}
 
 /*******************************
  * Overrides
@@ -133,6 +137,10 @@ md-divider {
 
 md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
   min-height: 210px;
+}
+
+.md-button.md-icon-button {
+  vertical-align: middle;
 }
 
 /*******************************
