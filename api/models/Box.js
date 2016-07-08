@@ -70,7 +70,7 @@ module.exports =  {
     (Not to be confused with the omitPrivateContents function, which removes *confidential* data.) */
     toJSON () {
       return _.omit(this, (value, key) => {
-        return key.startsWith('_') || ['updatedAt'].includes(key);
+        return key.startsWith('_');
       });
     }
   },
