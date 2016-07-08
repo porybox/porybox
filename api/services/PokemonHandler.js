@@ -60,13 +60,13 @@ exports.getSafeBoxForUser = async (box, user) => {
   if (!box) {
     throw {statusCode: 404};
   }
+  const isOwner = user && user.name === box.owner;
+  const isAdmin = user && user.isAdmin;
   box.contents = await Promise.all(BoxOrdering.getOrderedPokemonList(box)
     .filter(p => !p._markedForDeletion)
-    .filter(p => {
-      return user && user.name === p.owner || p.visibility !== 'private' || user && user.isAdmin;
-    })
+    .filter(p => isOwner || isAdmin || p.visibility !== 'private')
     .map(p => PokemonHandler.getSafePokemonForUser(p, user, {parse: true})));
-  return box;
+  return isOwner || isAdmin ? box : _.omit(box, 'updatedAt');
 };
 
 exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
