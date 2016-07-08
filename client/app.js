@@ -5,6 +5,7 @@ require('angular-material');
 require('angular-messages');
 require('angular-route');
 require('ng-file-upload');
+require('angular-sortable-view');
 const Promise = require('bluebird');
 Promise.config({warnings: false});
 
@@ -27,7 +28,8 @@ const porybox = ng.module('porybox', [
 
   // Third party
   'ngMaterial',
-  'ngRoute'
+  'ngRoute',
+  'angular-sortable-view'
 ]);
 
 porybox.controller('MainCtrl', function () {
