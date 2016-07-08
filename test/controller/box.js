@@ -95,7 +95,7 @@ describe('BoxController', () => {
       expect(box.contents[2].speciesName).to.exist();
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.createdAt).to.be.a('string');
-      expect(box.updatedAt).to.not.exist();
+      expect(box.updatedAt).to.exist();
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/b/${boxId}`)).body;
@@ -109,6 +109,7 @@ describe('BoxController', () => {
       expect(box.contents[1].box).to.not.exist();
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2]).to.not.exist();
+      expect(box.updatedAt).to.not.exist();
     });
     it('allows admins to view the full contents of a box by ID', async () => {
       const box = (await adminAgent.get(`/b/${boxId}`)).body;
@@ -125,6 +126,7 @@ describe('BoxController', () => {
       expect(box.contents[2].pid).to.exist();
       expect(box.contents[2].speciesName).to.exist();
       expect(box.contents[2].box).to.equal(box.id);
+      expect(box.updatedAt).to.exist();
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
       const res = await noAuthAgent.get(`/b/${boxId}`);
@@ -140,6 +142,7 @@ describe('BoxController', () => {
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[1].box).to.not.exist();
       expect(box.contents[2]).to.not.exist();
+      expect(box.updatedAt).to.not.exist();
     });
     it('allows the properties of the Pokémon in the box to be specified by query', async () => {
       const res = await agent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName'});
