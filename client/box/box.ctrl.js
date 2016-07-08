@@ -84,4 +84,8 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
       $scope.$apply();
     }).catch(console.error.bind(console));
   };
+  this.movePkmn = (pkmn, newIndex) => {
+    return io.socket.postAsync(`/p/${pkmn.id}/move`,{box: this.id, index: newIndex})
+      .catch(console.error.bind(console));
+  };
 };
