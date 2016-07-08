@@ -6,7 +6,7 @@ require('angular-messages');
 require('angular-route');
 require('ng-file-upload');
 require('ngsilent');
-require('angular-sortable-view');
+require('angular-sortable-views');
 const Promise = require('bluebird');
 Promise.config({warnings: false});
 
