@@ -527,10 +527,12 @@ describe('PokemonController', () => {
     });
     it('does not show deleted contents when a box is retrieved', async () => {
       const res = await agent.get(`/b/${pkmn.box}`);
-      expect(_.map(res.body.contents, 'id')).to.include(pkmn.id);
+      const res2 = await agent.get(`/b/${pkmn.box}`).query({page: 2});
+      expect(_.map(res.body.contents.concat(res2.body.contents), 'id')).to.include(pkmn.id);
       await agent.del(`/p/${pkmn.id}`);
-      const res2 = await agent.get(`/b/${pkmn.box}`);
-      expect(_.map(res2.body.contents, 'id')).to.not.include(pkmn.id);
+      const res3 = await agent.get(`/b/${pkmn.box}`);
+      const res4 = await agent.get(`/b/${pkmn.box}`).query({page: 2});
+      expect(_.map(res3.body.contents.concat(res4.body.contents), 'id')).to.not.include(pkmn.id);
     });
     after(() => {
       sails.services.constants.POKEMON_DELETION_DELAY = previousDeletionDelay;
