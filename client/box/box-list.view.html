@@ -40,9 +40,8 @@
     <md-card-content>{{box.data.description}}</md-card-content>
   </md-card>
 
-  <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData" sv-root sv-part="box.data.contents" sv-on-sort="box.movePkmn($item, $indexTo)">
-    <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id" sv-element>
-      <div sv-handle ng-if="!main.user || main.user.name !== box.data.owner" style="display:none;"></div>
+  <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
+    <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id">
       <pokemon-card data="pokemon"></pokemon-card>
     </div>
   </div>
