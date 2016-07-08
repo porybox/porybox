@@ -36,7 +36,7 @@
 
         Or upload a file:
         <input type="file" ngf-select ng-model="pkmDialog.file" name="file"
-             accept=".pk6" ngf-max-size="2MB" required ng-change="pkmDialog.addFile()"
+             accept=".pk6" ngf-max-size="2MB" ng-change="pkmDialog.addFile()"
              ngf-model-invalid="errorFile">
         <md-divider></md-divider>
         <div>
@@ -48,7 +48,7 @@
       <md-button ng-click="pkmDialog.cancel()">
        Cancel
       </md-button>
-      <md-button ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd()" type="submit">
+      <md-button ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd() || !pkmDialog.lines.length" type="submit">
         Upload
       </md-button>
     </md-dialog-actions>
