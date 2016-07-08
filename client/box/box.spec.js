@@ -2,7 +2,7 @@ const ctrlTest = require('./box.ctrl');
 
 describe('BoxCtrl', function() {
 
-  let $controller, $scope, $routeParams, $mdMedia, $mdDialog, io, tested;
+  let $controller, $scope, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, io, tested;
 
   beforeEach(inject(function(_$controller_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
@@ -18,6 +18,7 @@ describe('BoxCtrl', function() {
         }
       }
     };
+    $ngSilentLocation = {};
     $routeParams = {};
     $mdMedia = {};
     $mdDialog = {};
@@ -30,7 +31,9 @@ describe('BoxCtrl', function() {
 
   describe('controller variables', function() {
     it('are correctly taken from the box input', function() {
-      tested = $controller(ctrlTest, {$scope, io, $routeParams, $mdMedia, $mdDialog}, {data: {
+      tested = $controller(ctrlTest, {
+        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog
+      }, {data: {
         name: 'boxName',
         description: 'boxDescription',
         owner: 'boxUser',
@@ -46,7 +49,9 @@ describe('BoxCtrl', function() {
     it('are correctly instantiated when not provided at construction', function() {
       $routeParams.boxid = 'routeParamId';
 
-      tested = $controller(ctrlTest, {$scope, io, $routeParams, $mdMedia, $mdDialog}, {});
+      tested = $controller(ctrlTest, {
+        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog
+      }, {});
       expect(tested.id).to.equal('routeParamId');
       expect(tested.data.contents).to.eql([]);
     });
