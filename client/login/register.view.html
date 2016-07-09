@@ -1,9 +1,9 @@
 <md-card>
-  <md-card-title>
-    <md-card-title-text>
-      <span class="md-headline">Register</span>
-    </md-card-title-text>
-  </md-card-title>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+      <span>Register</span>
+    </div>
+  </md-toolbar>
   <md-card-content>
     <div layout="column" layout-padding>
       <md-content class="autoscroll">
@@ -21,8 +21,12 @@
             <label>Password</label>
           </md-input-container>
           <span ng-if="auth.registerError">{{auth.registerError}}<br></span>
-          <md-button type="submit" class="md-raised">Sign up</md-button>
-          <p class="md-body-1">By registering, you agree to the Porybox <a href="/tos">terms of service</a> and <a href="privacy-policy">privacy policy.</a></p>
+
+          <md-card-actions layout="row" layout-align="center">
+            <md-button type="submit" class="md-raised">Sign up</md-button>
+          </md-card-actions>
+          <p class="md-body-1" style="text-align: center;">By registering, you agree to the Porybox <a href="/tos">terms of service</a>
+            and <a href="privacy-policy">privacy policy.</a></p>
         </form>
       </md-content>
     </div>
