@@ -6,7 +6,8 @@ module.exports = function ($mdDialog) {
 
   this.name = '';
   this.description = '';
-  this.visibility = 'unlisted';
+  // TODO: Make this depend on the default user preferences
+  this.visibility = 'listed';
 
   this.cancel = function() {
     $mdDialog.cancel();
