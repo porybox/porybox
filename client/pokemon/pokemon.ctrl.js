@@ -31,6 +31,16 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null);
 
+    const shinyStringPart = this.data.isShiny ? 'shiny' : 'regular';
+    const genderDiffPart = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
+      ? 'female/'
+      : '';
+    const formSuffix = this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1
+      ? '-' + this.data.formId
+      : '';
+
+    this.spriteUrl = `pokemon/${shinyStringPart}/${genderDiffPart}${this.data.dexNo}${formSuffix}`;
+
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
 
@@ -152,10 +162,6 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
     this.gameLabel = 'game-' + (this.data.otGameName || '').replace(' ', '-').toLowerCase();
 
     this.isFromGen4 = [7, 8, 10, 11, 12].indexOf(this.data.otGameId) > -1;
-
-    this.spriteUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${this.data.gender === 'F'
-      && genderDifferences.has(this.data.dexNo) ? 'female/' : ''}${this.data.dexNo}${this.data.formId > 0 &&
-      [25, 664, 665].indexOf(this.data.dexNo) === -1 ? '-' + this.data.formId : ''}`;
 
     this.displayMetDate = parseDate(this.data.metDate);
     this.displayEggDate = parseDate(this.data.eggDate);
