@@ -119,7 +119,7 @@ module.exports = _.mapValues({
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.POKEMON_DELETION_DELAY);
     const updatedPokemon = await Pokemon.findOne({id});
-    if (updatedPokemon._markedForDeletion) {
+    if (updatedPokemon && updatedPokemon._markedForDeletion) {
       await pokemon.destroy();
     }
   },
