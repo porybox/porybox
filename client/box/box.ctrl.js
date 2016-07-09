@@ -10,6 +10,7 @@ const POKEMON_FIELDS_USED = [
   'dexNo',
   'esv',
   'formId',
+  'formName',
   'gender',
   'heldItemId',
   'heldItemName',

@@ -54,14 +54,14 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
     ];
 
     this.natureStats = [statIndex[this.data.increasedStat], statIndex[this.data.decreasedStat]];
+
+    this.speciesWithForme = this.data.speciesName +
+      `${this.data.formName ? '-' + this.data.formName : ''}`;
   };
   this.parseAllProps = () => {
     this.parseBoxViewProps();
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
     this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
-
-    this.speciesWithForme = this.data.speciesName +
-      `${this.data.formName ? '-' + this.data.formName : ''}`;
 
     this.parsedNotOt = replace3dsUnicodeChars(this.data.notOt);
 
