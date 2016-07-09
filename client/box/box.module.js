@@ -16,14 +16,28 @@ ng.module('porybox.box', ['ngRoute'])
     },
     templateUrl: 'box/box-card.view.html',
     controller: [
-      '$scope', '$ngSilentLocation', '$routeParams', 'io', '$mdMedia', '$mdDialog', boxController
+      '$scope',
+      '$ngSilentLocation',
+      '$routeParams',
+      'io',
+      '$mdMedia',
+      '$mdDialog',
+      'errorHandler',
+      boxController
     ],
     controllerAs: 'box'
   }).config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/box/:boxid/:pageNum?', {
       templateUrl: '/box/box-list.view.html',
       controller: [
-        '$scope', '$ngSilentLocation', '$routeParams', 'io', '$mdMedia', '$mdDialog', boxController
+        '$scope',
+        '$ngSilentLocation',
+        '$routeParams',
+        'io',
+        '$mdMedia',
+        '$mdDialog',
+        'errorHandler',
+        boxController
       ],
       controllerAs: 'box'
     });

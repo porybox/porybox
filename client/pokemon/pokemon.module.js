@@ -1,6 +1,14 @@
 const ng = require('angular');
 const pokemonController = require('./pokemon.ctrl');
-const controllerDeps = ['$routeParams', '$scope', 'io', '$mdMedia', '$mdDialog', '$mdToast'];
+const controllerDeps = [
+  '$routeParams',
+  '$scope',
+  'io',
+  '$mdMedia',
+  '$mdDialog',
+  '$mdToast',
+  'errorHandler'
+];
 
 /**
  * [module description]
