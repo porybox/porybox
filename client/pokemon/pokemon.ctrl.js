@@ -31,9 +31,6 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
       : null);
 
-    this.iconUrl = `pokemon/${this.data.isShiny ? 'shiny' : 'regular'}/${
-      this.data.speciesName && this.data.speciesName.toLowerCase()}`;
-
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
 
