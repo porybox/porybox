@@ -1,0 +1,35 @@
+<md-card>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+        <span>Change password</span>
+    </div>
+  </md-toolbar>
+  <md-card-content>
+    <div layout="column" layout-padding>
+      <md-content class="autoscroll">
+        <form name="changePassword" method="POST">
+          <md-input-container class="md-block">
+            <label>Old password</label>
+            <input ng-model="prefs.oldPassword" type="password" name="oldPassword" aria-label="Old password">
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>New password</label>
+            <input ng-model="prefs.newPassword1" type="password" name="newPassword2" aria-label="New password">
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Verify new password</label>
+            <input ng-model="prefs.newPassword2" type="password" name="newPassword2" aria-label="Verify new password">
+          </md-input-container>
+
+          <md-card-actions layout="row" layout-align="start">
+            <md-button ng-click="prefs.changePassword()" type="submit">
+              Change password
+            </md-button>
+          </md-card-actions>
+        </form>
+
+      </md-content>
+    </div>
+  </md-card-content>
+</md-card>
+
