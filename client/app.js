@@ -102,10 +102,12 @@ porybox.service('io', function () {
 
 porybox.service('errorHandler', ['$mdToast', function ($mdToast) {
   return reason => {
-    console.error(reason);
-    $mdToast.show(
-      $mdToast.simple().textContent('An unexpected error occured.').position('bottom right')
-    );
+    if (reason) {
+      console.error(reason);
+      $mdToast.show(
+        $mdToast.simple().textContent('An unexpected error occured.').position('bottom right')
+      );
+    }
   };
 }]);
 
