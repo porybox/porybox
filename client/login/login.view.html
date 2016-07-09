@@ -1,9 +1,9 @@
 <md-card>
-  <md-card-title>
-    <md-card-title-text>
-      <span class="md-headline">Login</span>
-    </md-card-title-text>
-  </md-card-title>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+      <span>Login</span>
+    </div>
+  </md-toolbar>
   <md-card-content>
     <form role="form" ng-submit="auth.login()" method="POST">
       <md-input-container class="md-block">
@@ -15,7 +15,10 @@
         <label>Password</label>
       </md-input-container>
       <span ng-if="auth.loginError">{{auth.loginError}}<br></span>
-      <md-button type="submit" class="md-raised">Sign in</md-button>
+
+      <md-card-actions layout="row" layout-align="center">
+        <md-button type="submit" class="md-raised">Sign in</md-button>
+      </md-card-actions>
     </form>
   </md-card-content>
 </md-card>
