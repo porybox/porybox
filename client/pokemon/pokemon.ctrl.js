@@ -33,13 +33,14 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
 
     const shinyStringPart = this.data.isShiny ? 'shiny' : 'regular';
     const genderDiffPart = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
-      ? 'female/'
+      ? '-f'
       : '';
     const formSuffix = this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1
       ? '-' + this.data.formId
       : '';
 
-    this.spriteUrl = `pokemon/${shinyStringPart}/${genderDiffPart}${this.data.dexNo}${formSuffix}`;
+    this.spriteUrl = `pokemon/${shinyStringPart}/${this.data.dexNo}${formSuffix}${genderDiffPart}`;
+    this.spriteClass = `spr-${shinyStringPart} spr-box-${this.data.dexNo}${formSuffix}${genderDiffPart}`;
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
