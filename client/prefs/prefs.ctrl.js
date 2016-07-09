@@ -1,4 +1,4 @@
-module.exports = function (io, $mdToast) {
+module.exports = function (io, $mdToast, errorHandler) {
   this.changePassword = () => {
     if (this.newPassword1 !== this.newPassword2) {
       return $mdToast.show(
@@ -29,6 +29,6 @@ module.exports = function (io, $mdToast) {
       return $mdToast.simple().position('top right').textContent('Incorrect password');
     }).then(toast => {
       $mdToast.show(toast);
-    });
+    }).catch(errorHandler);
   };
 };
