@@ -20,6 +20,7 @@ require('./pokemon/pokemon.module.js');
 require('./add/add.module.js');
 require('./userMenu/user.module.js');
 require('./profile/profile.module.js');
+require('./prefs/prefs.module.js');
 
 const porybox = ng.module('porybox', [
   // Porybox modules
@@ -27,6 +28,7 @@ const porybox = ng.module('porybox', [
   'porybox.home',
   'porybox.add',
   'porybox.profile',
+  'porybox.prefs',
   'porybox.userMenu',
 
   // Third party
@@ -42,8 +44,15 @@ porybox.controller('MainCtrl', function () {
   this.init = function ({boxes, user, prefs, selectedBox}) {
     this.boxes = boxes;
     this.user = user;
-    if (!this.user && location.pathname === '/' && ['', '#/'].indexOf(location.hash) !== -1) {
+    // TODO: Figure out a better way to do this
+    const LOGGED_IN_ONLY_ROUTES = ['#/prefs', '', '#/'];
+    const LOGGED_OUT_ONLY_ROUTES = ['#/login'];
+    console.log(location.hash);
+    if (!this.user && location.pathname === '/' && LOGGED_IN_ONLY_ROUTES.includes(location.hash)) {
       location.hash = 'home';
+    }
+    if (this.user && location.pathname === '/' && LOGGED_OUT_ONLY_ROUTES.includes(location.hash)) {
+      location.hash = '/';
     }
     this.prefs = prefs;
     this.selected.box = selectedBox;
