@@ -1,5 +1,6 @@
 const editCtrl = require('./box-edit.ctrl.js');
 const angular = require('angular');
+const boxPageSize = require('../../api/services/Constants').BOX_PAGE_SIZE;
 
 const POKEMON_FIELDS_USED = [
   'abilityName',
@@ -109,5 +110,10 @@ module.exports = function($scope, $ngSilentLocation, $routeParams, io, $mdMedia,
       this.isDeleted = false;
       $scope.$apply();
     }).catch(console.error.bind(console));
+  };
+  this.movePkmn = (pkmn, localIndex) => {
+    const absoluteIndex = boxPageSize * (this.data.pageNum - 1) + localIndex;
+    return io.socket.postAsync(`/p/${pkmn.id}/move`,{box: this.id, index: absoluteIndex})
+      .catch(console.error.bind(console));
   };
 };
