@@ -12,7 +12,10 @@ module.exports = {
   getOrderedBoxList: _.partial(_getOrderedItemList, _, 'boxes', '_orderedBoxIds'),
   addPkmnIdsToBox (boxId, pkmnIds, position) {
     return Promise.fromCallback(Box.native.bind(Box)).then(collection => {
-      const query = {$push: {_orderedIds: {$each: pkmnIds}}};
+      const query = {
+        $push: {_orderedIds: {$each: pkmnIds}},
+        $set: {updatedAt: new Date().toISOString()}
+      };
       if (_.isNumber(position)) {
         query.$push._orderedIds.$position = position;
       }
@@ -22,13 +25,19 @@ module.exports = {
 
   removePkmnIdFromBox (boxId, pkmnId) {
     return Promise.fromCallback(Box.native.bind(Box)).then(collection => {
-      return collection.update({_id: boxId}, {$pull: {_orderedIds: pkmnId}});
+      return collection.update({_id: boxId}, {
+        $pull: {_orderedIds: pkmnId},
+        $set: {updatedAt: new Date().toISOString()}
+      });
     });
   },
 
   addBoxIdsToUser (username, boxIds, position) {
     return Promise.fromCallback(User.native.bind(User)).then(collection => {
-      const query = {$push: {_orderedBoxIds: {$each: boxIds}}};
+      const query = {
+        $push: {_orderedBoxIds: {$each: boxIds}},
+        $set: {updatedAt: new Date().toISOString()}
+      };
       if (_.isNumber(position)) {
         query.$push._orderedBoxIds.$position = position;
       }
@@ -38,7 +47,10 @@ module.exports = {
 
   removeBoxIdFromUser (username, boxId) {
     return Promise.fromCallback(User.native.bind(User)).then(collection => {
-      return collection.update({_id: username}, {$pull: {_orderedBoxIds: boxId}});
+      return collection.update({_id: username}, {
+        $pull: {_orderedBoxIds: boxId},
+        $set: {updatedAt: new Date().toISOString()}
+      });
     });
   }
 };
