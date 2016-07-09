@@ -688,6 +688,7 @@ describe('PokemonController', () => {
       expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
       const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
       expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn4.id, pkmn5.id, pkmn6.id, pkmn.id]);
+      expect(+new Date(updatedBox2.updatedAt)).to.be.above(+new Date(box2.updatedAt));
     });
     it('allows an index to be specified for the pokemon within the new box', async () => {
       const res = await agent.post(`/p/${pkmn2.id}/move`).send({box: box2.id, index: 1});
