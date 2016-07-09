@@ -43,6 +43,7 @@ module.exports = function(
   this.selected = this.selected || ($scope.$parent.main ? $scope.$parent.main.selected : {});
   this.selected.selectedBox = this.data;
   this.errorStatusCode = null;
+  this.indexInMain = null;
   this.isDeleted = false;
   this.currentPageNum = +$routeParams.pageNum || this.data.pageNum || 1;
 
@@ -99,6 +100,10 @@ module.exports = function(
     }).then((editedData) => {
       return io.socket.postAsync('/b/' + this.id + '/edit', editedData).then(() => {
         Object.assign(this.data, editedData);
+        if ($scope.$parent && $scope.$parent.main && $scope.$parent.main.boxes) {
+          const thisBox = $scope.$parent.main.boxes.find(box => box.id === this.id);
+          if (thisBox) Object.assign(thisBox, this.data);
+        }
         $scope.$apply();
       });
     })).catch(errorHandler);
@@ -108,6 +113,14 @@ module.exports = function(
     io.socket.deleteAsync('/b/' + this.id).then(() => {
       this.isDeleted = true;
       $scope.$apply();
+      if ($scope.$parent && $scope.$parent.main && $scope.$parent.main.boxes) {
+        const thisBoxIndex = $scope.$parent.main.boxes.findIndex(box => box.id === this.id);
+        if (thisBoxIndex !== -1) {
+          this.indexInMain = thisBoxIndex;
+          $scope.$parent.main.boxes.splice(thisBoxIndex, 1);
+        }
+      }
+      $scope.$apply();
     }).catch(errorHandler);
   };
 
@@ -115,6 +128,11 @@ module.exports = function(
     io.socket.postAsync('/b/' + this.id + '/undelete').then(() => {
       this.isDeleted = false;
       $scope.$apply();
+      if ($scope.$parent && $scope.$parent.main && $scope.$parent.main.boxes
+          && this.indexInMain !== null) {
+        $scope.$parent.main.boxes.splice(this.indexInMain, 0, this.data);
+        this.indexInMain = null;
+      }
     }).catch(errorHandler);
   };
   this.movePkmn = (pkmn, localIndex) => {
