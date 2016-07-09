@@ -1,24 +1,24 @@
 <md-card class="pokemon-card-mini" ng-init="pokemon.parseBoxViewProps()">
-  <a ng-href="#/pokemon/{{pokemon.id}}" class="card-link" ng-attr-title="{{pokemon.data.isEgg ?
+  <a draggable="false" ng-href="#/pokemon/{{pokemon.id}}" class="card-link" ng-attr-title="{{pokemon.data.isEgg ?
   pokemon.parsedNickname + ' (ESV: ' + pokemon.paddedEsv + ')' : pokemon.parsedNickname}}">
     <md-card-header>
       <md-card-avatar>
         <div class="icon-container">
-          <img ng-if="pokemon.data.isEgg" style="margin-left:-5px" src="/img/icons/egg.png" />
-          <img ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="/img/icons/{{pokemon.iconUrl}}.png" />
+          <img draggable="false" ng-if="pokemon.data.isEgg" style="margin-left:-5px" src="/img/icons/egg.png" />
+          <img draggable="false" ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="/img/icons/{{pokemon.iconUrl}}.png" />
         </div>
       </md-card-avatar>
       <span class="card-headline" style="margin:0;">{{pokemon.parsedNickname}}</span>
       <span ng-if="pokemon.data.isEgg" class="esv">{{pokemon.paddedEsv}}</span>
     </md-card-header>
   </a>
-    <md-card-content layout="column">
+    <md-card-content layout="column" class="pokemon-card-content">
       <div layout="row" layout-align="none center">
-        <img class="pokeball"
+        <img draggable="false" class="pokeball"
           ng-if="pokemon.ballNameUrl"
           ng-src="img/icons/items/{{pokemon.ballNameUrl}}.png"
           title="In a {{pokemon.data.ballName}}" />
-        <img class="held-item"
+        <img draggable="false" class="held-item"
           ng-if="pokemon.heldItemUrl"
           ng-src="/img/icons/items/{{pokemon.heldItemUrl}}.png"
           title="Holding {{pokemon.data.heldItemName}}" />
@@ -42,7 +42,9 @@
       <div flex ng-if="pokemon.data.increasedStat" ng-attr-title="+{{pokemon.data.increasedStat}}, -{{pokemon.data.decreasedStat}}">{{pokemon.data.natureName}}</div>
       <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
       <div flex title="OT, TID">{{pokemon.parsedOt}}, {{pokemon.paddedTid}}</div>
-      <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
-                      'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
+      <div layout="row" layout-align="none center">
+        <span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
+                      'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span>
+      </div>
     </md-card-content>
 </md-card>

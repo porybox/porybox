@@ -3,6 +3,14 @@
     <div class="md-toolbar-tools">
       <h1><span>{{box.data.name}}</span></h1>
       <span flex></span>
+      <md-button ng-if="!box.draggingEnabled" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
+        <md-tooltip md-direction="left">Enable dragging to move Pokémon in this box</md-tooltip>
+        <i class="material-icons">open_with</i>
+      </md-button>
+      <md-button ng-if="box.draggingEnabled" class="md-icon-button" aria-label="Done" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = false">
+        <md-tooltip md-direction="left">Done moving Pokémon</md-tooltip>
+        <i class="material-icons">done</i>
+      </md-button>
       <md-menu md-position-mode="target-right target" md-offset="0 50">
         <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
           <md-tooltip md-direction="left">{{box.data.name}} settings</md-tooltip>
@@ -40,9 +48,19 @@
     <md-card-content>{{box.data.description}}</md-card-content>
   </md-card>
 
-  <div layout="row" layout-xs="column" layout-wrap ng-init="box.fetch()" ng-show="box.hasFullData">
-    <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id">
-      <pokemon-card data="pokemon"></pokemon-card>
+  <div
+    layout="row"
+    layout-xs="column"
+    layout-wrap
+    ng-init="box.fetch()"
+    ng-show="box.hasFullData"
+    sv-disabled="!box.draggingEnabled"
+    sv-root
+    sv-part="box.data.contents"
+    sv-on-sort="box.movePkmn($item, $indexTo)"
+  >
+    <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id" sv-element>
+      <pokemon-card data="pokemon" ng-class="{'draggable': box.draggingEnabled}"></pokemon-card>
     </div>
   </div>
 
