@@ -3,7 +3,17 @@ const keyBy = (collection, iteratee) => _.mapValues(_.groupBy(collection, iterat
 
 function _getOrderedItemList (parent, contentsKey, orderedIdsKey) {
   const mapById = keyBy(parent[contentsKey], 'id');
-  return parent[orderedIdsKey]
+  const uniqList = _.uniq(parent[orderedIdsKey]);
+  const id = contentsKey === 'contents' ? parent.id : parent.name;
+  const missingIds = _.difference(Object.keys(mapById), uniqList);
+  if (missingIds.length) {
+    // should not happen, but might due to database issues
+    sails.log.warn(`The following ${orderedIdsKey} are missing from the item with id ${id
+    }: ${missingIds}. They will be added to the end of the list.`);
+    if (contentsKey === 'contents') BoxOrdering.addPkmnIdsToBox(parent.id, missingIds);
+    else BoxOrdering.addBoxIdsToUser(parent.name, missingIds);
+  }
+  return uniqList
     .filter(id => _.has(mapById, id) && !mapById[id]._markedForDeletion)
     .map(id => mapById[id]);
 }
