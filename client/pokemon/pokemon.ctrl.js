@@ -28,7 +28,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
 
     this.heldItemUrl = this.data.heldItemId >= 328 && this.data.heldItemId <= 445 ?
       'tm' : (this.data.heldItemName
-      ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').toLowerCase()
+      ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').replace('\'', '').toLowerCase()
       : null);
 
     const shinyStringPart = this.data.isShiny ? 'shiny' : 'regular';
