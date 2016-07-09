@@ -7,7 +7,11 @@ const POKEMON_FIELDS_USED = [
   'abilityNum',
   'ballName',
   'decreasedStat',
+  'dexNo',
   'esv',
+  'formId',
+  'gender',
+  'heldItemId',
   'heldItemName',
   'id',
   'increasedStat',
@@ -27,8 +31,7 @@ const POKEMON_FIELDS_USED = [
   'otGameId',
   'speciesName',
   'tid',
-  'visibility',
-  'heldItemId'
+  'visibility'
 ].join(',');
 
 module.exports = function($scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog) {
