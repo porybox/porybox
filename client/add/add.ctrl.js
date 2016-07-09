@@ -10,7 +10,7 @@ import {chunk} from 'lodash';
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast) {
+module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, errorHandler) {
   this.box = (event) => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $scope.$watch(function() {
@@ -29,7 +29,7 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast) 
     })
     .then((boxInfo) => io.socket.postAsync('/box', boxInfo)))
     .then(res => $scope.$apply(this.boxes.push(res)))
-    .catch(console.error.bind(console));
+    .catch(errorHandler);
   };
 
   this.pokemon = (event) => {
@@ -82,7 +82,7 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast) 
       .then(lines => lines.slice(0, boxPageSize - this.selected.selectedBox.contents.length))
       .map(line => line.created)
       .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
-      .catch(console.error.bind(console))
+      .catch(errorHandler)
       .then(() => $scope.$apply());
   };
 

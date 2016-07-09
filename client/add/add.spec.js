@@ -10,9 +10,10 @@ describe('AddCtrl', function() {
     io = {},
     $controller = {},
     $mdDialog = {},
-    $mdMedia = {},
-    $mdToast = {},
-    tested, postSpy;
+    $mdMedia = {};
+  const $mdToast = {};
+  const errorHandler = {};
+  let tested, postSpy;
   beforeEach(inject(function(_$controller_){
     $scope = {
       boxes: [],
@@ -42,7 +43,8 @@ describe('AddCtrl', function() {
       io: io,
       $mdDialog: $mdDialog,
       $mdMedia: $mdMedia,
-      $mdToast
+      $mdToast,
+      errorHandler
     }, {boxes: []});
     postSpy = sinon.spy(io.socket, 'postAsync');
   }));
