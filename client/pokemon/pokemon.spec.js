@@ -21,11 +21,11 @@ describe('PokemonCtrl', function() {
   }));
 
   describe('controller variables', function() {
-    it('are correctly taken from the box input', function() {
+    it.only('are correctly taken from the box input', function() {
       tested = $controller(ctrlTest, deps, {data: {
         speciesName: 'Pelipper',
         nickname: 'pokemondNickname',
-        dexNo: 'pokemonDexNo',
+        dexNo: 279,
         owner: 'boxUser',
         id: 'pokemonId',
         isShiny: false,
@@ -34,9 +34,9 @@ describe('PokemonCtrl', function() {
       tested.parseAllProps();
       expect(tested.data.nickname).to.equal('pokemondNickname');
       expect(tested.data.owner).to.equal('boxUser');
-      expect(tested.data.dexNo).to.equal('pokemonDexNo');
+      expect(tested.data.dexNo).to.equal(279);
       expect(tested.data.id).to.equal('pokemonId');
-      expect(tested.iconUrl).to.equal('pokemon/regular/pelipper');
+      expect(tested.spriteUrl).to.equal('pokemon/regular/279');
     });
 
     it('are correctly instantiated when not provided at construction', function() {
