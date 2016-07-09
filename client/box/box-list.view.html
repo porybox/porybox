@@ -4,11 +4,11 @@
       <h1><span>{{box.data.name}}</span></h1>
       <span flex></span>
       <md-button ng-if="!box.draggingEnabled" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
-        <md-tooltip md-direction="left">Drag Pokémon around in this box</md-tooltip>
+        <md-tooltip md-direction="left">Enable dragging to move Pokémon in this box</md-tooltip>
         <i class="material-icons">open_with</i>
       </md-button>
       <md-button ng-if="box.draggingEnabled" class="md-icon-button" aria-label="Done" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = false">
-        <md-tooltip md-direction="left">Done dragging Pokémon around</md-tooltip>
+        <md-tooltip md-direction="left">Done moving Pokémon</md-tooltip>
         <i class="material-icons">done</i>
       </md-button>
       <md-menu md-position-mode="target-right target" md-offset="0 50">
@@ -60,7 +60,7 @@
     sv-on-sort="box.movePkmn($item, $indexTo)"
   >
     <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id" sv-element>
-      <pokemon-card data="pokemon"></pokemon-card>
+      <pokemon-card data="pokemon" ng-class="{'draggable': box.draggingEnabled}"></pokemon-card>
     </div>
   </div>
 
