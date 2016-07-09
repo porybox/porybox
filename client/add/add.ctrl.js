@@ -75,8 +75,9 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
       })
       .filter(line => line.success && line.created.box === this.selected.selectedBox.id)
       .tap(lines => this.selected.selectedBox.totalItemCount += lines.length)
-      .tap(lines => this.selected.selectedBox.totalPageCount = Math.ceil(
-        (this.selected.selectedBox.contents.length + lines.length) / boxPageSize
+      .tap(lines => this.selected.selectedBox.totalPageCount = Math.max(
+        Math.ceil((this.selected.selectedBox.contents.length + lines.length) / boxPageSize),
+        1
       ))
       .then(lines => this.selected.selectedBox.contents.length < boxPageSize ? lines : [])
       .then(lines => lines.slice(0, boxPageSize - this.selected.selectedBox.contents.length))
