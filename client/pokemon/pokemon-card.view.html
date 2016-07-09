@@ -4,8 +4,8 @@
     <md-card-header>
       <md-card-avatar>
         <div class="icon-container">
-          <img draggable="false" ng-if="pokemon.data.isEgg" style="margin-left:-5px" src="/img/icons/egg.png" />
-          <img draggable="false" ng-class="{'pokemon-egg': pokemon.data.isEgg}" ng-src="/img/icons/{{pokemon.spriteUrl}}.png" />
+          <span ng-if="pokemon.data.isEgg" class="spr-box spr-box-egg"></span>
+          <span class="spr-box {{pokemon.spriteClass}}" ng-class="{'pokemon-egg': pokemon.data.isEgg}"></span>
         </div>
       </md-card-avatar>
       <span class="card-headline" style="margin:0;">{{pokemon.parsedNickname}}</span>
