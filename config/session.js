@@ -23,16 +23,9 @@ module.exports.session = {
   ***************************************************************************/
   secret: '1f27e8af10263b9e822e0a6ebeb4f888',
 
-
-  /***************************************************************************
-  *                                                                          *
-  * Set the session cookie expire time The maxAge is set by milliseconds,    *
-  * the example below is for 24 hours                                        *
-  *                                                                          *
-  ***************************************************************************/
-
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000
+    // 1000 years. The expiration date of the session must be a valid javascript Date, so `Infinity` doesn't work
+    maxAge: 1000 * 365 * 24 * 60 * 60 * 1000
   },
 
   autoReconnect: true,
