@@ -20,6 +20,7 @@ require('./pokemon/pokemon.module.js');
 require('./add/add.module.js');
 require('./userMenu/user.module.js');
 require('./profile/profile.module.js');
+require('./prefs/prefs.module.js');
 
 const porybox = ng.module('porybox', [
   // Porybox modules
@@ -27,6 +28,7 @@ const porybox = ng.module('porybox', [
   'porybox.home',
   'porybox.add',
   'porybox.profile',
+  'porybox.prefs',
   'porybox.userMenu',
 
   // Third party

@@ -1,0 +1,18 @@
+<h1>Change password</h1>
+<form name="changePassword" method="POST">
+  <md-input-container class="md-block">
+    <label>Old password</label>
+    <input ng-model="prefs.oldPassword" type="password" name="oldPassword" aria-label="Old password">
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>New password</label>
+    <input ng-model="prefs.newPassword1" type="password" name="newPassword2" aria-label="New password">
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Verify new password</label>
+    <input ng-model="prefs.newPassword2" type="password" name="newPassword2" aria-label="Verify new password">
+  </md-input-container>
+  <md-button ng-click="prefs.changePassword()" type="submit">
+    Change password
+  </md-button>
+</form>
