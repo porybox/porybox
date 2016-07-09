@@ -9,7 +9,7 @@
  ******************************/
 
 @import (inline) 'boxsprites.css';
- 
+
 .add-button {
   bottom: 40px;
   right: 20px;
@@ -86,7 +86,7 @@ h1, h2 {
 a {text-decoration: none}
 
 p > a, a.md-body-1, a.md-body-2 {
-  color: #039be5;
+  color: #0099e6;
 }
 
 p > a:visited, a.md-body-1:visited, a.md-body-2:visited {
@@ -108,6 +108,10 @@ md-card md-card-content {
   padding: 14px;
   font-size: 14px;
   line-height: 1.3em;
+}
+
+.summary > md-card-content {
+  line-height: 22px;
 }
 
 .card-headline {
@@ -147,6 +151,11 @@ md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
 
 md-card > md-toolbar {
   border-radius: 2px 2px 0 0;
+}
+
+md-toolbar.md-tall {
+  height: 158px;
+  max-height: 188px;
 }
 
 /*******************************
@@ -355,6 +364,7 @@ span[class^='gender-'] {
 
 .pokemon-card-content {
   position: relative;
+  padding-top: .6em;
 }
 
 .pokemon-card-content:after {
@@ -476,5 +486,5 @@ span[class^='gender-'] {
     margin: 10px;
 }
 .dragover {
-    border: 5px dashed blue;
+    border: 5px dashed rgb(2,119,189);
 }
