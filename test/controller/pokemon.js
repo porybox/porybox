@@ -534,6 +534,17 @@ describe('PokemonController', () => {
       const res4 = await agent.get(`/b/${pkmn.box}`).query({page: 2});
       expect(_.map(res3.body.contents.concat(res4.body.contents), 'id')).to.not.include(pkmn.id);
     });
+    it('does not cause errors if the same Pokémon is deleted in two requests', async () => {
+      const res = await agent.del(`/p/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      const res2 = await agent.post(`/p/${pkmn.id}/undelete`);
+      expect(res2.statusCode).to.equal(200);
+      const res3 = await agent.del(`/p/${pkmn.id}`);
+      expect(res3.statusCode).to.equal(202);
+      await Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
+      const res4 = await agent.get(`/p/${pkmn.id}`);
+      expect(res4.statusCode).to.equal(404);
+    });
     after(() => {
       sails.services.constants.POKEMON_DELETION_DELAY = previousDeletionDelay;
     });
