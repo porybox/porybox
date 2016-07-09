@@ -3,6 +3,7 @@ const ctrlTest = require('./pokemon.ctrl');
 describe('PokemonCtrl', function() {
 
   let $controller, $scope, $routeParams, io, tested, $mdMedia, $mdDialog, $mdToast, deps;
+  let errorHandler;
 
   beforeEach(inject(function(_$controller_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
@@ -12,12 +13,13 @@ describe('PokemonCtrl', function() {
     $mdMedia = {};
     $mdDialog = {};
     $mdToast = {};
+    errorHandler = {};
     io = {
       socket: {
         get: function () {}
       }
     };
-    deps = {$scope, io, $routeParams, $mdMedia, $mdDialog, $mdToast};
+    deps = {$scope, io, $routeParams, $mdMedia, $mdDialog, $mdToast, errorHandler};
   }));
 
   describe('controller variables', function() {

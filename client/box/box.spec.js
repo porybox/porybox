@@ -3,6 +3,7 @@ const ctrlTest = require('./box.ctrl');
 describe('BoxCtrl', function() {
 
   let $controller, $scope, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, io, tested;
+  let errorHandler;
 
   beforeEach(inject(function(_$controller_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
@@ -22,6 +23,7 @@ describe('BoxCtrl', function() {
     $routeParams = {};
     $mdMedia = {};
     $mdDialog = {};
+    errorHandler = {};
     io = {
       socket: {
         get: function () {}
@@ -32,7 +34,7 @@ describe('BoxCtrl', function() {
   describe('controller variables', function() {
     it('are correctly taken from the box input', function() {
       tested = $controller(ctrlTest, {
-        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog
+        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, errorHandler
       }, {data: {
         name: 'boxName',
         description: 'boxDescription',
@@ -50,7 +52,7 @@ describe('BoxCtrl', function() {
       $routeParams.boxid = 'routeParamId';
 
       tested = $controller(ctrlTest, {
-        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog
+        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, errorHandler
       }, {});
       expect(tested.id).to.equal('routeParamId');
       expect(tested.data.contents).to.eql([]);
