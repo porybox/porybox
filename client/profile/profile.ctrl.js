@@ -1,7 +1,7 @@
 const editCtrl = require('./profile-edit.ctrl.js');
 const angular = require('angular');
 
-module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
+module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog, errorHandler) {
   this.data = this.data || {};
   this.data.name = this.data.name || $routeParams.username;
   this.errorStatusCode = null;
@@ -19,7 +19,7 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
   this.fetchBoxes = () => {
     return io.socket.getAsync(`/user/${this.data.name}/boxes`).then(res => {
       this.data.boxes = res;
-    }).catch(console.error.bind(console)).then(() => $scope.$apply());
+    }).catch(errorHandler).then(() => $scope.$apply());
   };
 
   this.edit = event => {
@@ -44,6 +44,6 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog) {
         Object.assign(this.data, editedData);
         $scope.$apply();
       });
-    })).catch(console.error.bind(console));
+    })).catch(errorHandler);
   };
 };

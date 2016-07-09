@@ -35,7 +35,9 @@ const POKEMON_FIELDS_USED = [
   'visibility'
 ].join(',');
 
-module.exports = function($scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog) {
+module.exports = function(
+    $scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog, errorHandler
+) {
   this.data = this.data || {contents: []};
   this.id = $routeParams.boxid || this.data.id;
   this.selected = this.selected || ($scope.$parent.main ? $scope.$parent.main.selected : {});
@@ -99,25 +101,25 @@ module.exports = function($scope, $ngSilentLocation, $routeParams, io, $mdMedia,
         Object.assign(this.data, editedData);
         $scope.$apply();
       });
-    })).catch(console.error.bind(console));
+    })).catch(errorHandler);
   };
 
   this.delete = () => {
     io.socket.deleteAsync('/b/' + this.id).then(() => {
       this.isDeleted = true;
       $scope.$apply();
-    }).catch(console.error.bind(console));
+    }).catch(errorHandler);
   };
 
   this.undelete = () => {
     io.socket.postAsync('/b/' + this.id + '/undelete').then(() => {
       this.isDeleted = false;
       $scope.$apply();
-    }).catch(console.error.bind(console));
+    }).catch(errorHandler);
   };
   this.movePkmn = (pkmn, localIndex) => {
     const absoluteIndex = boxPageSize * (this.data.pageNum - 1) + localIndex;
     return io.socket.postAsync(`/p/${pkmn.id}/move`,{box: this.id, index: absoluteIndex})
-      .catch(console.error.bind(console));
+      .catch(errorHandler);
   };
 };

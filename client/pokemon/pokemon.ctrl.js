@@ -11,7 +11,7 @@ const genderDifferences = new Set([
   457, 459, 460, 461, 464, 465, 473, 521, 592, 593, 668, 678
 ]);
 
-module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToast) {
+module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToast, errorHandler) {
   this.data = this.data || {};
   this.id = $routeParams.pokemonid || this.data.id;
   this.errorStatusCode = null;
@@ -214,7 +214,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
         $scope.$apply();
         $scope.$apply();
       });
-    })).catch(console.error.bind(console));
+    })).catch(errorHandler);
   };
 
   this.uploadInfo = (event) => {
@@ -253,7 +253,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
         }
       });
       $scope.$apply();
-    }).catch(console.error.bind(console));
+    }).catch(errorHandler);
   };
 
   this.undelete = () => {
@@ -265,7 +265,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
           .textContent(this.parsedNickname + ' undeleted.')
           .position('top right'));
       $scope.$apply();
-    }).catch(console.error.bind(console));
+    }).catch(errorHandler);
   };
 
   /* box: the ID of the box to move to (can be the same as the current box)
@@ -274,7 +274,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   this.move = ({box, index}) => {
     return io.socket.postAsync(`/p/${this.id}/move`, {box, index}).then(() => {
       $scope.$apply();
-    }).catch(console.error.bind(console));
+    }).catch(errorHandler);
   };
 };
 

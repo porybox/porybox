@@ -92,4 +92,13 @@ porybox.service('io', function () {
   return io;
 });
 
+porybox.service('errorHandler', ['$mdToast', function ($mdToast) {
+  return reason => {
+    console.error(reason);
+    $mdToast.show(
+      $mdToast.simple().textContent('An unexpected error occured.').position('bottom right')
+    );
+  };
+}]);
+
 ng.bootstrap(document, ['porybox'], {strictDi: true});
