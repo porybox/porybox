@@ -10,7 +10,7 @@ import {chunk} from 'lodash';
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, io, $mdDialog, $mdMedia, $mdToast) {
+module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast) {
   this.box = (event) => {
     const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
     $scope.$watch(function() {
@@ -52,6 +52,27 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdToast) {
       .then(files => chunk(files, maxMultiUploadSize))
       .mapSeries(files => io.socket.postAsync('/pk6/multi', {files}))
       .reduce((acc, nextGroup) => acc.concat(nextGroup), [])
+      .tap(lines => {
+        const successfulUploads = lines.filter(line => line.success);
+        const successfulUploadCount = successfulUploads.length;
+        const failedUploadCount = lines.length - successfulUploads.length;
+        const toast = $mdToast.simple().position('top right').hideDelay(4000);
+        if (successfulUploadCount === lines.length) {
+          toast.textContent(`${successfulUploads.length} Pokémon uploaded successfully`);
+        } else if (successfulUploadCount === 0) {
+          toast.textContent('Upload failed; no Pokémon uploaded');
+        } else {
+          toast.textContent(
+            `${successfulUploadCount} Pokémon uploaded successfully (${failedUploadCount} failed)`
+          );
+        }
+        if (successfulUploadCount === 1) {
+          toast.action('View');
+        }
+        $mdToast.show(toast).then(response => {
+          if (response === 'ok') $location.path(`pokemon/${successfulUploads[0].created.id}`);
+        });
+      })
       .filter(line => line.success && line.created.box === this.selected.selectedBox.id)
       .tap(lines => this.selected.selectedBox.totalItemCount += lines.length)
       .tap(lines => this.selected.selectedBox.totalPageCount = Math.ceil(
@@ -62,13 +83,7 @@ module.exports = function($scope, io, $mdDialog, $mdMedia, $mdToast) {
       .map(line => line.created)
       .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
       .catch(console.error.bind(console))
-      .then(() => {
-        $mdToast.show(
-          $mdToast.simple()
-            .textContent('Pokémon uploaded successfully')
-            .position('top right'));
-        $scope.$apply();
-      });
+      .then(() => $scope.$apply());
   };
 
 };
