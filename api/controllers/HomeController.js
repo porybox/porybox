@@ -19,6 +19,7 @@ module.exports = _.mapValues({
   },
   faq: (req, res) => res.view('static/faq'),
   about: (req, res) => res.view('static/about'),
+  donate: (req, res) => res.view('static/donate'),
   privacyPolicy: (req, res) => res.view('static/privacy-policy'),
   tos: (req, res) => res.view('static/tos'),
   extractingPk6Files: (req, res) => res.view('static/extracting-pk6-files'),

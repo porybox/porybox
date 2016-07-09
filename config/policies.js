@@ -35,6 +35,7 @@ module.exports.policies = {
     index: anyone,
     faq: anyone,
     about: anyone,
+    donate: anyone,
     privacyPolicy: anyone,
     tos: anyone,
     extractingPk6Files: anyone,

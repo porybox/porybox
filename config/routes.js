@@ -25,6 +25,7 @@ module.exports.routes = {
   'get /': 'HomeController.index',
   'get /faq': 'HomeController.faq',
   'get /about': 'HomeController.about',
+  'get /donate': 'HomeController.donate',
   'get /privacy-policy': 'HomeController.privacyPolicy',
   'get /tos': 'HomeController.tos',
   'get /extracting-pk6-files': 'HomeController.extractingPk6Files',
