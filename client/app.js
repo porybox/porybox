@@ -9,10 +9,11 @@ require('ngsilent');
 require('angular-sortable-views');
 const Promise = require('bluebird');
 Promise.config({warnings: false});
+import {unescape as unescapeHTML} from 'lodash';
 
 const CSRF_TOKEN = document.getElementById('csrf-token').innerHTML;
 const APP_VERSION = document.getElementById('app-version').innerHTML;
-const userData = JSON.parse(document.getElementById('user-data').innerHTML);
+const userData = JSON.parse(unescapeHTML(document.getElementById('user-data').innerHTML));
 
 // Import modules
 require('./login/login.module.js');
