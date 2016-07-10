@@ -39,6 +39,7 @@
       </div>
     </div>
     <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
+    <div id="app-version"><%= VERSION %></div>
     <script src="<%=
       (sails.config.environment === 'development' ? '/bundle.js' : '/bundle.min.js') + '?v=' + VERSION
     %>"></script>

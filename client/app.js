@@ -11,6 +11,7 @@ const Promise = require('bluebird');
 Promise.config({warnings: false});
 
 const CSRF_TOKEN = document.getElementById('csrf-token').innerHTML;
+const APP_VERSION = document.getElementById('app-version').innerHTML;
 
 // Import modules
 require('./login/login.module.js');
@@ -75,8 +76,19 @@ porybox.config(['$mdThemingProvider','$routeProvider',function(
   $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
+// Add a ?v=1.0.0 (e.g.) query to all requests for templates
+// This avoids browser cache issues when the version number is bumped
+porybox.factory('porybox.versionQuery', ['$templateCache', $templateCache => ({request (config) {
+  if (config.url.endsWith('.html') && !$templateCache.get(config.url)) {
+    config.params = config.params || {};
+    config.params.v = APP_VERSION;
+  }
+  return config;
+}})]);
+
 porybox.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.defaults.headers.common['x-csrf-token'] = CSRF_TOKEN;
+  $httpProvider.interceptors.push('porybox.versionQuery');
 }]);
 
 porybox.service('io', function () {
