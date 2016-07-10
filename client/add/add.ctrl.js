@@ -56,7 +56,7 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
         const successfulUploads = lines.filter(line => line.success);
         const successfulUploadCount = successfulUploads.length;
         const failedUploadCount = lines.length - successfulUploads.length;
-        const toast = $mdToast.simple().position('top right').hideDelay(4000);
+        const toast = $mdToast.simple().position('bottom right').hideDelay(4000);
         if (successfulUploadCount === lines.length) {
           toast.textContent(`${successfulUploads.length} Pokémon uploaded successfully`);
         } else if (successfulUploadCount === 0) {
