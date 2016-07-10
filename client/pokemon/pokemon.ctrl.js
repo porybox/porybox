@@ -211,7 +211,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
         $mdToast.show(
           $mdToast.simple()
             .textContent(this.parsedNickname + ' edited successfully')
-            .position('top right'));
+            .position('bottom right'));
         $scope.$apply();
         $scope.$apply();
       });
@@ -247,7 +247,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
             .textContent(this.parsedNickname + ' deleted')
             .action('Undo')
             .highlightAction(true)
-            .position('top right');
+            .position('bottom right');
       $mdToast.show(toast).then((response) => {
         if ( response === 'ok' ) {
           this.undelete();
