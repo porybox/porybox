@@ -22,12 +22,7 @@
     </script>
   </head>
 
-  <body flex layout="column" ng-controller="MainCtrl as main" ng-cloak layout-fill
-    ng-init="main.init({
-      boxes: <%=(typeof boxes !== 'undefined' ? JSON.stringify(boxes) : '[]')%>,
-      user: <%=(typeof user !== 'undefined' ? JSON.stringify(user) : 'null')%>,
-      prefs: <%=(typeof prefs !== 'undefined' ? JSON.stringify(prefs) : '{}')%>
-    })">
+  <body flex layout="column" ng-controller="MainCtrl as main" ng-cloak layout-fill>
     <div id="scroll-container">
       <%- include header.ejs %>
       <div flex layout="column">
@@ -39,6 +34,14 @@
       </div>
     </div>
     <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
+    <div id="app-version"><%= VERSION %></div>
+    <div id="user-data" ng-non-bindable>
+      <%= JSON.stringify({
+        boxes: typeof boxes !== 'undefined' ? boxes : [],
+        user: typeof user !== 'undefined' ? user : null,
+        prefs: typeof prefs !== 'undefined' ? prefs : {}
+      }) %>
+    </div>
     <script src="<%=
       (sails.config.environment === 'development' ? '/bundle.js' : '/bundle.min.js') + '?v=' + VERSION
     %>"></script>
