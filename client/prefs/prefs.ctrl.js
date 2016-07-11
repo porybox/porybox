@@ -17,14 +17,15 @@ module.exports = function (io, $mdToast, errorHandler) {
           .textContent('Error: Passwords may not be longer than 72 characters.')
       );
     }
-    return io.socket.postAsync('/changePassword', {
+    return io.socket.postAsync('/api/v1/changePassword', {
       oldPassword: this.oldPassword,
       newPassword: this.newPassword1
     }).then(() => {
       this.oldPassword = '';
       this.newPassword1 = '';
       this.newPassword2 = '';
-      return $mdToast.simple().position('bottom right').textContent('Password updated successfully');
+      return $mdToast.simple()
+        .position('bottom right').textContent('Password updated successfully');
     }).catch({statusCode: 403, body: 'Incorrect password'}, () => {
       return $mdToast.simple().position('bottom right').textContent('Incorrect password');
     }).then(toast => {
