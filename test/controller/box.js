@@ -74,7 +74,7 @@ describe('BoxController', () => {
     before(async () => {
       boxId = (await agent.post('/box').send({name: 'Inbox'})).body.id;
       await Promise.each(['viewable', 'public', 'private'], async visibility => {
-        const res = await agent.post('/uploadpk6')
+        const res = await agent.post('/pokemon')
           .field('box', boxId)
           .field('visibility', visibility)
           .attach('pk6', __dirname + '/pkmn1.pk6');
@@ -82,7 +82,7 @@ describe('BoxController', () => {
       });
     });
     it('allows a user to view the contents of their box by ID', async () => {
-      const box = (await agent.get(`/b/${boxId}`)).body;
+      const box = (await agent.get(`/box/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents).to.have.lengthOf(3);
       expect(box.contents[0].pid).to.exist();
@@ -99,7 +99,7 @@ describe('BoxController', () => {
       expect(box.pageNum).to.equal(1);
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
-      const box = (await otherAgent.get(`/b/${boxId}`)).body;
+      const box = (await otherAgent.get(`/box/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.not.exist();
@@ -114,7 +114,7 @@ describe('BoxController', () => {
       expect(box.pageNum).to.equal(1);
     });
     it('allows admins to view the full contents of a box by ID', async () => {
-      const box = (await adminAgent.get(`/b/${boxId}`)).body;
+      const box = (await adminAgent.get(`/box/${boxId}`)).body;
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.exist();
@@ -132,7 +132,7 @@ describe('BoxController', () => {
       expect(box.pageNum).to.equal(1);
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
-      const res = await noAuthAgent.get(`/b/${boxId}`);
+      const res = await noAuthAgent.get(`/box/${boxId}`);
       expect(res.statusCode).to.equal(200);
       const box = res.body;
       expect(box.id).to.equal(boxId);
@@ -149,7 +149,7 @@ describe('BoxController', () => {
       expect(box.pageNum).to.equal(1);
     });
     it('allows the properties of the Pokémon in the box to be specified by query', async () => {
-      const res = await agent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName'});
+      const res = await agent.get(`/box/${boxId}`).query({pokemonFields: 'speciesName'});
       expect(res.statusCode).to.equal(200);
       expect(res.body.id).to.equal(boxId);
       expect(res.body.contents).to.eql([
@@ -159,8 +159,8 @@ describe('BoxController', () => {
       ]);
     });
     it('does not allow private properties of Pokémon to be accessed by the query', async () => {
-      const publicPid = (await agent.get(`/b/${boxId}`)).body.contents[1].pid;
-      const res = await otherAgent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName,pid'});
+      const publicPid = (await agent.get(`/box/${boxId}`)).body.contents[1].pid;
+      const res = await otherAgent.get(`/box/${boxId}`).query({pokemonFields: 'speciesName,pid'});
       expect(res.statusCode).to.equal(200);
       expect(res.body.id).to.equal(boxId);
       expect(res.body.contents).to.eql([
@@ -169,7 +169,7 @@ describe('BoxController', () => {
       ]);
     });
     it('does not allow internal properties of Pokémon to be accessed by the query', async () => {
-      const res = await agent.get(`/b/${boxId}`).query({pokemonFields: 'speciesName,_rawPk6'});
+      const res = await agent.get(`/box/${boxId}`).query({pokemonFields: 'speciesName,_rawPk6'});
       expect(res.statusCode).to.equal(200);
       expect(res.body.id).to.equal(boxId);
       expect(res.body.contents).to.eql([
@@ -191,7 +191,7 @@ describe('BoxController', () => {
       const pkmnData = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
       pkmnList = [];
       for (const amount of [pageSize, pageSize, 1]) {
-        const res2 = await agent.post('/pk6/multi').send({files: _.times(amount, () => ({
+        const res2 = await agent.post('/pokemon/multi').send({files: _.times(amount, () => ({
           box: box.id, visibility: _.sample(['public', 'private', 'viewable']), data: pkmnData
         }))});
         expect(res2.statusCode).to.equal(201);
@@ -201,7 +201,7 @@ describe('BoxController', () => {
       }
     });
     it('returns the first 50 items if no page parameter is provided', async () => {
-      const res = await agent.get(`/b/${box.id}`);
+      const res = await agent.get(`/box/${box.id}`);
       expect(res.statusCode).to.equal(200);
       expect(_.map(res.body.contents, 'id')).to.eql(_.map(pkmnList.slice(0, pageSize), 'id'));
       expect(res.body.pageNum).to.equal(1);
@@ -209,7 +209,7 @@ describe('BoxController', () => {
       expect(res.body.totalItemCount).to.equal(2 * pageSize + 1);
     });
     it('adjusts the results for privacy if the user is not the owner', async () => {
-      const res = await otherAgent.get(`/b/${box.id}`);
+      const res = await otherAgent.get(`/box/${box.id}`);
       expect(res.statusCode).to.equal(200);
       const nonPrivatePkmn = pkmnList.filter(pkmn => pkmn.visibility !== 'private');
       expect(_.map(res.body.contents, 'id')).to.eql(_.map(nonPrivatePkmn.slice(0, pageSize), 'id'));
@@ -218,7 +218,7 @@ describe('BoxController', () => {
       expect(res.body.totalItemCount).to.equal(nonPrivatePkmn.length);
     });
     it('returns returns different contents depending on a page parameter', async () => {
-      const res = await agent.get(`/b/${box.id}`).query({page: 2});
+      const res = await agent.get(`/box/${box.id}`).query({page: 2});
       expect(res.statusCode).to.equal(200);
       const expectedList = pkmnList.slice(pageSize, pageSize * 2);
       expect(_.map(res.body.contents, 'id')).to.eql(_.map(expectedList, 'id'));
@@ -226,7 +226,7 @@ describe('BoxController', () => {
       expect(res.body.totalPageCount).to.equal(3);
       expect(res.body.totalItemCount).to.equal(2 * pageSize + 1);
 
-      const res2 = await agent.get(`/b/${box.id}`).query({page: 3});
+      const res2 = await agent.get(`/box/${box.id}`).query({page: 3});
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmnList[pageSize * 2].id]);
       expect(res2.body.pageNum).to.equal(3);
@@ -234,14 +234,14 @@ describe('BoxController', () => {
       expect(res2.body.totalItemCount).to.equal(2 * pageSize + 1);
     });
     it('returns a 404 error if the page parameter is too large', async () => {
-      const res = await agent.get(`/b/${box.id}`).query({page: 4});
+      const res = await agent.get(`/box/${box.id}`).query({page: 4});
       expect(res.statusCode).to.equal(404);
 
-      const res2 = await otherAgent.get(`/b/${box.id}`).query({page: 3});
+      const res2 = await otherAgent.get(`/box/${box.id}`).query({page: 3});
       expect(res2.statusCode).to.equal(404);
     });
     it('returns a 404 error if the page parameter is invalid', async () => {
-      const res = await agent.get(`/b/${box.id}`).query({page: 'foo'});
+      const res = await agent.get(`/box/${box.id}`).query({page: 'foo'});
       expect(res.statusCode).to.equal(404);
     });
   });
@@ -261,7 +261,7 @@ describe('BoxController', () => {
       expect(res4.statusCode).to.equal(201);
       otherBox = res4.body;
       await Promise.each(['viewable', 'public', 'private'], async visibility => {
-        const res = await agent.post('/uploadpk6')
+        const res = await agent.post('/pokemon')
           .attach('pk6', __dirname + '/pkmn1.pk6')
           .field('box', box1.id)
           .field('visibility', visibility);
@@ -269,7 +269,7 @@ describe('BoxController', () => {
       });
     });
     it('allows a user to get their own boxes', async () => {
-      const res = await agent.get('/boxes/mine');
+      const res = await agent.get('/me/boxes');
       expect(res.statusCode).to.equal(302);
       expect(res.header.location).to.equal('/user/boxtester/boxes');
       const myBoxes = (await agent.get('/user/boxtester/boxes')).body;
@@ -312,7 +312,7 @@ describe('BoxController', () => {
       expect(boxContents).to.eql([]);
     });
     it('does not leak internal properties of a box to the client', async () => {
-      const box = (await agent.get(`/b/${box1.id}`)).body;
+      const box = (await agent.get(`/box/${box1.id}`)).body;
       expect(box._markedForDeletion).to.not.exist();
       expect(box._orderedIds).to.not.exist();
     });
@@ -338,7 +338,7 @@ describe('BoxController', () => {
       const res = await agent.post('/box').send({name: 'Boombox'});
       expect(res.statusCode).to.equal(201);
       box = res.body;
-      const res2 = await agent.post('/uploadpk6')
+      const res2 = await agent.post('/pokemon')
         .field('box', box.id)
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res2.statusCode).to.equal(201);
@@ -354,90 +354,90 @@ describe('BoxController', () => {
       expect(res2.body.length).to.equal(initialLength + 5);
       expect(res2.statusCode).to.equal(200);
       await Promise.each(res2.body.slice(1), async box => {
-        const res3 = await agent.del(`/b/${box.id}`);
+        const res3 = await agent.del(`/box/${box.id}`);
         expect(res3.statusCode).to.equal(202);
       });
-      const res4 = await agent.del(`/b/${res2.body[0].id}`);
+      const res4 = await agent.del(`/box/${res2.body[0].id}`);
       expect(res4.statusCode).to.equal(400);
       const res5 = await agent.get('/user/boxtester/boxes');
       expect(res5.body.length).to.equal(1);
     });
     it('does not allow users to delete boxes that belong to other users', async () => {
-      const res = await otherAgent.del(`/b/${box.id}`);
+      const res = await otherAgent.del(`/box/${box.id}`);
       expect(res.statusCode).to.equal(403);
     });
     it('returns a 404 error after fetching a deleted box', async () => {
-      const res = await agent.del(`/b/${box.id}`);
+      const res = await agent.del(`/box/${box.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.statusCode).to.equal(404);
     });
     it('also deletes all Pokemon contents when a box is deleted', async () => {
-      await agent.del(`/b/${box.id}`);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      await agent.del(`/box/${box.id}`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(404);
       await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
-      const res3 = await agent.get(`/p/${pkmn.id}`);
+      const res3 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res3.statusCode).to.equal(404);
     });
     it('allows deleted boxes to be undeleted shortly afterwards', async () => {
-      await agent.del(`/b/${box.id}`);
-      const res = await agent.post(`/b/${box.id}/undelete`);
+      await agent.del(`/box/${box.id}`);
+      const res = await agent.post(`/box/${box.id}/undelete`);
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.id).to.equal(box.id);
       await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
-      const res3 = await agent.get(`/b/${box.id}`);
+      const res3 = await agent.get(`/box/${box.id}`);
       expect(res3.statusCode).to.equal(200);
       expect(res3.body.id).to.equal(box.id);
     });
     it('does not allow boxes to be undeleted once some time has elapsed', async () => {
-      await agent.del(`/b/${box.id}`);
+      await agent.del(`/box/${box.id}`);
       await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
-      const res = await agent.post(`/b/${box.id}/undelete`);
+      const res = await agent.post(`/box/${box.id}/undelete`);
       expect(res.statusCode).to.equal(404);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.statusCode).to.equal(404);
     });
     it('does not allow users to undelete boxes that belong to other users', async () => {
-      await agent.del(`/b/${box.id}`);
-      const res = await otherAgent.post(`/b/${box.id}/undelete`);
+      await agent.del(`/box/${box.id}`);
+      const res = await otherAgent.post(`/box/${box.id}/undelete`);
       expect(res.statusCode).to.equal(404);
     });
     it('does not allow a user to undelete a pokemon if its box was deleted', async () => {
-      await agent.del(`/b/${box.id}`);
-      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      await agent.del(`/box/${box.id}`);
+      const res = await agent.post(`/pokemon/${pkmn.id}/undelete`);
       expect(res.statusCode).to.equal(400);
     });
     it('allows admins to delete a box belonging to anyone', async () => {
-      const res = await adminAgent.del(`/b/${box.id}`);
+      const res = await adminAgent.del(`/box/${box.id}`);
       expect(res.statusCode).to.equal(202);
-      expect((await agent.get(`/b/${box.id}`)).statusCode).to.equal(404);
+      expect((await agent.get(`/box/${box.id}`)).statusCode).to.equal(404);
     });
     it('allows admins to undelete a box belonging to anyone', async () => {
-      const res = await agent.del(`/b/${box.id}`);
+      const res = await agent.del(`/box/${box.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await adminAgent.post(`/b/${box.id}/undelete`);
+      const res2 = await adminAgent.post(`/box/${box.id}/undelete`);
       expect(res2.statusCode).to.equal(200);
-      expect((await agent.get(`/b/${box.id}`)).statusCode).to.equal(200);
+      expect((await agent.get(`/box/${box.id}`)).statusCode).to.equal(200);
     });
     it("restores a box's contents after undeleting it", async () => {
-      await agent.del(`/b/${box.id}`);
-      const res = await agent.get(`/p/${pkmn.id}`);
+      await agent.del(`/box/${box.id}`);
+      const res = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(404);
-      await agent.post(`/b/${box.id}/undelete`);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      await agent.post(`/box/${box.id}/undelete`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.id).to.equal(pkmn.id);
     });
     it('deletes a box immediately if the `immediately` parameter is set to true', async () => {
-      await agent.del(`/b/${box.id}`).send({immediately: true});
-      const res = await agent.post(`/b/${box.id}/undelete`);
+      await agent.del(`/box/${box.id}`).send({immediately: true});
+      const res = await agent.post(`/box/${box.id}/undelete`);
       expect(res.statusCode).to.equal(404);
     });
     it('does not hang the server while waiting for a box to be fully deleted', async () => {
-      await agent.del(`/b/${box.id}`);
+      await agent.del(`/box/${box.id}`);
       const timer = Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
       await agent.get('/');
       expect(timer.isFulfilled()).to.be.false();
@@ -445,19 +445,19 @@ describe('BoxController', () => {
     it('does not show deleted boxes in box listings', async () => {
       const res = await agent.get('/user/boxtester/boxes');
       expect(_.map(res.body, 'id')).to.include(box.id);
-      await agent.del(`/b/${box.id}`);
+      await agent.del(`/box/${box.id}`);
       const res2 = await agent.get('/user/boxtester/boxes');
       expect(_.map(res2.body, 'id')).to.not.include(box.id);
     });
     it('does not cause errors if the same box is deleted in two separate requests', async () => {
-      const res = await agent.del(`/b/${box.id}`);
+      const res = await agent.del(`/box/${box.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.post(`/b/${box.id}/undelete`);
+      const res2 = await agent.post(`/box/${box.id}/undelete`);
       expect(res2.statusCode).to.equal(200);
-      const res3 = await agent.del(`/b/${box.id}`);
+      const res3 = await agent.del(`/box/${box.id}`);
       expect(res3.statusCode).to.equal(202);
       await Promise.delay(sails.services.constants.BOX_DELETION_DELAY);
-      const res4 = await agent.get(`/b/${box.id}`);
+      const res4 = await agent.get(`/box/${box.id}`);
       expect(res4.statusCode).to.equal(404);
     });
     after(() => {
@@ -472,83 +472,86 @@ describe('BoxController', () => {
       box = res.body;
     });
     it('allows a user to edit the name of their box', async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'Boxfish'});
+      const res = await agent.post(`/box/${box.id}`).send({name: 'Boxfish'});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.body.name).to.equal('Boxfish');
       expect(res2.body.description).to.equal('');
       expect(res2.body.visibility).to.equal('listed');
     });
     it('allows a user to edit the description of their box', async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({description: 'Contains things'});
+      const res = await agent.post(`/box/${box.id}`).send({description: 'Contains things'});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.body.name).to.equal('Pillbox');
       expect(res2.body.description).to.equal('Contains things');
       expect(res2.body.visibility).to.equal('listed');
     });
     it('allows a user to edit the visibility of their box', async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({visibility: 'unlisted'});
+      const res = await agent.post(`/box/${box.id}`).send({visibility: 'unlisted'});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.body.name).to.equal('Pillbox');
       expect(res2.body.description).to.equal('');
       expect(res2.body.visibility).to.equal('unlisted');
     });
     it('allows a user to edit multiple box properties at once', async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'a', visibility: 'unlisted'});
+      const res = await agent.post(`/box/${box.id}`).send({name: 'a', visibility: 'unlisted'});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.body.name).to.equal('a');
       expect(res2.body.description).to.equal('');
       expect(res2.body.visibility).to.equal('unlisted');
     });
     it('does not allow invalid properties to be edited', async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({visibility: 'unlisted', owner: 'b'});
+      const res = await agent.post(`/box/${box.id}`).send({
+        visibility: 'unlisted',
+        owner: 'b'
+      });
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.body.name).to.equal('Pillbox');
       expect(res2.body.description).to.equal('');
       expect(res2.body.visibility).to.equal('unlisted');
       expect(res2.body.owner).to.not.equal('b');
     });
     it('returns a 400 error if no valid properties are specified', async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({owner: 'b', contents: []});
+      const res = await agent.post(`/box/${box.id}`).send({owner: 'b', contents: []});
       expect(res.statusCode).to.equal(400);
     });
     it('returns a 404 error if an invalid box ID is given', async () => {
-      const res = await agent.post('/b/NotARealBoxID/edit').send({visibility: 'unlisted'});
+      const res = await agent.post('/box/NotARealBoxID').send({visibility: 'unlisted'});
       expect(res.statusCode).to.equal(404);
     });
     it("does not allow a user to edit someone else's box", async () => {
-      const res = await otherAgent.post(`/b/${box.id}/edit`).send({description: 'a box'});
+      const res = await otherAgent.post(`/box/${box.id}`).send({description: 'a box'});
       expect(res.statusCode).to.equal(403);
     });
     it("allows an admin to edit anyone's box", async () => {
-      const res = await adminAgent.post(`/b/${box.id}/edit`).send({description: 'a box'});
+      const res = await adminAgent.post(`/box/${box.id}`).send({description: 'a box'});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box.id}`);
+      const res2 = await agent.get(`/box/${box.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.name).to.equal('Pillbox');
       expect(res2.body.description).to.equal('a box');
       expect(res.body.visibility).to.equal('listed');
     });
     it('does not allow a deleted box to be edited', async () => {
-      const res = await agent.del(`/b/${box.id}`);
+      const res = await agent.del(`/box/${box.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.post(`/b/${box.id}/edit`).send({description: 'a box'});
+      const res2 = await agent.post(`/box/${box.id}`).send({description: 'a box'});
       expect(res2.statusCode).to.equal(404);
     });
     it("does not allow a box's name to be edited to the empty string", async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({name: ''});
+      const res = await agent.post(`/box/${box.id}`).send({name: ''});
       expect(res.statusCode).to.equal(400);
     });
     it("does not allow a box's name to be edited to longer than 300 chars", async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'A'.repeat(301)});
+      const res = await agent.post(`/box/${box.id}`).send({name: 'A'.repeat(301)});
       expect(res.statusCode).to.equal(400);
     });
     it("does not allow a box's description to be edited to longer than 1000 chars", async () => {
-      const res = await agent.post(`/b/${box.id}/edit`).send({name: 'A'.repeat(1001)});
+      const res = await agent.post(`/box/${box.id}`).send({name: 'A'.repeat(1001)});
       expect(res.statusCode).to.equal(400);
     });
   });

@@ -37,11 +37,11 @@ module.exports.routes = {
   // Boxes
 
   'post /box': 'BoxController.add',
-  'get /b/:id': 'BoxController.get',
-  'get /boxes/mine': 'BoxController.mine',
-  'delete /b/:id': 'BoxController.delete',
-  'post /b/:id/undelete': 'BoxController.undelete',
-  'post /b/:id/edit': 'BoxController.edit',
+  'get /box/:id': 'BoxController.get',
+  'get /me/boxes': 'BoxController.mine',
+  'delete /box/:id': 'BoxController.delete',
+  'post /box/:id/undelete': 'BoxController.undelete',
+  'post /box/:id': 'BoxController.edit',
 
   // Authentication
 
@@ -56,26 +56,26 @@ module.exports.routes = {
 
   // Pokemon
 
-  'post /uploadpk6': 'PokemonController.uploadpk6',
-  'post /pk6/multi': 'PokemonController.uploadMultiPk6',
+  'post /pokemon': 'PokemonController.uploadpk6',
+  'post /pokemon/multi': 'PokemonController.uploadMultiPk6',
 
-  'get /p/:id': 'PokemonController.get',
-  'get /p/:id/download': 'PokemonController.download',
-  'delete /p/:id': 'PokemonController.delete',
-  'post /p/:id/undelete': 'PokemonController.undelete',
-  'post /p/:id/move': 'PokemonController.move',
-  'post /p/:id/edit': 'PokemonController.edit',
+  'get /pokemon/:id': 'PokemonController.get',
+  'get /pokemon/:id/pk6': 'PokemonController.download',
+  'delete /pokemon/:id': 'PokemonController.delete',
+  'post /pokemon/:id/undelete': 'PokemonController.undelete',
+  'post /pokemon/:id/move': 'PokemonController.move',
+  'post /pokemon/:id': 'PokemonController.edit',
 
   // Users
   'get /user/:name': 'UserController.get',
   'get /user/:name/boxes': 'UserController.boxes',
   'get /me': 'UserController.me',
-  'get /preferences': 'UserController.getPreferences',
-  'post /preferences/edit': 'UserController.editPreferences',
+  'get /me/preferences': 'UserController.getPreferences',
+  'post /me/preferences': 'UserController.editPreferences',
   'post /me': 'UserController.editAccountInfo',
   'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
   'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
-  'post /deleteAccount': 'UserController.deleteAccount',
+  'delete /me': 'UserController.deleteAccount',
   'post /changePassword': 'UserController.changePassword',
   'get /checkUsernameAvailable': 'UserController.checkUsernameAvailable'
 };

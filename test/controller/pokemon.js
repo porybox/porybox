@@ -45,7 +45,7 @@ describe('PokemonController', () => {
       otherBox = res.body.id;
     });
     it('should be able to upload a pk6 file and receive a parsed version', async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
@@ -58,66 +58,66 @@ describe('PokemonController', () => {
       expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
     });
     it('should identify uploaded things as clones', async () => {
-      const res1 = await agent.post('/uploadpk6')
+      const res1 = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/pkmn2.pk6`);
       expect(res1.statusCode).to.equal(201);
       expect(res1.body.isUnique).to.be.true();
-      const res2 = await agent.post('/uploadpk6')
+      const res2 = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/pkmn2.pk6`);
       expect(res2.statusCode).to.equal(201);
       expect(res2.body.isUnique).to.be.false();
     });
     it("should reject uploads that aren't pk6 files", async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/not_a_pk6_file.txt`);
       expect(res.statusCode).to.equal(400);
     });
     it('should not allow a user to upload a pk6 file without specifying a box', async () => {
-      const res = await agent.post('/uploadpk6').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/pokemon').attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(400);
     });
     it('should return a 404 error if the specified box does not exist', async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', 'not a real box id')
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(404);
     });
     it('should return a 403 error if the specified box belongs to someone else', async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', otherBox)
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(403);
     });
     it('should not allow kyurem-white to be uploaded', async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/kyurem-w.pk6`);
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Kyurem-White may not be uploaded');
     });
     it('should not allow a pokemon with invalid move IDs to be uploaded', async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/invalid-moves.pk6`);
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Failed to parse the provided file');
     });
     it('can handle concurrent uploads to the same box without losing anything', async () => {
-      const res = await agent.get(`/b/${generalPurposeBox}`);
+      const res = await agent.get(`/box/${generalPurposeBox}`);
       expect(res.statusCode).to.equal(200);
       const initialCount = res.body.contents.length;
       expect(initialCount).to.be.a('number');
       const newIds = await Promise.all(_.times(10, async () => {
-        const res2 = await agent.post('/uploadpk6')
+        const res2 = await agent.post('/pokemon')
           .field('box', generalPurposeBox)
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
         expect(res2.statusCode).to.equal(201);
         return res2.body.id;
       }));
-      const res3 = await agent.get(`/b/${generalPurposeBox}`);
+      const res3 = await agent.get(`/box/${generalPurposeBox}`);
       expect(res3.body.contents.length).to.equal(initialCount + 10);
       expect(_.map(res3.body.contents.slice(-10), 'id').sort()).to.eql(newIds.sort());
     });
@@ -147,7 +147,7 @@ describe('PokemonController', () => {
         {box: generalPurposeBox, visibility: 'public', data: pk6Data},
         {box: generalPurposeBox, visibility: 'private', data: pk6Data}
       ];
-      const res = await agent.post('/pk6/multi').send({files});
+      const res = await agent.post('/pokemon/multi').send({files});
       expect(res.statusCode).to.equal(201);
       expect(res.body).to.be.an.instanceof(Array);
       expect(res.body).to.have.lengthOf(3);
@@ -158,7 +158,7 @@ describe('PokemonController', () => {
       expect(_.map(res.body, 'created.box')).to.eql(_.times(3, () => generalPurposeBox));
     });
     it("defaults to the user's default upload visibility if none is provided", async () => {
-      const res = await agent.post('/pk6/multi').send({files: [
+      const res = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, data: pk6Data}
       ]});
       expect(res.statusCode).to.equal(201);
@@ -166,29 +166,29 @@ describe('PokemonController', () => {
       expect(res.body).to.have.lengthOf(1);
       expect(res.body[0].success).to.be.true();
       expect(res.body[0].error).to.be.null();
-      const res2 = await agent.get('/preferences');
+      const res2 = await agent.get('/me/preferences');
       expect(res2.statusCode).to.equal(200);
       const userDefaultVisibility = res2.body.defaultPokemonVisibility;
       expect(res.body[0].created.visibility).to.equal(userDefaultVisibility);
     });
     it('returns a 400 error if the `files` argument is not an array', async () => {
       const notAnArray = {length: 3, 0: 'foo', 1: 'bar', 2: 'baz'};
-      const res = await agent.post('/pk6/multi').send({files: notAnArray});
+      const res = await agent.post('/pokemon/multi').send({files: notAnArray});
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Invalid files array');
     });
     it('returns a 400 error if the `files` array is empty', async () => {
-      const res = await agent.post('/pk6/multi').send({files: []});
+      const res = await agent.post('/pokemon/multi').send({files: []});
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('No files uploaded');
     });
     it('returns a 400 error if the `files` array has a length greater than 50', async () => {
-      const res = await agent.post('/pk6/multi').send({files: _.times(51, () => ({}))});
+      const res = await agent.post('/pokemon/multi').send({files: _.times(51, () => ({}))});
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('A maximum of 50 files may be uploaded at a time');
     });
     it('returns a 400 error if any provided visibility is invalid', async () => {
-      const res = await agent.post('/pk6/multi').send({files: [
+      const res = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: generalPurposeBox, visibility: 'private', data: pk6Data},
         {box: generalPurposeBox, visibility: 'HI THANKS FOR READING THE UNIT TESTS', data: pk6Data},
@@ -198,7 +198,7 @@ describe('PokemonController', () => {
       expect(res.body).to.equal('Invalid Pokémon visibility');
     });
     it('returns a 400 error if any box IDs are missing/invalid', async () => {
-      const res = await agent.post('/pk6/multi').send({files: [
+      const res = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {visibility: 'private', data: pk6Data},
@@ -207,7 +207,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Missing/invalid box ID');
 
-      const res2 = await agent.post('/pk6/multi').send({files: [
+      const res2 = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: ['this is an array'], visibility: 'private', data: pk6Data},
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
@@ -217,12 +217,12 @@ describe('PokemonController', () => {
       expect(res2.body).to.equal('Missing/invalid box ID');
     });
     it('does not accept Pokémon with invalid pk6 data', async () => {
-      const res = await agent.post('/pk6/multi').send({files: [
+      const res = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: generalPurposeBox, visibility: 'private', data: invalidPk6Data1},
         {box: generalPurposeBox, visibility: 'public', data: pk6Data}
       ]});
-      const res2 = await agent.post('/pk6/multi').send({files: [
+      const res2 = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: generalPurposeBox, visibility: 'private', data: invalidPk6Data2},
         {box: generalPurposeBox, visibility: 'public', data: pk6Data}
@@ -241,7 +241,7 @@ describe('PokemonController', () => {
       });
     });
     it("does not accept box IDs that don't exist", async () => {
-      const res = await agent.post('/pk6/multi').send({files: [
+      const res = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: generalPurposeBox + 'extra not-box-id bit', visibility: 'private', data: pk6Data},
         {box: generalPurposeBox, visibility: 'public', data: pk6Data}
@@ -261,7 +261,7 @@ describe('PokemonController', () => {
       const res = await otherAgent.post('/box').send({name: 'Outbox'});
       expect(res.statusCode).to.equal(201);
       const otherBox = res.body;
-      const res2 = await agent.post('/pk6/multi').send({files: [
+      const res2 = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: otherBox.id, visibility: 'private', data: pk6Data},
         {box: generalPurposeBox, visibility: 'public', data: pk6Data}
@@ -278,7 +278,7 @@ describe('PokemonController', () => {
       expect(res2.body[1].error).to.equal('Forbidden');
     });
     it('does not accept kyurem-w or kyurem-b', async () => {
-      const res = await agent.post('/pk6/multi').send({files: [
+      const res = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: generalPurposeBox, visibility: 'private', data: kyuremW},
         {box: generalPurposeBox, visibility: 'public', data: pk6Data}
@@ -303,11 +303,11 @@ describe('PokemonController', () => {
       expect(res2.statusCode).to.equal(201);
       const box2 = res2.body;
 
-      const res3 = await agent.get(`/b/${generalPurposeBox}`);
+      const res3 = await agent.get(`/box/${generalPurposeBox}`);
       expect(res3.statusCode).to.equal(200);
       const initialContents = res3.body.contents;
 
-      const res4 = await agent.post('/pk6/multi').send({files: [
+      const res4 = await agent.post('/pokemon/multi').send({files: [
         {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
         {box: box1.id, visibility: 'public', data: pk6Data},
         {box: box2.id, visibility: 'private', data: pk6Data},
@@ -325,13 +325,13 @@ describe('PokemonController', () => {
       expect(res4.body[5].created).to.be.null();
       expect(res4.body[5].error).to.equal('Failed to parse the provided file');
 
-      const res5 = await agent.get(`/b/${box1.id}`);
+      const res5 = await agent.get(`/box/${box1.id}`);
       expect(res5.statusCode).to.equal(200);
       const updatedBox1 = res5.body;
-      const res6 = await agent.get(`/b/${box2.id}`);
+      const res6 = await agent.get(`/box/${box2.id}`);
       expect(res6.statusCode).to.equal(200);
       const updatedBox2 = res6.body;
-      const res7 = await agent.get(`/b/${generalPurposeBox}`);
+      const res7 = await agent.get(`/box/${generalPurposeBox}`);
       expect(res7.statusCode).to.equal(200);
       const updatedInitialBox = res7.body;
       expect(updatedBox1.contents).to.eql(_.map([res4.body[1], res4.body[3]], 'created'));
@@ -345,14 +345,14 @@ describe('PokemonController', () => {
     let publicId, privateId, viewableId;
     before(async () => {
       [publicId, privateId, viewableId] = await Promise.map(['public', 'private', 'viewable'], v =>
-        agent.post('/uploadpk6')
+        agent.post('/pokemon')
           .field('visibility', v)
           .field('box', generalPurposeBox)
           .attach('pk6', __dirname + '/pkmn1.pk6')
       ).map(response => response.body.id);
     });
     it('allows third parties to view all the data on a public pokemon', async () => {
-      const res = await otherAgent.get(`/p/${publicId}`);
+      const res = await otherAgent.get(`/pokemon/${publicId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
       expect(res.body.encryptionConstant).to.exist();
@@ -364,7 +364,7 @@ describe('PokemonController', () => {
       expect(res.body.privateNotes).to.not.exist();
     });
     it('allows the uploader to view all the data on a viewable pokemon', async () => {
-      const res = await agent.get(`/p/${viewableId}`);
+      const res = await agent.get(`/pokemon/${viewableId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
@@ -373,7 +373,7 @@ describe('PokemonController', () => {
       expect(res.body.publicNotes).to.exist();
     });
     it('allows third parties to view only public data on a viewable pokemon', async () => {
-      const res = await otherAgent.get(`/p/${viewableId}`);
+      const res = await otherAgent.get(`/pokemon/${viewableId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.not.exist();
@@ -387,7 +387,7 @@ describe('PokemonController', () => {
       expect(res.body.publicNotes).to.exist();
     });
     it('allows the uploader to view all the data on a private pokemon', async () => {
-      const res = await agent.get(`/p/${privateId}`);
+      const res = await agent.get(`/pokemon/${privateId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
@@ -396,11 +396,11 @@ describe('PokemonController', () => {
       expect(res.body.publicNotes).to.exist();
     });
     it('does not allow third parties to view a private pokemon', async () => {
-      const res = await otherAgent.get(`/p/${privateId}`);
+      const res = await otherAgent.get(`/pokemon/${privateId}`);
       expect(res.statusCode).to.equal(403);
     });
     it('allows an admin to view all the data on a public pokemon', async () => {
-      const res = await adminAgent.get(`/p/${publicId}`);
+      const res = await adminAgent.get(`/pokemon/${publicId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
@@ -409,7 +409,7 @@ describe('PokemonController', () => {
       expect(res.body.privateNotes).to.exist();
     });
     it('allows an admin to view all the data on a viewable pokemon', async () => {
-      const res = await adminAgent.get(`/p/${viewableId}`);
+      const res = await adminAgent.get(`/pokemon/${viewableId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
@@ -418,7 +418,7 @@ describe('PokemonController', () => {
       expect(res.body.privateNotes).to.exist();
     });
     it('allows an admin to view all the data on a private pokemon', async () => {
-      const res = await adminAgent.get(`/p/${privateId}`);
+      const res = await adminAgent.get(`/pokemon/${privateId}`);
       expect(res.statusCode).to.equal(200);
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
@@ -432,23 +432,25 @@ describe('PokemonController', () => {
       expect(pkmn._rawPk6).to.not.exist();
     });
     it('allows a list of fields to be specified as a query parameter', async () => {
-      const res = await agent.get(`/p/${viewableId}`).query({pokemonFields: 'id,visibility,ivHp'});
+      const res = await agent.get(`/pokemon/${viewableId}`).query({
+        pokemonFields: 'id,visibility,ivHp'
+      });
       expect(res.statusCode).to.equal(200);
       expect(res.body).to.eql({id: viewableId, visibility: 'viewable', ivHp: 31});
     });
     it('does not allow private fields to be sent even if specified in the query', async () => {
-      const res = await otherAgent.get(`/p/${viewableId}`).query({pokemonFields: 'id,pid'});
+      const res = await otherAgent.get(`/pokemon/${viewableId}`).query({pokemonFields: 'id,pid'});
       expect(res.statusCode).to.equal(200);
       expect(res.body).to.eql({id: viewableId});
       expect(res.body.pid).not.to.exist();
     });
     it('allows private fields to be sent to the owner if specified in the query', async () => {
-      const res = await agent.get(`/p/${viewableId}`).query({pokemonFields: 'pid'});
+      const res = await agent.get(`/pokemon/${viewableId}`).query({pokemonFields: 'pid'});
       expect(res.statusCode).to.equal(200);
       expect(Object.keys(res.body)).to.eql(['pid']);
     });
     it('does not leak internal properties of a pokemon if specified in the query', async () => {
-      const res = await agent.get(`/p/${viewableId}`).query({pokemonFields: '_rawPk6'});
+      const res = await agent.get(`/pokemon/${viewableId}`).query({pokemonFields: '_rawPk6'});
       expect(res.statusCode).to.equal(200);
       expect(res.body).to.eql({});
     });
@@ -463,86 +465,86 @@ describe('PokemonController', () => {
       sails.services.constants.POKEMON_DELETION_DELAY = 2000;
     });
     beforeEach(async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .field('box', generalPurposeBox)
         .attach('pk6', `${__dirname}/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
     });
     it('allows the owner of a pokemon to delete it', async () => {
-      const res = await agent.del(`/p/${pkmn.id}`);
+      const res = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(404);
     });
     it("does not allow a third party to delete someone else's pokemon", async () => {
-      const res = await otherAgent.del(`/p/${pkmn.id}`);
+      const res = await otherAgent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(403);
-      const res2 = await otherAgent.get(`/p/${pkmn.id}`);
+      const res2 = await otherAgent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.not.equal(404);
     });
     it("allows an admin to delete someone's pokemon", async () => {
-      const res = await adminAgent.del(`/p/${pkmn.id}`);
+      const res = await adminAgent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(202);
-      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(404);
+      expect((await agent.get(`/pokemon/${pkmn.id}`)).statusCode).to.equal(404);
     });
     it("allows an admin to undelete someone's pokemon", async () => {
-      const res = await agent.del(`/p/${pkmn.id}`);
+      const res = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await adminAgent.post(`/p/${pkmn.id}/undelete`);
+      const res2 = await adminAgent.post(`/pokemon/${pkmn.id}/undelete`);
       expect(res2.statusCode).to.equal(200);
-      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(200);
+      expect((await agent.get(`/pokemon/${pkmn.id}`)).statusCode).to.equal(200);
     });
     it('allows a deleted pokemon to be undeleted shortly afterwards', async () => {
-      await agent.del(`/p/${pkmn.id}`);
-      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(404);
-      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      await agent.del(`/pokemon/${pkmn.id}`);
+      expect((await agent.get(`/pokemon/${pkmn.id}`)).statusCode).to.equal(404);
+      const res = await agent.post(`/pokemon/${pkmn.id}/undelete`);
       expect(res.statusCode).to.equal(200);
-      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(200);
+      expect((await agent.get(`/pokemon/${pkmn.id}`)).statusCode).to.equal(200);
       await Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
-      expect((await agent.get(`/p/${pkmn.id}`)).statusCode).to.equal(200);
+      expect((await agent.get(`/pokemon/${pkmn.id}`)).statusCode).to.equal(200);
     });
     it('does not allow a pokemon to be undeleted once some time has elapsed', async () => {
-      await agent.del(`/p/${pkmn.id}`);
+      await agent.del(`/pokemon/${pkmn.id}`);
       await Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
-      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      const res = await agent.post(`/pokemon/${pkmn.id}/undelete`);
       expect(res.statusCode).to.equal(404);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(404);
     });
     it("does not allow a third party to undelete someone else's pokemon", async () => {
-      await agent.del(`/p/${pkmn.id}`);
-      expect((await otherAgent.post(`/p/${pkmn.id}/undelete`)).statusCode).to.equal(404);
+      await agent.del(`/pokemon/${pkmn.id}`);
+      expect((await otherAgent.post(`/pokemon/${pkmn.id}/undelete`)).statusCode).to.equal(404);
     });
     it('deletes a pokemon immediately if the `immediately` parameter is set to true', async () => {
-      await agent.del(`/p/${pkmn.id}`).send({immediately: true});
-      const res = await agent.post(`/p/${pkmn.id}/undelete`);
+      await agent.del(`/pokemon/${pkmn.id}`).send({immediately: true});
+      const res = await agent.post(`/pokemon/${pkmn.id}/undelete`);
       expect(res.statusCode).to.equal(404);
     });
     it('does not hang the server while waiting for a pokemon to be fully deleted', async () => {
-      await agent.del(`/p/${pkmn.id}`);
+      await agent.del(`/pokemon/${pkmn.id}`);
       const timer = Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
       await agent.get('/');
       expect(timer.isFulfilled()).to.be.false();
     });
     it('does not show deleted contents when a box is retrieved', async () => {
-      const res = await agent.get(`/b/${pkmn.box}`);
-      const res2 = await agent.get(`/b/${pkmn.box}`).query({page: 2});
+      const res = await agent.get(`/box/${pkmn.box}`);
+      const res2 = await agent.get(`/box/${pkmn.box}`).query({page: 2});
       expect(_.map(res.body.contents.concat(res2.body.contents), 'id')).to.include(pkmn.id);
-      await agent.del(`/p/${pkmn.id}`);
-      const res3 = await agent.get(`/b/${pkmn.box}`);
-      const res4 = await agent.get(`/b/${pkmn.box}`).query({page: 2});
+      await agent.del(`/pokemon/${pkmn.id}`);
+      const res3 = await agent.get(`/box/${pkmn.box}`);
+      const res4 = await agent.get(`/box/${pkmn.box}`).query({page: 2});
       expect(_.map(res3.body.contents.concat(res4.body.contents), 'id')).to.not.include(pkmn.id);
     });
     it('does not cause errors if the same Pokémon is deleted in two requests', async () => {
-      const res = await agent.del(`/p/${pkmn.id}`);
+      const res = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.post(`/p/${pkmn.id}/undelete`);
+      const res2 = await agent.post(`/pokemon/${pkmn.id}/undelete`);
       expect(res2.statusCode).to.equal(200);
-      const res3 = await agent.del(`/p/${pkmn.id}`);
+      const res3 = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res3.statusCode).to.equal(202);
       await Promise.delay(sails.services.constants.POKEMON_DELETION_DELAY);
-      const res4 = await agent.get(`/p/${pkmn.id}`);
+      const res4 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res4.statusCode).to.equal(404);
     });
     after(() => {
@@ -552,18 +554,18 @@ describe('PokemonController', () => {
   describe('downloading a pokemon', () => {
     let publicPkmn, viewablePkmn, privatePkmn, rawPk6;
     before(async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('visibility', 'public')
         .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       publicPkmn = res.body;
-      const res2 = await agent.post('/uploadpk6')
+      const res2 = await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', generalPurposeBox);
       expect(res2.statusCode).to.equal(201);
       viewablePkmn = res2.body;
-      const res3 = await agent.post('/uploadpk6')
+      const res3 = await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('visibility', 'private')
         .field('box', generalPurposeBox);
@@ -572,85 +574,91 @@ describe('PokemonController', () => {
       rawPk6 = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`).toString('utf8');
     });
     it('allows a user to download their own pokemon, regardless of visibility', async () => {
-      const res = await agent.get(`/p/${publicPkmn.id}/download`).buffer()
+      const res = await agent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer()
         .expect(
           'Content-Disposition',
           `attachment; filename=${publicPkmn.nickname}-${publicPkmn.id}.pk6`
         );
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await agent.get(`/p/${viewablePkmn.id}/download`).buffer();
+      const res2 = await agent.get(`/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(200);
       expect(res2.text).to.equal(rawPk6);
-      const res3 = await agent.get(`/p/${privatePkmn.id}/download`).buffer();
+      const res3 = await agent.get(`/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(200);
       expect(res3.text).to.equal(rawPk6);
     });
     it("only allows other users to download someone's public pokemon", async () => {
-      const res = await otherAgent.get(`/p/${publicPkmn.id}/download`).buffer();
+      const res = await otherAgent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await otherAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
+      const res2 = await otherAgent.get(`/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(403);
       expect(res2.text).to.not.equal(rawPk6);
-      const res3 = await otherAgent.get(`/p/${privatePkmn.id}/download`).buffer();
+      const res3 = await otherAgent.get(`/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(403);
       expect(res3.text).to.not.equal(rawPk6);
     });
     it('only allows an unauthenticated user to download a public pokemon', async () => {
-      const res = await noAuthAgent.get(`/p/${publicPkmn.id}/download`).buffer();
+      const res = await noAuthAgent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await noAuthAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
+      const res2 = await noAuthAgent.get(`/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(403);
       expect(res2.text).to.not.equal(rawPk6);
-      const res3 = await noAuthAgent.get(`/p/${privatePkmn.id}/download`).buffer();
+      const res3 = await noAuthAgent.get(`/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(403);
       expect(res3.text).to.not.equal(rawPk6);
     });
     it('allows an admin to download any pokemon, regardless of visibility', async () => {
-      const res = await adminAgent.get(`/p/${publicPkmn.id}/download`).buffer();
+      const res = await adminAgent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
-      const res2 = await adminAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
+      const res2 = await adminAgent.get(`/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(200);
       expect(res2.text).to.equal(rawPk6);
-      const res3 = await adminAgent.get(`/p/${privatePkmn.id}/download`).buffer();
+      const res3 = await adminAgent.get(`/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(200);
       expect(res3.text).to.equal(rawPk6);
     });
     it('increases the download count with downloads by third parties', async () => {
-      const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      await otherAgent.get(`/p/${publicPkmn.id}/download`).buffer();
+      const initialCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
+      await otherAgent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
       await Promise.delay(500);
-      const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      const newCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
       expect(newCount).to.equal(initialCount + 1);
     });
     it('increases the download count with downloads by unauthenticated users', async () => {
-      const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      await noAuthAgent.get(`/p/${publicPkmn.id}/download`).buffer();
+      const initialCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
+      await noAuthAgent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
       await Promise.delay(500);
-      const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      const newCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
       expect(newCount).to.equal(initialCount + 1);
     });
     it("does not increase the download count with downloads by a pokemon's owner", async () => {
-      const initialCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      await agent.get(`/p/${publicPkmn.id}/download`).buffer();
+      const initialCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
+      await agent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
       await Promise.delay(500);
-      const newCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
+      const newCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
       expect(newCount).to.equal(initialCount);
     });
     it('increases the download count on admin downloads, only for public pokemon', async () => {
-      const initialPublicCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      const initialviewableCount = (await agent.get(`/p/${viewablePkmn.id}`)).body.downloadCount;
-      const initialPrivateCount = (await agent.get(`/p/${privatePkmn.id}`)).body.downloadCount;
-      await adminAgent.get(`/p/${publicPkmn.id}/download`).buffer();
-      await adminAgent.get(`/p/${viewablePkmn.id}/download`).buffer();
-      await adminAgent.get(`/p/${privatePkmn.id}/download`).buffer();
+      const initialPublicCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
+      const initialviewableCount = (
+        await agent.get(`/pokemon/${viewablePkmn.id}`)
+      ).body.downloadCount;
+      const initialPrivateCount = (
+        await agent.get(`/pokemon/${privatePkmn.id}`)
+      ).body.downloadCount;
+      await adminAgent.get(`/pokemon/${publicPkmn.id}/pk6`).buffer();
+      await adminAgent.get(`/pokemon/${viewablePkmn.id}/pk6`).buffer();
+      await adminAgent.get(`/pokemon/${privatePkmn.id}/pk6`).buffer();
       await Promise.delay(500);
-      const finalPublicCount = (await agent.get(`/p/${publicPkmn.id}`)).body.downloadCount;
-      const finalviewableCount = (await agent.get(`/p/${viewablePkmn.id}`)).body.downloadCount;
-      const finalPrivateCount = (await agent.get(`/p/${privatePkmn.id}`)).body.downloadCount;
+      const finalPublicCount = (await agent.get(`/pokemon/${publicPkmn.id}`)).body.downloadCount;
+      const finalviewableCount = (
+        await agent.get(`/pokemon/${viewablePkmn.id}`)
+      ).body.downloadCount;
+      const finalPrivateCount = (await agent.get(`/pokemon/${privatePkmn.id}`)).body.downloadCount;
       expect(finalPublicCount).to.equal(initialPublicCount + 1);
       expect(finalviewableCount).to.equal(initialviewableCount);
       expect(finalPrivateCount).to.equal(initialPrivateCount);
@@ -664,158 +672,162 @@ describe('PokemonController', () => {
     beforeEach(async () => {
       box1 = (await agent.post('/box').send({name: 'Shoebox'})).body;
       box2 = (await agent.post('/box').send({name: 'Lunchbox'})).body;
-      pkmn = (await agent.post('/uploadpk6')
+      pkmn = (await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box1.id)).body;
-      pkmn2 = (await agent.post('/uploadpk6')
+      pkmn2 = (await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box1.id)).body;
-      pkmn3 = (await agent.post('/uploadpk6')
+      pkmn3 = (await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box1.id)).body;
-      pkmn4 = (await agent.post('/uploadpk6')
+      pkmn4 = (await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box2.id)).body;
-      pkmn5 = (await agent.post('/uploadpk6')
+      pkmn5 = (await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box2.id)).body;
-      pkmn6 = (await agent.post('/uploadpk6')
+      pkmn6 = (await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', box2.id)).body;
       someoneElsesBox = (await otherAgent.post('/box').send({name: 'Mailbox'})).body;
-      someoneElsesPkmn = (await otherAgent.post('/uploadpk6')
+      someoneElsesPkmn = (await otherAgent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', someoneElsesBox.id)).body;
       adminBox = (await adminAgent.post('/box').send({name: 'Icebox'})).body;
-      adminPkmn = (await adminAgent.post('/uploadpk6')
+      adminPkmn = (await adminAgent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('box', adminBox.id)).body;
     });
     it('allows a user to move their own pokemon to a different box', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      const res = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box2.id});
       expect(res.statusCode).to.equal(200);
-      expect((await agent.get(`/p/${pkmn.id}`)).body.box).to.equal(box2.id);
-      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      expect((await agent.get(`/pokemon/${pkmn.id}`)).body.box).to.equal(box2.id);
+      const updatedBox1 = (await agent.get(`/box/${box1.id}`)).body;
       expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
-      const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
+      const updatedBox2 = (await agent.get(`/box/${box2.id}`)).body;
       expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn4.id, pkmn5.id, pkmn6.id, pkmn.id]);
       expect(+new Date(updatedBox2.updatedAt)).to.be.above(+new Date(box2.updatedAt));
     });
     it('allows an index to be specified for the pokemon within the new box', async () => {
-      const res = await agent.post(`/p/${pkmn2.id}/move`).send({box: box2.id, index: 1});
+      const res = await agent.post(`/pokemon/${pkmn2.id}/move`).send({box: box2.id, index: 1});
       expect(res.statusCode).to.equal(200);
-      expect((await agent.get(`/p/${pkmn2.id}`)).body.box).to.equal(box2.id);
-      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      expect((await agent.get(`/pokemon/${pkmn2.id}`)).body.box).to.equal(box2.id);
+      const updatedBox1 = (await agent.get(`/box/${box1.id}`)).body;
       expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn.id, pkmn3.id]);
-      const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
+      const updatedBox2 = (await agent.get(`/box/${box2.id}`)).body;
       expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn4.id, pkmn2.id, pkmn5.id, pkmn6.id]);
     });
     it('allows a pokemon to be relocated within its original box', async () => {
-      const res = await agent.post(`/p/${pkmn3.id}/move`).send({box: box1.id, index: 1});
+      const res = await agent.post(`/pokemon/${pkmn3.id}/move`).send({box: box1.id, index: 1});
       expect(res.statusCode).to.equal(200);
-      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
+      const updatedBox1 = (await agent.get(`/box/${box1.id}`)).body;
       expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn.id, pkmn3.id, pkmn2.id]);
     });
     it('allows a pokemon to be moved to a later slot in its own box', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 1});
+      const res = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box1.id, index: 1});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box1.id}`);
+      const res2 = await agent.get(`/box/${box1.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmn2.id, pkmn.id, pkmn3.id]);
 
-      const res3 = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 2});
+      const res3 = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box1.id, index: 2});
       expect(res3.statusCode).to.equal(200);
-      const res4 = await agent.get(`/b/${box1.id}`);
+      const res4 = await agent.get(`/box/${box1.id}`);
       expect(res4.statusCode).to.equal(200);
       expect(_.map(res4.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id, pkmn.id]);
     });
     it('defaults to the last slot of the box if an index is not provided', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id});
+      const res = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box1.id});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box1.id}`);
+      const res2 = await agent.get(`/box/${box1.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id, pkmn.id]);
     });
     it('returns a 400 error if the length is out of range due to offsetting', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 3});
+      const res = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box1.id, index: 3});
       expect(res.statusCode).to.equal(400);
-      const res2 = await agent.get(`/b/${box1.id}`);
+      const res2 = await agent.get(`/box/${box1.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id]);
     });
     it('allows index to equal the box length if the pkmn is moved to a different box', async () => {
-      const res = await agent.post(`/p/${pkmn4.id}/move`).send({box: box1.id, index: 3});
+      const res = await agent.post(`/pokemon/${pkmn4.id}/move`).send({box: box1.id, index: 3});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box1.id}`);
+      const res2 = await agent.get(`/box/${box1.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id, pkmn4.id]);
     });
     it('does not take deleted IDs into account when moving by index', async () => {
-      const res = await agent.del(`/p/${pkmn2.id}`);
+      const res = await agent.del(`/pokemon/${pkmn2.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.get(`/b/${box1.id}`);
+      const res2 = await agent.get(`/box/${box1.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn3.id]);
-      const res3 = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 1});
+      const res3 = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box1.id, index: 1});
       expect(res3.statusCode).to.equal(200);
-      const res4 = await agent.get(`/b/${box1.id}`);
+      const res4 = await agent.get(`/box/${box1.id}`);
       expect(res4.statusCode).to.equal(200);
       expect(_.map(res4.body.contents, 'id')).to.eql([pkmn3.id, pkmn.id]);
     });
     it('returns a 400 error if the provided index is too large due to deletion', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box1.id, index: 2});
+      const res = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box1.id, index: 2});
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/b/${box1.id}`);
+      const res2 = await agent.get(`/box/${box1.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(_.map(res2.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id, pkmn.id]);
-      const res3 = await agent.del(`/p/${pkmn.id}`);
+      const res3 = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res3.statusCode).to.equal(202);
-      const res4 = await agent.get(`/b/${box1.id}`);
+      const res4 = await agent.get(`/box/${box1.id}`);
       expect(res4.statusCode).to.equal(200);
       expect(_.map(res4.body.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
-      const res5 = await agent.post(`/p/${pkmn2.id}/move`).send({box: box1.id, index: 2});
+      const res5 = await agent.post(`/pokemon/${pkmn2.id}/move`).send({box: box1.id, index: 2});
       expect(res5.statusCode).to.equal(400);
     });
     it("does not allow a third party to move someone's else pokemon", async () => {
-      const res = await otherAgent.post(`/p/${pkmn.id}/move`).send({box: someoneElsesBox.id});
+      const res = await otherAgent.post(`/pokemon/${pkmn.id}/move`).send({box: someoneElsesBox.id});
       expect(res.statusCode).to.equal(403);
-      const res2 = await otherAgent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      const res2 = await otherAgent.post(`/pokemon/${pkmn.id}/move`).send({box: box2.id});
       expect(res2.statusCode).to.equal(403);
     });
     it("does not allow a third party to move their pokemon into someone else's box", async () => {
-      const res = await otherAgent.post(`/p/${someoneElsesPkmn.id}/move`).send({box: box1.id});
+      const res = await otherAgent.post(`/pokemon/${someoneElsesPkmn.id}/move`).send({
+        box: box1.id
+      });
       expect(res.statusCode).to.equal(403);
     });
     it("allows an admin to move someone else's pokemon to another one of their boxes", async () => {
-      const res = await adminAgent.post(`/p/${pkmn.id}/move`).send({box: box2.id, index: 0});
+      const res = await adminAgent.post(`/pokemon/${pkmn.id}/move`).send({box: box2.id, index: 0});
       expect(res.statusCode).to.equal(200);
-      const updatedBox1 = (await agent.get(`/b/${box1.id}`)).body;
-      const updatedBox2 = (await agent.get(`/b/${box2.id}`)).body;
+      const updatedBox1 = (await agent.get(`/box/${box1.id}`)).body;
+      const updatedBox2 = (await agent.get(`/box/${box2.id}`)).body;
       expect(_.map(updatedBox1.contents, 'id')).to.eql([pkmn2.id, pkmn3.id]);
       expect(_.map(updatedBox2.contents, 'id')).to.eql([pkmn.id, pkmn4.id, pkmn5.id, pkmn6.id]);
-      const updatedPkmn = (await agent.get(`/p/${pkmn.id}`)).body;
+      const updatedPkmn = (await agent.get(`/pokemon/${pkmn.id}`)).body;
       expect(updatedPkmn.box).to.equal(box2.id);
     });
     it("does not allow an admin to move one user's pokemon to a different user's box", async () => {
-      const res = await adminAgent.post(`/p/${pkmn.id}/move`).send({box: someoneElsesBox.id});
+      const res = await adminAgent.post(`/pokemon/${pkmn.id}/move`).send({box: someoneElsesBox.id});
       expect(res.statusCode).to.equal(403);
     });
     it("does not allow an admin to move their own pokemon to someone else's box", async () => {
-      const res = await adminAgent.post(`/p/${adminPkmn.id}/move`).send({box: box2.id});
+      const res = await adminAgent.post(`/pokemon/${adminPkmn.id}/move`).send({box: box2.id});
       expect(res.statusCode).to.equal(403);
     });
     it("does not allow an admin to move someone else's pokemon into the admin's box", async () => {
-      const res = await adminAgent.post(`/p/${pkmn.id}/move`).send({box: adminBox.id});
+      const res = await adminAgent.post(`/pokemon/${pkmn.id}/move`).send({box: adminBox.id});
       expect(res.statusCode).to.equal(403);
     });
     it('returns a 404 error if an invalid pokemon ID is included', async () => {
-      expect((await agent.post('/p/aaa/move').send({box: box2.id})).statusCode).to.equal(404);
+      expect((await agent.post('/pokemon/aaa/move').send({box: box2.id})).statusCode).to.equal(404);
     });
     it('returns a 404 error if an invalid box ID is included', async () => {
-      expect((await agent.post(`/p/${pkmn.id}/move`).send({box: 'a'})).statusCode).to.equal(404);
+      expect((
+        await agent.post(`/pokemon/${pkmn.id}/move`).send({box: 'a'})
+      ).statusCode).to.equal(404);
     });
     it('returns a 400 error if no box ID is included', async () => {
-      expect((await agent.post(`/p/${pkmn.id}/move`)).statusCode).to.equal(400);
+      expect((await agent.post(`/pokemon/${pkmn.id}/move`)).statusCode).to.equal(400);
     });
     it('returns a 400 error if the provided index is invalid', () => {
       const invalidIndices = [
@@ -827,9 +839,9 @@ describe('PokemonController', () => {
         null // not an integer
       ];
       return Promise.each(invalidIndices, async index => {
-        const res = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id, index});
-        const res2 = await agent.get(`/b/${box1.id}`);
-        const res3 = await agent.get(`/b/${box2.id}`);
+        const res = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box2.id, index});
+        const res2 = await agent.get(`/box/${box1.id}`);
+        const res3 = await agent.get(`/box/${box2.id}`);
         expect(res2.statusCode).to.equal(200);
         expect(res3.statusCode).to.equal(200);
         expect(_.map(res2.body.contents, 'id')).to.eql([pkmn.id, pkmn2.id, pkmn3.id]);
@@ -838,22 +850,22 @@ describe('PokemonController', () => {
       });
     });
     it("does not allow a pokemon to be moved if it's marked for deletion", async () => {
-      const res = await agent.del(`/p/${pkmn.id}`);
+      const res = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      const res2 = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box2.id});
       expect(res2.statusCode).to.equal(404);
     });
     it("does not allow a pokemon to be moved to a box that's marked for deletion", async () => {
-      const res = await agent.del(`/b/${box2.id}`);
+      const res = await agent.del(`/box/${box2.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.post(`/p/${pkmn.id}/move`).send({box: box2.id});
+      const res2 = await agent.post(`/pokemon/${pkmn.id}/move`).send({box: box2.id});
       expect(res2.statusCode).to.equal(404);
     });
   });
   describe("editing a pokemon's visibility and notes", () => {
     let pkmn;
     beforeEach(async () => {
-      const res = await agent.post('/uploadpk6')
+      const res = await agent.post('/pokemon')
         .attach('pk6', `${__dirname}/pkmn1.pk6`)
         .field('visibility', 'viewable')
         .field('box', generalPurposeBox);
@@ -861,49 +873,49 @@ describe('PokemonController', () => {
       pkmn = res.body;
     });
     it("allows a user to edit their pokemon's visibility", async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({
         visibility: 'private',
         publicNotes: 'public things',
         privateNotes: 'private things'
       });
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.visibility).to.equal('private');
       expect(res2.body.publicNotes).to.equal('public things');
       expect(res2.body.privateNotes).to.equal('private things');
     });
     it('returns a 400 error if no valid parameters are specified', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({owner: 'AAAAA'});
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({owner: 'AAAAA'});
       expect(res.statusCode).to.equal(400);
     });
     it('returns a 404 error if given an invalid pokemon id', async () => {
-      const res = await agent.post('/p/invalidpokemonid/edit').send({visibility: 'private'});
+      const res = await agent.post('/pokemon/invalidpokemonid').send({visibility: 'private'});
       expect(res.statusCode).to.equal(404);
     });
     it("does not allow a user to edit another user's pokemon's visibility", async () => {
-      const res = await otherAgent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      const res = await otherAgent.post(`/pokemon/${pkmn.id}`).send({visibility: 'private'});
       expect(res.statusCode).to.equal(403);
     });
     it("allows an admin to edit a pokemon's info", async () => {
-      const res = await adminAgent.post(`/p/${pkmn.id}/edit`).send({
+      const res = await adminAgent.post(`/pokemon/${pkmn.id}`).send({
         visibility: 'private',
         publicNotes: 'foo'
       });
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.visibility).to.equal('private');
       expect(res2.body.publicNotes).to.equal('foo');
     });
     it('does not allow a deleted pokemon to be edited', async () => {
-      const res = await agent.del(`/p/${pkmn.id}`);
+      const res = await agent.del(`/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(202);
-      const res2 = await agent.post(`/p/${pkmn.id}/edit`).send({visibility: 'private'});
+      const res2 = await agent.post(`/pokemon/${pkmn.id}`).send({visibility: 'private'});
       expect(res2.statusCode).to.equal(404);
     });
     it('returns a 400 error if the given visibility is invalid', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({
         visibility: 'foo',
         publicNotes: 'bar',
         privateNotes: 'baz'
@@ -912,41 +924,45 @@ describe('PokemonController', () => {
       expect(res.body).to.equal('Invalid Pokémon visibility');
     });
     it('returns a 400 error if the given public notes are too long', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({publicNotes: 'A'.repeat(3000)});
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({
+        publicNotes: 'A'.repeat(3000)
+      });
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Public notes too long');
     });
     it('returns a 400 error if the given private notes are too long', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({privateNotes: 'A'.repeat(3000)});
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({
+        privateNotes: 'A'.repeat(3000)
+      });
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Private notes too long');
     });
     it('returns a 400 error if the given public notes are invalid', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({publicNotes: 5});
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({publicNotes: 5});
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Invalid publicNotes');
     });
     it('returns a 400 error if the given private notes are invalid', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({privateNotes: 5});
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({privateNotes: 5});
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Invalid privateNotes');
     });
     it('does not modify other fields if only some fields are specified', async () => {
-      const res = await agent.post(`/p/${pkmn.id}/edit`).send({
+      const res = await agent.post(`/pokemon/${pkmn.id}`).send({
         visibility: 'private',
         publicNotes: 'foo',
         privateNotes: 'bar'
       });
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get(`/p/${pkmn.id}`);
+      const res2 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(200);
       expect(res2.body.visibility).to.equal('private');
       expect(res2.body.publicNotes).to.equal('foo');
       expect(res2.body.privateNotes).to.equal('bar');
 
-      const res3 = await agent.post(`/p/${pkmn.id}/edit`).send({publicNotes: 'baz'});
+      const res3 = await agent.post(`/pokemon/${pkmn.id}`).send({publicNotes: 'baz'});
       expect(res3.statusCode).to.equal(200);
-      const res4 = await agent.get(`/p/${pkmn.id}`);
+      const res4 = await agent.get(`/pokemon/${pkmn.id}`);
       expect(res4.statusCode).to.equal(200);
       expect(res4.body.visibility).to.equal('private');
       expect(res4.body.publicNotes).to.equal('baz');

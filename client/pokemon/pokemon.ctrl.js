@@ -180,7 +180,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   };
 
   this.fetch = () => {
-    return io.socket.getAsync(`/p/${this.id}`).then(data => {
+    return io.socket.getAsync(`/pokemon/${this.id}`).then(data => {
       Object.assign(this.data, data);
     }).then(this.parseAllProps).catch(err => {
       this.errorStatusCode = err.statusCode;
@@ -206,7 +206,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((editedData) => {
-      return io.socket.postAsync(`/p/${this.id}/edit`, editedData).then(() => {
+      return io.socket.postAsync(`/pokemon/${this.id}`, editedData).then(() => {
         Object.assign(this.data, editedData);
         $mdToast.show(
           $mdToast.simple()
@@ -239,7 +239,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   };
 
   this.delete = () => {
-    return io.socket.deleteAsync(`/p/${this.id}`).then(() => {
+    return io.socket.deleteAsync(`/pokemon/${this.id}`).then(() => {
       this.isDeleted = true;
     }).then(() => {
       const toast = $mdToast.simple()
@@ -258,7 +258,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   };
 
   this.undelete = () => {
-    return io.socket.postAsync(`/p/${this.id}/undelete`).then(() => {
+    return io.socket.postAsync(`/pokemon/${this.id}/undelete`).then(() => {
       this.isDeleted = false;
     }).then(() => {
       $mdToast.show(
@@ -273,7 +273,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   ** index (optional): the index where this pokemon should be inserted in the new box.
   ** (Defaults to the last spot in the box.) */
   this.move = ({box, index}) => {
-    return io.socket.postAsync(`/p/${this.id}/move`, {box, index}).then(() => {
+    return io.socket.postAsync(`/pokemon/${this.id}/move`, {box, index}).then(() => {
       $scope.$apply();
     }).catch(errorHandler);
   };
