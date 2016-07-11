@@ -27,7 +27,7 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     })
-    .then((boxInfo) => io.socket.postAsync('/box', boxInfo)))
+    .then((boxInfo) => io.socket.postAsync('/api/v1/box', boxInfo)))
     .then(res => $scope.$apply(this.boxes.push(res)))
     .catch(errorHandler);
   };
@@ -50,7 +50,7 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
     })).map(Promise.props)
       .map(result => ({data: result.data, box: result.box, visibility: result.visibility}))
       .then(files => chunk(files, maxMultiUploadSize))
-      .mapSeries(files => io.socket.postAsync('/pk6/multi', {files}))
+      .mapSeries(files => io.socket.postAsync('/api/v1/pokemon/multi', {files}))
       .reduce((acc, nextGroup) => acc.concat(nextGroup), [])
       .tap(lines => {
         const successfulUploads = lines.filter(line => line.success);

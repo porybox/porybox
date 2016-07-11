@@ -31,16 +31,16 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').replace('\'', '').toLowerCase()
       : null);
 
-    const shinyStringPart = this.data.isShiny ? 'shiny' : 'regular';
-    const genderDiffPart = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
+    const shinyString = this.data.isShiny ? 'shiny' : 'regular';
+    const genderDiff = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
       ? '-f'
       : '';
     const formSuffix = this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1
       ? '-' + this.data.formId
       : '';
 
-    this.spriteUrl = `pokemon/${shinyStringPart}/${this.data.dexNo}${formSuffix}${genderDiffPart}`;
-    this.spriteClass = `spr-${shinyStringPart} spr-box-${this.data.dexNo}${formSuffix}${genderDiffPart}`;
+    this.spriteUrl = `pokemon/${shinyString}/${this.data.dexNo}${formSuffix}${genderDiff}`;
+    this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${formSuffix}${genderDiff}`;
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
@@ -180,7 +180,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   };
 
   this.fetch = () => {
-    return io.socket.getAsync(`/p/${this.id}`).then(data => {
+    return io.socket.getAsync(`/api/v1/pokemon/${this.id}`).then(data => {
       Object.assign(this.data, data);
     }).then(this.parseAllProps).catch(err => {
       this.errorStatusCode = err.statusCode;
@@ -206,7 +206,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((editedData) => {
-      return io.socket.postAsync(`/p/${this.id}/edit`, editedData).then(() => {
+      return io.socket.patchAsync(`/api/v1/pokemon/${this.id}`, editedData).then(() => {
         Object.assign(this.data, editedData);
         $mdToast.show(
           $mdToast.simple()
@@ -239,7 +239,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   };
 
   this.delete = () => {
-    return io.socket.deleteAsync(`/p/${this.id}`).then(() => {
+    return io.socket.deleteAsync(`/pokemon/${this.id}`).then(() => {
       this.isDeleted = true;
     }).then(() => {
       const toast = $mdToast.simple()
@@ -258,7 +258,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   };
 
   this.undelete = () => {
-    return io.socket.postAsync(`/p/${this.id}/undelete`).then(() => {
+    return io.socket.postAsync(`/api/v1/pokemon/${this.id}/undelete`).then(() => {
       this.isDeleted = false;
     }).then(() => {
       $mdToast.show(
@@ -273,7 +273,7 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
   ** index (optional): the index where this pokemon should be inserted in the new box.
   ** (Defaults to the last spot in the box.) */
   this.move = ({box, index}) => {
-    return io.socket.postAsync(`/p/${this.id}/move`, {box, index}).then(() => {
+    return io.socket.postAsync(`/api/v1/pokemon/${this.id}/move`, {box, index}).then(() => {
       $scope.$apply();
     }).catch(errorHandler);
   };
