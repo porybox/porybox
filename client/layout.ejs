@@ -36,11 +36,11 @@
     <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
     <div id="app-version"><%= VERSION %></div>
     <div id="user-data" ng-non-bindable>
-      <%= JSON.stringify({
+      <%= _.escape(JSON.stringify({
         boxes: typeof boxes !== 'undefined' ? boxes : [],
         user: typeof user !== 'undefined' ? user : null,
         prefs: typeof prefs !== 'undefined' ? prefs : {}
-      }) %>
+      })) %>
     </div>
     <script src="<%=
       (sails.config.environment === 'development' ? '/bundle.js' : '/bundle.min.js') + '?v=' + VERSION
