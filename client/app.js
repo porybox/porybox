@@ -42,7 +42,6 @@ const porybox = ng.module('porybox', [
 ]);
 
 porybox.controller('MainCtrl', function () {
-  this.boxes = [];
   this.selected = {};
   Object.assign(this, userData);
   // TODO: Figure out a better way to do this
@@ -56,23 +55,6 @@ porybox.controller('MainCtrl', function () {
   }
 });
 
-porybox.config(['$mdThemingProvider','$routeProvider',function(
-  $mdThemingProvider,
-  $routeProvider
-) {
-  $mdThemingProvider.theme('default')
-    .primaryPalette('light-blue', {
-      'default': '800',
-      'hue-1': '600',
-      'hue-2': '900'
-    })
-    .accentPalette('pink', {
-      'default': 'A100'
-    });
-
-  $routeProvider.otherwise({ redirectTo: '/' });
-}]);
-
 // Add a ?v=1.0.0 (e.g.) query to all requests for templates
 // This avoids browser cache issues when the version number is bumped
 porybox.factory('porybox.versionQuery', ['$templateCache', $templateCache => ({request (config) {
@@ -82,6 +64,21 @@ porybox.factory('porybox.versionQuery', ['$templateCache', $templateCache => ({r
   }
   return config;
 }})]);
+
+porybox.config(['$mdThemingProvider', $mdThemingProvider => {
+  $mdThemingProvider.theme('default')
+    .primaryPalette('light-blue', {
+      'default': '800',
+      'hue-1': '600',
+      'hue-2': '900'
+    }).accentPalette('pink', {
+      'default': 'A100'
+    });
+}]);
+
+porybox.config(['$routeProvider', $routeProvider => {
+  $routeProvider.otherwise({redirectTo: '/'});
+}]);
 
 porybox.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.defaults.headers.common['x-csrf-token'] = CSRF_TOKEN;
