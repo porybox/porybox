@@ -11,12 +11,27 @@ const genderDifferences = new Set([
   457, 459, 460, 461, 464, 465, 473, 521, 592, 593, 668, 678
 ]);
 
-module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToast, errorHandler) {
-  this.data = this.data || {};
-  this.id = $routeParams.pokemonid || this.data.id;
-  this.errorStatusCode = null;
-  this.isDeleted = false;
-  this.parseBoxViewProps = () => {
+module.exports = class Pokemon {
+  constructor ($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToast, errorHandler) {
+    this.$scope = $scope;
+    this.io = io;
+    this.$mdMedia = $mdMedia;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.errorHandler = errorHandler;
+    this.data = this.data || {};
+    this.id = $routeParams.pokemonid || this.data.id;
+    this.errorStatusCode = null;
+    this.isDeleted = false;
+  }
+  fetch () {
+    return this.io.socket.getAsync(`/api/v1/pokemon/${this.id}`).then(data => {
+      Object.assign(this.data, data);
+    }).then(() => this.parseAllProps()).catch(err => {
+      this.errorStatusCode = err.statusCode;
+    }).then(() => this.$scope.$apply());
+  }
+  parseBoxViewProps () {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
     this.paddedTid = this.data.tid.toString().padStart(5, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
@@ -58,8 +73,8 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
 
     this.speciesWithForme = this.data.speciesName +
       `${this.data.formName ? '-' + this.data.formName : ''}`;
-  };
-  this.parseAllProps = () => {
+  }
+  parseAllProps () {
     this.parseBoxViewProps();
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
     this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
@@ -177,25 +192,16 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
 
     this.hasFullData = true;
     return this;
-  };
-
-  this.fetch = () => {
-    return io.socket.getAsync(`/api/v1/pokemon/${this.id}`).then(data => {
-      Object.assign(this.data, data);
-    }).then(this.parseAllProps).catch(err => {
-      this.errorStatusCode = err.statusCode;
-    }).then(() => $scope.$apply());
-  };
-
-  // (the visibility probably won't need to get passed as a parameter when there's a view for it)
-  this.edit = (event) => {
-    const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-    $scope.$watch(function() {
-      return $mdMedia('xs') || $mdMedia('sm');
-    }, function(wantsFullScreen) {
-      $scope.customFullscreen = (wantsFullScreen === true);
+  }
+  edit (event) {
+    const useFullScreen
+      = (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
+    this.$scope.$watch(() => {
+      return this.$mdMedia('xs') || this.$mdMedia('sm');
+    }, wantsFullScreen => {
+      this.$scope.customFullscreen = (wantsFullScreen === true);
     });
-    return Promise.resolve($mdDialog.show({
+    return Promise.resolve(this.$mdDialog.show({
       locals: {data: this.data},
       bindToController: true,
       controller: ['$mdDialog', editCtrl],
@@ -206,57 +212,54 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((editedData) => {
-      return io.socket.patchAsync(`/api/v1/pokemon/${this.id}`, editedData).then(() => {
+      return this.io.socket.patchAsync(`/api/v1/pokemon/${this.id}`, editedData).then(() => {
         Object.assign(this.data, editedData);
-        $mdToast.show(
-          $mdToast.simple()
+        this.$mdToast.show(
+          this.$mdToast.simple()
             .textContent(this.parsedNickname + ' edited successfully')
             .position('bottom right'));
-        $scope.$apply();
-        $scope.$apply();
+        this.$scope.$apply();
+        this.$scope.$apply();
       });
-    })).catch(errorHandler);
-  };
-
-  this.delete = () => {
-    return io.socket.deleteAsync(`/pokemon/${this.id}`).then(() => {
+    })).catch(this.errorHandler);
+  }
+  delete () {
+    return this.io.socket.deleteAsync(`/api/v1/pokemon/${this.id}`).then(() => {
       this.isDeleted = true;
     }).then(() => {
-      const toast = $mdToast.simple()
+      const toast = this.$mdToast.simple()
             .hideDelay(10000)
             .textContent(this.parsedNickname + ' deleted')
             .action('Undo')
             .highlightAction(true)
             .position('bottom right');
-      $mdToast.show(toast).then((response) => {
+      this.$mdToast.show(toast).then((response) => {
         if ( response === 'ok' ) {
           this.undelete();
         }
       });
-      $scope.$apply();
-    }).catch(errorHandler);
-  };
-
-  this.undelete = () => {
-    return io.socket.postAsync(`/api/v1/pokemon/${this.id}/undelete`).then(() => {
-      this.isDeleted = false;
-    }).then(() => {
-      $mdToast.show(
-        $mdToast.simple()
-          .textContent(this.parsedNickname + ' undeleted.')
-          .position('top right'));
-      $scope.$apply();
-    }).catch(errorHandler);
-  };
-
+      this.$scope.$apply();
+    }).catch(this.errorHandler);
+  }
   /* box: the ID of the box to move to (can be the same as the current box)
   ** index (optional): the index where this pokemon should be inserted in the new box.
   ** (Defaults to the last spot in the box.) */
-  this.move = ({box, index}) => {
-    return io.socket.postAsync(`/api/v1/pokemon/${this.id}/move`, {box, index}).then(() => {
-      $scope.$apply();
-    }).catch(errorHandler);
-  };
+  move ({box, index}) {
+    return this.io.socket.postAsync(`/api/v1/pokemon/${this.id}/move`, {box, index}).then(() => {
+      this.$scope.$apply();
+    }).catch(this.errorHandler);
+  }
+  undelete () {
+    return this.io.socket.postAsync(`/api/v1/pokemon/${this.id}/undelete`).then(() => {
+      this.isDeleted = false;
+    }).then(() => {
+      this.$mdToast.show(
+        this.$mdToast.simple()
+          .textContent(this.parsedNickname + ' undeleted.')
+          .position('top right'));
+      this.$scope.$apply();
+    }).catch(this.errorHandler);
+  }
 };
 
 function parseDate(timestamp) {
