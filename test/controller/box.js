@@ -1,15 +1,15 @@
 'use strict';
-const supertest = require('supertest-as-promised');
 const expect = require('chai').use(require('dirty-chai')).expect;
 const _ = require('lodash');
 const Promise = require('bluebird');
+const testHelpers = require('../test-helpers');
 describe('BoxController', () => {
   let agent, otherAgent, noAuthAgent, adminAgent;
   before(async () => {
-    agent = supertest.agent(sails.hooks.http.app);
-    otherAgent = supertest.agent(sails.hooks.http.app);
-    noAuthAgent = supertest.agent(sails.hooks.http.app);
-    adminAgent = supertest.agent(sails.hooks.http.app);
+    agent = await testHelpers.getAgent();
+    otherAgent = await testHelpers.getAgent();
+    noAuthAgent = await testHelpers.getAgent();
+    adminAgent = await testHelpers.getAgent();
     const res = await agent.post('/api/v1/auth/local/register').send({
       name: 'boxtester',
       password: '********',

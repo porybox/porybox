@@ -1,17 +1,17 @@
 'use strict';
-const supertest = require('supertest-as-promised');
 const expect = require('chai').use(require('dirty-chai')).expect;
+const testHelpers = require('../test-helpers');
 describe('UserController', () => {
   let agent, adminAgent, noAuthAgent, generalPurposeBox;
   before(async () => {
-    agent = supertest.agent(sails.hooks.http.app);
+    agent = await testHelpers.getAgent();
     const res = await agent.post('/api/v1/auth/local/register').send({
       name: 'usertester',
       password: '********',
       email: 'usertester@usertesting.com'
     });
     expect(res.statusCode).to.equal(200);
-    adminAgent = supertest.agent(sails.hooks.http.app);
+    adminAgent = await testHelpers.getAgent();
     const res2 = await adminAgent.post('/api/v1/auth/local/register').send({
       name: 'IM_AN_ADMIN_FEAR_ME',
       password: '***********************************************************************',
@@ -19,7 +19,7 @@ describe('UserController', () => {
     });
     expect(res2.statusCode).to.equal(200);
     await sails.models.user.update({name: 'IM_AN_ADMIN_FEAR_ME'}, {isAdmin: true});
-    noAuthAgent = supertest.agent(sails.hooks.http.app);
+    noAuthAgent = await testHelpers.getAgent();
 
     const res3 = await agent.post('/api/v1/box').send({name: 'Boxer'});
     expect(res3.statusCode).to.equal(201);
@@ -287,7 +287,7 @@ describe('UserController', () => {
   describe('deleting an account', () => {
     let deleteAgent;
     beforeEach(async () => {
-      deleteAgent = supertest.agent(sails.hooks.http.app);
+      deleteAgent = await testHelpers.getAgent();
       const uniqueUsername = `deleteTester${require('crypto').randomBytes(4).toString('hex')}`;
       const res = await deleteAgent.post('/api/v1/auth/local/register').send({
         name: uniqueUsername,
