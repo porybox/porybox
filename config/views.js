@@ -77,6 +77,10 @@ module.exports.views = {
 
   layout: 'layout',
 
+  locals: {
+    VERSION: require('../package').version
+  },
+
   /****************************************************************************
   *                                                                           *
   * Partials are simply top-level snippets you can leverage to reuse template *
