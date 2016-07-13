@@ -1,19 +1,18 @@
 'use strict';
-const supertest = require('supertest-as-promised');
 const expect = require('chai').use(require('dirty-chai')).expect;
-require('babel-polyfill');
+const testHelpers = require('../test-helpers');
 
 describe('AuthController', function() {
   let agent;
   let otherAgent;
   let invalidAgent;
-  before(() => {
-    agent = supertest.agent(sails.hooks.http.app);
+  before(async () => {
+    agent = await testHelpers.getAgent();
   });
 
-  beforeEach(() => {
-    otherAgent = supertest.agent(sails.hooks.http.app);
-    invalidAgent = supertest.agent(sails.hooks.http.app);
+  beforeEach(async () => {
+    otherAgent = await testHelpers.getAgent();
+    invalidAgent = await testHelpers.getAgent();
   });
 
   describe('#login()', function () {
@@ -29,7 +28,7 @@ describe('AuthController', function() {
     });
 
     it('creates a box for the user after registering an account', async () => {
-      const firstBoxAgent = supertest.agent(sails.hooks.http.app);
+      const firstBoxAgent = await testHelpers.getAgent();
       const res = await firstBoxAgent.post('/api/v1/auth/local/register').send({
         name: 'firstBoxTester',
         password: 'f1rstB0xTest3r',
@@ -152,9 +151,9 @@ describe('AuthController', function() {
     let passAgent, passAgent2, passAgent3, username;
     beforeEach(async () => {
       username = `USERNAME_${require('crypto').randomBytes(4).toString('hex')}`;
-      passAgent = supertest.agent(sails.hooks.http.app);
-      passAgent2 = supertest.agent(sails.hooks.http.app);
-      passAgent3 = supertest.agent(sails.hooks.http.app);
+      passAgent = await testHelpers.getAgent();
+      passAgent2 = await testHelpers.getAgent();
+      passAgent3 = await testHelpers.getAgent();
       const res = await passAgent.post('/api/v1/auth/local/register').send({
         name: username,
         password: 'Correct Horse Battery Staple',
@@ -248,7 +247,7 @@ describe('AuthController', function() {
   describe('logging out', () => {
     let logoutAgent;
     beforeEach(async () => {
-      logoutAgent = supertest.agent(sails.hooks.http.app);
+      logoutAgent = await testHelpers.getAgent();
       const res = await logoutAgent.post('/api/v1/auth/local/register').send({
         name: 'logoutTester',
         password: "I can't think of any funny placeholder passwords right now",
