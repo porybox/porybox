@@ -24,7 +24,7 @@ describe('AuthController', function() {
         email: 'testuser1@gmail.com'
       });
       expect(res.statusCode).to.equal(200);
-      const res2 = await agent.get('/preferences');
+      const res2 = await agent.get('/me/preferences');
       expect(res2.statusCode).to.equal(200);
     });
 
@@ -126,7 +126,7 @@ describe('AuthController', function() {
         email: 'invalid3@porybox.com'
       });
       expect(res.statusCode).to.equal(200);
-      const res2 = await otherAgent.post('/deleteAccount').send({password: 'blahblahblah'});
+      const res2 = await otherAgent.del('/me').send({password: 'blahblahblah'});
       expect(res2.statusCode).to.equal(200);
       const res3 = await invalidAgent.post('/auth/local/register').send({
         name: 'CLAIMEDUSERNAME2',
@@ -261,7 +261,7 @@ describe('AuthController', function() {
       expect(res.statusCode).to.equal(200);
 
       // Do a request to make sure it doesn't work
-      const res2 = await logoutAgent.get('/boxes/mine');
+      const res2 = await logoutAgent.get('/me/boxes');
       expect(res2.statusCode).to.equal(403);
     });
   });

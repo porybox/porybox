@@ -98,47 +98,47 @@ describe('UserController', () => {
   });
   describe('preferences', () => {
     it("can get a user's preferences", async () => {
-      const res = await agent.get('/preferences');
+      const res = await agent.get('/me/preferences');
       expect(res.body.defaultBoxVisibility).to.equal('listed');
       expect(res.body.defaultPokemonVisibility).to.equal('viewable');
     });
     describe('modifying preferences', () => {
       it("can edit a user's preferences", async () => {
-        await agent.post('/preferences/edit').send({defaultBoxVisibility: 'unlisted'});
-        const newPrefs = (await agent.get('/preferences')).body;
+        await agent.post('/me/preferences').send({defaultBoxVisibility: 'unlisted'});
+        const newPrefs = (await agent.get('/me/preferences')).body;
         expect(newPrefs.defaultBoxVisibility).to.equal('unlisted');
-        await agent.post('/preferences/edit').send({defaultBoxVisibility: 'listed'});
-        const revertedPrefs = (await agent.get('/preferences')).body;
+        await agent.post('/me/preferences').send({defaultBoxVisibility: 'listed'});
+        const revertedPrefs = (await agent.get('/me/preferences')).body;
         expect(revertedPrefs.defaultBoxVisibility).to.equal('listed');
       });
       it('only allows users to change certain preference attributes', async () => {
         /* i.e. even though `user` is an attribute in the UserPreferences schema, the server
         shouldn't allow the user to change it. */
-        const res = await agent.post('/preferences/edit').send({user: 'someone_else'});
+        const res = await agent.post('/me/preferences').send({user: 'someone_else'});
         expect(res.statusCode).to.equal(400);
       });
       it('returns a 400 error when sent invalid preference values', async () => {
-        const res = await agent.post('/preferences/edit').send({defaultBoxVisibility: 'invalid'});
+        const res = await agent.post('/me/preferences').send({defaultBoxVisibility: 'invalid'});
         expect(res.statusCode).to.equal(400);
       });
     });
     describe('defaultBoxVisibility', () => {
       it('sets the default visibility of uploaded boxes', async () => {
-        await agent.post('/preferences/edit').send({defaultBoxVisibility: 'unlisted'});
+        await agent.post('/me/preferences').send({defaultBoxVisibility: 'unlisted'});
         const newBox = (await agent.post('/box').send({name: 'Lunchbox'})).body;
         expect(newBox.visibility).to.equal('unlisted');
-        await agent.post('/preferences/edit').send({defaultBoxVisibility: 'listed'});
+        await agent.post('/me/preferences').send({defaultBoxVisibility: 'listed'});
         const evenNewerBox = (await agent.post('/box').send({name: 'Chatterbox'})).body;
         expect(evenNewerBox.visibility).to.equal('listed');
       });
       it('can be overridden by specifying a visibility while uploading a box', async () => {
-        await agent.post('/preferences/edit').send({defaultBoxVisibility: 'unlisted'});
+        await agent.post('/me/preferences').send({defaultBoxVisibility: 'unlisted'});
         const newBox = (await agent.post('/box').send({
           name: 'Matchbox',
           visibility: 'listed'
         })).body;
         expect(newBox.visibility).to.equal('listed');
-        await agent.post('/preferences/edit').send({defaultBoxVisibility: 'listed'});
+        await agent.post('/me/preferences').send({defaultBoxVisibility: 'listed'});
         const evenNewerBox = (await agent.post('/box').send({
           name: 'Toolbox',
           visibility: 'unlisted'
@@ -148,29 +148,29 @@ describe('UserController', () => {
     });
     describe('defaultPokemonVisibility', () => {
       it('sets the default visibility of uploaded pokemon', async () => {
-        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'public'});
-        const res = await agent.post('/uploadpk6')
+        await agent.post('/me/preferences').send({defaultPokemonVisibility: 'public'});
+        const res = await agent.post('/pokemon')
           .attach('pk6', `${__dirname}/pkmn1.pk6`)
           .field('box', generalPurposeBox);
         expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('public');
-        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'viewable'});
-        const res2 = await agent.post('/uploadpk6')
+        await agent.post('/me/preferences').send({defaultPokemonVisibility: 'viewable'});
+        const res2 = await agent.post('/pokemon')
           .attach('pk6', `${__dirname}/pkmn1.pk6`)
           .field('box', generalPurposeBox);
         expect(res2.statusCode).to.equal(201);
         expect(res2.body.visibility).to.equal('viewable');
       });
       it('can be overridden by specifying a visibility while uploading a pokemon', async () => {
-        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'public'});
-        const res = await agent.post('/uploadpk6')
+        await agent.post('/me/preferences').send({defaultPokemonVisibility: 'public'});
+        const res = await agent.post('/pokemon')
           .field('visibility', 'viewable')
           .field('box', generalPurposeBox)
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('viewable');
-        await agent.post('/preferences/edit').send({defaultPokemonVisibility: 'viewable'});
-        const res2 = await agent.post('/uploadpk6')
+        await agent.post('/me/preferences').send({defaultPokemonVisibility: 'viewable'});
+        const res2 = await agent.post('/pokemon')
           .field('visibility', 'public')
           .field('box', generalPurposeBox)
           .attach('pk6', `${__dirname}/pkmn1.pk6`);
@@ -292,20 +292,20 @@ describe('UserController', () => {
       expect(res.statusCode).to.equal(200);
     });
     it('allows an account to be deleted if the correct password is provided', async () => {
-      const res = await deleteAgent.post('/deleteAccount').send({password: 'correct-password'});
+      const res = await deleteAgent.del('/me').send({password: 'correct-password'});
       expect(res.statusCode).to.equal(200);
     });
     it('does not allow an account to be deleted if an incorrect password is provided', async () => {
-      const res = await deleteAgent.post('/deleteAccount').send({password: 'incorrect-password'});
+      const res = await deleteAgent.del('/me').send({password: 'incorrect-password'});
       expect(res.statusCode).to.equal(403);
     });
     it("deletes all of a user's boxes when their account is deleted", async () => {
       const res = await deleteAgent.post('/box').send({name: 'My box', visibility: 'listed'});
       expect(res.statusCode).to.equal(201);
       const box = res.body;
-      expect((await agent.get(`/b/${box.id}`)).statusCode).to.equal(200);
-      await deleteAgent.post('/deleteAccount').send({password: 'correct-password'});
-      expect((await agent.get(`/b/${box.id}`)).statusCode).to.equal(404);
+      expect((await agent.get(`/box/${box.id}`)).statusCode).to.equal(200);
+      await deleteAgent.del('/me').send({password: 'correct-password'});
+      expect((await agent.get(`/box/${box.id}`)).statusCode).to.equal(404);
     });
   });
 });
