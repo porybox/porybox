@@ -9,12 +9,12 @@
       <md-content class="autoscroll">
         <form role="form" ng-submit="auth.register()">
           <md-input-container class="md-block">
-            <input type="text" name="name" ng-model="registerName">
-            <label>Username</label>
+            <input type="email" name="email" ng-model="registerEmail">
+            <label>Email (will not be made public)</label>
           </md-input-container>
           <md-input-container class="md-block">
-            <input type="email" name="email" ng-model="registerEmail">
-            <label>Email</label>
+            <input type="text" name="name" ng-model="registerName">
+            <label>Username</label>
           </md-input-container>
           <md-input-container class="md-block">
             <input type="password" name="password" ng-model="registerPassword">
@@ -26,7 +26,7 @@
             <md-button type="submit" class="md-raised">Sign up</md-button>
           </md-card-actions>
           <p class="md-body-1" style="text-align: center;">By registering, you agree to the Porybox <a href="/tos">terms of service</a>
-            and <a href="privacy-policy">privacy policy.</a></p>
+            and <a href="privacy-policy">privacy policy</a>.</p>
         </form>
       </md-content>
     </div>
