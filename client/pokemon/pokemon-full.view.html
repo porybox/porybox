@@ -198,7 +198,9 @@
                 <md-divider></md-divider>
                 <div>
                   <strong>Relearnable</strong>
-                  <div layout="row" layout-align="center start"><div flex="noshrink" ng-repeat="move in pokemon.eggMoves track by $index">{{move || '-'}}</span></div></div>
+                  <div layout="row" layout-align="center start" layout-wrap>
+                    <div flex="50" ng-repeat="move in pokemon.eggMoves track by $index">{{move || '-'}}</div>
+                  </div>
                 </div>
               </md-card-content>
             </md-card>
