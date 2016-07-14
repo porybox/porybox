@@ -46,10 +46,6 @@
           </md-menu-item>
         </md-menu-content>
       </md-menu>
-      <md-button class="md-icon-button" aria-label="Upload info" ng-click="pokemon.uploadInfo()">
-        <md-tooltip md-direction="left">Upload info</md-tooltip>
-        <i class="material-icons">info</i>
-      </md-button>
     </div>
   </md-toolbar>
 
@@ -393,6 +389,29 @@
       </md-card>
     </md-tab>
 
+    <md-tab label="Upload Info">
+      <md-card ng-show="pokemon.hasFullData">
+        <md-card-header><span class="card-headline">Owner</span></md-card-header>
+        <md-card-content>
+            <div><a class="md-body-1" href="/#/user/{{pokemon.data.owner}}">{{pokemon.data.owner}}</a></div>
+        </md-card-content>
+      </md-card>
+
+      <md-card ng-show="pokemon.hasFullData">
+        <md-card-header><span class="card-headline">Public Notes</span></md-card-header>
+        <md-card-content>
+          <div>{{pokemon.data.publicNotes}}</div>
+        </md-card-content>
+      </md-card>
+
+      <md-card ng-show="pokemon.hasFullData" ng-if="pokemon.data.owner === main.user.name || main.user.isAdmin">
+        <md-card-header><span class="card-headline">Private Notes</span></md-card-header>
+        <md-card-content>
+          <div>{{pokemon.data.privateNotes}}</div>
+          <div style="font-style: italic">Private notes are only visible to you, the owner.</div>
+        </md-card-content>
+      </md-card>
+    </md-tab>
   </md-tabs>
 </div>
 <div ng-if="pokemon.errorStatusCode" ng-include="'/errors/' + pokemon.errorStatusCode + '.html'"></div>
