@@ -218,26 +218,6 @@ module.exports = function($routeParams, $scope, io, $mdMedia, $mdDialog, $mdToas
     })).catch(errorHandler);
   };
 
-  this.uploadInfo = (event) => {
-    const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-    $scope.$watch(function() {
-      return $mdMedia('xs') || $mdMedia('sm');
-    }, function(wantsFullScreen) {
-      $scope.customFullscreen = (wantsFullScreen === true);
-    });
-    return $mdDialog.show({
-      locals: {data: this.data},
-      bindToController: true,
-      controller: ['$mdDialog', editCtrl],
-      controllerAs: 'dialog',
-      templateUrl: 'pokemon/upload-info.view.html',
-      parent: angular.element(document.body),
-      targetEvent: event,
-      clickOutsideToClose: true,
-      fullscreen: useFullScreen
-    });
-  };
-
   this.delete = () => {
     return io.socket.deleteAsync(`/p/${this.id}`).then(() => {
       this.isDeleted = true;
