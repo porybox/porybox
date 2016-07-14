@@ -21,26 +21,14 @@ module.exports = function ($mdDialog, $routeParams) {
   this.addLine = (line) => this.lines.push(line);
 
   this.addFiles = (files) => {
-    files = files || this.files;
-    files.forEach((file) => this.addLine({
+    files.forEach(file => this.addLine({
       filename: file.name,
       data: fileToBase64(file),
       visibility: this.defaultPokemonVisibility,
       box: this.defaultBox
     }));
-    this.files = [];
-  };
-
-  this.addFile = () => {
-    if (this.file && this.file !== {}) {
-      this.addLine({
-        filename: this.file.name,
-        data: fileToBase64(this.file),
-        visibility: this.defaultPokemonVisibility,
-        box: this.defaultBox
-      });
-      this.file = undefined;
-    }
+    this.draggedFiles = [];
+    this.manualFiles = [];
   };
 
   this.cancel = function() {
