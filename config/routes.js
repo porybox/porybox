@@ -23,16 +23,6 @@
 module.exports.routes = {
 
   'get /': 'HomeController.index',
-  'get /faq': 'HomeController.faq',
-  'get /about': 'HomeController.about',
-  'get /donate': 'HomeController.donate',
-  'get /privacy-policy': 'HomeController.privacyPolicy',
-  'get /tos': 'HomeController.tos',
-  'get /extracting-pk6-files': 'HomeController.extractingPk6Files',
-  'get /how-to-pk6-1-bvs': 'HomeController.howToPk6Bvs',
-  'get /how-to-pk6-2-homebrew': 'HomeController.howToPk6Homebrew',
-  'get /how-to-pk6-3-4-save-files': 'HomeController.howToPk6SaveFiles',
-  'get /how-to-pk6-6-decrypted-powersaves': 'HomeController.howToPk6DecryptedPowersaves',
 
   // Boxes
 
@@ -79,3 +69,19 @@ module.exports.routes = {
   'post /changePassword': 'UserController.changePassword',
   'get /checkUsernameAvailable': 'UserController.checkUsernameAvailable'
 };
+
+// Redirect old paths to avoid 404 errors from old links
+[
+  'faq',
+  'about',
+  'donate',
+  'privacy-policy',
+  'tos',
+  'extracting-pk6-files',
+  'how-to-pk6-1-bvs',
+  'how-to-pk6-2-homebrew',
+  'how-to-pk6-3-4-save-files',
+  'how-to-pk6-6-decrypted-powersaves'
+].forEach(pathName => {
+  module.exports.routes[`get /${pathName}`] = (req, res) => res.redirect(`/#/${pathName}`);
+});

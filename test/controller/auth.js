@@ -268,7 +268,7 @@ describe('AuthController', function() {
 
   describe('misc. security', async () => {
     it('sends an x-frame-options: SAMEORIGIN header on every request', async () => {
-      const res = await agent.get('/faq');
+      const res = await agent.get('/');
       expect(res.statusCode).to.equal(200);
       expect(res.header['x-frame-options']).to.equal('SAMEORIGIN');
     });
