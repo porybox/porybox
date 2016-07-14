@@ -57,6 +57,7 @@
     sv-disabled="!box.draggingEnabled"
     sv-root
     sv-part="box.data.contents"
+    sv-grid="true"
     sv-on-sort="box.movePkmn($item, $indexTo)"
   >
     <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id" sv-element>
