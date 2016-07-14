@@ -10,15 +10,25 @@ import {chunk} from 'lodash';
  * A small controller to explain the syntax we will be using
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, errorHandler) {
-  this.box = (event) => {
-    const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-    $scope.$watch(function() {
-      return $mdMedia('xs') || $mdMedia('sm');
-    }, function(wantsFullScreen) {
-      $scope.customFullscreen = (wantsFullScreen === true);
+module.exports = class Add {
+  constructor ($scope, $location, io, $mdDialog, $mdMedia, $mdToast, errorHandler) {
+    this.$scope = $scope;
+    this.$location = $location;
+    this.io = io;
+    this.$mdDialog = $mdDialog;
+    this.$mdMedia = $mdMedia;
+    this.$mdToast = $mdToast;
+    this.errorHandler = errorHandler;
+  }
+  box (event) {
+    const useFullScreen
+      = (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
+    this.$scope.$watch(() => {
+      return this.$mdMedia('xs') || this.$mdMedia('sm');
+    }, wantsFullScreen => {
+      this.$scope.customFullscreen = (wantsFullScreen === true);
     });
-    return Promise.resolve($mdDialog.show({
+    return Promise.resolve(this.$mdDialog.show({
       controller: ['$mdDialog', boxCtrl],
       controllerAs: 'dialog',
       templateUrl: 'add/box.view.html',
@@ -26,15 +36,14 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
       targetEvent: event,
       clickOutsideToClose: true,
       fullscreen: useFullScreen
-    })
-    .then((boxInfo) => io.socket.postAsync('/api/v1/box', boxInfo)))
-    .then(res => $scope.$apply(this.boxes.push(res)))
-    .catch(errorHandler);
-  };
-
-  this.pokemon = (event) => {
-    const useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-    return Promise.resolve($mdDialog.show({
+    }).then((boxInfo) => this.io.socket.postAsync('/api/v1/box', boxInfo)))
+      .then(res => this.$scope.$apply(this.boxes.push(res)))
+      .catch(this.errorHandler);
+  }
+  pokemon (event) {
+    const useFullScreen
+      = (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
+    return Promise.resolve(this.$mdDialog.show({
       controller: ['$mdDialog', '$routeParams', pokemonCtrl],
       controllerAs: 'pkmDialog',
       templateUrl: 'add/pokemon.view.html',
@@ -50,13 +59,13 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
     })).map(Promise.props)
       .map(result => ({data: result.data, box: result.box, visibility: result.visibility}))
       .then(files => chunk(files, maxMultiUploadSize))
-      .mapSeries(files => io.socket.postAsync('/api/v1/pokemon/multi', {files}))
+      .mapSeries(files => this.io.socket.postAsync('/api/v1/pokemon/multi', {files}))
       .reduce((acc, nextGroup) => acc.concat(nextGroup), [])
       .tap(lines => {
         const successfulUploads = lines.filter(line => line.success);
         const successfulUploadCount = successfulUploads.length;
         const failedUploadCount = lines.length - successfulUploads.length;
-        const toast = $mdToast.simple().position('bottom right').hideDelay(4000);
+        const toast = this.$mdToast.simple().position('bottom right').hideDelay(4000);
         if (successfulUploadCount === lines.length) {
           toast.textContent(`${successfulUploads.length} Pokémon uploaded successfully`);
         } else if (successfulUploadCount === 0) {
@@ -69,8 +78,8 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
         if (successfulUploadCount === 1) {
           toast.action('View');
         }
-        $mdToast.show(toast).then(response => {
-          if (response === 'ok') $location.path(`pokemon/${successfulUploads[0].created.id}`);
+        this.$mdToast.show(toast).then(response => {
+          if (response === 'ok') this.$location.path(`pokemon/${successfulUploads[0].created.id}`);
         });
       })
       .filter(line => line.success && line.created.box === this.selected.selectedBox.id)
@@ -83,8 +92,7 @@ module.exports = function($scope, $location, io, $mdDialog, $mdMedia, $mdToast, 
       .then(lines => lines.slice(0, boxPageSize - this.selected.selectedBox.contents.length))
       .map(line => line.created)
       .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
-      .catch(errorHandler)
-      .then(() => $scope.$apply());
-  };
-
+      .catch(this.errorHandler)
+      .then(() => this.$scope.$apply());
+  }
 };
