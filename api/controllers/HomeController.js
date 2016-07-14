@@ -16,15 +16,5 @@ module.exports = _.mapValues({
       await req.user.save();
     }
     res.view('home/view');
-  },
-  faq: (req, res) => res.view('static/faq'),
-  about: (req, res) => res.view('static/about'),
-  donate: (req, res) => res.view('static/donate'),
-  privacyPolicy: (req, res) => res.view('static/privacy-policy'),
-  tos: (req, res) => res.view('static/tos'),
-  extractingPk6Files: (req, res) => res.view('static/extracting-pk6-files'),
-  howToPk6Bvs: (req, res) => res.view('static/how-to-pk6-1-bvs'),
-  howToPk6Homebrew: (req, res) => res.view('static/how-to-pk6-2-homebrew'),
-  howToPk6SaveFiles: (req, res) => res.view('static/how-to-pk6-3-4-save-files'),
-  howToPk6DecryptedPowersaves: (req, res) => res.view('static/how-to-pk6-6-decrypted-powersaves')
+  }
 }, catchAsyncErrors);
