@@ -1,50 +1,50 @@
 <md-card class="pokemon-card-mini" ng-init="pokemon.parseBoxViewProps()">
-  <a draggable="false" ng-href="#/pokemon/{{pokemon.id}}" class="card-link" ng-attr-title="{{pokemon.data.isEgg ?
+  <a draggable="false" ng-href="#/pokemon/{{::pokemon.id}}" class="card-link" ng-attr-title="{{::pokemon.data.isEgg ?
   pokemon.parsedNickname + ' (ESV: ' + pokemon.paddedEsv + ')' : pokemon.parsedNickname}}">
     <md-card-header>
       <md-card-avatar>
         <div class="icon-container">
-          <span ng-if="pokemon.data.isEgg" class="spr-box spr-box-egg"></span>
-          <span class="spr-box {{pokemon.spriteClass}}" ng-class="{'pokemon-egg': pokemon.data.isEgg}"></span>
+          <span ng-if="::pokemon.data.isEgg" class="spr-box spr-box-egg"></span>
+          <span class="spr-box {{::pokemon.spriteClass}}" ng-class="::{'pokemon-egg': pokemon.data.isEgg}"></span>
         </div>
       </md-card-avatar>
-      <span class="card-headline" style="margin:0;">{{pokemon.parsedNickname}}</span>
-      <span ng-if="pokemon.data.isEgg" class="esv">{{pokemon.paddedEsv}}</span>
+      <span class="card-headline" style="margin:0;">{{::pokemon.parsedNickname}}</span>
+      <span ng-if="::pokemon.data.isEgg" class="esv">{{::pokemon.paddedEsv}}</span>
     </md-card-header>
   </a>
     <md-card-content layout="column" class="pokemon-card-content">
       <div layout="row" layout-align="none center">
         <img draggable="false" class="pokeball"
-          ng-if="pokemon.ballNameUrl"
-          ng-src="img/icons/items/{{pokemon.ballNameUrl}}.png"
-          title="In a {{pokemon.data.ballName}}" />
+          ng-if="::pokemon.ballNameUrl"
+          ng-src="img/icons/items/{{::pokemon.ballNameUrl}}.png"
+          title="In a {{::pokemon.data.ballName}}" />
         <img draggable="false" class="held-item"
-          ng-if="pokemon.heldItemUrl"
-          ng-src="/img/icons/items/{{pokemon.heldItemUrl}}.png"
-          title="Holding {{pokemon.data.heldItemName}}" />
+          ng-if="::pokemon.heldItemUrl"
+          ng-src="/img/icons/items/{{::pokemon.heldItemUrl}}.png"
+          title="Holding {{::pokemon.data.heldItemName}}" />
         <span flex></span>
-        <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
+        <span class="language-tag" layout-align="end" title="Language">{{::pokemon.data.language}}</span>
       </div>
       <div layout="row" layout-align="none center">
-        <div flex style="font-weight:bold;" title="Species">{{pokemon.speciesWithForme}}<span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
-        <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
-        <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" style="margin-left: 5px;" title="Originated from Gen 6"></md-icon>
+        <div flex style="font-weight:bold;" title="Species">{{::pokemon.speciesWithForme}}<span ng-if="::pokemon.data.isEgg"> (Egg)</span></div>
+        <md-icon ng-if="::pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
+        <md-icon ng-if="::pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" style="margin-left: 5px;" title="Originated from Gen 6"></md-icon>
       </div>
       <div layout="row" layout-align="none center">
-        <div flex title="Level">Level {{pokemon.data.level}}</div>
+        <div flex title="Level">Level {{::pokemon.data.level}}</div>
         <span layout-align="end">
-          <i ng-if="pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
-          <i ng-if="pokemon.data.visibility === 'viewable'" class="material-icons visibility" title="Viewable">visibility</i>
-          <i ng-if="pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">public</i>
+          <i ng-if="::pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
+          <i ng-if="::pokemon.data.visibility === 'viewable'" class="material-icons visibility" title="Viewable">visibility</i>
+          <i ng-if="::pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">public</i>
         </span>
       </div>
-      <div flex ng-if="!pokemon.data.increasedStat" title="Neutral nature">{{pokemon.data.natureName}}</div>
-      <div flex ng-if="pokemon.data.increasedStat" ng-attr-title="+{{pokemon.data.increasedStat}}, -{{pokemon.data.decreasedStat}}">{{pokemon.data.natureName}}</div>
-      <div flex ng-class="{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{pokemon.data.abilityName}}</div>
-      <div flex title="OT, TID">{{pokemon.parsedOt}}, {{pokemon.paddedTid}}</div>
+      <div flex ng-if="::!pokemon.data.increasedStat" title="Neutral nature">{{::pokemon.data.natureName}}</div>
+      <div flex ng-if="::pokemon.data.increasedStat" ng-attr-title="+{{::pokemon.data.increasedStat}}, -{{::pokemon.data.decreasedStat}}">{{::pokemon.data.natureName}}</div>
+      <div flex ng-class="::{'pokemon-ha': pokemon.hasHA}" ng-attr-title="{{pokemon.hasHA ? 'Ability (HA)' : 'Ability'}}">{{::pokemon.data.abilityName}}</div>
+      <div flex title="OT, TID">{{::pokemon.parsedOt}}, {{::pokemon.paddedTid}}</div>
       <div layout="row" layout-align="none center">
-        <span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
-                      'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span>
+        <span ng-repeat="iv in ::pokemon.ivs track by $index"><span ng-class="::{'increased-stat': $index === pokemon.natureStats[0],
+                      'decreased-stat': $index === pokemon.natureStats[1]}">{{::iv}}</span>{{::$last ? '' : '.'}}</span>
       </div>
     </md-card-content>
 </md-card>
