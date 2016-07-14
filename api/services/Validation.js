@@ -15,14 +15,14 @@ module.exports = {
   },
   verifyUserIsOwner (item, user, {allowAdmin = true, allowDeleted = false} = {}) {
     if (!item || !allowDeleted && item._markedForDeletion) {
-      throw {statusCode: 404, message: 'Not Found'};
+      throw {statusCode: 404};
     }
     if (item.owner !== user.name && !(user.isAdmin && allowAdmin)) {
       /* If anyone other than the owner tries to undelete an item, return a 404 error.
       That way, the server doesn't leak information on whether an item with the given ID ever existed. */
       throw item._markedForDeletion
-        ? {statusCode: 404, message: 'Not found'}
-        : {statusCode: 403, message: 'Forbidden'};
+        ? {statusCode: 404}
+        : {statusCode: 403};
     }
   },
   verifyBoxParams (params) {

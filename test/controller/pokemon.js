@@ -255,7 +255,7 @@ describe('PokemonController', () => {
       expect(res.body[2].created.visibility).to.equal('public');
       expect(res.body[1].success).to.be.false();
       expect(res.body[1].created).to.be.null();
-      expect(res.body[1].error).to.equal('Not Found');
+      expect(res.body[1].error).to.equal('Box not found');
     });
     it('does not accept box IDs that belong to another user', async () => {
       const res = await otherAgent.post('/box').send({name: 'Outbox'});
@@ -275,7 +275,7 @@ describe('PokemonController', () => {
       expect(res2.body[2].created.visibility).to.equal('public');
       expect(res2.body[1].success).to.be.false();
       expect(res2.body[1].created).to.be.null();
-      expect(res2.body[1].error).to.equal('Forbidden');
+      expect(res2.body[1].error).to.equal('Cannot upload to this box');
     });
     it('does not accept kyurem-w or kyurem-b', async () => {
       const res = await agent.post('/pk6/multi').send({files: [
