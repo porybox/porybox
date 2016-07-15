@@ -2,27 +2,28 @@
  * Controller for handling the dialog to add a new box
  * @return {function} A controller that contains 2 test elements
  */
-module.exports = function ($mdDialog) {
 
-  this.name = '';
-  this.description = '';
-  // TODO: Make this depend on the default user preferences
-  this.visibility = 'listed';
+module.exports = class BoxAdd {
+  constructor ($mdDialog) {
+    this.$mdDialog = $mdDialog;
 
-  this.cancel = function() {
-    $mdDialog.cancel();
-  };
-  this.canAdd = function () {
-    return Boolean(this.name);
-  };
-  this.answer = function() {
-    if (!this.name) {
-      return;
-    }
-    $mdDialog.hide({
+    this.name = '';
+    this.description = '';
+    // TODO: Make this depend on the default user preferences
+    this.visibility = 'listed';
+  }
+  cancel () {
+    this.$mdDialog.cancel();
+  }
+  canAdd () {
+    return !!this.name;
+  }
+  answer () {
+    if (!this.name) return;
+    this.$mdDialog.hide({
       name: this.name,
       description: this.description,
       visibility: this.visibility
     });
-  };
+  }
 };
