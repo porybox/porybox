@@ -95,6 +95,10 @@ describe('UserController', () => {
       expect(res3.statusCode).to.equal(200);
       expect(res3.body._orderedBoxIds).to.not.exist();
     });
+    it('returns a 404 error if the user in the profile does not exist', async () => {
+      const res = await agent.get('/user/adfjsakfdsafsadfasjdf');
+      expect(res.statusCode).to.equal(404);
+    });
   });
   describe('preferences', () => {
     it("can get a user's preferences", async () => {
