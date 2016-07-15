@@ -62,11 +62,71 @@ exports.getSafeBoxForUser = async (box, user) => {
   }
   const isOwner = user && user.name === box.owner;
   const isAdmin = user && user.isAdmin;
-  box.contents = await Promise.all(BoxOrdering.getOrderedPokemonList(box)
-    .filter(p => !p._markedForDeletion)
-    .filter(p => isOwner || isAdmin || p.visibility !== 'private')
-    .map(p => PokemonHandler.getSafePokemonForUser(p, user, {parse: true})));
   return isOwner || isAdmin ? box : _.omit(box, 'updatedAt');
+};
+
+exports.filterPokemonListForUser = async (pkmnList, user) => {
+  return pkmnList
+    .filter(p => !p._markedForDeletion)
+    .filter(p => user && (user.name === p.owner || user.isAdmin) || p.visibility !== 'private');
+};
+
+exports.getSafeBoxSliceForUser = async ({box, user, afterId, beforeId, sliceSize}) => {
+  if (sliceSize <= 0) return [];
+  let startIndex, endIndex;
+  /* Fetch 10 extra items from the db to reduce the chance that another batch will need to be fetched due to IDs being deleted/private.
+  (then get rid of the extras before returning the results to the client) */
+  const EXTRA_FALLBACK_AMOUNT = 10;
+  if (afterId) {
+    const indexOfMarker = box._orderedIds.indexOf(afterId);
+    if (indexOfMarker === -1) throw {statusCode: 404};
+    startIndex = indexOfMarker + 1;
+    endIndex = startIndex + sliceSize + EXTRA_FALLBACK_AMOUNT;
+  } else if (beforeId) {
+    const indexOfMarker = box._orderedIds.indexOf(beforeId);
+    if (indexOfMarker === -1) throw {statusCode: 404};
+    startIndex = Math.max(indexOfMarker - sliceSize - EXTRA_FALLBACK_AMOUNT, 0);
+    endIndex = indexOfMarker;
+  } else {
+    startIndex = 0;
+    endIndex = sliceSize + EXTRA_FALLBACK_AMOUNT;
+  }
+  // The IDs of the Pokémon that should be fetched
+  const desiredIds = box._orderedIds.slice(startIndex, endIndex);
+
+  if (!desiredIds.length) return [];
+
+  // The Pokémon objects corresponding to those IDs (not necessarily in order)
+  const unsafeResults = await Pokemon.find({id: desiredIds});
+
+  // An object mapping {[Pokémon ID]: Pokémon object} to put the items in the correct order in linear time
+  const resultsById = _.mapValues(_.groupBy(unsafeResults, 'id'), 0);
+
+  // The Pokémon objects in the correct order
+  const unsafeSortedResults = desiredIds.map(id => resultsById[id]);
+
+  const unsafeFilteredResults = PokemonHandler.filterPokemonListForUser(unsafeSortedResults, user);
+
+  const safeFilteredResults = await Promise.map(unsafeFilteredResults, pkmn => {
+    return PokemonHandler.getSafePokemonForUser(pkmn, user, {parse: true});
+  });
+
+  const isReversed = !afterId && beforeId;
+  const slicedSafeFilteredResults = isReversed
+    ? safeFilteredResults.slice(-sliceSize)
+    : safeFilteredResults.slice(0, sliceSize);
+  const nextAfterId = isReversed ? null : _.last(desiredIds);
+  const nextBeforeId = isReversed ? desiredIds[0] : null;
+  const nextItems = await PokemonHandler.getSafeBoxSliceForUser({
+    box,
+    user,
+    afterId: nextAfterId,
+    beforeId: nextBeforeId,
+    sliceSize: sliceSize - slicedSafeFilteredResults.length
+  });
+  return isReversed
+    ? nextItems.concat(slicedSafeFilteredResults)
+    : slicedSafeFilteredResults.concat(nextItems);
 };
 
 exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {

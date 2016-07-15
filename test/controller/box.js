@@ -3,7 +3,8 @@ const expect = require('chai').use(require('dirty-chai')).expect;
 const _ = require('lodash');
 const Promise = require('bluebird');
 const testHelpers = require('../test-helpers');
-describe('BoxController', () => {
+describe('BoxController', function () {
+  this.timeout(20000);
   let agent, otherAgent, noAuthAgent, adminAgent;
   before(async () => {
     agent = await testHelpers.getAgent();
@@ -98,7 +99,6 @@ describe('BoxController', () => {
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.createdAt).to.be.a('string');
       expect(box.updatedAt).to.exist();
-      expect(box.pageNum).to.equal(1);
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/api/v1/box/${boxId}`)).body;
@@ -113,7 +113,6 @@ describe('BoxController', () => {
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
-      expect(box.pageNum).to.equal(1);
     });
     it('allows admins to view the full contents of a box by ID', async () => {
       const box = (await adminAgent.get(`/api/v1/box/${boxId}`)).body;
@@ -131,7 +130,6 @@ describe('BoxController', () => {
       expect(box.contents[2].speciesName).to.exist();
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.updatedAt).to.exist();
-      expect(box.pageNum).to.equal(1);
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
       const res = await noAuthAgent.get(`/api/v1/box/${boxId}`);
@@ -148,7 +146,6 @@ describe('BoxController', () => {
       expect(box.contents[1].box).to.not.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
-      expect(box.pageNum).to.equal(1);
     });
     it('allows the properties of the Pokémon in the box to be specified by query', async () => {
       const res = await agent.get(`/api/v1/box/${boxId}`).query({pokemonFields: 'speciesName'});
@@ -185,7 +182,7 @@ describe('BoxController', () => {
   });
   describe('box pagination', () => {
     let pkmnList, box, pageSize;
-    before(async () => {
+    beforeEach(async () => {
       pageSize = sails.services.constants.BOX_PAGE_SIZE;
       expect(pageSize).to.be.a('number');
       expect(pageSize).to.be.above(0);
@@ -194,7 +191,7 @@ describe('BoxController', () => {
       box = res.body;
       const pkmnData = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
       pkmnList = [];
-      for (const amount of [pageSize, pageSize, 1]) {
+      for (const amount of [pageSize, pageSize, pageSize, 1]) {
         const res2 = await agent.post('/api/v1/pokemon/multi').send({files: _.times(amount, () => ({
           box: box.id, visibility: _.sample(['public', 'private', 'viewable']), data: pkmnData
         }))});
@@ -204,49 +201,149 @@ describe('BoxController', () => {
         pkmnList.push(..._.map(res2.body, 'created'));
       }
     });
-    it('returns the first 50 items if no page parameter is provided', async () => {
+    it('returns the first BOX_PAGE_SIZE items if no parameter is provided', async () => {
       const res = await agent.get(`/api/v1/box/${box.id}`);
       expect(res.statusCode).to.equal(200);
       expect(_.map(res.body.contents, 'id')).to.eql(_.map(pkmnList.slice(0, pageSize), 'id'));
-      expect(res.body.pageNum).to.equal(1);
-      expect(res.body.totalPageCount).to.equal(3);
-      expect(res.body.totalItemCount).to.equal(2 * pageSize + 1);
     });
     it('adjusts the results for privacy if the user is not the owner', async () => {
       const res = await otherAgent.get(`/api/v1/box/${box.id}`);
       expect(res.statusCode).to.equal(200);
       const nonPrivatePkmn = pkmnList.filter(pkmn => pkmn.visibility !== 'private');
       expect(_.map(res.body.contents, 'id')).to.eql(_.map(nonPrivatePkmn.slice(0, pageSize), 'id'));
-      expect(res.body.pageNum).to.equal(1);
-      expect(res.body.totalPageCount).to.be.below(3);
-      expect(res.body.totalItemCount).to.equal(nonPrivatePkmn.length);
     });
-    it('returns returns different contents depending on a page parameter', async () => {
-      const res = await agent.get(`/api/v1/box/${box.id}`).query({page: 2});
-      expect(res.statusCode).to.equal(200);
-      const expectedList = pkmnList.slice(pageSize, pageSize * 2);
-      expect(_.map(res.body.contents, 'id')).to.eql(_.map(expectedList, 'id'));
-      expect(res.body.pageNum).to.equal(2);
-      expect(res.body.totalPageCount).to.equal(3);
-      expect(res.body.totalItemCount).to.equal(2 * pageSize + 1);
-
-      const res2 = await agent.get(`/api/v1/box/${box.id}`).query({page: 3});
-      expect(res2.statusCode).to.equal(200);
-      expect(_.map(res2.body.contents, 'id')).to.eql([pkmnList[pageSize * 2].id]);
-      expect(res2.body.pageNum).to.equal(3);
-      expect(res2.body.totalPageCount).to.equal(3);
-      expect(res2.body.totalItemCount).to.equal(2 * pageSize + 1);
+    describe('with an "after" parameter', () => {
+      it('returns all pokemon following an "after" pokemon id', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`)
+          .query({after: pkmnList[pageSize - 1].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(pageSize);
+        expect(res.body.contents).to.eql(pkmnList.slice(pageSize, 2 * pageSize));
+      });
+      it('filters contents in an "after" listing if the user is not the owner', async () => {
+        const res = await otherAgent.get(`/api/v1/box/${box.id}`)
+          .query({after: pkmnList[pageSize - 1].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(pageSize);
+        const expectedResults = pkmnList
+          .slice(pageSize)
+          .filter(pkmn => pkmn.visibility !== 'private')
+          .slice(0, pageSize)
+          .map(pkmn => {
+            return pkmn.visibility === 'public'
+              ? _.omit(pkmn, ['privateNotes', 'box'])
+              : _.omit(pkmn, ['pid', 'encryptionConstant', 'privateNotes', 'box']);
+          });
+        expect(res.body.contents).to.eql(expectedResults);
+      });
+      it('filters deleted items out of the box', async () => {
+        const res = await agent.del(`/api/v1/pokemon/${_.last(pkmnList).id}`);
+        expect(res.statusCode).to.equal(202);
+        const res2 = await agent.get(`/api/v1/box/${box.id}`)
+          .query({after: pkmnList[pkmnList.length - 2].id});
+        expect(res2.statusCode).to.equal(200);
+        expect(res2.body.contents).to.be.an.instanceof(Array);
+        expect(res2.body.contents).to.have.lengthOf(0);
+      });
+      it('returns a shortened list if there are an too few remaining Pokémon', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`)
+          .query({after: pkmnList[pageSize * 3 - 1].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(1);
+        expect(res.body.contents[0]).to.eql(pkmnList[pkmnList.length - 1]);
+      });
+      it('returns an empty list if there are no Pokémon after the "after" param', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`).query({after: _.last(pkmnList).id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(0);
+      });
+      it('returns nothing if only unviewable Pokémon are after the "after" param', async () => {
+        const res = await agent.patch(`/api/v1/pokemon/${_.last(pkmnList).id}`)
+          .send({visibility: 'private'});
+        expect(res.statusCode).to.equal(200);
+        const res2 = await otherAgent.get(`/api/v1/box/${box.id}`)
+          .query({after: pkmnList[pkmnList.length - 2].id});
+        expect(res2.statusCode).to.equal(200);
+        expect(res2.body.contents).to.be.an.instanceof(Array);
+        expect(res2.body.contents).to.have.lengthOf(0);
+      });
+      it('returns a 404 error if the "after" parameter is not in the box', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`).query({after: 'foo'});
+        expect(res.statusCode).to.equal(404);
+      });
     });
-    it('returns a 404 error if the page parameter is too large', async () => {
-      const res = await agent.get(`/api/v1/box/${box.id}`).query({page: 4});
-      expect(res.statusCode).to.equal(404);
-
-      const res2 = await otherAgent.get(`/api/v1/box/${box.id}`).query({page: 3});
-      expect(res2.statusCode).to.equal(404);
+    describe('with a "before" parameter', () => {
+      it('returns all pokemon preceeding a "before" pokemon id', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`).query({before: pkmnList[pageSize].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(pageSize);
+        expect(res.body.contents).to.eql(pkmnList.slice(0, pageSize));
+      });
+      it('filters contents in a "before" listing if the user is not the owner', async () => {
+        const res = await otherAgent.get(`/api/v1/box/${box.id}`)
+          .query({before: _.last(pkmnList).id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(pageSize);
+        const expectedResults = pkmnList
+          .slice(0, -1)
+          .filter(pkmn => pkmn.visibility !== 'private')
+          .slice(-pageSize)
+          .map(pkmn => {
+            return pkmn.visibility === 'public'
+              ? _.omit(pkmn, ['privateNotes', 'box'])
+              : _.omit(pkmn, ['pid', 'encryptionConstant', 'privateNotes', 'box']);
+          });
+        expect(res.body.contents).to.eql(expectedResults);
+      });
+      it('filters deleted items out of the box', async () => {
+        const res = await agent.del(`/api/v1/pokemon/${pkmnList[0].id}`);
+        expect(res.statusCode).to.equal(202);
+        const res2 = await agent.get(`/api/v1/box/${box.id}`).query({before: pkmnList[1].id});
+        expect(res2.statusCode).to.equal(200);
+        expect(res2.body.contents).to.be.an.instanceof(Array);
+        expect(res2.body.contents).to.have.lengthOf(0);
+      });
+      it('returns a shortened list for an insufficient number of remaining Pokémon', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`)
+          .query({before: pkmnList[pageSize - 1].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(pageSize - 1);
+        expect(res.body.contents).to.eql(pkmnList.slice(0, pageSize - 1));
+      });
+      it('returns an empty list if there are no Pokémon preceding the "before" param', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`).query({before: pkmnList[0].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(0);
+      });
+      it('returns an empty list if only private Pokémon precede the "before" param', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`).query({before: pkmnList[0].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.have.lengthOf(0);
+      });
+      it('returns a 404 error if the "before" parameter is not in the box', async () => {
+        it('returns a 404 error if the "after" parameter is not in the box', async () => {
+          const res = await agent.get(`/api/v1/box/${box.id}`).query({after: 'foo'});
+          expect(res.statusCode).to.equal(404);
+        });
+      });
     });
-    it('returns a 404 error if the page parameter is invalid', async () => {
-      const res = await agent.get(`/api/v1/box/${box.id}`).query({page: 'foo'});
-      expect(res.statusCode).to.equal(404);
+    describe('with both a "before" and an "after" parameter', () => {
+      it('only uses the "before" parameter and ignores the "after" parameter', async () => {
+        const res = await agent.get(`/api/v1/box/${box.id}`)
+          .query({after: pkmnList[pageSize - 1].id, before: pkmnList[pageSize].id});
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.contents).to.be.an.instanceof(Array);
+        expect(res.body.contents).to.eql(pkmnList.slice(pageSize, 2 * pageSize));
+      });
     });
   });
   describe("getting a user's boxes", () => {
