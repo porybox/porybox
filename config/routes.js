@@ -26,48 +26,48 @@ module.exports.routes = {
 
   // Boxes
 
-  'post /box': 'BoxController.add',
-  'get /b/:id': 'BoxController.get',
-  'get /boxes/mine': 'BoxController.mine',
-  'delete /b/:id': 'BoxController.delete',
-  'post /b/:id/undelete': 'BoxController.undelete',
-  'post /b/:id/edit': 'BoxController.edit',
+  'post /api/v1/box': 'BoxController.add',
+  'get /api/v1/box/:id': 'BoxController.get',
+  'get /api/v1/me/boxes': 'BoxController.mine',
+  'delete /api/v1/box/:id': 'BoxController.delete',
+  'post /api/v1/box/:id/undelete': 'BoxController.undelete',
+  'patch /api/v1/box/:id': 'BoxController.edit',
 
   // Authentication
 
-  'post /logout': 'AuthController.logout',
+  'post /api/v1/logout': 'AuthController.logout',
 
-  'post /auth/local': 'AuthController.callback',
-  'post /auth/local/:action': 'AuthController.callback',
+  'post /api/v1/auth/local': 'AuthController.callback',
+  'post /api/v1/auth/local/:action': 'AuthController.callback',
 
-  'get /auth/:provider': 'AuthController.provider',
-  'get /auth/:provider/callback': 'AuthController.callback',
-  'get /auth/:provider/:action': 'AuthController.callback',
+  'get /api/v1/auth/:provider': 'AuthController.provider',
+  'get /api/v1/auth/:provider/callback': 'AuthController.callback',
+  'get /api/v1/auth/:provider/:action': 'AuthController.callback',
 
   // Pokemon
 
-  'post /uploadpk6': 'PokemonController.uploadpk6',
-  'post /pk6/multi': 'PokemonController.uploadMultiPk6',
+  'post /api/v1/pokemon': 'PokemonController.uploadpk6',
+  'post /api/v1/pokemon/multi': 'PokemonController.uploadMultiPk6',
 
-  'get /p/:id': 'PokemonController.get',
-  'get /p/:id/download': 'PokemonController.download',
-  'delete /p/:id': 'PokemonController.delete',
-  'post /p/:id/undelete': 'PokemonController.undelete',
-  'post /p/:id/move': 'PokemonController.move',
-  'post /p/:id/edit': 'PokemonController.edit',
+  'get /api/v1/pokemon/:id': 'PokemonController.get',
+  'get /api/v1/pokemon/:id/pk6': 'PokemonController.download',
+  'delete /api/v1/pokemon/:id': 'PokemonController.delete',
+  'post /api/v1/pokemon/:id/undelete': 'PokemonController.undelete',
+  'post /api/v1/pokemon/:id/move': 'PokemonController.move',
+  'patch /api/v1/pokemon/:id': 'PokemonController.edit',
 
   // Users
-  'get /user/:name': 'UserController.get',
-  'get /user/:name/boxes': 'UserController.boxes',
-  'get /me': 'UserController.me',
-  'get /preferences': 'UserController.getPreferences',
-  'post /preferences/edit': 'UserController.editPreferences',
-  'post /me': 'UserController.editAccountInfo',
-  'post /user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
-  'post /user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
-  'post /deleteAccount': 'UserController.deleteAccount',
-  'post /changePassword': 'UserController.changePassword',
-  'get /checkUsernameAvailable': 'UserController.checkUsernameAvailable'
+  'get /api/v1/user/:name': 'UserController.get',
+  'get /api/v1/user/:name/boxes': 'UserController.boxes',
+  'get /api/v1/me': 'UserController.me',
+  'get /api/v1/me/preferences': 'UserController.getPreferences',
+  'patch /api/v1/me/preferences': 'UserController.editPreferences',
+  'patch /api/v1/me': 'UserController.editAccountInfo',
+  'post /api/v1/user/:name/grantAdminStatus': 'UserController.grantAdminStatus',
+  'post /api/v1/user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
+  'delete /api/v1/me': 'UserController.deleteAccount',
+  'post /api/v1/changePassword': 'UserController.changePassword',
+  'get /api/v1/checkUsernameAvailable': 'UserController.checkUsernameAvailable'
 };
 
 // Redirect old paths to avoid 404 errors from old links

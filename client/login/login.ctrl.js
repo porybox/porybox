@@ -16,7 +16,7 @@ module.exports = function ($scope, $http) {
   this.register = () => {
     return $http({
       method: 'POST',
-      url: '/auth/local/register',
+      url: '/api/v1/auth/local/register',
       data: {
         name: $scope.registerName,
         password: $scope.registerPassword,
@@ -36,7 +36,7 @@ module.exports = function ($scope, $http) {
   this.login = () => {
     return $http({
       method: 'POST',
-      url: '/auth/local',
+      url: '/api/v1/auth/local',
       data: {
         name: $scope.loginName,
         password: $scope.loginPassword

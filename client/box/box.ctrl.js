@@ -48,7 +48,7 @@ module.exports = function(
   this.currentPageNum = +$routeParams.pageNum || this.data.pageNum || 1;
 
   this.fetch = () => {
-    return io.socket.getAsync('/b/' + this.id, {
+    return io.socket.getAsync(`/api/v1/box/${this.id}`, {
       pokemonFields: POKEMON_FIELDS_USED,
       page: this.currentPageNum
     }).then(data => {
@@ -98,7 +98,7 @@ module.exports = function(
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((editedData) => {
-      return io.socket.postAsync('/b/' + this.id + '/edit', editedData).then(() => {
+      return io.socket.postAsync(`/api/v1/box/${this.id}`, editedData).then(() => {
         Object.assign(this.data, editedData);
         if ($scope.$parent && $scope.$parent.main && $scope.$parent.main.boxes) {
           const thisBox = $scope.$parent.main.boxes.find(box => box.id === this.id);
@@ -110,7 +110,7 @@ module.exports = function(
   };
 
   this.delete = () => {
-    io.socket.deleteAsync('/b/' + this.id).then(() => {
+    io.socket.deleteAsync(`/box/${this.id}`).then(() => {
       this.isDeleted = true;
       $scope.$apply();
       if ($scope.$parent && $scope.$parent.main && $scope.$parent.main.boxes) {
@@ -125,7 +125,7 @@ module.exports = function(
   };
 
   this.undelete = () => {
-    io.socket.postAsync('/b/' + this.id + '/undelete').then(() => {
+    io.socket.postAsync(`/api/v1/box/${this.id}/undelete`).then(() => {
       this.isDeleted = false;
       $scope.$apply();
       if ($scope.$parent && $scope.$parent.main && $scope.$parent.main.boxes
@@ -137,7 +137,9 @@ module.exports = function(
   };
   this.movePkmn = (pkmn, localIndex) => {
     const absoluteIndex = boxPageSize * (this.data.pageNum - 1) + localIndex;
-    return io.socket.postAsync(`/p/${pkmn.id}/move`,{box: this.id, index: absoluteIndex})
-      .catch(errorHandler);
+    return io.socket.postAsync(
+      `/api/v1/pokemon/${pkmn.id}/move`,
+      {box: this.id, index: absoluteIndex}
+    ).catch(errorHandler);
   };
 };

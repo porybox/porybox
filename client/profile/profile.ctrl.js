@@ -9,7 +9,7 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog, errorHa
   this.fetch = () => Promise.all([this.fetchInfo, this.fetchBoxes]);
 
   this.fetchInfo = () => {
-    return io.socket.getAsync(`/user/${this.data.name}`).then(res => {
+    return io.socket.getAsync(`/api/v1/user/${this.data.name}`).then(res => {
       Object.assign(this.data, res);
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
@@ -17,7 +17,7 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog, errorHa
   };
 
   this.fetchBoxes = () => {
-    return io.socket.getAsync(`/user/${this.data.name}/boxes`).then(res => {
+    return io.socket.getAsync(`/api/v1/user/${this.data.name}/boxes`).then(res => {
       this.data.boxes = res;
     }).catch(errorHandler).then(() => $scope.$apply());
   };
@@ -40,7 +40,7 @@ module.exports = function($scope, $routeParams, io, $mdMedia, $mdDialog, errorHa
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((editedData) => {
-      return io.socket.postAsync('/me', editedData).then(() => {
+      return io.socket.patchAsync('/api/v1/me', editedData).then(() => {
         Object.assign(this.data, editedData);
         $scope.$apply();
       });
