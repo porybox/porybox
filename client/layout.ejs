@@ -34,7 +34,7 @@
         <%- include footer.ejs %>
       </div>
     </div>
-    <div id="csrf-token"><%= typeof _csrf !== undefined ? _csrf : '' %></div>
+    <div id="csrf-token"><%= typeof _csrf !== 'undefined' ? _csrf : '' %></div>
     <div id="app-version"><%= VERSION %></div>
     <div id="user-data" ng-non-bindable>
       <%= _.escape(JSON.stringify({
