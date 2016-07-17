@@ -26,6 +26,11 @@ module.exports = {
     url: 'mongodb://localhost:27017/porybox',
     // url: 'mongodb://username:pass@localhost:27017/porybox'
     collection: 'sessions'
+  },
+
+  email: {
+    user: 'username@something.co.uk',
+    pass: 'password'
   }
 
 };
