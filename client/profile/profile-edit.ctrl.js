@@ -1,37 +1,41 @@
 /**
  * Controller for handling the dialog for editing profiles
  */
-module.exports = function ($mdDialog) {
+module.exports = class ProfileEdit {
+  constructor ($mdDialog) {
+    this.$mdDialog = $mdDialog;
 
-  this.friendCodes = this.data.friendCodes ? this.data.friendCodes.slice(0) : [''];
-  this.inGameNames = this.data.inGameNames ? this.data.inGameNames.slice(0) : [''];
-  this.tsvs = this.data.trainerShinyValues ? this.data.trainerShinyValues.slice(0) : [''];
+    this.friendCodes = this.data.friendCodes ? this.data.friendCodes.slice(0) : [''];
+    this.inGameNames = this.data.inGameNames ? this.data.inGameNames.slice(0) : [''];
+    this.tsvs = this.data.trainerShinyValues ? this.data.trainerShinyValues.slice(0) : [''];
 
-  if (this.friendCodes.length === 0) {
-    this.friendCodes = [''];
+    if (this.friendCodes.length === 0) {
+      this.friendCodes = [''];
+    }
+    if (this.inGameNames.length === 0) {
+      this.inGameNames = [''];
+    }
+    if (this.tsvs.length === 0) {
+      this.tsvs = [''];
+    }
   }
-  if (this.inGameNames.length === 0) {
-    this.inGameNames = [''];
+  addFC () {
+    this.friendCodes.push('');
   }
-  if (this.tsvs.length === 0) {
-    this.tsvs = [''];
+  addIGN () {
+    this.inGameNames.push('');
   }
-
-  this.addFC = () => this.friendCodes.push('');
-  this.addIGN = () => this.inGameNames.push('');
-  this.addTSV = () => this.tsvs.push('');
-
-  this.cancel = () => {
-    $mdDialog.cancel();
-  };
-
-  this.answer = () => {
-    $mdDialog.hide({
-      inGameNames: this.inGameNames.filter(removeEmpty),
-      friendCodes: this.friendCodes.filter(removeEmpty),
-      trainerShinyValues: this.tsvs.filter(removeEmpty)
+  addTSV () {
+    this.tsvs.push('');
+  }
+  cancel () {
+    this.$mdDialog.cancel();
+  }
+  answer () {
+    this.$mdDialog.hide({
+      inGameNames: this.inGameNames.filter(ign => ign),
+      friendCodes: this.friendCodes.filter(fc => fc),
+      trainerShinyValues: this.tsvs.filter(tsv => tsv)
     });
-  };
-
-  const removeEmpty = (el) => el !== '';
+  }
 };

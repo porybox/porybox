@@ -12,15 +12,19 @@ const ERRORS_MAP = {
   'Error.Passport.Bad.Username': 'invalid username (must be 1-20 alphanumeric characters)',
   'Error.Passport.Username.Taken': 'a user with that name already exists'
 };
-module.exports = function ($scope, $http) {
-  this.register = () => {
-    return $http({
+module.exports = class Login {
+  constructor ($scope, $http) {
+    this.$scope = $scope;
+    this.$http = $http;
+  }
+  register () {
+    return this.$http({
       method: 'POST',
       url: '/api/v1/auth/local/register',
       data: {
-        name: $scope.registerName,
-        password: $scope.registerPassword,
-        email: $scope.registerEmail
+        name: this.$scope.registerName,
+        password: this.$scope.registerPassword,
+        email: this.$scope.registerEmail
       }
     }).then(() => {
       window.location = '/';
@@ -32,14 +36,14 @@ module.exports = function ($scope, $http) {
         this.registerError = 'An unknown error occured.';
       }
     });
-  };
-  this.login = () => {
-    return $http({
+  }
+  login () {
+    return this.$http({
       method: 'POST',
       url: '/api/v1/auth/local',
       data: {
-        name: $scope.loginName,
-        password: $scope.loginPassword
+        name: this.$scope.loginName,
+        password: this.$scope.loginPassword
       }
     }).then(() => {
       window.location = '/';
@@ -51,5 +55,5 @@ module.exports = function ($scope, $http) {
         this.loginError = 'An unknown error occured.';
       }
     });
-  };
+  }
 };
