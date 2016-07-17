@@ -14,6 +14,6 @@ ng.module('porybox.userMenu', [])
       name: '='
     },
     templateUrl: 'userMenu/user.view.html',
-    controller: ['io', controller],
+    controller: ['io', 'errorHandler', controller],
     controllerAs: 'userMenu'
   });
