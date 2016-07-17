@@ -32,17 +32,7 @@ module.exports.policies = {
   },
 
   HomeController: {
-    index: anyone,
-    faq: anyone,
-    about: anyone,
-    donate: anyone,
-    privacyPolicy: anyone,
-    tos: anyone,
-    extractingPk6Files: anyone,
-    howToPk6Bvs: anyone,
-    howToPk6Homebrew: anyone,
-    howToPk6SaveFiles: anyone,
-    howToPk6DecryptedPowersaves: anyone
+    index: anyone
   },
 
   PokemonController: {
