@@ -80,7 +80,9 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
     throw {statusCode: 400, message: prohibitReason};
   }
   const box = await Box.findOne({id: boxId});
-  Validation.verifyUserIsOwner(box, user, {allowAdmin: false});
+  await Promise.method(Validation.verifyUserIsOwner)(box, user, {allowAdmin: false})
+    .catchThrow({statusCode: 404}, {statusCode: 404, message: 'Box not found'})
+    .catchThrow({statusCode: 403}, {statusCode: 403, message: 'Cannot upload to this box'});
   parsed.box = box.id;
   parsed.owner = user.name;
   parsed.visibility = visibility;
