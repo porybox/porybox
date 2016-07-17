@@ -91,8 +91,9 @@ porybox.service('io', function () {
   const socket = require('socket.io-client');
   const io = require('sails.io.js')(socket);
   io.sails.headers = {'x-csrf-token': CSRF_TOKEN};
+  io.socket.patch = (url, data, cb) => io.socket.request({method: 'PATCH', url, data}, cb);
   // create versions of the io.socket functions that return Promises.
-  // e.g. io.socket.getAsync('/foo').then(handleResponse).catch(handleErrors)
+  // e.g. io.socket.getAsync('/api/v1/foo').then(handleResponse).catch(handleErrors)
   Promise.promisifyAll(io.socket, {
     promisifier (fn) {
       return function (...args) {
