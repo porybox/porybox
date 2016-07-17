@@ -2,14 +2,15 @@ module.exports = _.mapValues({
   async get (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, 'name');
-    const user = _.omit(await User.findOne({name: params.name}).populate('preferences'), 'boxes');
+    const user = await User.findOne({name: params.name}).populate('preferences');
     if (!user) {
       return res.notFound();
     }
-    if (req.user && (req.user.name === user.name || req.user.isAdmin)) {
-      return res.ok(user);
+    const filteredUser = _.omit(user, 'boxes');
+    if (req.user && (req.user.name === filteredUser.name || req.user.isAdmin)) {
+      return res.ok(filteredUser);
     }
-    return res.ok(user.omitPrivateInformation());
+    return res.ok(filteredUser.omitPrivateInformation());
   },
   async boxes (req, res) {
     const user = await User.findOne({id: req.param('name')}).populate('boxes');
