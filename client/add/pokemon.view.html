@@ -11,9 +11,31 @@
     </md-toolbar>
     <md-dialog-content>
       <div class="md-dialog-content" layout="column">
+        <div layout="row">
+          <span flex></span>
+          <div ngf-drop ngf-select ng-model="pkmDialog.draggedFiles" class="drop-box"
+              ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
+              ngf-multiple="true" ngf-allow-dir="true" ngf-capture="'other'"
+              accept=".pk6,.pkx" ngf-accept="'.pk6,.pkx'" ngf-change="pkmDialog.addFiles(pkmDialog.draggedFiles)"
+              ngf-pattern="'.pk6,.pkx'">Drop file/directory here</div>
+          <span flex></span>
+        </div>
+
+        <div layout="row">
+          <span flex></span>
+          <div flex="50">
+            Or select a file:
+            <input type="file" ngf-select ng-model="pkmDialog.manualFiles" name="file"
+                 accept=".pk6" ngf-max-size="2MB" ng-change="pkmDialog.addFiles(pkmDialog.manualFiles)" multiple
+                 ngf-model-invalid="errorFile">
+          </div>
+          <span flex></span>
+        </div>
+        <span flex></span>
+        <md-divider></md-divider>
         <div layout="row" ng-repeat="line in pkmDialog.lines">
           <md-input-container class="md-block">
-            <input type="text" ng-model="line.filename" aria-label="File name"> </input>
+            <input type="text" ng-model="line.filename" aria-label="File name" disabled> </input>
           </md-input-container>
           <md-input-container class="md-block">
             <label>Visibility</label>
@@ -28,22 +50,10 @@
             </md-select>
           </md-input-container>
         </div>
-        <div ngf-drop ngf-select ng-model="pkmDialog.draggedFiles" class="drop-box"
-            ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
-            ngf-multiple="true" ngf-allow-dir="true" ngf-capture="'other'"
-            accept=".pk6,.pkx" ngf-accept="'.pk6,.pkx'" ngf-change="pkmDialog.addFiles(pkmDialog.draggedFiles)"
-            ngf-pattern="'.pk6,.pkx'">Drop file/directory here</div>
-
-        Or upload a file:
-        <input type="file" ngf-select ng-model="pkmDialog.manualFiles" name="file"
-             accept=".pk6" ngf-max-size="2MB" ng-change="pkmDialog.addFiles(pkmDialog.manualFiles)" multiple
-             ngf-model-invalid="errorFile">
-        <md-divider></md-divider>
-        <div>
-          <i class="material-icons" style="vertical-align: middle;">help_outline</i> <a href="/extracting-pk6-files" target="_blank" rel="noreferrer">How to obtain Pokémon files</a></div>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
+      <i class="material-icons" style="vertical-align: middle;">help_outline</i> <a href="/extracting-pk6-files" target="_blank" rel="noreferrer">How to obtain Pokémon files</a>
       <span flex></span>
       <md-button ng-click="pkmDialog.cancel()">
        Cancel
