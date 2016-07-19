@@ -581,7 +581,7 @@ describe('PokemonController', () => {
       const res = await agent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer()
         .expect(
           'Content-Disposition',
-          `attachment; filename=${publicPkmn.nickname}-${publicPkmn.id}.pk6`
+          `attachment; filename="${publicPkmn.nickname}-${publicPkmn.id}.pk6"`
         );
       expect(res.statusCode).to.equal(200);
       expect(res.text).to.equal(rawPk6);
@@ -672,6 +672,15 @@ describe('PokemonController', () => {
       expect(finalPublicCount).to.equal(initialPublicCount + 1);
       expect(finalviewableCount).to.equal(initialviewableCount);
       expect(finalPrivateCount).to.equal(initialPrivateCount);
+    });
+    it('escapes special characters in nicknames correctly', async () => {
+      await sails.models.pokemon.update({id: publicPkmn.id}, {nickname: `\r\né∫ab;"'`});
+      const res = await agent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer();
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-disposition']).to.equal(
+        `attachment; filename="??é?ab;\\"'-${publicPkmn.id}.pk6"; ` +
+        `filename*=UTF-8''%0D%0A%C3%A9%E2%88%ABab%3B%22%27-${publicPkmn.id}.pk6`
+      );
     });
   });
   describe('moving a pokemon', () => {
