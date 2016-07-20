@@ -146,7 +146,7 @@ module.exports = _.mapValues({
     if (pokemon.visibility !== 'public' && !userIsOwner && !userIsAdmin) {
       return res.forbidden();
     }
-    res.header('Content-Disposition', `attachment; filename=${pokemon.nickname}-${pokemon.id}.pk6`);
+    res.attachment(`${pokemon.nickname}-${pokemon.id}.pk6`);
     res.status(200).send(Buffer.from(pokemon._rawPk6, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
       await pokemon.incrementDownloadCount();
