@@ -256,7 +256,7 @@ module.exports = class Pokemon {
       this.$mdToast.show(
         this.$mdToast.simple()
           .textContent(this.parsedNickname + ' undeleted.')
-          .position('top right'));
+          .position('bottom right'));
       this.$scope.$apply();
     }).catch(this.errorHandler);
   }
