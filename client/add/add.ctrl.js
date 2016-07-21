@@ -37,6 +37,17 @@ module.exports = class Add {
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((boxInfo) => this.io.socket.postAsync('/api/v1/box', boxInfo)))
+      .tap(box => {
+        const toast = this.$mdToast
+          .simple()
+          .position('bottom right')
+          .hideDelay(4000)
+          .textContent(`Box '${box.name}' created successfully`)
+          .action('View');
+        this.$mdToast.show(toast).then(response => {
+          if (response === 'ok') this.$location.path(`box/${box.id}`);
+        });
+      })
       .then(res => this.$scope.$apply(this.boxes.push(res)))
       .catch(this.errorHandler);
   }

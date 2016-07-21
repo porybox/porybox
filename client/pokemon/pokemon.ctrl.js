@@ -219,7 +219,6 @@ module.exports = class Pokemon {
             .textContent(this.parsedNickname + ' edited successfully')
             .position('bottom right'));
         this.$scope.$apply();
-        this.$scope.$apply();
       });
     })).catch(this.errorHandler);
   }
