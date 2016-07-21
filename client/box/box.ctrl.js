@@ -118,7 +118,7 @@ module.exports = class Box {
     })).catch(this.errorHandler);
   }
   delete () {
-    return this.io.socket.deleteAsync(`/box/${this.id}`).then(() => {
+    return this.io.socket.deleteAsync(`/api/v1/box/${this.id}`).then(() => {
       this.isDeleted = true;
       this.$scope.$apply();
       if (this.$scope.$parent && this.$scope.$parent.main && this.$scope.$parent.main.boxes) {
