@@ -55,7 +55,7 @@
     // require all variables to be defined
     'no-undef': "error",
     // specify whether double or single quotes should be used
-    'quotes': [2, 'single', {'avoidEscape': true, 'allowTemplateLiterals': true}],
+    'quotes': [2, 'single', 'avoid-escape'],
     'semi': 1,
     // enforce spacing before and after semicolons
     'semi-spacing': [2, {'before': false, 'after': true}],
