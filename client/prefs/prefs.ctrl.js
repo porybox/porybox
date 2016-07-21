@@ -24,7 +24,7 @@ module.exports = class Prefs {
       );
     }
     return this.io.socket.postAsync('/api/v1/changePassword', {
-      oldPassword: this.oldPassword,
+      password: this.oldPassword,
       newPassword: this.newPassword1
     }).then(() => {
       this.oldPassword = '';
