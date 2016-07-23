@@ -105,11 +105,11 @@ describe('BoxController', function () {
       expect(box.id).to.equal(boxId);
       expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.not.exist();
-      expect(box.contents[0].box).to.not.exist();
+      expect(box.contents[0].box).to.exist();
       expect(box.contents[0].speciesName).to.exist();
       expect(box.contents[1].visibility).to.equal('public');
       expect(box.contents[1].pid).to.exist();
-      expect(box.contents[1].box).to.not.exist();
+      expect(box.contents[1].box).to.exist();
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
@@ -139,11 +139,11 @@ describe('BoxController', function () {
       expect(box.contents[0].visibility).to.equal('viewable');
       expect(box.contents[0].pid).to.not.exist();
       expect(box.contents[0].speciesName).to.exist();
-      expect(box.contents[0].box).to.not.exist();
+      expect(box.contents[0].box).to.exist();
       expect(box.contents[1].visibility).to.equal('public');
       expect(box.contents[1].pid).to.exist();
       expect(box.contents[1].speciesName).to.exist();
-      expect(box.contents[1].box).to.not.exist();
+      expect(box.contents[1].box).to.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
     });
