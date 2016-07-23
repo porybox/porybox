@@ -23,7 +23,7 @@ require('./pokemon/pokemon.module.js');
 require('./add/add.module.js');
 require('./userMenu/user.module.js');
 require('./profile/profile.module.js');
-require('./prefs/prefs.module.js');
+require('./account/account.module.js');
 require('./static/static.module.js');
 
 const porybox = ng.module('porybox', [
@@ -32,7 +32,7 @@ const porybox = ng.module('porybox', [
   'porybox.home',
   'porybox.add',
   'porybox.profile',
-  'porybox.prefs',
+  'porybox.account',
   'porybox.userMenu',
   'porybox.static',
 

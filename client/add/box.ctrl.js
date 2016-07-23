@@ -9,8 +9,7 @@ module.exports = class BoxAdd {
 
     this.name = '';
     this.description = '';
-    // TODO: Make this depend on the default user preferences
-    this.visibility = 'listed';
+    this.visibility = this.defaultBoxVisibility;
   }
   cancel () {
     this.$mdDialog.cancel();
