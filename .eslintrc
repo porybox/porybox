@@ -44,7 +44,7 @@
     'key-spacing': [2, {'beforeColon': false, 'afterColon': true}],
     // require a capital letter for constructors
     'new-cap': [2, {'newIsCap': true}],
-    'no-console': 0,
+    'no-console': 2,
     // disallow mixed spaces and tabs for indentation
     'no-mixed-spaces-and-tabs': 2,
     // disallow trailing whitespace at the end of lines
