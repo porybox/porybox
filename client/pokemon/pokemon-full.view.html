@@ -1,13 +1,20 @@
 <div ng-show="pokemon.data.id">
   <md-toolbar class="md-hue-1">
     <div class="md-toolbar-tools">
-      <div ng-if="pokemon.data.box" style="margin-left:-15px;">
+      <div ng-if="pokemon.data.box" class="back-button">
         <a ng-href="/#/box/{{pokemon.data.box}}">
-          <md-button ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin" class="md-icon-button" aria-label="Back to box">
+          <md-button class="md-icon-button" aria-label="Back to box">
             <md-tooltip md-direction="right">Back to box</md-tooltip>
             <i class="material-icons">arrow_back</i>
           </md-button>
         </a>
+      </div>
+      <div ng-if="!pokemon.data.box" class="back-button">
+        <!-- Tooltips don't work in disabled buttons, so put it outside the button; see https://github.com/angular/material/issues/1667 -->
+        <md-tooltip md-direction="right">This Pokémon's box is unlisted</md-tooltip>
+        <md-button ng-disabled="true" class="md-icon-button" aria-label="This Pokémon's box is unlisted">
+          <i class="material-icons">arrow_back</i>
+        </md-button>
       </div>
       <div class="icon-container">
         <span>

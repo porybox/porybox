@@ -233,8 +233,8 @@ describe('BoxController', function () {
           .slice(0, pageSize)
           .map(pkmn => {
             return pkmn.visibility === 'public'
-              ? _.omit(pkmn, ['privateNotes', 'box'])
-              : _.omit(pkmn, ['pid', 'encryptionConstant', 'privateNotes', 'box']);
+              ? _.omit(pkmn, ['privateNotes'])
+              : _.omit(pkmn, ['pid', 'encryptionConstant', 'privateNotes']);
           });
         expect(res.body.contents).to.eql(expectedResults);
       });
@@ -296,8 +296,8 @@ describe('BoxController', function () {
           .slice(-pageSize)
           .map(pkmn => {
             return pkmn.visibility === 'public'
-              ? _.omit(pkmn, ['privateNotes', 'box'])
-              : _.omit(pkmn, ['pid', 'encryptionConstant', 'privateNotes', 'box']);
+              ? _.omit(pkmn, ['privateNotes'])
+              : _.omit(pkmn, ['pid', 'encryptionConstant', 'privateNotes']);
           });
         expect(res.body.contents).to.eql(expectedResults);
       });
