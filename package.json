@@ -76,7 +76,7 @@
   "author": "PorygonCo",
   "license": "",
   "devDependencies": {
-    "angular-mocks": "^1.5.0",
+    "angular-mocks": "^1.5.8",
     "chai": "^3.5.0",
     "dirty-chai": "^1.2.2",
     "karma": "^0.13.21",
