@@ -1,6 +1,6 @@
 const editCtrl = require('./box-edit.ctrl.js');
 const angular = require('angular');
-const boxPageSize = require('../../api/services/Constants').BOX_PAGE_SIZE;
+import {throttle} from 'lodash';
 
 const POKEMON_FIELDS_USED = [
   'abilityName',
@@ -36,12 +36,8 @@ const POKEMON_FIELDS_USED = [
 ].join(',');
 
 module.exports = class Box {
-  constructor(
-      $scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog, $mdToast, errorHandler
-  ) {
+  constructor($scope, $routeParams, io, $mdMedia, $mdDialog, $mdToast, errorHandler) {
     this.$scope = $scope;
-    this.$ngSilentLocation = $ngSilentLocation;
-    this.$routeParams = $routeParams;
     this.io = io;
     this.$mdMedia = $mdMedia;
     this.$mdDialog = $mdDialog;
@@ -54,7 +50,20 @@ module.exports = class Box {
     this.errorStatusCode = null;
     this.indexInMain = null;
     this.isDeleted = false;
-    this.currentPageNum = +$routeParams.pageNum || this.data.pageNum || 1;
+    this.isLoading = true;
+    this.isFinished = false;
+    const scrollElement = document.getElementById('scroll-container');
+    if ($routeParams.boxid) {
+      this.onscroll = throttle(() => {
+        if (!this.isLoading && !this.isFinished &&
+            scrollElement.scrollTop + window.innerHeight >= scrollElement.scrollHeight - 100) {
+          this.fetchMore();
+        }
+      }, 150);
+      scrollElement.addEventListener('scroll', this.onscroll);
+      // Clean up the event listener when this controller is destroyed
+      this.$scope.$on('$destroy', () => scrollElement.removeEventListener('scroll', this.onscroll));
+    }
   }
   fetch () {
     return this.io.socket.getAsync(`/api/v1/box/${this.id}`, {
@@ -65,31 +74,22 @@ module.exports = class Box {
       this.hasFullData = true;
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
-    }).then(() => this.$scope.$apply());
+    }).then(() => this.$scope.$apply())
+      .tap(() => this.isLoading = false);
   }
-  isLoading () {
-    return this.currentPageNum !== this.data.pageNum;
-  }
-  hasPrevPage () {
-    return this.currentPageNum > 1;
-  }
-  hasNextPage () {
-    return this.currentPageNum < this.data.totalPageCount;
-  }
-  prevPage () {
-    if (this.hasPrevPage()) {
-      // Update the location hash without reloading the controller
-      // Unfortunately it doesn't seem to be possible to do this natively with angular.
-      // https://github.com/angular/angular.js/issues/1699
-      this.$ngSilentLocation.silent(`/box/${this.id}/${--this.currentPageNum}`);
-      return this.fetch();
-    }
-  }
-  nextPage () {
-    if (this.hasNextPage()) {
-      this.$ngSilentLocation.silent(`/box/${this.id}/${++this.currentPageNum}`);
-      return this.fetch();
-    }
+  fetchMore () {
+    this.isLoading = true;
+    this.$scope.$apply();
+    return this.io.socket.getAsync(`/api/v1/box/${this.id}`, {
+      pokemonFields: POKEMON_FIELDS_USED,
+      after: this.data.contents[this.data.contents.length - 1].id
+    }).tap(data => this.data.contents.push(...data.contents))
+      .tap(data => {
+        this.isLoading = false;
+        this.isFinished = !data.contents.length;
+      })
+      .then(() => this.$scope.$apply())
+      .catch(this.errorHandler);
   }
   edit (event) {
     const useFullScreen =
@@ -166,11 +166,8 @@ module.exports = class Box {
           .position('bottom right'));
     }).catch(this.errorHandler);
   }
-  movePkmn (pkmn, localIndex) {
-    const absoluteIndex = boxPageSize * (this.data.pageNum - 1) + localIndex;
-    return this.io.socket.postAsync(
-      `/api/v1/pokemon/${pkmn.id}/move`,
-      {box: this.id, index: absoluteIndex}
-    ).catch(this.errorHandler);
+  movePkmn (pkmn, index) {
+    return this.io.socket.postAsync(`/api/v1/pokemon/${pkmn.id}/move`, {box: this.id, index})
+      .catch(this.errorHandler);
   }
 };
