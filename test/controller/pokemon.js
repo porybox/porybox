@@ -342,13 +342,33 @@ describe('PokemonController', () => {
     });
   });
   describe('getting a pokemon by ID', () => {
-    let publicId, privateId, viewableId;
+    let publicId, privateId, viewableId, unlistedPublicId,
+      unlistedPrivateId, unlistedViewableId, unlistedBox, listedBox;
     before(async () => {
+      const res = await agent.post('/api/v1/box').send({name: 'Gearbox', visibility: 'unlisted'});
+      expect(res.statusCode).to.equal(201);
+      unlistedBox = res.body;
+
+      const res2 = await agent.post('/api/v1/box').send({name: 'Pepperbox', visibility: 'listed'});
+      expect(res2.statusCode).to.equal(201);
+      listedBox = res2.body;
+
       [publicId, privateId, viewableId] = await Promise.map(['public', 'private', 'viewable'], v =>
         agent.post('/api/v1/pokemon')
           .field('visibility', v)
-          .field('box', generalPurposeBox)
-          .attach('pk6', __dirname + '/pkmn1.pk6')
+          .field('box', listedBox.id)
+          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+      ).map(response => response.body.id);
+
+      [unlistedPublicId, unlistedPrivateId, unlistedViewableId] = await Promise.map([
+        'public',
+        'private',
+        'viewable'
+      ], visibility =>
+        agent.post('/api/v1/pokemon')
+          .field('visibility', visibility)
+          .field('box', unlistedBox.id)
+          .attach('pk6', `${__dirname}/pkmn1.pk6`)
       ).map(response => response.body.id);
     });
     it('allows third parties to view all the data on a public pokemon', async () => {
@@ -360,7 +380,7 @@ describe('PokemonController', () => {
       expect(res.body.abilityName).to.equal('Keen Eye');
       expect(res.body.natureName).to.equal('Modest');
       expect(res.body.move1Name).to.equal('Agility');
-      expect(res.body.box).to.not.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.not.exist();
     });
     it('allows the uploader to view all the data on a viewable pokemon', async () => {
@@ -368,7 +388,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
-      expect(res.body.box).to.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.exist();
       expect(res.body.publicNotes).to.exist();
     });
@@ -382,7 +402,7 @@ describe('PokemonController', () => {
       expect(res.body.tsv).to.be.a('number');
       expect(res.body.esv).to.be.a('number');
       expect(res.body.isShiny).to.be.a('boolean');
-      expect(res.body.box).to.not.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.not.exist();
       expect(res.body.publicNotes).to.exist();
     });
@@ -391,7 +411,7 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(200);
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
-      expect(res.body.box).to.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.exist();
       expect(res.body.publicNotes).to.exist();
     });
@@ -405,7 +425,7 @@ describe('PokemonController', () => {
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
-      expect(res.body.box).to.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.exist();
     });
     it('allows an admin to view all the data on a viewable pokemon', async () => {
@@ -414,7 +434,7 @@ describe('PokemonController', () => {
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
-      expect(res.body.box).to.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.exist();
     });
     it('allows an admin to view all the data on a private pokemon', async () => {
@@ -423,7 +443,7 @@ describe('PokemonController', () => {
       expect(res.body.dexNo).to.exist();
       expect(res.body.pid).to.exist();
       expect(res.body.speciesName).to.exist();
-      expect(res.body.box).to.exist();
+      expect(res.body.box).to.equal(listedBox.id);
       expect(res.body.privateNotes).to.exist();
     });
     it('does not leak internal properties of a a pokemon to the client', async () => {
@@ -455,6 +475,138 @@ describe('PokemonController', () => {
         .query({pokemonFields: '_rawPk6'});
       expect(res.statusCode).to.equal(200);
       expect(res.body).to.eql({});
+    });
+    describe('sending the box ID for unlisted boxes', () => {
+      describe('when the requester is the owner', () => {
+        it('sends the box ID of a public Pokémon', async () => {
+          const res = await agent.get(`/api/v1/pokemon/${unlistedPublicId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.equal(unlistedBox.id);
+        });
+        it('sends the box ID of a viewable Pokémon', async () => {
+          const res = await agent.get(`/api/v1/pokemon/${unlistedViewableId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.equal(unlistedBox.id);
+        });
+        it('sends the box ID of a private Pokémon', async () => {
+          const res = await agent.get(`/api/v1/pokemon/${unlistedPrivateId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.equal(unlistedBox.id);
+        });
+      });
+      describe('when the requester is an admin', () => {
+        it('sends the box ID of a public Pokémon', async () => {
+          const res = await adminAgent.get(`/api/v1/pokemon/${unlistedPublicId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.equal(unlistedBox.id);
+        });
+        it('sends the box ID of a viewable Pokémon', async () => {
+          const res = await adminAgent.get(`/api/v1/pokemon/${unlistedViewableId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.equal(unlistedBox.id);
+        });
+        it('sends the box ID of a private Pokémon', async () => {
+          const res = await adminAgent.get(`/api/v1/pokemon/${unlistedPrivateId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.equal(unlistedBox.id);
+        });
+      });
+      describe('when the requester is another user', () => {
+        it('does not send the box ID of a public Pokémon', async () => {
+          const res = await otherAgent.get(`/api/v1/pokemon/${unlistedPublicId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.not.exist();
+        });
+        it('does not send the box ID of a viewable Pokémon', async () => {
+          const res = await otherAgent.get(`/api/v1/pokemon/${unlistedViewableId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.not.exist();
+        });
+        it('does not send the box Id of a private Pokémon', async () => {
+          const res = await otherAgent.get(`/api/v1/pokemon/${unlistedPrivateId}`);
+          expect(res.statusCode).to.equal(403);
+          expect(res.body.box).to.not.exist();
+        });
+      });
+      describe('the user is unauthenticated', () => {
+        it('does not send the box ID of a public Pokémon', async () => {
+          const res = await noAuthAgent.get(`/api/v1/pokemon/${unlistedPublicId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.not.exist();
+        });
+        it('does not send the box ID of a viewable Pokémon', async () => {
+          const res = await noAuthAgent.get(`/api/v1/pokemon/${unlistedViewableId}`);
+          expect(res.statusCode).to.equal(200);
+          expect(res.body.box).to.not.exist();
+        });
+        it('does not send the box Id of a private Pokémon', async () => {
+          const res = await noAuthAgent.get(`/api/v1/pokemon/${unlistedPrivateId}`);
+          expect(res.statusCode).to.equal(403);
+          expect(res.body.box).to.not.exist();
+        });
+      });
+      describe('when sending the box itself', () => {
+        describe('when the box is listed', () => {
+          describe('the requester is the uploader', () => {
+            it('sends a `box` parameter on the Pokémon in the box', async () => {
+              const res = await agent.get(`/api/v1/box/${listedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.equal(listedBox.id);
+            });
+          });
+          describe('the requester is an admin', () => {
+            it('sends a `box` parameter on the Pokémon in the box', async () => {
+              const res = await adminAgent.get(`/api/v1/box/${listedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.equal(listedBox.id);
+            });
+          });
+          describe('the requester is another user', () => {
+            it('sends a `box` parameter on the Pokémon in the box', async () => {
+              const res = await otherAgent.get(`/api/v1/box/${listedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.equal(listedBox.id);
+            });
+          });
+          describe('the requester is unauthenticated', () => {
+            it('sends a `box` parameter on the Pokémon in the box', async () => {
+              const res = await noAuthAgent.get(`/api/v1/box/${listedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.equal(listedBox.id);
+            });
+          });
+        });
+        describe('when the box is unlisted', () => {
+          describe('the requester is the uploader', () => {
+            it('sends a `box` parameter on the Pokémon in the box', async () => {
+              const res = await agent.get(`/api/v1/box/${unlistedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.equal(unlistedBox.id);
+            });
+          });
+          describe('the requester is an admin', () => {
+            it('sends a `box` parameter on the Pokémon in the box', async () => {
+              const res = await adminAgent.get(`/api/v1/box/${unlistedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.equal(unlistedBox.id);
+            });
+          });
+          describe('the requester is another user', () => {
+            it('does not send a `box` parameter on the Pokémon in the box', async () => {
+              const res = await otherAgent.get(`/api/v1/box/${unlistedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.not.exist();
+            });
+          });
+          describe('the requester is unauthenticated', () => {
+            it('does not send a `box` parameter on the Pokémon in the box', async () => {
+              const res = await noAuthAgent.get(`/api/v1/box/${unlistedBox.id}`);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body.contents[0].box).to.not.exist();
+            });
+          });
+        });
+      });
     });
   });
 

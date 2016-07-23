@@ -31,7 +31,9 @@ exports.checkProhibited = pkmn => {
 
 exports.isStaticPidEvent = () => false; // TODO: Implement this
 
-exports.getSafePokemonForUser = async (pkmn, user, {checkUnique = false, parse = true} = {}) => {
+exports.getSafePokemonForUser = async (
+    pkmn, user, {checkUnique = false, parse = true, knownBoxVisibility} = {}
+) => {
   if (!pkmn) {
     throw {statusCode: 404};
   }
@@ -41,19 +43,23 @@ exports.getSafePokemonForUser = async (pkmn, user, {checkUnique = false, parse =
   if (parse) {
     pkmn.assignParsedNames();
   }
-  const pokemonIsPublic = pkmn.visibility === 'public';
   const userIsOwner = !!user && user.name === pkmn.owner;
   const userIsAdmin = !!user && user.isAdmin;
   if (userIsOwner || userIsAdmin) {
     return pkmn;
   }
-  if (pokemonIsPublic) {
-    return pkmn.omitOwnerOnlyInfo();
-  }
   if (pkmn.visibility === 'private') {
     throw {statusCode: 403};
   }
-  return pkmn.omitOwnerOnlyInfo().omitPrivateData();
+  let filteredPkmn = pkmn.omitOwnerOnlyInfo();
+  if (pkmn.visibility !== 'public') {
+    filteredPkmn = filteredPkmn.omitPrivateData();
+  }
+  const boxVisibility = knownBoxVisibility || await filteredPkmn.getBoxVisibility();
+  if (boxVisibility !== 'listed') {
+    filteredPkmn = _.omit(filteredPkmn, 'box');
+  }
+  return filteredPkmn;
 };
 
 exports.getSafeBoxForUser = async (box, user) => {
