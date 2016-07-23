@@ -35,7 +35,11 @@ module.exports = class Add {
       parent: angular.element(document.body),
       targetEvent: event,
       clickOutsideToClose: true,
-      fullscreen: useFullScreen
+      fullscreen: useFullScreen,
+      bindToController: true,
+      locals: {
+        defaultBoxVisibility: this.prefs.defaultBoxVisibility
+      }
     }).then((boxInfo) => this.io.socket.postAsync('/api/v1/box', boxInfo)))
       .then(res => this.$scope.$apply(this.boxes.push(res)))
       .catch(this.errorHandler);

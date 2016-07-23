@@ -1,0 +1,26 @@
+<md-card>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+        <span>Edit Account Information</span>
+    </div>
+  </md-toolbar>
+  <md-card-content>
+    <div layout="column" layout-padding>
+      <md-content class="autoscroll">
+        <form name="editInfo" method="POST">
+          <md-input-container class="md-block">
+            <label>Email Address</label>
+            <input ng-model="info.email" type="email" name="email" aria-label="Email">
+          </md-input-container>
+
+          <md-card-actions layout="row" layout-align="start">
+            <md-button ng-click="info.saveInfo()" type="submit">
+              Save Info
+            </md-button>
+          </md-card-actions>
+        </form>
+
+      </md-content>
+    </div>
+  </md-card-content>
+</md-card>

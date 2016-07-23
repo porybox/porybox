@@ -1,0 +1,35 @@
+<md-card>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+        <span>Edit Preferences</span>
+    </div>
+  </md-toolbar>
+  <md-card-content>
+    <div layout="column" layout-padding>
+      <md-content class="autoscroll">
+        <form name="editPrefs" method="POST">
+          <md-input-container class="md-block">
+            <label>Default Pokemon Visibility</label>
+            <md-select ng-model="prefs.defaultPokemonVisibility" name="pkmnVisibility">
+              <md-option ng-value="visibility" ng-repeat="visibility in prefs.pokemonVisibilities">{{ visibility }}</md-option>
+            </md-select>
+          </md-input-container>
+
+          <md-input-container class="md-block">
+            <label>Default Box Visibility</label>
+            <md-select ng-model="prefs.defaultBoxVisibility" name="boxVisibility">
+              <md-option ng-value="visibility" ng-repeat="visibility in prefs.boxVisibilities">{{ visibility }}</md-option>
+            </md-select>
+          </md-input-container>
+
+          <md-card-actions layout="row" layout-align="start">
+            <md-button ng-click="prefs.updatePrefs()" type="submit">
+              Save Preferences
+            </md-button>
+          </md-card-actions>
+        </form>
+
+      </md-content>
+    </div>
+  </md-card-content>
+</md-card>
