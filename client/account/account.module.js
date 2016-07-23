@@ -4,7 +4,7 @@ const passwordCtrl = require('./password.ctrl');
 const infoCtrl = require('./info.ctrl');
 const prefsCtrl = require('./prefs.ctrl');
 
-ng.module('porybox.account', ['ngRoute'])
+ng.module('porybox.account', ['ngRoute', 'ngMessages'])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/account', {
       templateUrl: '/account/account.view.html',
@@ -14,7 +14,7 @@ ng.module('porybox.account', ['ngRoute'])
   }])
   .component('editPassword', {
     templateUrl: 'account/password.view.html',
-    controller: ['io', '$mdToast', 'errorHandler', passwordCtrl],
+    controller: ['$scope', 'io', '$mdToast', 'errorHandler', passwordCtrl],
     controllerAs: 'password'
   })
   .component('editInfo', {
