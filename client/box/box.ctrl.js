@@ -36,13 +36,16 @@ const POKEMON_FIELDS_USED = [
 ].join(',');
 
 module.exports = class Box {
-  constructor($scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog, errorHandler) {
+  constructor(
+      $scope, $ngSilentLocation, $routeParams, io, $mdMedia, $mdDialog, $mdToast, errorHandler
+  ) {
     this.$scope = $scope;
     this.$ngSilentLocation = $ngSilentLocation;
     this.$routeParams = $routeParams;
     this.io = io;
     this.$mdMedia = $mdMedia;
     this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
     this.data = this.data || {contents: []};
     this.id = $routeParams.boxid || this.data.id;
@@ -113,6 +116,10 @@ module.exports = class Box {
           const thisBox = this.$scope.$parent.main.boxes.find(box => box.id === this.id);
           if (thisBox) Object.assign(thisBox, this.data);
         }
+        this.$mdToast.show(
+          this.$mdToast.simple()
+            .textContent(`'${this.data.name}' edited successfully`)
+            .position('bottom right'));
         this.$scope.$apply();
       });
     })).catch(this.errorHandler);
@@ -128,6 +135,19 @@ module.exports = class Box {
           this.$scope.$parent.main.boxes.splice(thisBoxIndex, 1);
         }
       }
+      this.$mdToast.show(
+        this.$mdToast
+          .simple()
+          .hideDelay(10000)
+          .textContent(`'${this.data.name}' deleted`)
+          .action('Undo')
+          .highlightAction(true)
+          .position('bottom right')
+      ).then(response => {
+        if (response === 'ok') {
+          this.undelete();
+        }
+      });
       this.$scope.$apply();
     }).catch(this.errorHandler);
   }
@@ -140,6 +160,10 @@ module.exports = class Box {
         this.$scope.$parent.main.boxes.splice(this.indexInMain, 0, this.data);
         this.indexInMain = null;
       }
+      this.$mdToast.show(
+        this.$mdToast.simple()
+          .textContent(`'${this.data.name}' undeleted`)
+          .position('bottom right'));
     }).catch(this.errorHandler);
   }
   movePkmn (pkmn, localIndex) {
