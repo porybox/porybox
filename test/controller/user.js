@@ -28,7 +28,7 @@ describe('UserController', () => {
   it('can redirect users to information about their own profile', async () => {
     const res = await agent.get('/api/v1/me');
     expect(res.statusCode).to.equal(302);
-    expect(res.header.location).to.equal('/user/usertester');
+    expect(res.header.location).to.equal('/api/v1/user/usertester');
   });
   describe('getting a user profile', () => {
     it('returns full information when a user gets their own profile', async () => {
