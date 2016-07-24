@@ -56,18 +56,7 @@
     <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id" sv-element>
       <pokemon-card data="pokemon" ng-class="{'draggable': box.draggingEnabled}"></pokemon-card>
     </div>
-  </div>
-
-  <div class="pagination-container">
-    <md-button class="md-icon-button" ng-click="box.prevPage()" ng-disabled="box.isLoading() || !box.hasPrevPage()">
-      <i class="material-icons">navigate_before</i>
-      <md-tooltip md-direction="left">Previous page</md-tooltip>
-    </md-button>
-    <span class="md-subhead">Page {{box.data.pageNum}} of {{box.data.totalPageCount}}</span>
-    <md-button class="md-icon-button" ng-click="box.nextPage()" ng-disabled="box.isLoading() || !box.hasNextPage()">
-      <i class="material-icons">navigate_next</i>
-      <md-tooltip md-direction="right">Next page</md-tooltip>
-    </md-button>
+    <md-progress-circular md-mode="indeterminate" ng-if="box.isLoading" md-diameter="166"></md-progress-circular>
   </div>
 </div>
 <div ng-if="box.errorStatusCode" ng-include="'/errors/' + box.errorStatusCode + '.html'"></div>
