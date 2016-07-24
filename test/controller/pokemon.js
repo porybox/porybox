@@ -533,7 +533,8 @@ describe('PokemonController', () => {
     });
     it('does not show deleted contents when a box is retrieved', async () => {
       const res = await agent.get(`/api/v1/box/${pkmn.box}`);
-      const res2 = await agent.get(`/api/v1/box/${pkmn.box}`).query({page: 2});
+      const res2 = await agent.get(`/api/v1/box/${pkmn.box}`)
+        .query({after: _.last(res.body.contents).id});
       expect(_.map(res.body.contents.concat(res2.body.contents), 'id')).to.include(pkmn.id);
       await agent.del(`/api/v1/pokemon/${pkmn.id}`);
       const res3 = await agent.get(`/api/v1/box/${pkmn.box}`);

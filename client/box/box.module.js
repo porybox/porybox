@@ -17,7 +17,6 @@ ng.module('porybox.box', ['ngRoute'])
     templateUrl: 'box/box-card.view.html',
     controller: [
       '$scope',
-      '$ngSilentLocation',
       '$routeParams',
       'io',
       '$mdMedia',
@@ -32,7 +31,6 @@ ng.module('porybox.box', ['ngRoute'])
       templateUrl: '/box/box-list.view.html',
       controller: [
         '$scope',
-        '$ngSilentLocation',
         '$routeParams',
         'io',
         '$mdMedia',
