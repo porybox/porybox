@@ -110,7 +110,7 @@ porybox.service('io', function () {
 porybox.service('errorHandler', ['$mdToast', function ($mdToast) {
   return reason => {
     if (reason) {
-      console.error(reason);
+      console.error(reason); // eslint-disable-line no-console
       $mdToast.show(
         $mdToast.simple().textContent('An unexpected error occured.').position('bottom right')
       );
