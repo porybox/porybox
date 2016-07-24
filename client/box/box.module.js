@@ -22,6 +22,7 @@ ng.module('porybox.box', ['ngRoute'])
       'io',
       '$mdMedia',
       '$mdDialog',
+      '$mdToast',
       'errorHandler',
       boxController
     ],
@@ -36,6 +37,7 @@ ng.module('porybox.box', ['ngRoute'])
         'io',
         '$mdMedia',
         '$mdDialog',
+        '$mdToast',
         'errorHandler',
         boxController
       ],
