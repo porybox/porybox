@@ -6,7 +6,6 @@ module.exports = class Info {
     this.errorHandler = errorHandler;
   }
   saveInfo () {
-    console.log(this.email);
     // Do something to change email address (tbd)
   }
 };
