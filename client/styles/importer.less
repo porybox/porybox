@@ -284,6 +284,11 @@ h1.summary-toolbar {
   opacity: 1;
 }
 
+// Prevent people from overflowing markdown text boxes, e.g. by embedding large images
+[marked] * {
+  max-width: 100%;
+}
+
 .pokeball, .held-item {
   width: 32px;
   height: 32px;
