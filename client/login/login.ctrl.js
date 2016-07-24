@@ -32,7 +32,6 @@ module.exports = class Login {
       if (res.status === 401 && ERRORS_MAP[res.data]) {
         this.registerError = ERRORS_MAP[res.data];
       } else {
-        console.error(res.data);
         this.registerError = 'An unknown error occured.';
       }
     });
@@ -51,7 +50,6 @@ module.exports = class Login {
       if (res.status === 401 && ERRORS_MAP[res.data]) {
         this.loginError = ERRORS_MAP[res.data];
       } else {
-        console.error(res.data);
         this.loginError = 'An unknown error occured.';
       }
     });
