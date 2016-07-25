@@ -44,6 +44,12 @@ module.exports.routes = {
   'get /api/v1/auth/:provider/callback': 'AuthController.callback',
   'get /api/v1/auth/:provider/:action': 'AuthController.callback',
 
+  // Password resets
+
+  'post /api/v1/user/:name/passwordReset': 'PasswordResetController.create',
+  'get /api/v1/passwordReset/:token': 'PasswordResetController.get',
+  'delete /api/v1/passwordReset/:token': 'PasswordResetController.delete',
+
   // Pokemon
 
   'post /api/v1/pokemon': 'PokemonController.uploadpk6',
