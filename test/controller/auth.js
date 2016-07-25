@@ -6,11 +6,8 @@ describe('AuthController', function() {
   let agent;
   let otherAgent;
   let invalidAgent;
-  before(async () => {
-    agent = await testHelpers.getAgent();
-  });
-
   beforeEach(async () => {
+    agent = await testHelpers.getAgent();
     otherAgent = await testHelpers.getAgent();
     invalidAgent = await testHelpers.getAgent();
   });

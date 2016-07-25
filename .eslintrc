@@ -64,7 +64,7 @@
     // require spaces following keywords
     'keyword-spacing': 2,
     // warn when line length is greater than 80 characters
-    'max-len': [1, 100, 2, { 'ignoreComments': true, 'ignoreUrls': true }]
+    'max-len': [1, 100, 2, { 'ignoreComments': true, 'ignoreUrls': true, 'ignorePattern': 'sails\.log' }]
   },
   'globals': {
     'sails': true,

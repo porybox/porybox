@@ -11,8 +11,10 @@
     'UserPreferences': true,
     'catchAsyncErrors': true,
     'Validation': true,
+    'Email': true,
     'DeletedUser': true,
     'BoxOrdering': true,
-    'Util': true
+    'Util': true,
+    'PasswordReset': true
   }
 }

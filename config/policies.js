@@ -70,6 +70,11 @@ module.exports.policies = {
     deleteAccount: passwordProtected,
     changePassword: passwordProtected,
     checkUsernameAvailable: anyone
-  }
+  },
 
+  PasswordResetController: {
+    create: anyone,
+    get: anyone,
+    delete: anyone
+  }
 };
