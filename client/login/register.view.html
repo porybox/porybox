@@ -7,23 +7,44 @@
   <md-card-content>
     <div layout="column" layout-padding>
       <md-content class="autoscroll">
-        <form role="form" ng-submit="auth.register()">
+        <form role="form" name="registerForm" ng-submit="auth.register()" method="POST">
           <md-input-container class="md-block">
-            <input type="email" name="email" ng-model="registerEmail">
+            <input type="email" name="email" required ng-model="auth.registerEmail" aria-label="Email (will not be made public)">
             <label>Email (will not be made public)</label>
           </md-input-container>
           <md-input-container class="md-block">
-            <input type="text" name="name" ng-model="registerName">
+            <input
+              type="text"
+              name="name"
+              maxlength="20"
+              ng-pattern="auth.VALID_USERNAME_REGEX"
+              required
+              ng-model="auth.registerName"
+              aria-label="Username"
+              ng-change="registerForm.name.$setValidity('available', true)"
+            >
             <label>Username</label>
+            <div ng-messages="registerForm.name.$error">
+              <div ng-message="pattern">Username may only contain alphanumeric characters, hyphens, and underscores</div>
+              <div ng-message="available">An account with that name already exists</div>
+            </div>
           </md-input-container>
           <md-input-container class="md-block">
-            <input type="password" name="password" ng-model="registerPassword">
+            <input type="password" name="password" minlength="8" maxlength="72" required ng-model="auth.registerPassword" aria-label="Password">
             <label>Password</label>
+            <div ng-messages="registerForm.password.$error">
+              <div ng-message="minlength">Password must be at least 8 characters long</div>
+            </div>
           </md-input-container>
-          <span ng-if="auth.registerError">{{auth.registerError}}<br></span>
-
+          <md-input-container class="md-block">
+            <input type="password" name="password2" required ng-pattern="{{auth.registerPassword}}" aria-label="Verify password" ng-model="auth.password2">
+            <label>Verify password</label>
+            <div ng-messages="registerForm.password2.$error">
+              <div ng-message="pattern">Passwords do not match</div>
+            </div>
+          </md-input-container>
           <md-card-actions layout="row" layout-align="center">
-            <md-button type="submit" class="md-raised">Sign up</md-button>
+            <md-button type="submit" class="md-raised" ng-disabled="registerForm.$invalid">Sign up</md-button>
           </md-card-actions>
           <p class="md-body-1" style="text-align: center;">By registering, you agree to the Porybox <a href="/tos">terms of service</a>
             and <a href="privacy-policy">privacy policy</a>.</p>
