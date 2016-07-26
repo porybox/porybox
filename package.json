@@ -78,7 +78,7 @@
     "angular-mocks": "^1.5.8",
     "chai": "^3.5.0",
     "dirty-chai": "^1.2.2",
-    "karma": "^0.13.21",
+    "karma": "^1.1.2",
     "karma-browserify": "^5.0.1",
     "karma-chai": "^0.1.0",
     "karma-dirty-chai": "^1.0.2",
