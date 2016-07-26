@@ -140,7 +140,15 @@ const attributes = {
     return _.omit(this, secretProperties);
   },
   omitOwnerOnlyInfo () {
-    return _.omit(this, ['box', 'privateNotes']);
+    return _.omit(this, ['privateNotes']);
+  },
+  async getBoxVisibility () {
+    const box = await Box.findOne({id: this.box, _markedForDeletion: false});
+    if (!box) {
+      sails.log.warn(`The Pokémon with ID ${this.id} has a missing box (ID ${this.box})`);
+      return 'unlisted'; // This shouldn't happen, but return the option that would disclose the least amount of info if it does.
+    }
+    return box.visibility;
   },
   async markForDeletion () {
     return Pokemon.update({id: this.id}, {_markedForDeletion: true});
