@@ -21,7 +21,7 @@
     "babelify": "^7.2.0",
     "bcryptjs": "^2.3.0",
     "bluebird": "3.4.1",
-    "browserify": "13.0.1",
+    "browserify": "13.1.0",
     "clean-css": "^3.4.18",
     "concurrently": "^2.1.0",
     "connect-mongo": "^1.2.1",
