@@ -137,7 +137,7 @@ md-divider {
 
 @media (min-width: 370px) {
   md-dialog {
-    min-width: 360px;
+    min-width: 90%;
   }
 }
 
@@ -160,6 +160,11 @@ md-card > md-toolbar {
 md-toolbar.md-tall {
   height: 158px;
   max-height: 188px;
+}
+
+md-dialog-content textarea[md-no-autogrow].md-input {
+  height: inherit;
+  overflow-y: auto;
 }
 
 /*******************************
