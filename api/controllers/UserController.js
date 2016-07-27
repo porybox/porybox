@@ -78,28 +78,17 @@ module.exports = _.mapValues({
     return res.ok();
   },
   async deleteAccount (req, res) {
-    const params = req.allParams();
-    Validation.requireParams(params, 'password');
-    const userPassport = await Passport.findOne({user: req.user.name, protocol: 'local'});
-    const isValid = await userPassport.validatePassword(params.password);
-    if (!isValid) {
-      return res.forbidden('Incorrect password');
-    }
+    // (The user's password is validated before this controller function, in the passwordRequired policy)
     await req.user.deleteAccount();
     return res.ok();
   },
   async changePassword (req, res) {
+    // (The old password is validated before this controller function, in the passwordRequired policy)
     const params = req.allParams();
-    Validation.requireParams(params, ['oldPassword', 'newPassword']);
-    const oldPassport = await Passport.findOne({user: req.user.name, protocol: 'local'});
-    const isValid = await oldPassport.validatePassword(params.oldPassword);
-    if (!isValid) {
-      // If the provided oldPassword is incorrect, stop immediately.
-      return res.forbidden('Incorrect password');
-    }
-    // Otherwise, attempt to create a new Passport for the user with the new password.
+    // Attempt to create a new Passport for the user with the new password.
     // This is done *before* deleting the old Passport; otherwise, the user will be locked out of their
     // account if there's an error creating the new Passport.
+    Validation.requireParams(params, 'newPassword');
     const newPassport = await Passport.create({
       protocol: 'local',
       user: req.user.name,
@@ -115,7 +104,6 @@ module.exports = _.mapValues({
     await Passport.destroy({
       user: req.user.name,
       protocol: 'local',
-      password: oldPassport.password,
       // Omit the newly-created Passport -- this line is necessary because the old/new passwords might be the same.
       id: {not: newPassport.id}
     });

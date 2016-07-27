@@ -26,7 +26,16 @@ before(function(done) {
       migrate: 'drop'
     },
     connection: 'testDB',
-    paths: { public: 'client', views: 'client' }
+    paths: { public: 'client', views: 'client' },
+    email: {
+      transport: {
+        host: 'localhost',
+        port: 1235,
+        ignoreTLS: true
+      },
+      sender: 'Porybox <no-reply@example.org>'
+    },
+    log: {level: 'debug'}
   }, function(err) {
     if (err) return done(err);
     // here you can load fixtures, etc.

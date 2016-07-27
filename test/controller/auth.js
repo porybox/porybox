@@ -6,11 +6,8 @@ describe('AuthController', function() {
   let agent;
   let otherAgent;
   let invalidAgent;
-  before(async () => {
-    agent = await testHelpers.getAgent();
-  });
-
   beforeEach(async () => {
+    agent = await testHelpers.getAgent();
     otherAgent = await testHelpers.getAgent();
     invalidAgent = await testHelpers.getAgent();
   });
@@ -163,7 +160,7 @@ describe('AuthController', function() {
     });
     it('allows a user to change their password', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({
-        oldPassword: 'Correct Horse Battery Staple',
+        password: 'Correct Horse Battery Staple',
         newPassword: 'Correct Llama Battery Staple'
       });
       expect(res.statusCode).to.equal(200);
@@ -186,7 +183,7 @@ describe('AuthController', function() {
     });
     it('does not allow users to change their password if the given password is wrong', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({
-        oldPassword: 'Incorrect Horse Battery Staple',
+        password: 'Incorrect Horse Battery Staple',
         newPassword: 'invalid new password'
       });
       expect(res.statusCode).to.equal(403);
@@ -207,12 +204,13 @@ describe('AuthController', function() {
     it('returns a 400 error if a user omits either parameter', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({newPassword: 'new pass'});
       expect(res.statusCode).to.equal(400);
-      const res2 = await passAgent.post('/api/v1/changePassword').send({oldPassword: 'old pass'});
+      const res2 = await passAgent.post('/api/v1/changePassword')
+        .send({password: 'Correct Horse Battery Staple'});
       expect(res2.statusCode).to.equal(400);
     });
     it('functions properly if the new password happens to be the same as the old one', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({
-        oldPassword: 'Correct Horse Battery Staple',
+        password: 'Correct Horse Battery Staple',
         newPassword: 'Correct Horse Battery Staple'
       });
       expect(res.statusCode).to.equal(200);
@@ -228,7 +226,7 @@ describe('AuthController', function() {
     });
     it('returns a 400 error and keeps the old password valid if new one is invalid', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({
-        oldPassword: 'Correct Horse Battery Staple',
+        password: 'Correct Horse Battery Staple',
         newPassword: 'blah' // Invalid password (too short)
       });
       expect(res.statusCode).to.equal(400);
