@@ -25,7 +25,7 @@
     "clean-css": "^3.4.18",
     "concurrently": "^2.1.0",
     "connect-mongo": "^1.2.1",
-    "ejs": "2.5.1",
+    "ejs": "^2.5.1",
     "eslint": "^3.0.0",
     "grunt": "1.0.1",
     "include-all": "0.1.6",
@@ -34,6 +34,7 @@
     "lodash": "^4.14.0",
     "moment": "^2.14.0",
     "ng-file-upload": "^12.0.4",
+    "nodemailer": "^2.5.0",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
@@ -87,6 +88,7 @@
     "mocha": "^2.5.0",
     "phantomjs-prebuilt": "^2.1.8",
     "sails-memory": "^0.10.6",
+    "smtp-tester": "^0.6.2",
     "superagent-defaults": "^0.1.14",
     "supertest-as-promised": "^3.0.0"
   }

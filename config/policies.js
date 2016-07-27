@@ -18,6 +18,7 @@
 
 const anyone = ['passport'];
 const user = ['passport', 'sessionAuth'];
+const passwordProtected = ['passport', 'sessionAuth', 'passwordRequired'];
 const admin = ['passport', 'sessionAuth', 'isAdmin'];
 
 module.exports.policies = {
@@ -66,9 +67,14 @@ module.exports.policies = {
     getPreferences: user,
     editPreferences: user,
     editAccountInfo: user,
-    deleteAccount: user,
-    changePassword: user,
+    deleteAccount: passwordProtected,
+    changePassword: passwordProtected,
     checkUsernameAvailable: anyone
-  }
+  },
 
+  PasswordResetController: {
+    create: anyone,
+    get: anyone,
+    delete: anyone
+  }
 };

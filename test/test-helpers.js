@@ -1,6 +1,10 @@
 const supertest = require('supertest-as-promised');
 const defaults = require('superagent-defaults');
 const expect = require('chai').use(require('dirty-chai')).expect;
+// start a fake SMTP server on port 1235
+const emailServer = require('smtp-tester').init(1235, {disableDNSValidation: true});
+const emailEmitter = new (require('events').EventEmitter);
+emailServer.bind((address, id, email) => emailEmitter.emit('email', email));
 
 module.exports = {
   getAgent () {
@@ -13,5 +17,6 @@ module.exports = {
       the .then function. */
       agent.then = undefined;
     }).return(agent);
-  }
+  },
+  emailEmitter
 };
