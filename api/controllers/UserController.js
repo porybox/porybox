@@ -24,7 +24,7 @@ module.exports = _.mapValues({
     return res.ok(_.reject(orderedBoxes, b => b.visibility === 'unlisted'));
   },
   me (req, res) {
-    return res.redirect(`/user/${req.user.name}`);
+    return res.redirect(`/api/v1/user/${req.user.name}`);
   },
   getPreferences (req, res) {
     return UserPreferences.findOne({user: req.user.name}).then(res.ok).catch(res.serverError);
