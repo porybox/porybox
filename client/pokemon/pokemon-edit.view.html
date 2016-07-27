@@ -21,12 +21,12 @@
 
           <md-input-container class="md-block">
             <label>Public Notes (supports markdown)</label>
-            <textarea ng-model="dialog.publicNotes" rows="5" maxlength="2000"></textarea>
+            <textarea ng-model="dialog.publicNotes" rows="5" md-maxlength="2000" placeholder="Public notes are visible to anyone who views the Pokémon." md-no-autogrow></textarea>
           </md-input-container>
 
           <md-input-container class="md-block">
             <label>Private Notes (supports markdown)</label>
-            <textarea ng-model="dialog.privateNotes" rows="5" maxlength="2000"></textarea>
+            <textarea ng-model="dialog.privateNotes" rows="5" md-maxlength="2000" placeholder="Private notes are only visible to you." md-no-autogrow></textarea>
           </md-input-container>
 
 
