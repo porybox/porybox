@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-module.exports = class ForgetPassword {
+module.exports = class ForgotPassword {
   constructor ($scope, $http, $mdToast, errorHandler) {
     this.$scope = $scope;
     this.$http = $http;
@@ -12,14 +12,14 @@ module.exports = class ForgetPassword {
       url: `/api/v1/user/${this.resetName}/passwordReset`
     })).then(() => {
       this.resetName = '';
-      this.$scope.forgetForm.$setPristine();
-      this.$scope.forgetForm.$setUntouched();
+      this.$scope.forgotForm.$setPristine();
+      this.$scope.forgotForm.$setUntouched();
       this.$mdToast.show(this.$mdToast.simple()
         .textContent('Password reset link sent; please check your email.')
         .position('bottom right')
         .hideDelay(4000));
     })
-    .catch({status: 404}, () => this.$scope.forgetForm.user.$setValidity('exists', false))
+    .catch({status: 404}, () => this.$scope.forgotForm.user.$setValidity('exists', false))
     .then(() => this.$scope.$apply())
     .catch(this.errorHandler);
   }
