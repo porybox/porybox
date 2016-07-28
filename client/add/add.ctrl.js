@@ -3,8 +3,7 @@ const Promise = require('bluebird');
 const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
 const maxMultiUploadSize = require('../../api/services/Constants.js').MAX_MULTI_UPLOAD_SIZE;
-const boxPageSize = require('../../api/services/Constants.js').BOX_PAGE_SIZE;
-import {chunk} from 'lodash';
+import {chunk, flatten} from 'lodash/fp';
 
 /**
  * A small controller to explain the syntax we will be using
@@ -73,9 +72,9 @@ module.exports = class Add {
       }
     })).map(Promise.props)
       .map(result => ({data: result.data, box: result.box, visibility: result.visibility}))
-      .then(files => chunk(files, maxMultiUploadSize))
+      .then(chunk(maxMultiUploadSize))
       .mapSeries(files => this.io.socket.postAsync('/api/v1/pokemon/multi', {files}))
-      .reduce((acc, nextGroup) => acc.concat(nextGroup), [])
+      .then(flatten)
       .tap(lines => {
         const successfulUploads = lines.filter(line => line.success);
         const successfulUploadCount = successfulUploads.length;
@@ -98,13 +97,6 @@ module.exports = class Add {
         });
       })
       .filter(line => line.success && line.created.box === this.selected.selectedBox.id)
-      .tap(lines => this.selected.selectedBox.totalItemCount += lines.length)
-      .tap(lines => this.selected.selectedBox.totalPageCount = Math.max(
-        Math.ceil((this.selected.selectedBox.contents.length + lines.length) / boxPageSize),
-        1
-      ))
-      .then(lines => this.selected.selectedBox.contents.length < boxPageSize ? lines : [])
-      .then(lines => lines.slice(0, boxPageSize - this.selected.selectedBox.contents.length))
       .map(line => line.created)
       .each(pkmn => this.selected.selectedBox.contents.push(pkmn))
       .catch(this.errorHandler)
