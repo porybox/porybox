@@ -74,8 +74,8 @@ module.exports = class Box {
       this.hasFullData = true;
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
-    }).then(() => this.$scope.$apply())
-      .tap(() => this.isLoading = false);
+    }).tap(() => this.isLoading = false)
+      .then(() => this.$scope.$apply());
   }
   fetchMore () {
     this.isLoading = true;
