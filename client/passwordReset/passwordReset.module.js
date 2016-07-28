@@ -6,7 +6,14 @@ ng.module('porybox.passwordReset', ['ngRoute'])
     $routeProvider.when('/passwordReset/:token', {
       templateUrl: '/passwordReset/passwordReset.view.html',
       controller: [
-        '$scope', '$http', 'io', '$routeParams', '$mdToast', 'errorHandler', passwordResetCtrl
+        '$scope',
+        '$http',
+        'io',
+        '$routeParams',
+        '$mdToast',
+        'errorHandler',
+        'escapeRegExp',
+        passwordResetCtrl
       ],
       controllerAs: 'passwordReset'
     });
