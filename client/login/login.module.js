@@ -12,14 +12,14 @@ ng.module('porybox.login', ['ngRoute', 'ngMessages'])
   {
     bindings: {},
     templateUrl: 'login/login.view.html',
-    controller: ['$scope', '$http', 'errorHandler', controller],
+    controller: ['$scope', '$http', 'errorHandler', 'escapeRegExp', controller],
     controllerAs: 'auth'
   })
   .component('registrationForm',
   {
     bindings: {},
     templateUrl: 'login/register.view.html',
-    controller: ['$scope', '$http', 'errorHandler', controller],
+    controller: ['$scope', '$http', 'errorHandler', 'escapeRegExp', controller],
     controllerAs: 'auth'
   }).config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/login', {

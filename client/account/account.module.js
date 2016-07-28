@@ -14,7 +14,7 @@ ng.module('porybox.account', ['ngRoute', 'ngMessages'])
   }])
   .component('editPassword', {
     templateUrl: 'account/password.view.html',
-    controller: ['$scope', 'io', '$mdToast', 'errorHandler', passwordCtrl],
+    controller: ['$scope', 'io', '$mdToast', 'errorHandler', 'escapeRegExp', passwordCtrl],
     controllerAs: 'password'
   })
   .component('editInfo', {

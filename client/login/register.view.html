@@ -37,7 +37,7 @@
             </div>
           </md-input-container>
           <md-input-container class="md-block">
-            <input type="password" name="password2" required ng-pattern="{{auth.registerPassword}}" aria-label="Verify password" ng-model="auth.password2">
+            <input type="password" name="password2" required ng-pattern="{{auth.escapeRegExp(auth.registerPassword)}}" aria-label="Verify password" ng-model="auth.password2">
             <label>Verify password</label>
             <div ng-messages="registerForm.password2.$error">
               <div ng-message="pattern">Passwords do not match</div>
