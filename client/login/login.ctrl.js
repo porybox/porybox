@@ -7,10 +7,11 @@ import Promise from 'bluebird';
 const VALID_USERNAME_REGEX = require('../../api/services/Constants').VALID_USERNAME_REGEX;
 
 module.exports = class Login {
-  constructor ($scope, $http, errorHandler) {
+  constructor ($scope, $http, errorHandler, escapeRegExp) {
     this.$scope = $scope;
     this.$http = $http;
     this.errorHandler = errorHandler;
+    this.escapeRegExp = escapeRegExp;
     this.VALID_USERNAME_REGEX = VALID_USERNAME_REGEX;
   }
   register () {

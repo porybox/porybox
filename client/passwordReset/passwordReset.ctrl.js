@@ -1,12 +1,13 @@
 import Promise from 'bluebird';
 module.exports = class PasswordReset {
-  constructor ($scope, $http, io, $routeParams, $mdToast, errorHandler) {
+  constructor ($scope, $http, io, $routeParams, $mdToast, errorHandler, escapeRegExp) {
     this.$scope = $scope;
     this.$http = $http;
     this.io = io;
     this.$routeParams = $routeParams;
     this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
+    this.escapeRegExp = escapeRegExp;
   }
   verifyToken () {
     return this.io.socket.getAsync(`/api/v1/passwordReset/${this.$routeParams.token}`).then(() => {

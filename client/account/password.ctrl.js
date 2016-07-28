@@ -1,9 +1,10 @@
 module.exports = class Password {
-  constructor ($scope, io, $mdToast, errorHandler) {
+  constructor ($scope, io, $mdToast, errorHandler, escapeRegExp) {
     this.$scope = $scope;
     this.io = io;
     this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
+    this.escapeRegExp = escapeRegExp;
   }
   changePassword () {
     return this.io.socket.postAsync('/api/v1/changePassword', {

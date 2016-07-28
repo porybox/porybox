@@ -122,4 +122,8 @@ porybox.service('errorHandler', ['$mdToast', function ($mdToast) {
   };
 }]);
 
+porybox.service('escapeRegExp', () => {
+  return string => string.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+});
+
 ng.bootstrap(document, ['porybox'], {strictDi: true});
