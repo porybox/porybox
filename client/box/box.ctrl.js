@@ -75,6 +75,7 @@ module.exports = class Box {
     }).catch(err => {
       this.errorStatusCode = err.statusCode;
     }).tap(() => this.isLoading = false)
+      .tap(() => this.onscroll())
       .then(() => this.$scope.$apply());
   }
   fetchMore () {
@@ -88,6 +89,7 @@ module.exports = class Box {
         this.isLoading = false;
         this.isFinished = !data.contents.length;
       })
+      .tap(() => this.onscroll())
       .then(() => this.$scope.$apply())
       .catch(this.errorHandler);
   }
