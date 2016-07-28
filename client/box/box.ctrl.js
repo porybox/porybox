@@ -79,6 +79,7 @@ module.exports = class Box {
       .then(() => this.$scope.$apply());
   }
   fetchMore () {
+    if (!this.data.contents.length) return Promise.resolve();
     this.isLoading = true;
     this.$scope.$apply();
     return this.io.socket.getAsync(`/api/v1/box/${this.id}`, {
