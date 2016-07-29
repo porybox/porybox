@@ -9,3 +9,6 @@ module.exports = class Info {
     // Do something to change email address (tbd)
   }
 };
+
+
+// foobar
