@@ -227,11 +227,11 @@ module.exports = class Pokemon {
       this.isDeleted = true;
     }).then(() => {
       const toast = this.$mdToast.simple()
-            .hideDelay(10000)
-            .textContent(this.parsedNickname + ' deleted')
-            .action('Undo')
-            .highlightAction(true)
-            .position('bottom right');
+        .hideDelay(10000)
+        .textContent(this.parsedNickname + ' deleted')
+        .action('Undo')
+        .highlightAction(true)
+        .position('bottom right');
       this.$mdToast.show(toast).then((response) => {
         if ( response === 'ok' ) {
           this.undelete();
