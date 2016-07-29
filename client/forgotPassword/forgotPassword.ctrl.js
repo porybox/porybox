@@ -18,9 +18,8 @@ module.exports = class ForgotPassword {
         .textContent('Password reset link sent; please check your email.')
         .position('bottom right')
         .hideDelay(4000));
-    })
-    .catch({status: 404}, () => this.$scope.forgotForm.user.$setValidity('exists', false))
-    .then(() => this.$scope.$apply())
-    .catch(this.errorHandler);
+    }).catch({status: 404}, () => this.$scope.forgotForm.user.$setValidity('exists', false))
+      .then(() => this.$scope.$apply())
+      .catch(this.errorHandler);
   }
 };
