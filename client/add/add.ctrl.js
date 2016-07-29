@@ -71,7 +71,9 @@ module.exports = class Add {
         defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
       }
     })).map(Promise.props)
-      .map(result => ({data: result.data, box: result.box, visibility: result.visibility}))
+      .map(line => ({data: line.data, box: line.box, visibility: line.visibility}))
+      .map(line => line.data.map(data => ({data, box: line.box, visibility: line.visibility})))
+      .then(flatten)
       .then(chunk(maxMultiUploadSize))
       .mapSeries(files => this.io.socket.postAsync('/api/v1/pokemon/multi', {files}))
       .then(flatten)
