@@ -48,7 +48,7 @@
     "sinon": "^1.17.3",
     "socket.io-browserify": "^0.9.6",
     "socket.io-client": "^1.4.5",
-    "supertest": "^1.2.0",
+    "supertest": "^2.0.0",
     "uglify-js": "^2.6.4",
     "validator": "^5.2.0",
     "watchify": "^3.7.0"
