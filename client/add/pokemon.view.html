@@ -16,18 +16,19 @@
           <div ngf-drop ngf-select ng-model="pkmDialog.draggedFiles" class="drop-box"
               ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
               ngf-multiple="true" ngf-allow-dir="true" ngf-capture="'other'"
-              accept=".pk6,.pkx" ngf-accept="'.pk6,.pkx'" ngf-change="pkmDialog.addFiles(pkmDialog.draggedFiles)"
-              ngf-pattern="'.pk6,.pkx'">Drop file/directory here</div>
+              ngf-change="pkmDialog.addFiles(pkmDialog.draggedFiles)"
+              ngf-validate-fn="pkmDialog.fileIsValid($file)"
+              ngf-pattern="'.pk6,.pkx,main'">Drop file/directory here</div>
           <span flex></span>
         </div>
 
         <div layout="row">
           <span flex></span>
           <div flex="50">
-            Or select a file:
+            Or select a .pk6/decrypted save file:
             <input type="file" ngf-select ng-model="pkmDialog.manualFiles" name="file"
-                 accept=".pk6" ngf-max-size="2MB" ng-change="pkmDialog.addFiles(pkmDialog.manualFiles)" multiple
-                 ngf-model-invalid="errorFile">
+                ngf-max-size="2MB" ng-change="pkmDialog.addFiles(pkmDialog.manualFiles)" multiple
+                ngf-validate-fn="pkmDialog.fileIsValid($file)">
           </div>
           <span flex></span>
         </div>
