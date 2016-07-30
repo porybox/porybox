@@ -264,10 +264,24 @@ describe('AuthController', function() {
   });
 
   describe('misc. security', async () => {
-    it('sends an x-frame-options: SAMEORIGIN header on every request', async () => {
-      const res = await agent.get('/');
+    let res;
+    before(async () => {
+      res = await agent.get('/');
       expect(res.statusCode).to.equal(200);
+    });
+    it('sends an x-frame-options: SAMEORIGIN header on every request', async () => {
       expect(res.header['x-frame-options']).to.equal('SAMEORIGIN');
+    });
+    it('sends an x-xss-protection: 1; mode=block header on every request', async () => {
+      expect(res.header['x-xss-protection']).to.equal('1; mode=block');
+    });
+    it('sends an x-content-type-options: nosniff header on every request', async () => {
+      expect(res.header['x-content-type-options']).to.equal('nosniff');
+    });
+    it('sends a content-security-policy header to only allow scripts from self', async () => {
+      expect(res.header['content-security-policy']).to.equal(
+        "default-src 'self' ; script-src 'self' 'unsafe-inline' *.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' ; reflected-xss block;"
+      );
     });
   });
 });
