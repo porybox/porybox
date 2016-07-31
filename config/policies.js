@@ -69,6 +69,7 @@ module.exports.policies = {
     editAccountInfo: user,
     deleteAccount: passwordProtected,
     changePassword: passwordProtected,
+    changeEmail: passwordProtected,
     checkUsernameAvailable: anyone
   },
 

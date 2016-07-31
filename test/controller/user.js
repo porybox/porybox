@@ -418,4 +418,75 @@ describe('UserController', () => {
       expect(res3.statusCode).to.equal(200);
     });
   });
+
+  describe('changing an email address', () => {
+    let changeAgent, oldEmail, newEmail, username, password;
+    beforeEach(async () => {
+      changeAgent = await testHelpers.getAgent();
+      username = `deleteTester${require('crypto').randomBytes(4).toString('hex')}`;
+      oldEmail = 'oldEmail@example.com';
+      newEmail = 'newEmail@example.com';
+      password = 'correct-password';
+      const res = await changeAgent.post('/api/v1/auth/local/register').send({
+        name: username,
+        password,
+        email: oldEmail
+      });
+      expect(res.statusCode).to.equal(200);
+    });
+    describe('the request is valid', () => {
+      it('allows the user to change their email address', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({email: newEmail, password});
+        expect(res.statusCode).to.equal(200);
+      });
+      afterEach(async () => {
+        const res = await changeAgent.get(`/api/v1/user/${username}`);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.email).to.equal(newEmail);
+      });
+    });
+    describe('the request is invalid', () => {
+      it('returns a 400 error if the provided email is not a valid email address', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({
+          email: 'newEmail@example.',
+          password
+        });
+        expect(res.statusCode).to.equal(400);
+      });
+      it('returns a 400 error if no email is provided', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({password});
+        expect(res.statusCode).to.equal(400);
+      });
+      it('returns a 400 error if a nonsense email address parameter is provided', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({
+          password,
+          email: [newEmail] // email should be a string rather than an array
+        });
+        expect(res.statusCode).to.equal(400);
+      });
+      it('returns a 401 error if the provided password is incorrect', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({
+          email: newEmail,
+          password: password + 'aaaaa'
+        });
+        expect(res.statusCode).to.equal(401);
+      });
+      it('returns a 400 error if no password is provided', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({email: newEmail});
+        expect(res.statusCode).to.equal(400);
+      });
+      it('returns a 400 error if a nonsense password parameter is provided', async () => {
+        const res = await changeAgent.post('/api/v1/changeEmail').send({
+          email: newEmail,
+          password: ['foo'] // password should be a string instead of an array
+        });
+        expect(res.statusCode).to.equal(400);
+      });
+      afterEach(async () => {
+        const res = await changeAgent.get(`/api/v1/user/${username}`);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.email).to.equal(oldEmail);
+      });
+    });
+  });
 });
