@@ -15,7 +15,7 @@ module.exports = class Password {
       return this.$mdToast.show(this.$mdToast.simple()
         .position('bottom right')
         .textContent('Password updated successfully'));
-    }).catch({statusCode: 403, body: 'Incorrect password'}, () => {
+    }).catch({statusCode: 401, body: 'Incorrect password'}, () => {
       this.$scope.changePassword.oldPassword.$setValidity('correct', false);
       this.$scope.$apply();
     }).catch(this.errorHandler);
