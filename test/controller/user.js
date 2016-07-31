@@ -302,7 +302,7 @@ describe('UserController', () => {
     });
     it('does not allow an account to be deleted if an incorrect password is provided', async () => {
       const res = await deleteAgent.del('/api/v1/me').send({password: 'incorrect-password'});
-      expect(res.statusCode).to.equal(403);
+      expect(res.statusCode).to.equal(401);
     });
     it("deletes all of a user's boxes when their account is deleted", async () => {
       const res = await deleteAgent.post('/api/v1/box')

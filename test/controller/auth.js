@@ -186,7 +186,7 @@ describe('AuthController', function() {
         password: 'Incorrect Horse Battery Staple',
         newPassword: 'invalid new password'
       });
-      expect(res.statusCode).to.equal(403);
+      expect(res.statusCode).to.equal(401);
       // log in with the old password and make sure it still works
       const res2 = await passAgent2.post('/api/v1/auth/local').send({
         name: username,
