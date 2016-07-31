@@ -109,6 +109,15 @@ module.exports = _.mapValues({
     });
     return res.ok();
   },
+  async changeEmail (req, res) {
+    Validation.requireParams(req.body, 'email');
+    Validation.sanityCheck(_.isString(req.user.name));
+    await User.update({name: req.user.name}, {email: req.body.email}).then().catchThrow(
+      {code: 'E_VALIDATION'},
+      {statusCode: 400, message: 'Invalid email address'}
+    );
+    return res.ok();
+  },
   async checkUsernameAvailable (req, res) {
     const params = req.allParams();
     Validation.requireParams(params, 'name');
