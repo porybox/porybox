@@ -4,12 +4,12 @@
       <h1>
         <span>
           {{box.data.name}}
-          <span class="unlisted-lock">
-            <md-tooltip md-direction="right">This box is unlisted.</md-tooltip>
-            <i class="material-icons" ng-if="box.data.visibility === 'unlisted'">lock_outline</i>
-          </span>
         </span>
       </h1>
+      <span class="unlisted-lock">
+        <md-tooltip md-direction="right">This box is unlisted.</md-tooltip>
+        <i class="material-icons" ng-if="box.data.visibility === 'unlisted'">lock_outline</i>
+      </span>
       <span flex></span>
       <md-button ng-if="!box.draggingEnabled" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
         <md-tooltip md-direction="left">Enable dragging to move Pokémon in this box</md-tooltip>
