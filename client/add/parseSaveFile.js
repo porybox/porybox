@@ -153,10 +153,19 @@ function copy(src, off1, dest, off2, length) {
   }
 }
 
+const FILE_SIZES = {
+  483328: 'ORAS',
+  415232: 'XY',
+  [232 * 30 * 32]: 'YABD',
+  [232 * 30 * 31]: 'PCDATA',
+  458752: 'ORASRAM'
+};
+
 module.exports = saveFile => {
-  for (const fileType of ['ORAS', 'XY', 'YABD', 'PCDATA', 'XYRAM', 'ORASRAM']) {
-    const pk6Files = new SaveReaderDecrypted(saveFile, fileType).getAllPkx();
-    if (pk6Files.length) return pk6Files.map(file => file.data);
+  if (saveFile.length === 2 ** 20 + 156 || saveFile.length === 2 ** 20 + 410) {
+    saveFile = saveFile.subarray(-(2 ** 20));
   }
+  const fileType = FILE_SIZES[saveFile.length];
+  if (fileType) return new SaveReaderDecrypted(saveFile, fileType).getAllPkx().map(pkx => pkx.data);
   return [];
 };
