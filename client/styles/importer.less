@@ -171,9 +171,18 @@ md-dialog-content textarea[md-no-autogrow].md-input {
  * Header
  *******************************/
 
+ .unlisted-lock {
+   color: orange;
+ }
+
 .md-toolbar-tools img {
   height: 74px;
   margin: 0 7px 0px -5px;
+}
+
+.md-toolbar-tools .unlisted-lock {
+  position: relative;
+  top: 4px;
 }
 
 /*******************************
@@ -183,6 +192,12 @@ md-dialog-content textarea[md-no-autogrow].md-input {
 .box-header {
   background-color: rgba(45, 45, 45, .2);
   padding: 7px 10px;
+}
+
+.box-card .unlisted-lock {
+  position: absolute;
+  top: 8px;
+  right: 7px;
 }
 
 @media (min-width: 600px) {
