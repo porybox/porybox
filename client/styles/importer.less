@@ -137,7 +137,7 @@ md-divider {
 
 @media (min-width: 370px) {
   md-dialog {
-    min-width: 360px;
+    min-width: 90%;
   }
 }
 
@@ -160,6 +160,11 @@ md-card > md-toolbar {
 md-toolbar.md-tall {
   height: 158px;
   max-height: 188px;
+}
+
+md-dialog-content textarea[md-no-autogrow].md-input {
+  height: inherit;
+  overflow-y: auto;
 }
 
 /*******************************
@@ -284,6 +289,11 @@ h1.summary-toolbar {
   opacity: 1;
 }
 
+// Prevent people from overflowing markdown text boxes, e.g. by embedding large images
+[marked] * {
+  max-width: 100%;
+}
+
 .pokeball, .held-item {
   width: 32px;
   height: 32px;
@@ -384,6 +394,11 @@ span[class^='gender-'] {
 
 .draggable > md-card.pokemon-card-mini > .pokemon-card-content:after {
   opacity: 0.15;
+}
+
+.note img {
+  max-width: 600px;
+  width: 100%;
 }
 
 /*******************************

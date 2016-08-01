@@ -407,14 +407,14 @@
       <md-card ng-show="pokemon.hasFullData">
         <md-card-header><span class="card-headline">Public Notes</span></md-card-header>
         <md-card-content>
-          <div>{{pokemon.data.publicNotes}}</div>
+          <div marked="pokemon.data.publicNotes" class="note"></div>
         </md-card-content>
       </md-card>
 
       <md-card ng-show="pokemon.hasFullData" ng-if="pokemon.data.owner === main.user.name || main.user.isAdmin">
         <md-card-header><span class="card-headline">Private Notes</span></md-card-header>
         <md-card-content>
-          <div>{{pokemon.data.privateNotes}}</div>
+          <div marked="pokemon.data.privateNotes" class="note"></div>
           <div style="font-style: italic">Private notes are only visible to you, the owner.</div>
         </md-card-content>
       </md-card>
