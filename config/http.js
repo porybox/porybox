@@ -23,7 +23,22 @@ module.exports.http = {
 
   middleware: {
     xframe: (req, res, next) => {
-      res.header('X-FRAME-OPTIONS', 'SAMEORIGIN');
+      res.header('X-Frame-Options', 'SAMEORIGIN');
+      next();
+    },
+
+    xss: (req, res, next) => {
+      res.header('X-XSS-Protection', '1; mode=block');
+      next();
+    },
+
+    contentType: (req, res, next) => {
+      res.header('X-Content-Type-Options', 'nosniff');
+      next();
+    },
+
+    csp: (req, res, next) => {
+      res.header('Content-Security-Policy', "default-src 'self' ; script-src 'self' 'unsafe-inline' *.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' ; reflected-xss block;");
       next();
     },
 
@@ -35,7 +50,6 @@ module.exports.http = {
   ***************************************************************************/
 
     order: [
-      'xframe',
       'startRequestTimer',
       'cookieParser',
       'session',
@@ -44,6 +58,10 @@ module.exports.http = {
       'handleBodyParserError',
       'compress',
       'methodOverride',
+      'xframe',
+      'xss',
+      'contentType',
+      'csp',
       '$custom',
       'router',
       'www',
