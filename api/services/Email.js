@@ -14,14 +14,10 @@ module.exports = {
     ).tap(() => sails.log.info(`Sent an email to ${to} with subject '${subject}'`));
   },
   renderTemplate (templateName, locals) {
-    if (!/^[A-Za-z\d]*$/.test(templateName)) {
-      /* Verify that the template name doesn't contain any special characters.
-      This should never happen since all the template names are just hard-coded string literals.
-      However, if there's a vulnerability that allows an attacker to use any given template name, it's
-      probably better to avoid emailing arbitrary files from the server's filesystem. */
-      sails.log.warn(`Blocked an attempt to render the invalid email template ${templateName}`);
-      throw new Error('Invalid template name');
-    }
+    Validation.sanityCheck(
+      /^[A-Za-z\d]*$/.test(templateName),
+      `Invalid template name '${templateName}'`
+    );
     return renderFile(
       `${__dirname}/EmailTemplates/${templateName}.ejs`,
       Object.assign({}, locals, {siteUrl: sails.config.siteUrl})
