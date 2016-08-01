@@ -1,0 +1,42 @@
+<md-card>
+  <md-toolbar class="md-hue-1">
+    <div class="md-toolbar-tools">
+        <span>Update email address</span>
+    </div>
+  </md-toolbar>
+  <md-card-content>
+    <div layout="column" layout-padding>
+      <md-content class="autoscroll">
+        <form name="editEmailForm" method="POST">
+          <md-input-container class="md-block">
+            <label>New email address</label>
+            <input ng-model="email.newEmail" type="email" name="email" required aria-label="Porybox password">
+            <div ng-messages="editEmailForm.email.$error">
+              <div ng-message="email">Please enter a valid email address</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Porybox password</label>
+            <input
+              ng-model="email.password"
+              type="password"
+              name="password"
+              required
+              aria-label="Porybox password"
+              ng-change="editEmailForm.password.$setValidity('correct', true)"
+            >
+            <div ng-messages="editEmailForm.password.$error">
+              <div ng-message="correct">Incorrect password</div>
+            </div>
+          </md-input-container>
+
+          <md-card-actions layout="row" layout-align="start">
+            <md-button ng-click="email.editEmail()" type="submit" ng-disabled="editEmailForm.$invalid">
+              Update email address
+            </md-button>
+          </md-card-actions>
+        </form>
+      </md-content>
+    </div>
+  </md-card-content>
+</md-card>

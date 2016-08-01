@@ -1,8 +1,8 @@
 const ng = require('angular');
 const accountCtrl = require('./account.ctrl');
 const passwordCtrl = require('./password.ctrl');
-const infoCtrl = require('./info.ctrl');
 const prefsCtrl = require('./prefs.ctrl');
+const emailCtrl = require('./email.ctrl');
 
 ng.module('porybox.account', ['ngRoute', 'ngMessages'])
   .config(['$routeProvider', function($routeProvider) {
@@ -17,14 +17,6 @@ ng.module('porybox.account', ['ngRoute', 'ngMessages'])
     controller: ['$scope', 'io', '$mdToast', 'errorHandler', 'escapeRegExp', passwordCtrl],
     controllerAs: 'password'
   })
-  .component('editInfo', {
-    bindings: {
-      email: '='
-    },
-    templateUrl: 'account/info.view.html',
-    controller: ['io', '$mdToast', 'errorHandler', infoCtrl],
-    controllerAs: 'info'
-  })
   .component('editPrefs',{
     bindings: {
       prefs: '='
@@ -32,4 +24,9 @@ ng.module('porybox.account', ['ngRoute', 'ngMessages'])
     templateUrl: 'account/prefs.view.html',
     controller: ['io', '$mdToast', 'errorHandler', prefsCtrl],
     controllerAs: 'prefs'
+  })
+  .component('editEmail', {
+    templateUrl: 'account/email.view.html',
+    controller: ['$scope', 'io', '$mdToast', 'errorHandler', emailCtrl],
+    controllerAs: 'email'
   });
