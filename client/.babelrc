@@ -2,6 +2,7 @@
 	"presets": ["es2015"],
 	"plugins": [
 		"lodash",
-		"transform-async-to-generator"
+		"transform-async-to-generator",
+		"transform-exponentiation-operator"
 	]
 }
