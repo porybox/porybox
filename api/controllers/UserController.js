@@ -94,11 +94,8 @@ module.exports = _.mapValues({
       user: req.user.name,
       password: params.newPassword,
       accessToken: require('crypto').randomBytes(48).toString('base64')
-    }).catch(err => {
-      // If an error occurs creating the new Passport, throw it and abort the process.
-      // (Usually this will occur when the user's new passwords is invalid, e.g. too short.)
-      throw err.code === 'E_VALIDATION' ? {statusCode: 400, message: 'Invalid new password'} : err;
-    });
+    }).then()
+      .catchThrow({code: 'E_VALIDATION'}, {statusCode: 400, message: 'Invalid new password'});
     // Once the new Passport has been created, delete all of the user's old Passports. This has the effect
     // of clearing the user's sessions.
     await Passport.destroy({
