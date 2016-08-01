@@ -6,6 +6,7 @@ require('angular-messages');
 require('angular-route');
 require('ng-file-upload');
 require('angular-sortable-views');
+require('angular-marked');
 const Promise = require('bluebird');
 Promise.config({warnings: false});
 import {unescape as unescapeHTML} from 'lodash';
@@ -42,7 +43,8 @@ const porybox = ng.module('porybox', [
   // Third party
   'ngMaterial',
   'ngRoute',
-  'angular-sortable-view'
+  'angular-sortable-view',
+  'hc.marked'
 ]);
 
 porybox.controller('MainCtrl', function () {
@@ -87,6 +89,10 @@ porybox.config(['$routeProvider', $routeProvider => {
 porybox.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.defaults.headers.common['x-csrf-token'] = CSRF_TOKEN;
   $httpProvider.interceptors.push('porybox.versionQuery');
+}]);
+
+porybox.config(['markedProvider', markedProvider => {
+  markedProvider.setOptions({gfm: true, sanitize: true});
 }]);
 
 porybox.service('io', function () {
