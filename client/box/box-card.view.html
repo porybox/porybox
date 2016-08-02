@@ -1,7 +1,13 @@
 <md-card class="box-card">
   <a ng-href="#/box/{{box.data.id}}" class="card-link">
     <md-card-header>
-      <span class="card-headline">{{box.data.name}}</span>
+      <span class="card-headline">
+        {{box.data.name}}
+      </span>
+      <span class="unlisted-lock">
+        <md-tooltip md-direction="left">This box is unlisted.</md-tooltip>
+        <i class="material-icons" ng-if="box.data.visibility === 'unlisted'">lock_outline</i>
+      </span>
     </md-card-header>
     <md-card-content>
       <span class="md-body-1">{{box.data.description}}</span>
