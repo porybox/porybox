@@ -32,7 +32,7 @@ exports.checkProhibited = pkmn => {
 exports.isStaticPidEvent = () => false; // TODO: Implement this
 
 exports.getSafePokemonForUser = async (
-    pkmn, user, {checkUnique = false, parse = true, knownBoxVisibility} = {}
+    pkmn, user, {checkUnique = false, parse = true, omitBox = false, knownBoxVisibility} = {}
 ) => {
   if (!pkmn) {
     throw {statusCode: 404};
@@ -55,8 +55,7 @@ exports.getSafePokemonForUser = async (
   if (pkmn.visibility !== 'public') {
     filteredPkmn = filteredPkmn.omitPrivateData();
   }
-  const boxVisibility = knownBoxVisibility || await filteredPkmn.getBoxVisibility();
-  if (boxVisibility !== 'listed') {
+  if (omitBox || (knownBoxVisibility || await filteredPkmn.getBoxVisibility()) !== 'listed') {
     filteredPkmn = _.omit(filteredPkmn, 'box');
   }
   return filteredPkmn;
@@ -156,5 +155,7 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
 };
 
 exports.pickPokemonFields = (pkmn, fieldString) => {
-  return _.isString(fieldString) ? _.pick(pkmn, fieldString.split(',').concat('toJSON')) : pkmn;
+  return _.isString(fieldString)
+    ? pkmn && _.pick(pkmn, fieldString.split(',').concat('toJSON'))
+    : pkmn;
 };

@@ -1159,7 +1159,7 @@ describe('PokemonController', () => {
     });
   });
 
-  describe.skip('getting a list of clones of a Pokémon', () => {
+  describe('getting a list of clones of a Pokémon', () => {
     let pkmnList, unlistedBox, pageSize;
     before(async function () {
       this.timeout(20000);
