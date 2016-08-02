@@ -61,6 +61,7 @@ module.exports.routes = {
   'post /api/v1/pokemon/:id/undelete': 'PokemonController.undelete',
   'post /api/v1/pokemon/:id/move': 'PokemonController.move',
   'patch /api/v1/pokemon/:id': 'PokemonController.edit',
+  'get /api/v1/pokemon/:id/clones': 'PokemonController.getClones',
 
   // Users
   'get /api/v1/user/:name': 'UserController.get',

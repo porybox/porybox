@@ -25,6 +25,11 @@ module.exports = {
         : {statusCode: 403};
     }
   },
+  verifyUserCanAccessPokemon (pkmn, user) {
+    if (!pkmn) throw {statusCode: 404};
+    const userIsOwner = user && pkmn.owner === user.name;
+    if (pkmn.visibility === 'private' && !userIsOwner && !user.isAdmin) throw {statusCode: 403};
+  },
   verifyBoxParams (params) {
     if (!_.isUndefined(params.name)) {
       if (!_.isString(params.name || _.isEmpty(params.name))) {

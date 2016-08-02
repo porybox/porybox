@@ -224,5 +224,26 @@ module.exports = _.mapValues({
     Validation.verifyPokemonParams(filteredParams);
     await Pokemon.update({id: pokemon.id}, filteredParams);
     return res.ok(pokemon);
+  },
+
+  async getClones (req, res) {
+    const id = req.param('id');
+    const pkmn = await Pokemon.findOne({id, _markedForDeletion: false});
+    Validation.verifyUserCanAccessPokemon(pkmn, req.user);
+    const page = _.isUndefined(req.query.page) ? 1 : +req.query.page;
+    if (Number.isNaN(page) || page % 1 || page < 1) return res.badRequest();
+    const pokemonFields = req.param('pokemonFields');
+    const contents = await Pokemon
+      .find({_cloneHash: pkmn._cloneHash, _markedForDeletion: false, id: {not: id}})
+      .sort('createdAt DESC')
+      .skip((page - 1) * Constants.CLONES_LIST_PAGE_SIZE)
+      .limit(Constants.CLONES_LIST_PAGE_SIZE)
+      .then()
+      .map(result => {
+        return PokemonHandler.getSafePokemonForUser(result, req.user, {omitBox: true})
+          .catchReturn({statusCode: 403}, null);
+      })
+      .map(pkmn => PokemonHandler.pickPokemonFields(pkmn, pokemonFields));
+    return res.ok({contents, page, pageSize: Constants.CLONES_LIST_PAGE_SIZE});
   }
 }, catchAsyncErrors);
