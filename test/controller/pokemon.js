@@ -1158,4 +1158,137 @@ describe('PokemonController', () => {
       expect(res4.body.privateNotes).to.equal('bar');
     });
   });
+
+  describe.skip('getting a list of clones of a Pokémon', () => {
+    let pkmnList, unlistedBox, pageSize;
+    before(async function () {
+      this.timeout(20000);
+      const res = await agent.post('/api/v1/box').send({name: 'Boxball', visibility: 'unlisted'});
+      expect(res.statusCode).to.equal(201);
+      unlistedBox = res.body.id;
+
+      const maxMultiUploadSize = sails.services.constants.MAX_MULTI_UPLOAD_SIZE;
+      pkmnList = [];
+      for (let i = 0; i < maxMultiUploadSize * 2; i++) {
+        const res = await agent.post('/api/v1/pokemon')
+          // (this just creates a good mix of visibilities and boxes)
+          .field('box', i % 2 ? generalPurposeBox : unlistedBox)
+          .field('visibility', ['public', 'private', 'viewable'][i % 3])
+          .attach('pk6', `${__dirname}/pk6/porygon.pk6`);
+        expect(res.statusCode).to.equal(201);
+        pkmnList.unshift(res.body);
+      }
+      pageSize = sails.services.constants.CLONES_LIST_PAGE_SIZE;
+    });
+    it('returns a list of clones sorted by upload date', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[1].id}/clones`);
+      expect(res.statusCode).to.equal(200);
+      // response format: { contents: [ { pkmn1 }, { pkmn2 }, { pkmn3 }, ]} ...
+      // The outer object with `contents` is used so that we can add metadata later if we want to
+      expect(res.body.contents).to.be.an.instanceof(Array);
+      expect(res.body.contents.length).to.equal(pageSize);
+      expect(_.map(res.body.contents, 'id')).to.eql(
+        _.map([pkmnList[0]].concat(pkmnList.slice(2, pageSize + 1)), 'id')
+      );
+    });
+    it('returns a 404 error if a Pokémon with the given id does not exist', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[1].id}aaaaaa/clones`);
+      expect(res.statusCode).to.equal(404);
+    });
+    it('returns a 403 error if the Pokémon is private and the user is not the owner', async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await otherAgent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(403);
+    });
+    it("doesn't return an error if the Pokémon is private and the user is the owner", async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await agent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.contents).to.be.an.instanceof(Array);
+      expect(_.map(res.body.contents, 'id')).to.eql(
+        _.map(_.reject(pkmnList.slice(0, pageSize + 1), pkmn => pkmn.id === privateId), 'id')
+      );
+    });
+    it('does not return an error if the Pokémon is private and the user is an admin', async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await adminAgent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.page).to.equal(1);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+      expect(res.body.contents).to.be.an.instanceof(Array);
+      expect(res.body.contents).to.eql(
+        _.reject(pkmnList.slice(0, pageSize + 1), {id: privateId})
+          .map(pkmn => _.omit(pkmn, 'isUnique'))
+      );
+    });
+    it('returns `null` in place of private Pokémon to indicate their existence', async () => {
+      const res = await otherAgent.get(`/api/v1/pokemon/${_.last(pkmnList).id}/clones`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.page).to.equal(1);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+      _.forEach(res.body.contents.slice(0, pageSize), (clone, index) => {
+        if (pkmnList[index].visibility === 'private') expect(clone).to.be.null();
+        else {
+          expect(clone.id).to.equal(pkmnList[index].id);
+          expect(clone.pid).to.equal(
+            clone.visibility === 'public' ? pkmnList[index].pid : undefined
+          );
+          expect(clone.box).to.be.undefined();
+          expect(clone.speciesName).to.exist();
+        }
+      });
+    });
+    it('allows a `pokemonFields` query parameter, filtering responses correctly', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)
+        .query({pokemonFields: 'speciesName'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.contents).to.eql(_.times(pageSize, () => ({speciesName: 'Porygon'})));
+      expect(res.body.page).to.equal(1);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+    });
+    it('does not return private information from `pokemonFields` queries', async () => {
+      const res = await otherAgent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)
+        .query({pokemonFields: 'pid'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.contents).to.eql(pkmnList.slice(1, pageSize + 1).map(pkmn => {
+        return pkmn.visibility === 'public'
+          ? {pid: pkmn.pid}
+          : pkmn.visibility === 'private'
+            ? null
+            : {};
+      }));
+    });
+    it('allows a further items to be returned with a `page` parameter', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`).query({page: 2});
+      expect(res.statusCode).to.equal(200);
+      expect(_.map(res.body.contents, 'id')).to.eql(
+        _.map(pkmnList.slice(pageSize + 1, 2 * pageSize + 1), 'id')
+      );
+      expect(res.body.page).to.equal(2);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+
+      const res2 = await otherAgent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)
+        .query({page: 2});
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql(pkmnList
+        .slice(pageSize + 1, 2 * pageSize + 1)
+        .map(pkmn => pkmn.visibility === 'private' ? undefined : pkmn.id)
+      );
+      expect(res.body.page).to.equal(2);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+    });
+    it('returns a response with an empty array if the `page` parameter is too large', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`).query({page: 10});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.eql({
+        contents: [],
+        page: 10,
+        pageSize: sails.services.constants.CLONES_LIST_PAGE_SIZE
+      });
+    });
+    it('returns a 400 error if the page is not an integer', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`).query({page: 'foo'});
+      expect(res.statusCode).to.equal(400);
+    });
+  });
 });
