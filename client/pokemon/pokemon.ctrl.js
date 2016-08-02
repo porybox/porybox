@@ -181,6 +181,7 @@ module.exports = class Pokemon {
 
     this.displayMetDate = parseDate(this.data.metDate);
     this.displayEggDate = parseDate(this.data.eggDate);
+    this.formattedUploadDate = moment(this.data.createdAt).format('YYYY-MM-DD (HH:mm:ss [UTC]ZZ)');
 
     this.places = [
       {country: this.data.geoLocation1CountryName, region: this.data.geoLocation1RegionName},
