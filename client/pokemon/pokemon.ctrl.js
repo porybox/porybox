@@ -125,8 +125,16 @@ module.exports = class Pokemon {
         iv: this.data.ivSpe,
         ev: this.data.evSpe,
         total: this.data.statSpe
+      },
+      Total: {
+        fullName: 'Total',
+        base: 0,
+        ev: 0
       }
     };
+
+    this.stats.Total.base = getStatTotal(this.stats, 'base');
+    this.stats.Total.ev = getStatTotal(this.stats, 'ev');
 
     this.contestStats = {
       cool: this.data.contestStatCool,
@@ -261,6 +269,14 @@ module.exports = class Pokemon {
     }).catch(this.errorHandler);
   }
 };
+
+function getStatTotal(stats, attr) {
+  let total = 0;
+  Object.keys(stats).forEach(function(statName) {
+    total += stats[statName][attr];
+  });
+  return total;
+}
 
 function parseDate(timestamp) {
   return timestamp && moment.utc(timestamp).format('MMMM Do, YYYY');

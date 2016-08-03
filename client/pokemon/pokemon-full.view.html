@@ -171,13 +171,16 @@
                 </div>
                 <div ng-repeat="(statName, statData) in pokemon.stats track by $index" layout="row">
                   <span flex ng-attr-title="{{statData.fullName}}" ng-class="{'increased-stat': $index === pokemon.natureStats[0],
-                            'decreased-stat': $index === pokemon.natureStats[1]}">{{statName}}</span>
-                  <span flex>{{statData.base}}</span>
-                  <span flex>{{statData.iv}}</span>
-                  <span flex>{{statData.ev}}</span>
-                  <span flex>{{statData.total}}</span>
+                            'decreased-stat': $index === pokemon.natureStats[1], 'stat-total': statName === 'Total'}">{{statName}}</span>
+                  <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.base}}</span>
+                  <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.iv || '-'}}</span>
+                  <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.ev}}</span>
+                  <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.total || '-'}}</span>
                 </div>
-
+                <md-divider></md-divider>
+                <div><strong>Hidden Power</strong>
+                  <span class="type" ng-class="'type-' + pokemon.data.hiddenPowerType">{{pokemon.data.hiddenPowerType}}</span>
+                </div>
               </md-card-content>
             </md-card>
 
@@ -392,6 +395,7 @@
             <span ng-if="pokemon.data.isUnique">Yes</span>
             <span ng-if="!pokemon.data.isUnique">No</span>
           </div>
+          <div><strong>Download count</strong> {{pokemon.data.downloadCount}}</div>
         </md-card-content>
       </md-card>
     </md-tab>
