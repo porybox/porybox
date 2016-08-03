@@ -27,6 +27,7 @@ require('./account/account.module.js');
 require('./static/static.module.js');
 require('./passwordReset/passwordReset.module.js');
 require('./forgotPassword/forgotPassword.module.js');
+require('./cloneList/cloneList.module.js');
 
 const porybox = ng.module('porybox', [
   // Porybox modules
@@ -39,6 +40,7 @@ const porybox = ng.module('porybox', [
   'porybox.static',
   'porybox.passwordReset',
   'porybox.forgotPassword',
+  'porybox.cloneList',
 
   // Third party
   'ngMaterial',
