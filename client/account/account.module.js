@@ -17,7 +17,7 @@ ng.module('porybox.account', ['ngRoute', 'ngMessages'])
     controller: ['$scope', 'io', '$mdToast', 'errorHandler', 'escapeRegExp', passwordCtrl],
     controllerAs: 'password'
   })
-  .component('editPrefs',{
+  .component('editPrefs', {
     bindings: {
       prefs: '='
     },
@@ -26,6 +26,9 @@ ng.module('porybox.account', ['ngRoute', 'ngMessages'])
     controllerAs: 'prefs'
   })
   .component('editEmail', {
+    bindings: {
+      user: '='
+    },
     templateUrl: 'account/email.view.html',
     controller: ['$scope', 'io', '$mdToast', 'errorHandler', emailCtrl],
     controllerAs: 'email'
