@@ -4,6 +4,7 @@ module.exports = class Email {
     this.io = io;
     this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
+    this.newEmail = this.user.email;
   }
   editEmail () {
     return this.io.socket.postAsync('/api/v1/changeEmail', {
@@ -11,6 +12,7 @@ module.exports = class Email {
       password: this.password
     }).then(() => {
       this.reset();
+      this.user.email = this.newEmail;
       return this.$mdToast.show(this.$mdToast.simple()
         .position('bottom right')
         .textContent('Email address updated successfully'));
@@ -20,7 +22,6 @@ module.exports = class Email {
     }).catch(this.errorHandler);
   }
   reset () {
-    this.newEmail = '';
     this.password = '';
     this.$scope.editEmailForm.$setPristine();
     this.$scope.editEmailForm.$setUntouched();
