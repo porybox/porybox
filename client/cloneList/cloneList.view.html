@@ -1,0 +1,10 @@
+<div ng-show="cloneList.pkmnData" ng-init="cloneList.fetchPokemonForCard(); cloneList.fetchMoreClones()">
+  <h1>Duplicates of {{cloneList.pkmnData.nickname}}</h1>
+  <pokemon-card ng-if="cloneList.pkmnData" data="cloneList.pkmnData"></pokemon-card>
+  <ul ng-repeat="pokemon in cloneList.clones">
+    <li ng-if="!pokemon._isPrivate"><a href="/#/pokemon/{{pokemon.id}}">{{pokemon.nickname}}</a> (uploaded by <a href="/#/user/{{pokemon.owner}}">{{pokemon.owner}}</a>)</li>
+    <li ng-if="pokemon._isPrivate">a Pokémon marked as 'private' by its owner</li>
+  </ul>
+  <md-progress-circular md-mode="indeterminate" ng-if="cloneList.isLoading" md-diameter="166"></md-progress-circular>
+</div>
+<div ng-if="cloneList.errorStatusCode" ng-include="'/errors/' + cloneList.errorStatusCode + '.html'"></div>
