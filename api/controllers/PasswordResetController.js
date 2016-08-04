@@ -61,6 +61,7 @@ module.exports = _.mapValues({
     const user = await User.findOne({name: resetRequest.owner});
     await Promise.promisify(req.login.bind(req))(user);
     req.session.authenticated = true;
+    await user.clearSessions(req.sessionStore, req.sessionID);
     res.ok();
     sails.log.info(`The user ${user.name} successfully reset their password from IP ${req.headers['x-forwarded-for'] || req.ip}`);
   }

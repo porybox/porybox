@@ -322,18 +322,25 @@ describe('UserController', () => {
   });
 
   describe('changing a password', () => {
-    let passAgent, passAgent2, passAgent3, username;
+    let passAgent, passAgent2, passAgent3, otherAgent, username;
     beforeEach(async () => {
       username = `USERNAME_${require('crypto').randomBytes(4).toString('hex')}`;
       passAgent = await testHelpers.getAgent();
       passAgent2 = await testHelpers.getAgent();
       passAgent3 = await testHelpers.getAgent();
+      otherAgent = await testHelpers.getAgent();
       const res = await passAgent.post('/api/v1/auth/local/register').send({
         name: username,
         password: 'Correct Horse Battery Staple',
         email: `${require('crypto').randomBytes(4).toString('hex')}@porybox.com`
       });
       expect(res.statusCode).to.equal(200);
+
+      const res2 = await otherAgent.post('/api/v1/auth/local').send({
+        name: username,
+        password: 'Correct Horse Battery Staple'
+      });
+      expect(res2.statusCode).to.equal(200);
     });
     it('allows a user to change their password', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({
@@ -357,6 +364,10 @@ describe('UserController', () => {
       });
       expect(res4.statusCode).to.equal(401);
       expect(res4.body).to.equal('Error.Passport.Password.Wrong');
+
+      // make a request with an existing session to ensure that the session has been cleared
+      const res5 = await otherAgent.get('/api/v1/me');
+      expect(res5.statusCode).to.equal(403);
     });
     it('does not allow users to change their password if the given password is wrong', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({
@@ -377,6 +388,11 @@ describe('UserController', () => {
       });
       expect(res3.statusCode).to.equal(401);
       expect(res3.body).to.equal('Error.Passport.Password.Wrong');
+
+      // make a request with an existing session to ensure that the session has not been cleared
+      const res4 = await otherAgent.get('/api/v1/me');
+      expect(res4.statusCode).to.equal(302);
+      expect(res4.header.location).to.equal(`/api/v1/user/${username}`);
     });
     it('returns a 400 error if a user omits either parameter', async () => {
       const res = await passAgent.post('/api/v1/changePassword').send({newPassword: 'new pass'});
@@ -416,6 +432,11 @@ describe('UserController', () => {
         password: 'Correct Horse Battery Staple'
       });
       expect(res3.statusCode).to.equal(200);
+
+      // make a request with an existing session to ensure that the session has not been cleared
+      const res4 = await otherAgent.get('/api/v1/me');
+      expect(res4.statusCode).to.equal(302);
+      expect(res4.header.location).to.equal(`/api/v1/user/${username}`);
     });
   });
 
