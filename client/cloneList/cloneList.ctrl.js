@@ -40,8 +40,15 @@ module.exports = class CloneList {
       pokemonFields: 'owner,id,createdAt,nickname'
     }).then(res => {
       if (res.contents.length < res.pageSize) this.isFinished = true;
-      // All elements in an ng-repeat have to be unique, so replace the `null`s with placeholder {_isPrivate: true} objects.
-      this.clones.push(...res.contents.map(clone => clone === null ? {_isPrivate: true} : clone));
+      this.clones.push(...res.contents.map(clone => {
+        // All elements in an ng-repeat have to be unique, so replace the `null`s with placeholder {_isPrivate: true} objects.
+        // TODO: The clone list can probably be a component of the pokemon controller to avoid duplicate code
+        return clone === null ? {_isPrivate: true} : Object.assign(
+          {},
+          clone,
+          {formattedUploadDate: moment(clone.createdAt).format('YYYY-MM-DD (HH:mm:ss [UTC]ZZ)')}
+        );
+      }));
     }).finally(() => this.isLoading = false)
       .tap(this.onscroll)
       .catch({statusCode: 403}, {statusCode: 404}, () => {})
