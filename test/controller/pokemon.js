@@ -1200,6 +1200,11 @@ describe('PokemonController', () => {
       const res = await otherAgent.get(`/api/v1/pokemon/${privateId}/clones`);
       expect(res.statusCode).to.equal(403);
     });
+    it('returns a 403 error for an unauthenticated user if the Pokémon is private', async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await noAuthAgent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(403);
+    });
     it("doesn't return an error if the Pokémon is private and the user is the owner", async () => {
       const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
       const res = await agent.get(`/api/v1/pokemon/${privateId}/clones`);

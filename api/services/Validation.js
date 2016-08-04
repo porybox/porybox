@@ -28,7 +28,8 @@ module.exports = {
   verifyUserCanAccessPokemon (pkmn, user) {
     if (!pkmn) throw {statusCode: 404};
     const userIsOwner = user && pkmn.owner === user.name;
-    if (pkmn.visibility === 'private' && !userIsOwner && !user.isAdmin) throw {statusCode: 403};
+    const userIsAdmin = user && user.isAdmin;
+    if (pkmn.visibility === 'private' && !userIsOwner && !userIsAdmin) throw {statusCode: 403};
   },
   verifyBoxParams (params) {
     if (!_.isUndefined(params.name)) {
