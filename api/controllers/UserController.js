@@ -96,14 +96,15 @@ module.exports = _.mapValues({
       accessToken: require('crypto').randomBytes(48).toString('base64')
     }).then()
       .catchThrow({code: 'E_VALIDATION'}, {statusCode: 400, message: 'Invalid new password'});
-    // Once the new Passport has been created, delete all of the user's old Passports. This has the effect
-    // of clearing the user's sessions.
+    // Once the new Passport has been created, delete all of the user's old Passports.
     await Passport.destroy({
       user: req.user.name,
       protocol: 'local',
       // Omit the newly-created Passport -- this line is necessary because the old/new passwords might be the same.
       id: {not: newPassport.id}
     });
+    // Clear the user's existing sessions, excluding this one.
+    await req.user.clearSessions(req.sessionStore, req.sessionID);
     return res.ok();
   },
   async changeEmail (req, res) {
