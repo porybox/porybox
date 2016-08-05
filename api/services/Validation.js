@@ -70,9 +70,13 @@ module.exports = {
     }
   },
   assert (value, message) {
-    if (!value) {
-      throw {statusCode: 400, message};
-    }
+    // These are assertions used for client input; they will sometimes be false if the client has erred.
+    if (!value) throw {statusCode: 400, message};
+  },
+  sanityCheck (value, message = 'Assertion error') {
+    /* These are assertions that should never be false, but that are worth checking anyway to prevent catastrophes if
+    they are unexpectedly false. */
+    if (!value) throw new Error(message);
   },
   usernameValid (name) {
     return _.isString(name) && Constants.VALID_USERNAME_REGEX.test(name);

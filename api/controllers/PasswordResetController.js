@@ -46,11 +46,8 @@ module.exports = _.mapValues({
       user: resetRequest.owner,
       password: params.newPassword,
       accessToken: require('crypto').randomBytes(48).toString('base64')
-    }).catch(err => {
-      // If an error occurs creating the new Passport, throw it and abort the process.
-      // (Usually this will occur when the user's new passwords is invalid, e.g. too short.)
-      throw err.code === 'E_VALIDATION' ? {statusCode: 400, message: 'Invalid new password'} : err;
-    });
+    }).then()
+      .catchThrow({code: 'E_VALIDATION'}, {statusCode: 400, message: 'Invalid new password'});
 
     // Destroy the user's other Passports
     await Passport.destroy({
