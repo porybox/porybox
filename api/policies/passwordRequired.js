@@ -7,6 +7,6 @@ module.exports = (req, res, next) => {
   }
   return Passport.findOne({user: req.user.name, protocol: 'local'})
     .then(currentPassport => currentPassport.validatePassword(password))
-    .then(isValid => isValid ? next() : res.status(403).json('Incorrect password'))
+    .then(isValid => isValid ? next() : res.status(401).json('Incorrect password'))
     .catch(next);
 };

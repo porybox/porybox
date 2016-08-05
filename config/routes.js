@@ -73,6 +73,7 @@ module.exports.routes = {
   'post /api/v1/user/:name/revokeAdminStatus': 'UserController.revokeAdminStatus',
   'delete /api/v1/me': 'UserController.deleteAccount',
   'post /api/v1/changePassword': 'UserController.changePassword',
+  'post /api/v1/changeEmail': 'UserController.changeEmail',
   'get /api/v1/checkUsernameAvailable': 'UserController.checkUsernameAvailable'
 };
 
