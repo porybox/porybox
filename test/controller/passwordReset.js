@@ -99,7 +99,7 @@ describe('PasswordResetController', () => {
   });
 
   describe('activating password resets', () => {
-    let username, oldPassword, newPassword, token, originalExpirationTime;
+    let username, oldPassword, newPassword, token, originalExpirationTime, originalAgent;
     before(() => {
       originalExpirationTime = sails.services.constants.PASSWORD_RESET_EXPIRATION_TIME;
       sails.services.constants.PASSWORD_RESET_EXPIRATION_TIME = 2000;
@@ -107,8 +107,8 @@ describe('PasswordResetController', () => {
     beforeEach(async () => {
       username = 'resetter' + require('crypto').randomBytes(4).toString('hex');
       oldPassword = 'hunter22'; // this will appear as ******** to anyone who reads the tests, right?
-      const tempAgent = await testHelpers.getAgent();
-      const res = await tempAgent.post('/api/v1/auth/local/register').send({
+      originalAgent = await testHelpers.getAgent();
+      const res = await originalAgent.post('/api/v1/auth/local/register').send({
         name: username,
         password: oldPassword,
         email: 'testuser1@example.com'
@@ -161,6 +161,11 @@ describe('PasswordResetController', () => {
         // should not allow the token to be used again
         const res = await agent.del(`/api/v1/passwordReset/${token}`).send({newPassword});
         expect(res.statusCode).to.equal(404);
+      });
+      afterEach(async () => {
+        // should clear existing sessions
+        const res = await originalAgent.get('/api/v1/me');
+        expect(res.statusCode).to.equal(403);
       });
     });
     describe('if the request is invalid', () => {
@@ -225,6 +230,12 @@ describe('PasswordResetController', () => {
         const res2 = await tempAgent.get('/api/v1/me');
         expect(res2.statusCode).to.equal(302);
         expect(res2.header.location.endsWith(`/user/${username}`)).to.be.true();
+      });
+      afterEach(async () => {
+        // should not clear existing sessions
+        const res = await originalAgent.get('/api/v1/me');
+        expect(res.statusCode).to.equal(302);
+        expect(res.header.location).to.equal(`/api/v1/user/${username}`);
       });
     });
     after(() => {

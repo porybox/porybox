@@ -81,6 +81,14 @@ module.exports =  {
       return _.omit(this, (value, key) => {
         return key.startsWith('_') || ['updatedAt', 'passports'].includes(key);
       });
+    },
+    async clearSessions (sessionStore, excludeSessionId) {
+      Validation.sanityCheck(_.isString(this.name));
+      const collection = sessionStore.db.collection(sails.config.session.collection);
+      return Promise.promisify(collection.remove.bind(collection))({
+        'session.passport.user': this.name,
+        _id: {$ne: excludeSessionId}
+      });
     }
   }
 };

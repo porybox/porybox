@@ -25,7 +25,8 @@ module.exports = {
     adapter: 'connect-mongo',
     url: 'mongodb://localhost:27017/porybox',
     // url: 'mongodb://username:pass@localhost:27017/porybox'
-    collection: 'sessions'
+    collection: 'sessions',
+    stringify: false
   },
 
   email: {
