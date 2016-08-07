@@ -1,5 +1,6 @@
 import {maxBy} from 'lodash';
 import Promise from 'bluebird';
+import parseSaveFile from './parseSaveFile.js';
 
 /**
  * Controller for handling the dialog to add a new pokemon
@@ -27,14 +28,26 @@ module.exports = class PokemonAdd {
   }
 
   addFiles (files) {
-    files.forEach(file => this.addLine({
-      filename: file.name,
-      data: fileToBase64(file),
-      visibility: this.defaultPokemonVisibility,
-      box: this.defaultBox
-    }));
+    files.forEach(file => this.addFile(file));
     this.draggedFiles = [];
     this.manualFiles = [];
+  }
+
+  addFile (file) {
+    const filesPromise = fileToBuffer(file).then(buffer => {
+      if (buffer.length === 232 || buffer.length === 260) return [bufferToBase64(buffer)];
+      return parseSaveFile(buffer).map(bufferToBase64);
+    });
+    this.addLine({
+      filename: file.name,
+      data: filesPromise,
+      visibility: this.defaultPokemonVisibility,
+      box: this.defaultBox
+    });
+  }
+
+  fileIsValid(file) {
+    return file.name.endsWith('.pk6') || file.name.endsWith('.pkx') || !file.name.includes('.');
   }
 
   cancel () {
@@ -49,15 +62,15 @@ module.exports = class PokemonAdd {
   }
 };
 
-function fileToBase64 (file) {
+function fileToBuffer (file) {
   return new Promise((resolve, reject) => {
     const fr = new FileReader();
-    fr.onload = evt => {
-      resolve(btoa(
-        new Uint8Array(evt.target.result).reduce((acc, next) => acc + String.fromCharCode(next), '')
-      ));
-    };
+    fr.onload = evt => resolve(new Uint8Array(evt.target.result));
     fr.onerror = reject;
     fr.readAsArrayBuffer(file);
   });
+}
+
+function bufferToBase64(buf) {
+  return btoa(buf.reduce((acc, next) => acc + String.fromCharCode(next), ''));
 }
