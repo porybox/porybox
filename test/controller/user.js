@@ -158,13 +158,13 @@ describe('UserController', () => {
       it('sets the default visibility of uploaded pokemon', async () => {
         await agent.patch('/api/v1/me/preferences').send({defaultPokemonVisibility: 'public'});
         const res = await agent.post('/api/v1/pokemon')
-          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
           .field('box', generalPurposeBox);
         expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('public');
         await agent.patch('/api/v1/me/preferences').send({defaultPokemonVisibility: 'viewable'});
         const res2 = await agent.post('/api/v1/pokemon')
-          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
           .field('box', generalPurposeBox);
         expect(res2.statusCode).to.equal(201);
         expect(res2.body.visibility).to.equal('viewable');
@@ -174,14 +174,14 @@ describe('UserController', () => {
         const res = await agent.post('/api/v1/pokemon')
           .field('visibility', 'viewable')
           .field('box', generalPurposeBox)
-          .attach('pk6', `${__dirname}/pkmn1.pk6`);
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
         expect(res.body.visibility).to.equal('viewable');
         await agent.patch('/api/v1/me/preferences').send({defaultPokemonVisibility: 'viewable'});
         const res2 = await agent.post('/api/v1/pokemon')
           .field('visibility', 'public')
           .field('box', generalPurposeBox)
-          .attach('pk6', `${__dirname}/pkmn1.pk6`);
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
         expect(res2.body.visibility).to.equal('public');
       });

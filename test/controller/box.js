@@ -80,7 +80,7 @@ describe('BoxController', function () {
         const res = await agent.post('/api/v1/pokemon')
           .field('box', boxId)
           .field('visibility', visibility)
-          .attach('pk6', __dirname + '/pkmn1.pk6');
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
         expect(res.statusCode).to.equal(201);
       });
     });
@@ -189,7 +189,9 @@ describe('BoxController', function () {
       const res = await agent.post('/api/v1/box').send({name: 'multibox'});
       expect(res.statusCode).to.equal(201);
       box = res.body;
-      const pkmnData = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
+      const pkmnData = require('fs').readFileSync(`${__dirname}/pk6/pkmn1.pk6`, {
+        encoding: 'base64'
+      });
       pkmnList = [];
       for (const amount of [pageSize, pageSize, pageSize, 1]) {
         const res2 = await agent.post('/api/v1/pokemon/multi').send({files: _.times(amount, () => ({
@@ -364,7 +366,7 @@ describe('BoxController', function () {
       otherBox = res4.body;
       await Promise.each(['viewable', 'public', 'private'], async visibility => {
         const res = await agent.post('/api/v1/pokemon')
-          .attach('pk6', __dirname + '/pkmn1.pk6')
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
           .field('box', box1.id)
           .field('visibility', visibility);
         expect(res.statusCode).to.equal(201);
@@ -442,7 +444,7 @@ describe('BoxController', function () {
       box = res.body;
       const res2 = await agent.post('/api/v1/pokemon')
         .field('box', box.id)
-        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res2.statusCode).to.equal(201);
       pkmn = res2.body;
     });
