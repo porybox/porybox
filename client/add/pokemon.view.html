@@ -41,7 +41,12 @@
           <md-input-container class="md-block">
             <label>Visibility</label>
             <md-select ng-model="line.visibility" name="visibility">
-              <md-option ng-value="visibility" ng-repeat="visibility in pkmDialog.visibilities">{{ visibility }}</md-option>
+              <md-option ng-value="visibility" ng-repeat="visibility in pkmDialog.visibilities">
+                    <i ng-if="visibility === 'private'" class="material-icons small" title="Private">lock</i>
+                    <i ng-if="visibility === 'viewable'" class="material-icons small" title="Viewable">visibility</i>
+                    <i ng-if="visibility === 'public'" class="material-icons small" title="Public">public</i>
+                {{ visibility }}
+              </md-option>
             </md-select>
           </md-input-container>
           <md-input-container class="md-block">
