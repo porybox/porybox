@@ -53,7 +53,7 @@ porybox.controller('MainCtrl', function () {
   this.selected = {};
   Object.assign(this, userData);
   // TODO: Figure out a better way to do this
-  const LOGGED_IN_ONLY_ROUTES = ['#/prefs', '', '#/'];
+  const LOGGED_IN_ONLY_ROUTES = ['#/prefs', '#/account', '', '#/'];
   const LOGGED_OUT_ONLY_ROUTES = ['#/login'];
   if (!this.user && location.pathname === '/' && LOGGED_IN_ONLY_ROUTES.includes(location.hash)) {
     location.hash = 'home';
