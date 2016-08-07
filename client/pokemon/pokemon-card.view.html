@@ -33,9 +33,9 @@
       <div layout="row" layout-align="none center">
         <div flex title="Level">Level {{::pokemon.data.level}}</div>
         <span layout-align="end">
-          <i ng-if="::pokemon.data.visibility === 'private'" class="material-icons visibility" title="Private">lock</i>
-          <i ng-if="::pokemon.data.visibility === 'viewable'" class="material-icons visibility" title="Viewable">visibility</i>
-          <i ng-if="::pokemon.data.visibility === 'public'" class="material-icons visibility" title="Public">public</i>
+          <i ng-if="::pokemon.data.visibility === 'private'" class="material-icons small" title="Private">lock</i>
+          <i ng-if="::pokemon.data.visibility === 'viewable'" class="material-icons small" title="Viewable">visibility</i>
+          <i ng-if="::pokemon.data.visibility === 'public'" class="material-icons small" title="Public">public</i>
         </span>
       </div>
       <div flex ng-if="::!pokemon.data.increasedStat" title="Neutral nature">{{::pokemon.data.natureName}}</div>
