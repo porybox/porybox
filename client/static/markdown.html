@@ -1,79 +1,118 @@
 <md-content layout-padding>
 
   <div class="md-body-1">
-    <h1 class="md-display-2">Markdown</h1>
+    <h1 class="md-display-2">Markdown Basics</h1>
 
     <h2 class="md-headline">Text Formatting</h2>
 
     <p>
       <div class="md-body-2">Italics</div>
-      *This text will be italic*
+      <code>*This text will be italic*</code><br/>
+      <em>This text will be italic</em>
     </p>
 
     <p>
       <div class="md-body-2">Bold</div>
-      **This text will be bold**
+      <code>**This text will be bold**</code><br/>
+      <strong>This text will be bold</strong>
+    </p>
+
+    <p>
+    <div class="md-body-2">Strikethrough</div>
+    <code>~~This text will be crossed out~~</code><br/>
+    <del>This text will be crossed out</del>
     </p>
 
     <p>
       <div class="md-body-2">Links</div>
-      https://www.porybox.com will automatically redirect to porybox.com.<br>
-      [This site](https://www.porybox.com) will make "<i>This site</i>" clickable.
+      <code>[This site](https://www.porybox.com)</code> will make "<a href="https://www.porybox.com">This site</a>" clickable.
     </p>
-    
+
     <p>
       <div class="md-body-2">Quotes</div>
       Use <i>></i> at the beginning of the line to display the text in a block quote.<br>
-      > I have been on many Pokémon sites but Porybox is the best one.
+      <code>> I have been on many Pokémon sites but Porybox is the best one.</code>
+
+    <blockquote>
+      <p>I have been on many Pokémon sites but Porybox is the best one.</p>
+    </blockquote>
     </p>
-    
+
     <h2 class="md-headline">Images</h2>
-    
+
     <p>
       <div class="md-body-2">Displaying images</div>
-      You can display images hosted on other sites directly on your notes. Use the following syntax:<br>
-      ![description of the image](link to the image)<br>
-      ![Porybox logo](https://www.porybox.com/img/logo-header.png)<br>
+      You can display images hosted on other sites directly in your notes. Use the following syntax:<br/>
+      <code>![description of the image](link to the image)</code><br/>
+      <code>![Porybox logo](https://www.porybox.com/img/logo-header.png)</code><br/>
       Images will be displayed with a maximum width of 600 pixels.
     </p>
-    
+
     <h2 class="md-headline">Lists</h2>
 
     <p>
       <div class="md-body-2">Unordered lists</div>
-      For a bulleted list of items, use <i>*</i> at the beginning of the entries.<br>
-      * Item 1<br>
-      * Item 2<br>
-      * Item 3<br>
+      For a bulleted list of items, use <i>*</i> at the beginning of the entries.<br/>
+      <code>
+        * Item 1<br/>
+        * Item 2<br/>
+        * Item 3<br/>
+      </code>
     </p>
-    
+
     <p>
       <div class="md-body-2">Ordered lists</div>
-      For a numbered list of items, use <i>n.</i> at the beginning of the entries, where <i>n</i> is an integer.<br>
-      1. Item 1<br>
-      2. Item 2<br>
-      3. Item 3<br>
+      For a numbered list of items, use <i>n.</i> at the beginning of the entries, where <i>n</i> is an integer.<br/>
+      <code>
+        1. Item 1<br/>
+        2. Item 2<br/>
+        3. Item 3<br/>
+      </code>
     </p>
-    
+
     <h2 class="md-headline">Headers</h2>
-    
+
     <p>
       <div class="md-body-2">Headers</div>
-      Use <i>#</i> at the beginning of a line for a top-level header. Markdown supports 6 levels of subheaders.<br>
-      # Level 1<br>
-      ### Sublevel 3<br>
-      ###### Sublevel 6
+      Use <i>#</i> at the beginning of a line for a top-level header. Markdown supports 6 levels of subheaders.<br/>
+      <code>
+        # Level 1<br/>
+        ### Sublevel 3<br/>
+        ###### Sublevel 6
+      </code>
     </p>
 
     <h2 class="md-headline">Tables</h2>
-    
+
     <p>
       <div class="md-body-2">Tables</div>
-      First Header | Second Header<br>
-      ------------ | -------------<br>
-      Content row 1 column 1 | Content row 1 column 2<br>
-      Content row 2 column 1 | Content row 2 column 2
-      
+    This code:<br/>
+      <code>
+        First Header | Second Header<br/>
+        :------------ | :-------------<br/>
+        Content row 1 column 1 | Content row 1 column 2<br/>
+        Content row 2 column 1 | Content row 2 column 2
+      </code>
+
+    <p>Yields a table like the following:</p>
+    <table>
+      <thead>
+      <tr>
+        <th style="text-align:left">First Header</th>
+        <th style="text-align:left">Second Header</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="text-align:left">Content row 1 column 1</td>
+        <td style="text-align:left">Content row 1 column 2</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">Content row 2 column 1</td>
+        <td style="text-align:left">Content row 2 column 2</td>
+      </tr>
+      </tbody>
+    </table>
     </p>
 
   </div>
