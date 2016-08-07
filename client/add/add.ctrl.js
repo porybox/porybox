@@ -99,10 +99,11 @@ module.exports = class Add {
           if (response === 'ok') this.$location.path(`pokemon/${successfulUploads[0].created.id}`);
         });
       })
-      .filter(line => line.success && line.created.box === box.id)
-      .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.contents.length % BOX_PAGE_SIZE)))
+      .filter(line => line.success && line.created.box === box.data.id)
+      .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE)))
       .map(line => line.created)
-      .then(lines => box.contents.push(...lines))
+      .then(lines => box.data.contents.push(...lines))
+      .tap(box.onscroll)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
   }
