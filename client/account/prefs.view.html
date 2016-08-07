@@ -11,14 +11,20 @@
           <md-input-container class="md-block">
             <label>Default Pokémon Visibility</label>
             <md-select ng-model="prefs.defaultPokemonVisibility" name="pkmnVisibility">
-              <md-option ng-value="visibility" ng-repeat="visibility in prefs.pokemonVisibilities">{{ visibility }}</md-option>
+              <md-option ng-value="visibility" ng-repeat="visibility in prefs.pokemonVisibilities">
+                <i ng-if="visibility === 'private'" class="material-icons small" title="Private">lock</i>
+                <i ng-if="visibility === 'viewable'" class="material-icons small" title="Viewable">visibility</i>
+                <i ng-if="visibility === 'public'" class="material-icons small" title="Public">public</i>
+                 {{ visibility }}</md-option>
             </md-select>
           </md-input-container>
 
           <md-input-container class="md-block">
             <label>Default Box Visibility</label>
             <md-select ng-model="prefs.defaultBoxVisibility" name="boxVisibility">
-              <md-option ng-value="visibility" ng-repeat="visibility in prefs.boxVisibilities">{{ visibility }}</md-option>
+              <md-option ng-value="visibility" ng-repeat="visibility in prefs.boxVisibilities">
+                <i ng-if="visibility === 'unlisted'" class="material-icons unlisted-lock small">lock_outline</i>
+                {{ visibility }}</md-option>
             </md-select>
           </md-input-container>
 
