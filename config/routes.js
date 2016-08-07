@@ -85,6 +85,7 @@ module.exports.routes = {
   'donate',
   'privacy-policy',
   'tos',
+  'markdown',
   'extracting-pk6-files',
   'how-to-pk6-1-bvs',
   'how-to-pk6-2-homebrew',

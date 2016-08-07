@@ -9,6 +9,7 @@ ng.module('porybox.static', ['ngRoute']).config(['$routeProvider', $routeProvide
     'how-to-pk6-2-homebrew',
     'how-to-pk6-3-4-save-files',
     'how-to-pk6-6-decrypted-powersaves',
+    'markdown',
     'privacy-policy',
     'tos'
   ].forEach(pageName => {
