@@ -103,6 +103,7 @@ module.exports = class Add {
       .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.contents.length % BOX_PAGE_SIZE)))
       .map(line => line.created)
       .then(lines => box.contents.push(...lines))
+      .tap(box.onscroll)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
   }
