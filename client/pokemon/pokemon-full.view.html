@@ -242,7 +242,7 @@
               <md-card-content>
                 <div><strong>Language</strong> <span>{{pokemon.data.language}}</span></div>
                 <div><strong>Country</strong> <span>{{pokemon.data.countryName}}</span></div>
-                <div><strong>Subregion</strong> <span>{{pokemon.data.regionName}}</span></div>
+                <div><strong>Subregion</strong> <span>{{pokemon.data.regionName || '-'}}</span></div>
                 <div><strong>3DS Region</strong> <span>{{pokemon.data.consoleRegion}}</span></div>
               </md-card-content>
             </md-card>
