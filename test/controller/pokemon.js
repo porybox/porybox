@@ -47,7 +47,7 @@ describe('PokemonController', () => {
     it('should be able to upload a pk6 file and receive a parsed version', async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       expect(res.body.dexNo).to.equal(279);
       expect(res.body.speciesName).to.equal('Pelipper');
@@ -60,48 +60,48 @@ describe('PokemonController', () => {
     it('should identify uploaded things as clones', async () => {
       const res1 = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/pkmn2.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn2.pk6`);
       expect(res1.statusCode).to.equal(201);
       expect(res1.body.isUnique).to.be.true();
       const res2 = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/pkmn2.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn2.pk6`);
       expect(res2.statusCode).to.equal(201);
       expect(res2.body.isUnique).to.be.false();
     });
     it("should reject uploads that aren't pk6 files", async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/not_a_pk6_file.txt`);
+        .attach('pk6', `${__dirname}/pk6/not_a_pk6_file.txt`);
       expect(res.statusCode).to.equal(400);
     });
     it('should not allow a user to upload a pk6 file without specifying a box', async () => {
-      const res = await agent.post('/api/v1/pokemon').attach('pk6', `${__dirname}/pkmn1.pk6`);
+      const res = await agent.post('/api/v1/pokemon').attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res.statusCode).to.equal(400);
     });
     it('should return a 404 error if the specified box does not exist', async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', 'not a real box id')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res.statusCode).to.equal(404);
     });
     it('should return a 403 error if the specified box belongs to someone else', async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', otherBox)
-        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res.statusCode).to.equal(403);
     });
     it('should not allow kyurem-white to be uploaded', async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/kyurem-w.pk6`);
+        .attach('pk6', `${__dirname}/pk6/kyurem-w.pk6`);
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Kyurem-White may not be uploaded');
     });
     it('should not allow a pokemon with invalid move IDs to be uploaded', async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/invalid-moves.pk6`);
+        .attach('pk6', `${__dirname}/pk6/invalid-moves.pk6`);
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Failed to parse the provided file');
     });
@@ -113,7 +113,7 @@ describe('PokemonController', () => {
       const newIds = await Promise.all(_.times(10, async () => {
         const res2 = await agent.post('/api/v1/pokemon')
           .field('box', generalPurposeBox)
-          .attach('pk6', `${__dirname}/pkmn1.pk6`);
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
         expect(res2.statusCode).to.equal(201);
         return res2.body.id;
       }));
@@ -126,13 +126,13 @@ describe('PokemonController', () => {
     let pk6Data, invalidPk6Data1, invalidPk6Data2, kyuremW, verifyValidUpload;
     before(() => {
       const fs = require('fs');
-      pk6Data = fs.readFileSync(`${__dirname}/pkmn1.pk6`, {encoding: 'base64'});
+      pk6Data = fs.readFileSync(`${__dirname}/pk6/pkmn1.pk6`, {encoding: 'base64'});
       // (prepend a random string)
       invalidPk6Data1 = '44444444444444444' + pk6Data;
       // (valid structure with invalid move IDs)
-      invalidPk6Data2 = fs.readFileSync(`${__dirname}/invalid-moves.pk6`, {encoding: 'base64'});
+      invalidPk6Data2 = fs.readFileSync(`${__dirname}/pk6/invalid-moves.pk6`, {encoding: 'base64'});
 
-      kyuremW = fs.readFileSync(`${__dirname}/kyurem-w.pk6`, {encoding: 'base64'});
+      kyuremW = fs.readFileSync(`${__dirname}/pk6/kyurem-w.pk6`, {encoding: 'base64'});
 
       verifyValidUpload = data => {
         expect(data.success).to.be.true();
@@ -357,7 +357,7 @@ describe('PokemonController', () => {
         agent.post('/api/v1/pokemon')
           .field('visibility', v)
           .field('box', listedBox.id)
-          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
       ).map(response => response.body.id);
 
       [unlistedPublicId, unlistedPrivateId, unlistedViewableId] = await Promise.map([
@@ -368,7 +368,7 @@ describe('PokemonController', () => {
         agent.post('/api/v1/pokemon')
           .field('visibility', visibility)
           .field('box', unlistedBox.id)
-          .attach('pk6', `${__dirname}/pkmn1.pk6`)
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
       ).map(response => response.body.id);
     });
     it('allows third parties to view all the data on a public pokemon', async () => {
@@ -621,7 +621,7 @@ describe('PokemonController', () => {
     beforeEach(async () => {
       const res = await agent.post('/api/v1/pokemon')
         .field('box', generalPurposeBox)
-        .attach('pk6', `${__dirname}/pkmn1.pk6`);
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
     });
@@ -712,23 +712,23 @@ describe('PokemonController', () => {
     let publicPkmn, viewablePkmn, privatePkmn, rawPk6;
     before(async () => {
       const res = await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('visibility', 'public')
         .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
       publicPkmn = res.body;
       const res2 = await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', generalPurposeBox);
       expect(res2.statusCode).to.equal(201);
       viewablePkmn = res2.body;
       const res3 = await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('visibility', 'private')
         .field('box', generalPurposeBox);
       expect(res3.statusCode).to.equal(201);
       privatePkmn = res3.body;
-      rawPk6 = require('fs').readFileSync(`${__dirname}/pkmn1.pk6`).toString('utf8');
+      rawPk6 = require('fs').readFileSync(`${__dirname}/pk6/pkmn1.pk6`).toString('utf8');
     });
     it('allows a user to download their own pokemon, regardless of visibility', async () => {
       const res = await agent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer()
@@ -845,30 +845,30 @@ describe('PokemonController', () => {
       box1 = (await agent.post('/api/v1/box').send({name: 'Shoebox'})).body;
       box2 = (await agent.post('/api/v1/box').send({name: 'Lunchbox'})).body;
       pkmn = (await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box1.id)).body;
       pkmn2 = (await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box1.id)).body;
       pkmn3 = (await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box1.id)).body;
       pkmn4 = (await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box2.id)).body;
       pkmn5 = (await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box2.id)).body;
       pkmn6 = (await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box2.id)).body;
       someoneElsesBox = (await otherAgent.post('/api/v1/box').send({name: 'Mailbox'})).body;
       someoneElsesPkmn = (await otherAgent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', someoneElsesBox.id)).body;
       adminBox = (await adminAgent.post('/api/v1/box').send({name: 'Icebox'})).body;
       adminPkmn = (await adminAgent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', adminBox.id)).body;
     });
     it('allows a user to move their own pokemon to a different box', async () => {
@@ -1053,7 +1053,7 @@ describe('PokemonController', () => {
     let pkmn;
     beforeEach(async () => {
       const res = await agent.post('/api/v1/pokemon')
-        .attach('pk6', `${__dirname}/pkmn1.pk6`)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('visibility', 'viewable')
         .field('box', generalPurposeBox);
       expect(res.statusCode).to.equal(201);
@@ -1156,6 +1156,144 @@ describe('PokemonController', () => {
       expect(res4.body.visibility).to.equal('private');
       expect(res4.body.publicNotes).to.equal('baz');
       expect(res4.body.privateNotes).to.equal('bar');
+    });
+  });
+
+  describe('getting a list of clones of a Pokémon', () => {
+    let pkmnList, unlistedBox, pageSize;
+    before(async function () {
+      this.timeout(20000);
+      const res = await agent.post('/api/v1/box').send({name: 'Boxball', visibility: 'unlisted'});
+      expect(res.statusCode).to.equal(201);
+      unlistedBox = res.body.id;
+
+      const maxMultiUploadSize = sails.services.constants.MAX_MULTI_UPLOAD_SIZE;
+      pkmnList = [];
+      for (let i = 0; i < maxMultiUploadSize * 2; i++) {
+        const res = await agent.post('/api/v1/pokemon')
+          // (this just creates a good mix of visibilities and boxes)
+          .field('box', i % 2 ? generalPurposeBox : unlistedBox)
+          .field('visibility', ['public', 'private', 'viewable'][i % 3])
+          .attach('pk6', `${__dirname}/pk6/porygon.pk6`);
+        expect(res.statusCode).to.equal(201);
+        pkmnList.unshift(res.body);
+      }
+      pageSize = sails.services.constants.CLONES_LIST_PAGE_SIZE;
+    });
+    it('returns a list of clones sorted by upload date', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[1].id}/clones`);
+      expect(res.statusCode).to.equal(200);
+      // response format: { contents: [ { pkmn1 }, { pkmn2 }, { pkmn3 }, ]} ...
+      // The outer object with `contents` is used so that we can add metadata later if we want to
+      expect(res.body.contents).to.be.an.instanceof(Array);
+      expect(res.body.contents.length).to.equal(pageSize);
+      expect(_.map(res.body.contents, 'id')).to.eql(
+        _.map([pkmnList[0]].concat(pkmnList.slice(2, pageSize + 1)), 'id')
+      );
+    });
+    it('returns a 404 error if a Pokémon with the given id does not exist', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[1].id}aaaaaa/clones`);
+      expect(res.statusCode).to.equal(404);
+    });
+    it('returns a 403 error if the Pokémon is private and the user is not the owner', async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await otherAgent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(403);
+    });
+    it('returns a 403 error for an unauthenticated user if the Pokémon is private', async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await noAuthAgent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(403);
+    });
+    it("doesn't return an error if the Pokémon is private and the user is the owner", async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await agent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.contents).to.be.an.instanceof(Array);
+      expect(_.map(res.body.contents, 'id')).to.eql(
+        _.map(_.reject(pkmnList.slice(0, pageSize + 1), pkmn => pkmn.id === privateId), 'id')
+      );
+    });
+    it('does not return an error if the Pokémon is private and the user is an admin', async () => {
+      const privateId = pkmnList.find(pkmn => pkmn.visibility === 'private').id;
+      const res = await adminAgent.get(`/api/v1/pokemon/${privateId}/clones`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.page).to.equal(1);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+      expect(res.body.contents).to.be.an.instanceof(Array);
+      expect(res.body.contents).to.eql(
+        _.reject(pkmnList.slice(0, pageSize + 1), {id: privateId})
+          .map(pkmn => _.omit(pkmn, 'isUnique'))
+      );
+    });
+    it('returns `null` in place of private Pokémon to indicate their existence', async () => {
+      const res = await otherAgent.get(`/api/v1/pokemon/${_.last(pkmnList).id}/clones`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.page).to.equal(1);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+      _.forEach(res.body.contents.slice(0, pageSize), (clone, index) => {
+        if (pkmnList[index].visibility === 'private') expect(clone).to.be.null();
+        else {
+          expect(clone.id).to.equal(pkmnList[index].id);
+          expect(clone.pid).to.equal(
+            clone.visibility === 'public' ? pkmnList[index].pid : undefined
+          );
+          expect(clone.box).to.be.undefined();
+          expect(clone.speciesName).to.exist();
+        }
+      });
+    });
+    it('allows a `pokemonFields` query parameter, filtering responses correctly', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)
+        .query({pokemonFields: 'speciesName'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.contents).to.eql(_.times(pageSize, () => ({speciesName: 'Porygon'})));
+      expect(res.body.page).to.equal(1);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+    });
+    it('does not return private information from `pokemonFields` queries', async () => {
+      const res = await otherAgent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)
+        .query({pokemonFields: 'pid'});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.contents).to.eql(pkmnList.slice(1, pageSize + 1).map(pkmn => {
+        return pkmn.visibility === 'public'
+          ? {pid: pkmn.pid}
+          : pkmn.visibility === 'private'
+            ? null
+            : {};
+      }));
+    });
+    it('allows a further items to be returned with a `page` parameter', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`).query({page: 2});
+      expect(res.statusCode).to.equal(200);
+      expect(_.map(res.body.contents, 'id')).to.eql(
+        _.map(pkmnList.slice(pageSize + 1, 2 * pageSize + 1), 'id')
+      );
+      expect(res.body.page).to.equal(2);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+
+      const res2 = await otherAgent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)
+        .query({page: 2});
+      expect(res2.statusCode).to.equal(200);
+      expect(_.map(res2.body.contents, 'id')).to.eql(pkmnList
+        .slice(pageSize + 1, 2 * pageSize + 1)
+        .map(pkmn => pkmn.visibility === 'private' ? undefined : pkmn.id)
+      );
+      expect(res.body.page).to.equal(2);
+      expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
+    });
+    it('returns a response with an empty array if the `page` parameter is too large', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`).query({page: 10});
+      expect(res.statusCode).to.equal(200);
+      expect(res.body).to.eql({
+        contents: [],
+        page: 10,
+        pageSize: sails.services.constants.CLONES_LIST_PAGE_SIZE
+      });
+    });
+    it('returns a 400 error if the page is not an integer', async () => {
+      const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`).query({page: 'foo'});
+      expect(res.statusCode).to.equal(400);
     });
   });
 });

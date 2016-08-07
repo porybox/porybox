@@ -22,6 +22,9 @@
 
 i.material-icons.visibility {
   font-size: 14px;
+}
+
+.layout-align-end-stretch i.material-icons.visibility {
   margin-right: -3px;
 }
 
@@ -85,13 +88,18 @@ h1, h2 {
 
 a {text-decoration: none}
 
-p a, .md-body-1 a, .md-body-2 a {
+a, md-card.summary a {
   color: #0099e6;
 }
 
-p a:visited, .md-body-1 a:visited, .md-body-2 a:visited {
+a:visited, md-card.summary a:visited {
   color: #5e35b1;
 }
+
+md-card a, md-card a:visited, footer a, footer a:visited {
+  color: inherit;
+}
+
 
 md-card md-card-title {
   padding: 10px 16px;
@@ -423,6 +431,29 @@ span[class^='gender-'] {
 .note img {
   max-width: 600px;
   width: 100%;
+}
+
+.clone-list {
+  padding: 8px;
+}
+
+.clone-list > div > span {
+  margin: 0 10px 5px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.clone-list .visibility {
+  vertical-align: middle;
+}
+
+.visibility {
+  text-transform: capitalize;
+}
+
+.private {
+  font-style: italic;
 }
 
 /*******************************

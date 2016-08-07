@@ -1,0 +1,52 @@
+<md-toolbar class="md-hue-1">
+  <div class="md-toolbar-tools">
+    <div class="back-button">
+      <a ng-href="/#/pokemon/{{cloneList.pkmnId}}">
+        <md-button class="md-icon-button" aria-label="Back to {{cloneList.pkmnData.nickname}}'s summary">
+          <md-tooltip md-direction="right">Back to {{cloneList.pkmnData.nickname}}'s summary</md-tooltip>
+          <i class="material-icons">arrow_back</i>
+        </md-button>
+      </a>
+    </div>
+    <h1>Duplicates of {{cloneList.pkmnData.nickname}}</h1>
+  </div>
+</md-toolbar>
+
+<md-content layout-padding>
+  <div ng-show="cloneList.pkmnData" ng-init="cloneList.fetchPokemonForCard(); cloneList.fetchMoreClones()">
+    <!--<h1 class="md-headline">Duplicates of {{cloneList.pkmnData.nickname}}</h1>-->
+    <pokemon-card ng-if="cloneList.pkmnData" data="cloneList.pkmnData"></pokemon-card>
+
+    <div class="clone-list md-body-1">
+      <div layout="row" style="font-weight:bold;">
+        <span flex="20">Pokémon</span>
+        <span flex="20">Owner</span>
+        <span flex flex-gt-xs="15">Visibility</span>
+        <span flex flex-gt-xs="35">Upload date</span>
+      </div>
+      <div ng-repeat="pokemon in cloneList.clones" layout="row" ng-class="{'private': pokemon._isPrivate}">
+        <span flex="20">
+          <span flex><a href="/#/pokemon/{{pokemon.id}}">{{pokemon.nickname}}</a></span>
+          <span flex ng-if="pokemon._isPrivate">private</span>
+        </span>
+        <span flex="20">
+          <span><a href="/#/user/{{pokemon.owner}}">{{pokemon.owner}}</a></span>
+          <span flex ng-if="pokemon._isPrivate">private</span>
+        </span>
+        <span flex flex-gt-xs="15" class="visibility">
+          <span>
+            <i ng-if="pokemon.visibility === 'private' || pokemon._isPrivate" class="material-icons visibility" title="Private">lock</i>
+            <i ng-if="pokemon.visibility === 'viewable'" class="material-icons visibility" title="Viewable">visibility</i>
+            <i ng-if="pokemon.visibility === 'public'" class="material-icons visibility" title="Public">public</i>
+          </span>
+           {{pokemon.visibility || 'private'}}
+        </span>
+        <span flex flex-gt-xs="35">{{pokemon.formattedUploadDate || '-'}}</span>
+      </div>
+    </div>
+    <md-progress-circular md-mode="indeterminate" ng-if="cloneList.isLoading" md-diameter="166"></md-progress-circular>
+  </div>
+
+
+</md-content>
+<div ng-if="cloneList.errorStatusCode" ng-include="'/errors/' + cloneList.errorStatusCode + '.html'"></div>
