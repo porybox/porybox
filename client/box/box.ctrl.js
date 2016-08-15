@@ -66,10 +66,9 @@ module.exports = class Box {
     }
   }
   fetch () {
-    return this.io.socket.getAsync(`/api/v1/box/${this.id}`, {
-      pokemonFields: POKEMON_FIELDS_USED,
-      page: this.currentPageNum
-    }).then(data => {
+    return this.io.socket.getAsync(
+      `/api/v1/box/${this.id}?pokemonFields=${POKEMON_FIELDS_USED}`
+    ).then(data => {
       Object.assign(this.data, data);
       this.hasFullData = true;
     }).catch(err => {
@@ -82,10 +81,10 @@ module.exports = class Box {
     if (!this.data.contents.length) return Promise.resolve();
     this.isLoading = true;
     this.$scope.$apply();
-    return this.io.socket.getAsync(`/api/v1/box/${this.id}`, {
-      pokemonFields: POKEMON_FIELDS_USED,
-      after: this.data.contents[this.data.contents.length - 1].id
-    }).tap(data => this.data.contents.push(...data.contents))
+    const lastId = this.data.contents[this.data.contents.length - 1].id;
+    return this.io.socket.getAsync(
+      `/api/v1/box/${this.id}?pokemonFields=${POKEMON_FIELDS_USED}&after=${lastId}`
+    ).tap(data => this.data.contents.push(...data.contents))
       .tap(data => {
         this.isLoading = false;
         this.isFinished = !data.contents.length;
