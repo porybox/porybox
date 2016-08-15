@@ -35,10 +35,10 @@ module.exports = class CloneList {
   }
   fetchMoreClones () {
     this.isLoading = true;
-    return this.io.socket.getAsync(`/api/v1/pokemon/${this.pkmnId}/clones`, {
-      page: this.currentPage++,
-      pokemonFields: 'owner,id,createdAt,nickname,visibility'
-    }).then(res => {
+    const fields = 'owner,id,createdAt,nickname,visibility';
+    return this.io.socket.getAsync(
+      `/api/v1/pokemon/${this.pkmnId}/clones?page=${this.currentPage++}&pokemonFields=${fields}`
+    ).then(res => {
       if (res.contents.length < res.pageSize) this.isFinished = true;
       this.clones.push(...res.contents.map(clone => {
         // All elements in an ng-repeat have to be unique, so replace the `null`s with placeholder {_isPrivate: true} objects.
