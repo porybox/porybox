@@ -43,7 +43,7 @@ module.exports = class Pokemon {
 
     this.heldItemUrl = this.data.heldItemId >= 328 && this.data.heldItemId <= 445 ?
       'tm' : (this.data.heldItemName
-      ? this.data.heldItemName.replace(' ', '-').replace('é', 'e').replace('\'', '').toLowerCase()
+      ? this.data.heldItemName.replace(/ /g, '-').replace('é', 'e').replace('\'', '').toLowerCase()
       : null);
 
     const shinyString = this.data.isShiny ? 'shiny' : 'regular';
