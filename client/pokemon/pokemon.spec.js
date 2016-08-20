@@ -23,7 +23,7 @@ describe('PokemonCtrl', function() {
   }));
 
   describe('controller variables', function() {
-    it.only('are correctly taken from the box input', function() {
+    it('are correctly taken from the box input', function() {
       tested = $controller(ctrlTest, deps, {data: {
         speciesName: 'Pelipper',
         nickname: 'pokemondNickname',

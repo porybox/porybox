@@ -44,9 +44,7 @@ describe('PokemonCtrl', function() {
         {updatedAt: 0, id: 'foo'},
         {updatedAt: 1, id: 'bar'}
       ]});
-      tested.files = ['test'];
-      tested.addFiles();
-      expect(tested.lines[0].box).to.equal('bar');
+      expect(tested.defaultBox).to.equal('bar');
     });
     it('uses the most-recently-edited box if on a box page not belonging to the user', function() {
       $routeParams = {boxid: 'baz'};
@@ -54,9 +52,7 @@ describe('PokemonCtrl', function() {
         {updatedAt: 0, id: 'foo'},
         {updatedAt: 1, id: 'bar'}
       ]});
-      tested.files = ['test'];
-      tested.addFiles();
-      expect(tested.lines[0].box).to.equal('bar');
+      expect(tested.defaultBox).to.equal('bar');
     });
     it('uses the current box if on a box page belonging to the user', function() {
       $routeParams = {boxid: 'foo'};
@@ -64,9 +60,7 @@ describe('PokemonCtrl', function() {
         {updatedAt: 0, id: 'foo'},
         {updatedAt: 1, id: 'bar'}
       ]});
-      tested.files = ['test'];
-      tested.addFiles();
-      expect(tested.lines[0].box).to.equal('foo');
+      expect(tested.defaultBox).to.equal('foo');
     });
   });
 });

@@ -2,7 +2,10 @@ const ctrlTest = require('./box.ctrl');
 
 describe('BoxCtrl', function() {
 
-  let $controller, $scope, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, io, tested;
+  let $controller, $scope, $routeParams, $mdMedia, $mdDialog, $mdToast, io, tested;
+  const scrollContainer = document.createElement('div');
+  scrollContainer.id = 'scroll-container';
+  document.body.appendChild(scrollContainer);
   let errorHandler;
 
   beforeEach(inject(function(_$controller_){
@@ -17,13 +20,14 @@ describe('BoxCtrl', function() {
             }
           }
         }
-      }
+      },
+      $on () {}
     };
-    $ngSilentLocation = {};
     $routeParams = {};
     $mdMedia = {};
     $mdDialog = {};
     errorHandler = {};
+    $mdToast = {};
     io = {
       socket: {
         get: function () {}
@@ -34,7 +38,7 @@ describe('BoxCtrl', function() {
   describe('controller variables', function() {
     it('are correctly taken from the box input', function() {
       tested = $controller(ctrlTest, {
-        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, errorHandler
+        $scope, io, $routeParams, $mdMedia, $mdDialog, errorHandler, $mdToast
       }, {data: {
         name: 'boxName',
         description: 'boxDescription',
@@ -52,7 +56,7 @@ describe('BoxCtrl', function() {
       $routeParams.boxid = 'routeParamId';
 
       tested = $controller(ctrlTest, {
-        $scope, io, $ngSilentLocation, $routeParams, $mdMedia, $mdDialog, errorHandler
+        $scope, io, $routeParams, $mdMedia, $mdDialog, errorHandler, $mdToast
       }, {});
       expect(tested.id).to.equal('routeParamId');
       expect(tested.data.contents).to.eql([]);
