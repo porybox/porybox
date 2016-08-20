@@ -82,4 +82,49 @@ describe('PokemonCtrl', function() {
     dangerbug.parseAllProps();
     expect(dangerbug.parsedOt).to.equal('♥︎Filthy♥︎');
   });
+  describe('appends form names and gender differences correctly', () => {
+    it('with form names', () => {
+      const pkmn = $controller(ctrlTest, deps, {data: {
+        tid: 1,
+        sid: 1,
+        esv: 1,
+        tsv: 1,
+        formId: 1,
+        isShiny: false,
+        dexNo: 1
+      }});
+      pkmn.parseBoxViewProps();
+      expect(pkmn.spriteUrl).to.equal('pokemon/regular/1-1');
+      expect(pkmn.spriteClass).to.equal('spr-regular spr-box-1-1');
+    });
+    it('with gender differences', () => {
+      const pkmn = $controller(ctrlTest, deps, {data: {
+        tid: 1,
+        sid: 1,
+        esv: 1,
+        tsv: 1,
+        isShiny: false,
+        dexNo: 3,
+        gender: 'F'
+      }});
+      pkmn.parseBoxViewProps();
+      expect(pkmn.spriteUrl).to.equal('pokemon/regular/3-f');
+      expect(pkmn.spriteClass).to.equal('spr-regular spr-box-3-f');
+    });
+    it('with form names and gender differences', () => {
+      const pkmn = $controller(ctrlTest, deps, {data: {
+        tid: 1,
+        sid: 1,
+        esv: 1,
+        tsv: 1,
+        isShiny: false,
+        dexNo: 678,
+        gender: 'F',
+        formId: 1
+      }});
+      pkmn.parseBoxViewProps();
+      expect(pkmn.spriteUrl).to.equal('pokemon/regular/678-f');
+      expect(pkmn.spriteClass).to.equal('spr-regular spr-box-678-f');
+    });
+  });
 });
