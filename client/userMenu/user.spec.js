@@ -5,12 +5,14 @@ describe('HomeCtrl', function() {
 
   let $scope = {},
     io = {},
+    errorHandler = {},
     $controller = {},
     tested;
 
   beforeEach(inject(function(_$controller_){
     $controller = _$controller_;
     $scope = {};
+    errorHandler = {};
     io = {
       socket: {
         post: function (url, data, callback) {
@@ -18,7 +20,7 @@ describe('HomeCtrl', function() {
         }
       }
     };
-    tested = $controller(ctrlTest, {$scope, io});
+    tested = $controller(ctrlTest, {$scope, io, errorHandler});
     tested.name = 'test';
   }));
 
