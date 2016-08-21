@@ -34,14 +34,21 @@
         <%- include footer.ejs %>
       </div>
     </div>
-    <div id="csrf-token"><%= typeof _csrf !== 'undefined' ? _csrf : '' %></div>
-    <div id="app-version"><%= VERSION %></div>
-    <div id="user-data" ng-non-bindable>
-      <%= _.escape(JSON.stringify({
-        boxes: typeof boxes !== 'undefined' ? boxes : [],
-        user: typeof user !== 'undefined' ? user : null,
-        prefs: typeof prefs !== 'undefined' ? prefs : {}
-      })) %>
+    <div ng-non-bindable id="hidden-info">
+      <div id="csrf-token"><%= typeof _csrf !== 'undefined' ? _csrf : '' %></div>
+      <div id="app-version"><%= VERSION %></div>
+      <div id="user-data">
+        <%= _.escape(JSON.stringify({
+          boxes: typeof boxes !== 'undefined' ? boxes : [],
+          user: typeof user !== 'undefined' ? user : null,
+          prefs: typeof prefs !== 'undefined' ? prefs : {}
+        })) %>
+      </div>
+      <div id="server-status">
+        <%= _.escape(JSON.stringify({
+          readOnly: sails.config.readOnly
+        })) %>
+      </div>
     </div>
     <script src="<%=
       (sails.config.environment === 'development' ? '/bundle.js' : '/bundle.min.js') + '?v=' + VERSION

@@ -187,4 +187,39 @@ describe('AuthController', function() {
       );
     });
   });
+
+  describe('read-only mode', async () => {
+    let boxId;
+    before(async () => {
+      agent = await testHelpers.getAgent();
+      const res = await agent.post('/api/v1/auth/local/register').send({
+        name: 'readonly',
+        password: 'readonly',
+        email: 'readonly@example.com'
+      });
+      expect(res.statusCode).to.equal(200);
+
+      const res2 = await agent.post('/api/v1/box').send({name: 'Good Box'});
+      expect(res2.statusCode).to.equal(201);
+      boxId = res2.body.id;
+      sails.config.readOnly = true;
+    });
+    it('does not allow anything to be created in readonly mode', async () => {
+      const res = await agent.post('/api/v1/box').send({name: 'Bad Box'});
+      expect(res.statusCode).to.equal(405);
+      expect(res.body).to.equal('READONLY');
+
+      const res2 = await agent.patch(`/api/v1/box/${boxId}`).send({visibility: 'listed'});
+      expect(res2.statusCode).to.equal(405);
+      expect(res2.body).to.equal('READONLY');
+    });
+    it('still allows GET requests in readonly mode', async () => {
+      const res = await agent.get(`/api/v1/box/${boxId}`);
+      expect(res.statusCode).to.equal(200);
+      expect(res.body.name).to.equal('Good Box');
+    });
+    afterEach(() => {
+      sails.config.readOnly = false;
+    });
+  });
 });
