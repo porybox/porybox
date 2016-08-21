@@ -45,5 +45,7 @@ module.exports = {
   },
 
   // The URL that appears in emails from the site
-  siteUrl: 'localhost:1337'
+  siteUrl: 'localhost:1337',
+
+  readOnly: false
 };
