@@ -53,6 +53,7 @@ const porybox = ng.module('porybox', [
 
 porybox.controller('MainCtrl', ['$mdToast', function ($mdToast) {
   this.selected = {};
+  this.serverStatus = SERVER_STATUS;
   Object.assign(this, userData);
   // TODO: Figure out a better way to do this
   const LOGGED_IN_ONLY_ROUTES = ['#/prefs', '#/account', '', '#/'];
@@ -64,7 +65,7 @@ porybox.controller('MainCtrl', ['$mdToast', function ($mdToast) {
     location.hash = '/';
   }
   // TODO: Disable some buttons clientside in read-only mode
-  if (SERVER_STATUS.readOnly) {
+  if (this.serverStatus.readOnly) {
     $mdToast.show(
       $mdToast.simple()
         .textContent('Porybox is temporarily in read-only mode while we perform maintenance.')
