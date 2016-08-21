@@ -16,10 +16,10 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.policies.html
  */
 
-const anyone = ['passport'];
-const user = ['passport', 'sessionAuth'];
-const passwordProtected = ['passport', 'sessionAuth', 'passwordRequired'];
-const admin = ['passport', 'sessionAuth', 'isAdmin'];
+const anyone = ['readOnlyMode', 'passport'];
+const user = ['readOnlyMode', 'passport', 'sessionAuth'];
+const passwordProtected = ['readOnlyMode', 'passport', 'sessionAuth', 'passwordRequired'];
+const admin = ['readOnlyMode', 'passport', 'sessionAuth', 'isAdmin'];
 
 module.exports.policies = {
 
