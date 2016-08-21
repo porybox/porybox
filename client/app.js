@@ -15,6 +15,8 @@ const CSRF_TOKEN = document.getElementById('csrf-token').innerHTML;
 const APP_VERSION = document.getElementById('app-version').innerHTML;
 const userData = JSON.parse(unescapeHTML(document.getElementById('user-data').innerHTML));
 
+const SERVER_STATUS = JSON.parse(document.getElementById('server-status').innerHTML);
+
 // Import modules
 require('./login/login.module.js');
 require('./home/home.module.js');
@@ -49,7 +51,7 @@ const porybox = ng.module('porybox', [
   'hc.marked'
 ]);
 
-porybox.controller('MainCtrl', function () {
+porybox.controller('MainCtrl', ['$mdToast', function ($mdToast) {
   this.selected = {};
   Object.assign(this, userData);
   // TODO: Figure out a better way to do this
@@ -61,7 +63,16 @@ porybox.controller('MainCtrl', function () {
   if (this.user && location.pathname === '/' && LOGGED_OUT_ONLY_ROUTES.includes(location.hash)) {
     location.hash = '/';
   }
-});
+  // TODO: Disable some buttons clientside in read-only mode
+  if (SERVER_STATUS.readOnly) {
+    $mdToast.show(
+      $mdToast.simple()
+        .textContent('Porybox is temporarily in read-only mode while we perform maintenance.')
+        .position('bottom right')
+        .hideDelay(5000)
+    );
+  }
+}]);
 
 // Add a ?v=1.0.0 (e.g.) query to all requests for templates
 // This avoids browser cache issues when the version number is bumped
@@ -121,12 +132,23 @@ porybox.service('io', function () {
 
 porybox.service('errorHandler', ['$mdToast', function ($mdToast) {
   return reason => {
-    if (reason) {
-      console.error(reason); // eslint-disable-line no-console
-      $mdToast.show(
-        $mdToast.simple().textContent('An unexpected error occured.').position('bottom right')
+    if (!reason) return;
+    console.error(reason); // eslint-disable-line no-console
+    if ((reason.statusCode === 405 && reason.body === 'READONLY') ||
+        (reason.status === 405 && reason.data === 'READONLY')
+    ) {
+      return $mdToast.show(
+        $mdToast
+          .simple()
+          .textContent('Request failed; Porybox is currently in read-only mode.')
+          .position('bottom right')
       );
     }
+    return $mdToast.show(
+      $mdToast.simple()
+        .textContent('An unexpected error occured.')
+        .position('bottom right')
+    );
   };
 }]);
 
