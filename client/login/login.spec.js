@@ -7,6 +7,7 @@ describe('LoginCtrl', function() {
 
   let $controller;
   const $scope = {};
+  let errorHandler = {}, escapeRegExp = {};
   const $http1 = () => Promise.reject({status: 401, data: 'Error.Passport.Password.Wrong'});
   const $http2 = () => Promise.reject({status: 401, data: 'Error.Passport.Email.Missing'});
 
@@ -17,23 +18,21 @@ describe('LoginCtrl', function() {
 
   describe('controller.login', function() {
     it('is instantiated correctly', () => {
-      const controller = $controller(loginCtrl, {$scope, $http: $http1});
+      const controller = $controller(
+        loginCtrl,
+        {$scope, $http: $http1, errorHandler, escapeRegExp}
+      );
       expect(controller.login).to.be.a('function');
-      return controller.login().then(() => {
-        expect(controller.loginError).to.equal('incorrect username/password combination');
-        expect(controller.registerError).to.not.be.ok();
-      });
     });
   });
 
   describe('controller.register', function() {
     it('is instantiated correctly', () => {
-      const controller = $controller(loginCtrl, {$scope, $http: $http2});
+      const controller = $controller(
+        loginCtrl,
+        {$scope, $http: $http2, errorHandler, escapeRegExp}
+      );
       expect(controller.register).to.be.a('function');
-      return controller.register().then(() => {
-        expect(controller.registerError).to.equal('invalid email address');
-        expect(controller.loginError).to.not.be.ok();
-      });
     });
   });
 });

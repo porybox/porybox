@@ -54,8 +54,8 @@ module.exports = class Pokemon {
       ? '-' + this.data.formId
       : '';
 
-    this.spriteUrl = `pokemon/${shinyString}/${this.data.dexNo}${formSuffix}${genderDiff}`;
-    this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${formSuffix}${genderDiff}`;
+    this.spriteUrl = `pokemon/${shinyString}/${this.data.dexNo}${genderDiff || formSuffix}`;
+    this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${genderDiff || formSuffix}`;
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasHA = this.data.abilityNum === 4;
