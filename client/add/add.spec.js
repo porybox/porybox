@@ -4,8 +4,6 @@ const Promise = require('bluebird');
 Promise.config({warnings: false});
 
 describe('AddCtrl', function() {
-  // beforeEach(module('porygon'));
-
   let $scope = {},
     io = {},
     $controller = {},
@@ -46,6 +44,7 @@ describe('AddCtrl', function() {
       $mdToast,
       errorHandler
     }, {boxes: []});
+    tested.prefs = {defaultBoxVisibility: 'listed', defaultPokemonVisibility: 'private'};
     postSpy = sinon.spy(io.socket, 'postAsync');
   }));
 
@@ -53,13 +52,6 @@ describe('AddCtrl', function() {
     it('calls io.socket.postAsync', function() {
       tested.box();
       expect(postSpy.called).to.equal(true);
-    });
-
-    it('adds to boxes', function () {
-      expect(tested.boxes.length).to.equal(0);
-      return tested.box().then(() => {
-        expect(tested.boxes.length).to.equal(1);
-      });
     });
   });
 });
