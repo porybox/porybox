@@ -16,7 +16,7 @@ module.exports = {
       to the agent. We don't want the agent to be treated as a thenable when returning from this function, so just get rid of
       the .then function. */
       agent.then = undefined;
-    }).return(agent);
+    }).then(() => agent);
   },
   emailEmitter
 };
