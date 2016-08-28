@@ -183,7 +183,7 @@ describe('AuthController', function() {
     });
     it('sends a content-security-policy header to only allow scripts from self', async () => {
       expect(res.header['content-security-policy']).to.equal(
-        "default-src 'self' ; script-src 'self' 'unsafe-inline' *.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;"
+        "default-src 'self' ; script-src 'self' *.google-analytics.com 'sha256-YK4QnoRTRZEROg1LNIoMFIigO9GqLGEnuUYQ7fa3s/U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;"
       );
     });
   });
