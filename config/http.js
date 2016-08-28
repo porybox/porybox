@@ -38,7 +38,9 @@ module.exports.http = {
     },
 
     csp: (req, res, next) => {
-      res.header('Content-Security-Policy', "default-src 'self' ; script-src 'self' 'unsafe-inline' *.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;");
+      // 'sha256-YK4QnoRTRZEROg1LNIoMFIigO9GqLGEnuUYQ7fa3s/U=' is the sha256 digest of the google analytics inline script.
+      // If we change that script, we need to change the header as well.
+      res.header('Content-Security-Policy', "default-src 'self' ; script-src 'self' *.google-analytics.com 'sha256-YK4QnoRTRZEROg1LNIoMFIigO9GqLGEnuUYQ7fa3s/U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;");
       next();
     },
 
