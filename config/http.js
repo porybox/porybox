@@ -38,7 +38,7 @@ module.exports.http = {
     },
 
     csp: (req, res, next) => {
-      res.header('Content-Security-Policy', "default-src 'self' ; script-src 'self' 'unsafe-inline' *.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' ; reflected-xss block;");
+      res.header('Content-Security-Policy', "default-src 'self' ; script-src 'self' 'unsafe-inline' *.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;");
       next();
     },
 
