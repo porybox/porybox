@@ -21,7 +21,7 @@
     "babel-register": "^6.11.6",
     "babelify": "^7.2.0",
     "bcryptjs": "^2.3.0",
-    "bluebird": "3.4.4",
+    "bluebird": "3.4.5",
     "browserify": "13.1.0",
     "clean-css": "^3.4.18",
     "connect-mongo": "^1.2.1",
