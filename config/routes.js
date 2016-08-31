@@ -40,10 +40,6 @@ module.exports.routes = {
   'post /api/v1/auth/local': 'AuthController.callback',
   'post /api/v1/auth/local/:action': 'AuthController.callback',
 
-  'get /api/v1/auth/:provider': 'AuthController.provider',
-  'get /api/v1/auth/:provider/callback': 'AuthController.callback',
-  'get /api/v1/auth/:provider/:action': 'AuthController.callback',
-
   // Password resets
 
   'post /api/v1/user/:name/passwordReset': 'PasswordResetController.create',
