@@ -154,6 +154,13 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
   return parsed;
 };
 
+exports.getBoxSize = (boxId, filterQuery) => {
+  return Pokemon.count(_.assign({
+    box: boxId,
+    _markedForDeletion: false
+  }, filterQuery));
+};
+
 exports.pickPokemonFields = (pkmn, fieldString) => {
   return _.isString(fieldString)
     ? pkmn && _.pick(pkmn, fieldString.split(',').concat('toJSON'))
