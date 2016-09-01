@@ -114,7 +114,7 @@ a:visited {
   color: #5e35b1;
 }
 
-.box-card a, .box-card a:visited, footer a, footer a:visited, md-menu-item a:visited, .pokemon-card-mini a, .pokemon-card-mini a:visited {
+.box-card a, .box-card a:visited, footer a, footer a:visited, md-menu-item a:visited, .pokemon-card-mini a, .pokemon-card-mini a:visited, md-toolbar a:visited {
   color: inherit;
 }
 
@@ -193,6 +193,19 @@ md-toolbar.md-tall {
 md-dialog-content textarea[md-no-autogrow].md-input {
   height: inherit;
   overflow-y: auto;
+}
+
+md-icon {
+  min-height: inherit;
+  min-width: inherit;
+}
+
+body, md-content, .md-subheader {
+  background-color: rgb(255,255,255);
+}
+
+md-input-container label:not(.md-no-float):not(.md-container-ignore) {
+  overflow: visible;
 }
 
 /*******************************
