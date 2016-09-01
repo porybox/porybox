@@ -38,11 +38,17 @@ describe('PokemonController', () => {
     await sails.models.user.update({name: 'pokemon_admin'}, {isAdmin: true});
   });
   describe('upload', () => {
-    let otherBox;
+    let otherBox, initialMaxBoxSize;
     before(async () => {
       const res = await otherAgent.post('/api/v1/box').send({name: 'carBoxyl'});
       expect(res.statusCode).to.equal(201);
       otherBox = res.body.id;
+    });
+    before(() => {
+      initialMaxBoxSize = sails.services.constants.MAX_BOX_SIZE;
+    });
+    afterEach(() => {
+      sails.services.constants.MAX_BOX_SIZE = initialMaxBoxSize;
     });
     it('should be able to upload a pk6 file and receive a parsed version', async () => {
       const res = await agent.post('/api/v1/pokemon')
@@ -121,9 +127,20 @@ describe('PokemonController', () => {
       expect(res3.body.contents.length).to.equal(initialCount + 10);
       expect(_.map(res3.body.contents.slice(-10), 'id').sort()).to.eql(newIds.sort());
     });
+    it('should not allow uploads to a box at max capacity', async () => {
+      sails.services.constants.MAX_BOX_SIZE = await sails.models.pokemon.count({
+        box: generalPurposeBox,
+        _markedForDeletion: false
+      });
+      const res = await agent.post('/api/v1/pokemon')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Cannot upload to a maximum-capacity box');
+    });
   });
   describe('multi upload', () => {
-    let pk6Data, invalidPk6Data1, invalidPk6Data2, kyuremW, verifyValidUpload;
+    let pk6Data, invalidPk6Data1, invalidPk6Data2, kyuremW, verifyValidUpload, initialMaxBoxSize;
     before(() => {
       const fs = require('fs');
       pk6Data = fs.readFileSync(`${__dirname}/pk6/pkmn1.pk6`, {encoding: 'base64'});
@@ -140,6 +157,12 @@ describe('PokemonController', () => {
         expect(data.created.speciesName).to.equal('Pelipper');
         expect(data.created.pid).to.exist();
       };
+    });
+    before(() => {
+      initialMaxBoxSize = sails.services.constants.MAX_BOX_SIZE;
+    });
+    afterEach(() => {
+      sails.services.constants.MAX_BOX_SIZE = initialMaxBoxSize;
     });
     it('allows multiple files to be uploaded simultaneously', async () => {
       const files = [
@@ -339,6 +362,25 @@ describe('PokemonController', () => {
       expect(updatedInitialBox.contents).to.eql(
         initialContents.concat(_.map([res4.body[0], res4.body[4], res4.body[6]], 'created'))
       );
+    });
+    it('does not allow uploads to push boxes over the max box size', async () => {
+      sails.services.constants.MAX_BOX_SIZE = await sails.models.pokemon.count({
+        box: generalPurposeBox,
+        _markedForDeletion: false
+      }) + 2;
+
+      const res = await agent.post('/api/v1/pokemon/multi').send({files: [
+        {box: generalPurposeBox, visibility: 'viewable', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'private', data: pk6Data},
+        {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+      ]});
+      expect(res.statusCode).to.equal(201);
+      expect(res.body).to.be.an.instanceof(Array);
+      expect(res.body).to.have.lengthOf(3);
+      expect(res.body[0].success).to.be.true();
+      expect(res.body[1].success).to.be.true();
+      expect(res.body[2].success).to.be.false();
+      expect(res.body[2].error).to.equal('Cannot upload to a maximum-capacity box');
     });
   });
   describe('getting a pokemon by ID', () => {
@@ -611,11 +653,12 @@ describe('PokemonController', () => {
   });
 
   describe('deleting a pokemon', () => {
-    let previousDeletionDelay, pkmn;
+    let previousDeletionDelay, previousMaxBoxSize, pkmn;
     before(() => {
       /* Normally this is 5 minutes, but it's annoying for the unit tests to take that long.
       So for these tests it's set to 2 seconds instead. */
       previousDeletionDelay = sails.services.constants.POKEMON_DELETION_DELAY;
+      previousMaxBoxSize = sails.services.constants.MAX_BOX_SIZE;
       sails.services.constants.POKEMON_DELETION_DELAY = 2000;
     });
     beforeEach(async () => {
@@ -624,6 +667,12 @@ describe('PokemonController', () => {
         .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
       expect(res.statusCode).to.equal(201);
       pkmn = res.body;
+    });
+    afterEach(() => {
+      sails.services.constants.MAX_BOX_SIZE = previousMaxBoxSize;
+    });
+    after(() => {
+      sails.services.constants.POKEMON_DELETION_DELAY = previousDeletionDelay;
     });
     it('allows the owner of a pokemon to delete it', async () => {
       const res = await agent.del(`/api/v1/pokemon/${pkmn.id}`);
@@ -704,8 +753,16 @@ describe('PokemonController', () => {
       const res4 = await agent.get(`/api/v1/pokemon/${pkmn.id}`);
       expect(res4.statusCode).to.equal(404);
     });
-    after(() => {
-      sails.services.constants.POKEMON_DELETION_DELAY = previousDeletionDelay;
+    it('does not allow a pokemon to be undeleted if the box is at capacity', async () => {
+      const res = await agent.del(`/api/v1/pokemon/${pkmn.id}`);
+      expect(res.statusCode).to.equal(202);
+      sails.services.constants.MAX_BOX_SIZE = await sails.models.pokemon.count({
+        box: generalPurposeBox,
+        _markedForDeletion: false
+      });
+      const res2 = await agent.post(`/api/v1/pokemon/${pkmn.id}/undelete`);
+      expect(res2.statusCode).to.equal(400);
+      expect(res2.body).to.equal('Cannot add a Pokémon to a maximum-capacity box');
     });
   });
   describe('downloading a pokemon', () => {
@@ -838,9 +895,15 @@ describe('PokemonController', () => {
   });
   describe('moving a pokemon', () => {
     let pkmn, pkmn2, pkmn3, pkmn4, pkmn5, pkmn6, someoneElsesPkmn, box1, box2, someoneElsesBox,
-      adminPkmn, adminBox;
+      adminPkmn, adminBox, initialMaxBoxSize;
     // pkmn, pkmn2, and pkmn3 start out in box1
     // pkmn4, pkmn5, and pkmn6 start out in box2
+    before(() => {
+      initialMaxBoxSize = sails.services.constants.MAX_BOX_SIZE;
+    });
+    afterEach(() => {
+      sails.services.constants.MAX_BOX_SIZE = initialMaxBoxSize;
+    });
     beforeEach(async () => {
       box1 = (await agent.post('/api/v1/box').send({name: 'Shoebox'})).body;
       box2 = (await agent.post('/api/v1/box').send({name: 'Lunchbox'})).body;
@@ -1047,6 +1110,12 @@ describe('PokemonController', () => {
       expect(res.statusCode).to.equal(202);
       const res2 = await agent.post(`/api/v1/pokemon/${pkmn.id}/move`).send({box: box2.id});
       expect(res2.statusCode).to.equal(404);
+    });
+    it('does not allow a pokemon to be moved to a box at max capacity', async () => {
+      sails.services.constants.MAX_BOX_SIZE = 3;
+      const res = await agent.post(`/api/v1/pokemon/${pkmn4.id}/move`).send({box: box1.id});
+      expect(res.statusCode).to.equal(400);
+      expect(res.body).to.equal('Cannot move a Pokémon to a maximum-capacity box');
     });
   });
   describe("editing a pokemon's visibility and notes", () => {

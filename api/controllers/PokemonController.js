@@ -22,6 +22,10 @@ module.exports = _.mapValues({
       visibility,
       boxId: params.box,
       file: files[0].fd
+    }).tap(async pokemon => {
+      if (await PokemonHandler.getBoxSize(pokemon.box) >= Constants.MAX_BOX_SIZE) {
+        throw {statusCode: 400, message: 'Cannot upload to a maximum-capacity box'};
+      }
     }).then(parsed => Pokemon.create(parsed))
       .tap(result => BoxOrdering.addPkmnIdsToBox(result.box, [result.id]))
       .then(result => PokemonHandler.getSafePokemonForUser(result, req.user, {checkUnique: true}))
@@ -84,9 +88,31 @@ module.exports = _.mapValues({
     parsePromises.forEach(p => p.suppressUnhandledRejections());
     await Promise.all(parsePromises.map(promise => promise.reflect()));
 
-    const created = await Promise.map(Pokemon.create(
-      parsePromises.filter(promise => promise.isFulfilled()).map(promise => promise.value())
-    ), pkmn => PokemonHandler.getSafePokemonForUser(pkmn, req.user));
+    // a list of all uploads that were parsed successfully and have valid boxes
+    const fulfilledUploads
+      = parsePromises.filter(promise => promise.isFulfilled()).map(promise => promise.value());
+
+    // a map with box IDs as keys and an array of parsed uploads for the given box as values
+    const fulfilledValuesByBox = _.groupBy(fulfilledUploads, 'box');
+
+    // a map with box IDs as keys and numbers representing the current box size as values
+    const boxSizes = await Promise.props(_.mapValues(fulfilledValuesByBox, (vals, boxId) => {
+      return PokemonHandler.getBoxSize(boxId);
+    }));
+
+    // a Set containing the "overflow" files, i.e. Pokémon that will not be
+    // added because they would cause the box to exceed its max capacity.
+    const overflowFiles = new Set(_.reduce(fulfilledValuesByBox, (accum, valuesForBox, boxId) => {
+      // For each box, a maximum of `Constants.MAX_BOX_SIZE - boxSizes[boxId]` new files can be accepted.
+      // Add uploads which come after that index to the set of overflow files.
+      return accum.concat(valuesForBox.slice(Constants.MAX_BOX_SIZE - boxSizes[boxId]));
+    }, []));
+
+    // a list of Pokémon documents created in the database
+    const created = await Promise.map(
+      Pokemon.create(fulfilledUploads.filter(value => !overflowFiles.has(value))),
+      pkmn => PokemonHandler.getSafePokemonForUser(pkmn, req.user)
+    );
 
     await Promise.all(_.values(_.groupBy(created, 'box')).map(pkmnArray => {
       return BoxOrdering.addPkmnIdsToBox(pkmnArray[0].box, _.map(pkmnArray, 'id'));
@@ -95,6 +121,9 @@ module.exports = _.mapValues({
     let successCount = 0;
     return res.created(parsePromises.map(promise => {
       if (promise.isFulfilled()) {
+        if (overflowFiles.has(promise.value())) {
+          return {success: false, created: null, error: 'Cannot upload to a maximum-capacity box'};
+        }
         return {success: true, created: created[successCount++], error: null};
       }
       return {success: false, created: null, error: promise.reason().message || 'Unknown error'};
@@ -131,6 +160,9 @@ module.exports = _.mapValues({
     const box = await Box.findOne({id: pokemon.box, _markedForDeletion: false});
     if (!box) {
       return res.badRequest();
+    }
+    if (await PokemonHandler.getBoxSize(pokemon.box) >= Constants.MAX_BOX_SIZE) {
+      return res.status(400).json('Cannot add a Pokémon to a maximum-capacity box');
     }
     await pokemon.unmarkForDeletion();
     return res.ok();
@@ -191,6 +223,8 @@ module.exports = _.mapValues({
     if (params.box === pokemon.box) {
       oldBox = newBox;
       _.remove(orderedContents, pkmn => pkmn.id === pokemon.id);
+    } else if (await PokemonHandler.getBoxSize(newBox.id) >= Constants.MAX_BOX_SIZE) {
+      return res.status(400).json('Cannot move a Pokémon to a maximum-capacity box');
     } else {
       oldBox = await Box.findOne({id: pokemon.box});
     }
