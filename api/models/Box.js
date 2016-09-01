@@ -65,6 +65,14 @@ module.exports =  {
       ]).get(0);
     },
 
+    totalSizeForUser (user) {
+      return PokemonHandler.getBoxSize(this.id, {
+        visibility: user && (user.isAdmin || user.name === this.owner)
+          ? Constants.POKEMON_VISIBILITIES
+          : Constants.POKEMON_VISIBILITIES.filter(visibility => visibility !== 'private')
+      });
+    },
+
     /* Omit internal properties (i.e. properties that start with '_') when converting to JSON.
     Conveniently, this means that the internal properties are never sent to the client.
     (Not to be confused with the omitPrivateContents function, which removes *confidential* data.) */

@@ -99,6 +99,7 @@ describe('BoxController', function () {
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.createdAt).to.be.a('string');
       expect(box.updatedAt).to.exist();
+      expect(box.totalSize).to.equal(3);
     });
     it('allows third parties to view a box, filtering contents by pokemon visibility', async () => {
       const box = (await otherAgent.get(`/api/v1/box/${boxId}`)).body;
@@ -113,6 +114,7 @@ describe('BoxController', function () {
       expect(box.contents[1].speciesName).to.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
+      expect(box.totalSize).to.equal(2);
     });
     it('allows admins to view the full contents of a box by ID', async () => {
       const box = (await adminAgent.get(`/api/v1/box/${boxId}`)).body;
@@ -130,6 +132,7 @@ describe('BoxController', function () {
       expect(box.contents[2].speciesName).to.exist();
       expect(box.contents[2].box).to.equal(box.id);
       expect(box.updatedAt).to.exist();
+      expect(box.totalSize).to.equal(3);
     });
     it('allows an unauthenticated user to view a box by ID', async () => {
       const res = await noAuthAgent.get(`/api/v1/box/${boxId}`);
@@ -146,6 +149,7 @@ describe('BoxController', function () {
       expect(box.contents[1].box).to.exist();
       expect(box.contents[2]).to.not.exist();
       expect(box.updatedAt).to.not.exist();
+      expect(box.totalSize).to.equal(2);
     });
     it('allows the properties of the Pokémon in the box to be specified by query', async () => {
       const res = await agent.get(`/api/v1/box/${boxId}`).query({pokemonFields: 'speciesName'});
@@ -156,6 +160,7 @@ describe('BoxController', function () {
         {speciesName: 'Pelipper'},
         {speciesName: 'Pelipper'}
       ]);
+      expect(res.body.totalSize).to.equal(3);
     });
     it('does not allow private properties of Pokémon to be accessed by the query', async () => {
       const publicPid = (await agent.get(`/api/v1/box/${boxId}`)).body.contents[1].pid;
@@ -167,6 +172,7 @@ describe('BoxController', function () {
         {speciesName: 'Pelipper'},
         {speciesName: 'Pelipper', pid: publicPid}
       ]);
+      expect(res.body.totalSize).to.equal(2);
     });
     it('does not allow internal properties of Pokémon to be accessed by the query', async () => {
       const res = await agent.get(`/api/v1/box/${boxId}`)
@@ -178,6 +184,7 @@ describe('BoxController', function () {
         {speciesName: 'Pelipper'},
         {speciesName: 'Pelipper'}
       ]);
+      expect(res.body.totalSize).to.equal(3);
     });
   });
   describe('box pagination', () => {
@@ -205,6 +212,7 @@ describe('BoxController', function () {
     });
     it('returns the first BOX_PAGE_SIZE items if no parameter is provided', async () => {
       const res = await agent.get(`/api/v1/box/${box.id}`);
+      expect(res.body.totalSize).to.equal(pageSize * 3 + 1);
       expect(res.statusCode).to.equal(200);
       expect(_.map(res.body.contents, 'id')).to.eql(_.map(pkmnList.slice(0, pageSize), 'id'));
     });

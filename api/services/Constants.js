@@ -3,6 +3,8 @@ exports.DEFAULT_BOX_VISIBILITY_SETTING = 'listed';
 exports.POKEMON_VISIBILITIES = ['private', 'public', 'viewable'];
 exports.DEFAULT_POKEMON_VISIBILITY_SETTING = 'viewable';
 
+exports.MAX_BOX_SIZE = 3000;
+
 exports.MAX_BOX_NAME_LENGTH = 300;
 exports.MAX_BOX_DESCRIPTION_LENGTH = 1000;
 exports.MAX_POKEMON_NOTE_LENGTH = 2000;

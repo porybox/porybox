@@ -42,6 +42,7 @@ module.exports = _.mapValues({
       beforeId: params.before,
       sliceSize: Constants.BOX_PAGE_SIZE
     }).map(pkmn => PokemonHandler.pickPokemonFields(pkmn, params.pokemonFields));
+    safeBox.totalSize = await safeBox.totalSizeForUser(req.user);
     return res.ok(safeBox);
   },
 
