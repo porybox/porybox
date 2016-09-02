@@ -40,7 +40,9 @@ describe('PokemonController', () => {
   describe('upload', () => {
     let otherBox, initialMaxBoxSize;
     before(async () => {
-      const res = await otherAgent.post('/api/v1/box').send({name: 'carBoxyl'});
+      const res = await otherAgent.post('/api/v1/box').send(
+        {name: 'carBoxyl', visibility: 'listed'}
+      );
       expect(res.statusCode).to.equal(201);
       otherBox = res.body.id;
     });
@@ -62,6 +64,7 @@ describe('PokemonController', () => {
       expect(res.body._cloneHash).to.not.exist();
       expect(res.body.owner).to.equal('pk6tester');
       expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
+      expect(res.body._boxVisibility).to.not.exist();
     });
     it('should identify uploaded things as clones', async () => {
       const res1 = await agent.post('/api/v1/pokemon')
@@ -1240,8 +1243,8 @@ describe('PokemonController', () => {
       pkmnList = [];
       for (let i = 0; i < maxMultiUploadSize * 2; i++) {
         const res = await agent.post('/api/v1/pokemon')
-          // (this just creates a good mix of visibilities and boxes)
-          .field('box', i % 2 ? generalPurposeBox : unlistedBox)
+          .field('box', generalPurposeBox)
+          // (this just creates a good mix of visibilities)
           .field('visibility', ['public', 'private', 'viewable'][i % 3])
           .attach('pk6', `${__dirname}/pk6/porygon.pk6`);
         expect(res.statusCode).to.equal(201);
@@ -1301,8 +1304,9 @@ describe('PokemonController', () => {
       expect(res.body.page).to.equal(1);
       expect(res.body.pageSize).to.equal(sails.services.constants.CLONES_LIST_PAGE_SIZE);
       _.forEach(res.body.contents.slice(0, pageSize), (clone, index) => {
-        if (pkmnList[index].visibility === 'private') expect(clone).to.be.null();
-        else {
+        if (pkmnList[index].visibility === 'private') {
+          expect(clone).to.be.null();
+        } else {
           expect(clone.id).to.equal(pkmnList[index].id);
           expect(clone.pid).to.equal(
             clone.visibility === 'public' ? pkmnList[index].pid : undefined
@@ -1311,6 +1315,21 @@ describe('PokemonController', () => {
           expect(clone.speciesName).to.exist();
         }
       });
+    });
+    it('filters clone list based on box visibility', async () => {
+      const res = await agent.post('/api/v1/pokemon')
+        .field('box', generalPurposeBox)
+        .field('visibility', 'viewable')
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      const res2 = await agent.post('/api/v1/pokemon')
+        .field('box', unlistedBox)
+        .field('visibility', 'viewable')
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      expect(res2.statusCode).to.equal(201);
+      const pokemon = res.body;
+      const res6 = await agent.get(`/api/v1/pokemon/${pokemon.id}/clones`);
+      expect(res6.body.contents[0]).to.equal(null);
     });
     it('allows a `pokemonFields` query parameter, filtering responses correctly', async () => {
       const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)

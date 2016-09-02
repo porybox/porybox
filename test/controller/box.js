@@ -577,11 +577,38 @@ describe('BoxController', function () {
     });
   });
   describe('editing a box', () => {
-    let box;
+    let box, box2;
     beforeEach(async () => {
       const res = await agent.post('/api/v1/box').send({name: 'Pillbox', visibility: 'listed'});
+      const res2 = await agent.post('/api/v1/box').send({name: 'Pillbox2', visibility: 'listed'});
       expect(res.statusCode).to.equal(201);
+      expect(res2.statusCode).to.equal(201);
       box = res.body;
+      box2 = res2.body;
+    });
+    it('removes pokemon from clone lists when updating visibility', async () => {
+      const res = await agent.post('/api/v1/pokemon')
+        .field('box', box.id)
+        .field('visibility', 'viewable')
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      const res2 = await agent.post('/api/v1/pokemon')
+        .field('box', box2.id)
+        .field('visibility', 'viewable')
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      expect(res.statusCode).to.equal(201);
+      expect(res2.statusCode).to.equal(201);
+      const pokemon = res.body;
+      const pokemon2 = res2.body;
+      const res3 = await agent.get(`/api/v1/pokemon/${pokemon2.id}/clones`);
+      expect(res3.body.contents[0].id).to.equal(pokemon.id);
+      const res4 = await agent.patch(`/api/v1/box/${box.id}`).send({visibility: 'unlisted'});
+      expect(res4.statusCode).to.equal(200);
+      const res5 = await agent.get(`/api/v1/box/${box.id}`);
+      expect(res5.body.name).to.equal('Pillbox');
+      expect(res5.body.description).to.equal('');
+      expect(res5.body.visibility).to.equal('unlisted');
+      const res6 = await agent.get(`/api/v1/pokemon/${pokemon2.id}/clones`);
+      expect(res6.body.contents[0]).to.equal(null);
     });
     it('allows a user to edit the name of their box', async () => {
       const res = await agent.patch(`/api/v1/box/${box.id}`).send({name: 'Boxfish'});
