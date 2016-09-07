@@ -276,7 +276,11 @@
             <md-card class="summary" ng-show="pokemon.hasFullData">
               <md-card-header><span class="card-headline">Ribbon Info</span></md-card-header>
               <md-card-content>
-                <div ng-repeat="ribbon in pokemon.data.ribbons">{{ribbon}}</div>
+                <span ng-repeat="ribbon in pokemon.data.ribbons" class="ribbon {{ribbon.toLowerCase().split(' ').join('-')}}" aria-label="{{ribbon}}">
+                  <md-tooltip>
+                    {{ribbon}}
+                  </md-tooltip>
+				</span>
                 <div ng-if="pokemon.data.ribbons.length === 0">No ribbons</div>
               </md-card-content>
             </md-card>
