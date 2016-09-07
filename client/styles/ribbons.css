@@ -1,0 +1,199 @@
+.ribbon {
+	background:url("/img/ribbons.png");
+	display: inline-block;
+	font-size: 0;
+	height: 40px;
+	width: 40px;
+}
+
+.ribbon.contest-memory-ribbon {
+    background-position: 0 0;
+}
+
+.ribbon.contest-memory-gold-ribbon {
+    background-position: -40px 0;
+}
+
+.ribbon.battle-memory-ribbon {
+    background-position: -80px 0;
+}
+
+.ribbon.battle-memory-gold-ribbon {
+    background-position: -120px 0;
+}
+
+.ribbon.champion-ribbon {
+    background-position: -160px 0;
+}
+
+.ribbon.sinnoh-champ-ribbon {
+    background-position: -200px 0;
+}
+
+.ribbon.kalos-champ-ribbon {
+    background-position: -240px 0;
+}
+
+.ribbon.best-friends-ribbon {
+    background-position: -280px 0;
+}
+
+.ribbon.training-ribbon {
+    background-position: 0 -40px;
+}
+
+.ribbon.skillful-battler-ribbon {
+    background-position: -40px -40px;
+}
+
+.ribbon.expert-battler-ribbon {
+    background-position: -80px -40px;
+}
+
+.ribbon.artist-ribbon {
+    background-position: -120px -40px;
+}
+
+.ribbon.effort-ribbon {
+    background-position: -160px -40px;
+}
+
+.ribbon.alert-ribbon {
+    background-position: -200px -40px;
+}
+
+.ribbon.shock-ribbon {
+    background-position: -240px -40px;
+}
+
+.ribbon.downcast-ribbon {
+    background-position: -280px -40px;
+}
+
+.ribbon.careless-ribbon {
+    background-position: 0 -80px;
+}
+
+.ribbon.relax-ribbon {
+    background-position: -40px -80px;
+}
+
+.ribbon.snooze-ribbon {
+    background-position: -80px -80px;
+}
+
+.ribbon.smile-ribbon {
+    background-position: -120px -80px;
+}
+
+.ribbon.gorgeous-ribbon {
+    background-position: -160px -80px;
+}
+
+.ribbon.royal-ribbon {
+    background-position: -200px -80px;
+}
+
+.ribbon.gorgeous-royal-ribbon {
+    background-position: -240px -80px;
+}
+
+.ribbon.footprint-ribbon {
+    background-position: -280px -80px;
+}
+
+.ribbon.record-ribbon {
+    background-position: 0 -120px;
+}
+
+.ribbon.legend-ribbon {
+    background-position: -40px -120px;
+}
+
+.ribbon.country-ribbon {
+    background-position: -80px -120px;
+}
+
+.ribbon.national-ribbon {
+    background-position: -120px -120px;
+}
+
+.ribbon.earth-ribbon {
+    background-position: -160px -120px;
+}
+
+.ribbon.world-ribbon {
+    background-position: -200px -120px;
+}
+
+.ribbon.classic-ribbon {
+    background-position: -240px -120px;
+}
+
+.ribbon.premier-ribbon {
+    background-position: -280px -120px;
+}
+
+.ribbon.event-ribbon {
+    background-position: 0 -160px;
+}
+
+.ribbon.birthday-ribbon {
+    background-position: -40px -160px;
+}
+
+.ribbon.special-ribbon {
+    background-position: -80px -160px;
+}
+
+.ribbon.souvenir-ribbon {
+    background-position: -120px -160px;
+}
+
+.ribbon.wishing-ribbon {
+    background-position: -160px -160px;
+}
+
+.ribbon.battle-champion-ribbon {
+    background-position: -200px -160px;
+}
+
+.ribbon.regional-champion-ribbon {
+    background-position: -240px -160px;
+}
+
+.ribbon.national-champion-ribbon {
+    background-position: -280px -160px;
+}
+
+.ribbon.world-champion-ribbon {
+    background-position: 0 -200px;
+}
+
+.ribbon.hoenn-champion-ribbon {
+    background-position: -40px -200px;
+}
+
+.ribbon.contest-star-ribbon {
+    background-position: -80px -200px;
+}
+
+.ribbon.coolness-master-ribbon {
+    background-position: -120px -200px;
+}
+
+.ribbon.beauty-master-ribbon {
+    background-position: -160px -200px;
+}
+
+.ribbon.cuteness-master-ribbon {
+    background-position: -200px -200px;
+}
+
+.ribbon.cleverness-master-ribbon {
+    background-position: -240px -200px;
+}
+
+.ribbon.toughness-master-ribbon {
+    background-position: -280px -200px;
+}
