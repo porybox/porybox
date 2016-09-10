@@ -35,7 +35,10 @@ before(function(done) {
       },
       sender: 'Porybox <no-reply@example.org>'
     },
-    log: {level: 'debug'}
+    log: {level: 'debug'},
+    hooks: {
+      grunt: false
+    }
   }, function(err) {
     if (err) return done(err);
     // here you can load fixtures, etc.
