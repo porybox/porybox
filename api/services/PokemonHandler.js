@@ -55,7 +55,7 @@ exports.getSafePokemonForUser = async (
   if (pkmn.visibility !== 'public') {
     filteredPkmn = filteredPkmn.omitPrivateData();
   }
-  if (omitBox || (knownBoxVisibility || await filteredPkmn.getBoxVisibility()) !== 'listed') {
+  if (omitBox || (knownBoxVisibility || pkmn._boxVisibility) !== 'listed') {
     filteredPkmn = _.omit(filteredPkmn, 'box');
   }
   return filteredPkmn;
@@ -149,6 +149,7 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
     .catchThrow({statusCode: 404}, {statusCode: 404, message: 'Box not found'})
     .catchThrow({statusCode: 403}, {statusCode: 403, message: 'Cannot upload to this box'});
   parsed.box = box.id;
+  parsed._boxVisibility = box.visibility;
   parsed.owner = user.name;
   parsed.visibility = visibility;
   return parsed;

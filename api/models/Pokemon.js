@@ -109,8 +109,9 @@ const attributes = {
   _cloneHash: {type: 'string', required: false},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
+  _boxVisibility: {enum: Constants.BOX_VISIBILITIES, defaultsTo: 'listed'},
   id: {type: 'string', unique: true, primaryKey: true, required: false},
-  visibility: {type: 'string', enum: Constants.POKEMON_VISIBILITIES},
+  visibility: {enum: Constants.POKEMON_VISIBILITIES},
   _markedForDeletion: {type: 'boolean', defaultsTo: false},
   downloadCount: {defaultsTo: 0},
   publicNotes: {type: 'string', defaultsTo: '', maxLength: Constants.MAX_POKEMON_NOTE_LENGTH},
@@ -182,6 +183,9 @@ _.forEach(attributes, attr => {
   // i.e. by default all of the above properties must be integers and are required, unless specified otherwise
   if (_.isUndefined(attr.required) && _.isUndefined(attr.defaultsTo)) {
     attr.required = true;
+  }
+  if (!_.isUndefined(attr.enum)) {
+    return;
   }
   attr.type = attr.type || 'float';
 });

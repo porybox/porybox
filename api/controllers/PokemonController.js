@@ -277,6 +277,10 @@ module.exports = _.mapValues({
         return PokemonHandler.getSafePokemonForUser(result, req.user, {omitBox: true})
           .catchReturn({statusCode: 403}, null);
       })
+      .map((clone) => {
+        const visible = clone && clone._boxVisibility === 'listed';
+        return visible ? clone : null;
+      })
       .map(pkmn => PokemonHandler.pickPokemonFields(pkmn, pokemonFields));
     return res.ok({contents, page, pageSize: Constants.CLONES_LIST_PAGE_SIZE});
   }
