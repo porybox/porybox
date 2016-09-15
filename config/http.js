@@ -40,7 +40,10 @@ module.exports.http = {
     csp: (req, res, next) => {
       // 'sha256-YK4QnoRTRZEROg1LNIoMFIigO9GqLGEnuUYQ7fa3s/U=' is the sha256 digest of the google analytics inline script.
       // If we change that script, we need to change the header as well.
-      res.header('Content-Security-Policy', "default-src 'self' ; script-src 'self' *.google-analytics.com 'sha256-YK4QnoRTRZEROg1LNIoMFIigO9GqLGEnuUYQ7fa3s/U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;");
+
+      // The CSP currently uses `connect-src wss://${sails.config.siteUrl} *`. In theory this is redundant,
+      // but in practice there's an iOS 10 Safari bug where websocket URLs don't work with the `*` directive.
+      res.header('Content-Security-Policy', `default-src 'self' ; script-src 'self' *.google-analytics.com 'sha256-YK4QnoRTRZEROg1LNIoMFIigO9GqLGEnuUYQ7fa3s/U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src ws://${sails.config.siteUrl} wss://${sails.config.siteUrl} *; frame-ancestors 'self' ; form-action 'self' https://www.paypal.com ; reflected-xss block;`);
       next();
     },
 
