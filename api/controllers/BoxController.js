@@ -83,6 +83,10 @@ module.exports = _.mapValues({
     const box = await Box.findOne({id: params.id});
     Validation.verifyUserIsOwner(box, req.user);
     Validation.verifyBoxParams(filteredParams);
+    if (box.visibility !== filteredParams.visibility) {
+      // Update the boxVisibility of each pokemon inside the box
+      await Pokemon.update({box: box.id}, {_boxVisibility: filteredParams.visibility});
+    }
     await Box.update({id: box.id}, filteredParams);
     return res.ok(box);
   }
