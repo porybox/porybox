@@ -1316,20 +1316,38 @@ describe('PokemonController', () => {
         }
       });
     });
-    it('filters clone list based on box visibility', async () => {
-      const res = await agent.post('/api/v1/pokemon')
-        .field('box', generalPurposeBox)
-        .field('visibility', 'viewable')
-        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
-      const res2 = await agent.post('/api/v1/pokemon')
-        .field('box', unlistedBox)
-        .field('visibility', 'viewable')
-        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
-      expect(res.statusCode).to.equal(201);
-      expect(res2.statusCode).to.equal(201);
-      const pokemon = res.body;
-      const res6 = await agent.get(`/api/v1/pokemon/${pokemon.id}/clones`);
-      expect(res6.body.contents[0]).to.equal(null);
+    describe('unlisted pokemon', () => {
+      let clone1, clone2;
+      before(async () => {
+        const res = await agent.post('/api/v1/pokemon')
+          .field('box', generalPurposeBox)
+          .field('visibility', 'viewable')
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+        const res2 = await agent.post('/api/v1/pokemon')
+          .field('box', unlistedBox)
+          .field('visibility', 'viewable')
+          .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+        expect(res.statusCode).to.equal(201);
+        expect(res2.statusCode).to.equal(201);
+        clone1 = res.body;
+        clone2 = res2.body;
+      });
+      it('filters clone list based on box visibility', async () => {
+        const res = await otherAgent.get(`/api/v1/pokemon/${clone1.id}/clones`);
+        expect(res.body.contents[0]).to.be.null();
+      });
+      it('displays unlisted pokemon to their owner in a clone list', async () => {
+        const res = await agent.get(`/api/v1/pokemon/${clone1.id}/clones`);
+        expect(res.body.contents[0].id).to.eql(clone2.id);
+      });
+      it('displays unlisted pokemon to admins in a clone list', async () => {
+        const res = await adminAgent.get(`/api/v1/pokemon/${clone1.id}/clones`);
+        expect(res.body.contents[0].id).to.eql(clone2.id);
+      });
+      it('does not display unlisted pokemon to unauthenticated users in a clone list', async () => {
+        const res = await noAuthAgent.get(`/api/v1/pokemon/${clone1.id}/clones`);
+        expect(res.body.contents[0]).to.be.null();
+      });
     });
     it('allows a `pokemonFields` query parameter, filtering responses correctly', async () => {
       const res = await agent.get(`/api/v1/pokemon/${pkmnList[0].id}/clones`)

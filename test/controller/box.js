@@ -599,7 +599,7 @@ describe('BoxController', function () {
       expect(res2.statusCode).to.equal(201);
       const pokemon = res.body;
       const pokemon2 = res2.body;
-      const res3 = await agent.get(`/api/v1/pokemon/${pokemon2.id}/clones`);
+      const res3 = await otherAgent.get(`/api/v1/pokemon/${pokemon2.id}/clones`);
       expect(res3.body.contents[0].id).to.equal(pokemon.id);
       const res4 = await agent.patch(`/api/v1/box/${box.id}`).send({visibility: 'unlisted'});
       expect(res4.statusCode).to.equal(200);
@@ -607,7 +607,7 @@ describe('BoxController', function () {
       expect(res5.body.name).to.equal('Pillbox');
       expect(res5.body.description).to.equal('');
       expect(res5.body.visibility).to.equal('unlisted');
-      const res6 = await agent.get(`/api/v1/pokemon/${pokemon2.id}/clones`);
+      const res6 = await otherAgent.get(`/api/v1/pokemon/${pokemon2.id}/clones`);
       expect(res6.body.contents[0]).to.equal(null);
     });
     it('allows a user to edit the name of their box', async () => {
