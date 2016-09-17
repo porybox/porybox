@@ -278,8 +278,11 @@ module.exports = _.mapValues({
           .catchReturn({statusCode: 403}, null);
       })
       .map((clone) => {
-        const visible = clone && clone._boxVisibility === 'listed';
-        return visible ? clone : null;
+        if (!clone) return null;
+        const visible = clone._boxVisibility === 'listed';
+        return visible || req.user && (req.user.name === clone.owner || req.user.isAdmin)
+          ? clone
+          : null;
       })
       .map(pkmn => PokemonHandler.pickPokemonFields(pkmn, pokemonFields));
     return res.ok({contents, page, pageSize: Constants.CLONES_LIST_PAGE_SIZE});
