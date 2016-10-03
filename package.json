@@ -35,7 +35,7 @@
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "pk6parse": "^0.10.17",
-    "sails": "0.12.3",
+    "sails": "0.12.4",
     "sails-hook-winston": "^1.0.0",
     "sails-mongo": "^0.12.0",
     "sails.io.js": "^0.13.7",
