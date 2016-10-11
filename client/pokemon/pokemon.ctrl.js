@@ -207,9 +207,11 @@ module.exports = class Pokemon {
     return ribbon.replace(/[()]/g, '').toLowerCase().split(' ').join('-');
   }
   getRibbonName (ribbon) {
-    return `${ribbon.includes('Contest Memory Ribbon') ? ribbon + ' (' + this.data.contestMemoryRibbonCount + ')'
-      : ribbon.includes('Battle Memory Ribbon') ? ribbon + ' (' + this.data.battleMemoryRibbonCount + ')'
-      : ribbon}`
+    return ribbon.includes('Contest Memory Ribbon')
+      ? `${ribbon} (${this.data.contestMemoryRibbonCount})`
+      : ribbon.includes('Battle Memory Ribbon')
+      ? `${ribbon} (${this.data.battleMemoryRibbonCount})`
+      : ribbon;
   }
   edit (event) {
     const useFullScreen
