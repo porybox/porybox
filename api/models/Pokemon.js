@@ -37,6 +37,8 @@ const attributes = {
   pokerusStrain: {},
   medalData: {},
   ribbonData: {},
+  contestMemoryRibbonCount: {},
+  battleMemoryRibbonCount: {},
   distributionSuperTrainingFlags: {},
   nickname: {type: 'string'},
   move1Id: {},
