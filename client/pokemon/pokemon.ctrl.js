@@ -76,6 +76,7 @@ module.exports = class Pokemon {
   }
   parseAllProps () {
     this.parseBoxViewProps();
+
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
     this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
 
@@ -201,6 +202,16 @@ module.exports = class Pokemon {
 
     this.hasFullData = true;
     return this;
+  }
+  getRibbonClass (ribbon) {
+    return ribbon.replace(/[()]/g, '').toLowerCase().split(' ').join('-');
+  }
+  getRibbonName (ribbon) {
+    return ribbon.includes('Contest Memory Ribbon')
+      ? `${ribbon} (${this.data.contestMemoryRibbonCount})`
+      : ribbon.includes('Battle Memory Ribbon')
+      ? `${ribbon} (${this.data.battleMemoryRibbonCount})`
+      : ribbon;
   }
   edit (event) {
     const useFullScreen
