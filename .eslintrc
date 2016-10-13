@@ -1,25 +1,9 @@
-parser: babel-eslint
 env:
   es6: true
   node: true
-ecmaFeatures:
-  arrowFunctions: true
-  blockBindings: true
-  classes: true
-  defaultParams: true
-  destructuring: false
-  forOf: true
-  generators: false
-  modules: true
-  objectLiteralComputedProperties: true
-  objectLiteralDuplicateProperties: false
-  objectLiteralShorthandMethods: true
-  objectLiteralShorthandProperties: true
-  restParams: false
-  spread: false
-  superInFunctions: true
-  templateStrings: true
-  jsx: true
+parserOptions:
+  ecmaVersion: 2017
+  sourceType: module
 rules:
   eqeqeq: 2
   indent: [2, 2]
