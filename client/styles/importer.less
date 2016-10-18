@@ -33,6 +33,7 @@ i.material-icons.small {
 
 .layout-align-end-stretch i.material-icons.small {
   margin-right: -3px;
+  vertical-align: middle;
 }
 
 main {
@@ -132,9 +133,9 @@ md-card md-card-header {
 }
 
 md-card md-card-content {
-  padding: 14px;
+  padding: 10px 12px;
   font-size: 14px;
-  line-height: 1.3em;
+  line-height: 1.4em;
 }
 
 .summary > md-card-content {
@@ -275,7 +276,7 @@ md-tooltip {
 @media (min-width: 600px) {
   .pokemon-card-mini {
     width: 166px;
-    height: 214px;
+    height: 220px;
   }
 
   .summary {
@@ -455,6 +456,8 @@ span[class^='gender-'] {
 .pokemon-card-content {
   position: relative;
   padding-top: .6em;
+  box-sizing: border-box;
+  height: 175px;
 }
 
 .pokemon-card-content:after {
