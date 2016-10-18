@@ -9,6 +9,7 @@ module.exports = class PokemonEdit {
     this.visibility = this.data.visibility;
     this.publicNotes = this.data.publicNotes;
     this.privateNotes = this.data.privateNotes;
+    this.box = this.data.box;
   }
   cancel () {
     this.$mdDialog.cancel();
@@ -21,7 +22,8 @@ module.exports = class PokemonEdit {
     this.$mdDialog.hide({
       visibility: this.visibility,
       publicNotes: this.publicNotes,
-      privateNotes: this.privateNotes
+      privateNotes: this.privateNotes,
+      box: this.box
     });
   }
 };
