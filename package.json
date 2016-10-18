@@ -52,11 +52,11 @@
     "minify:css": "cleancss client/bundle.css -o client/bundle.min.css --s1 --advanced",
     "minify": "npm run minify:js && npm run minify:css",
     "start": "npm run bundle && npm run minify && node app.js",
-    "start:dev": "concurrently 'npm run less' 'npm run bundle:watch' 'node app.js'",
+    "start:dev": "concurrently \"npm run less\" \"npm run bundle:watch\" \"node app.js\"",
     "test": "npm run lint && npm run test:server && npm run test:client",
     "test:client": "karma start --single-run",
     "test:server": "mocha --timeout 5000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js",
-    "test:watch": "concurrently 'mocha -w --compilers js:babel-core/register' 'karma start'"
+    "test:watch": "concurrently \"mocha -w --compilers js:babel-core/register\" \"karma start\""
   },
   "main": "app.js",
   "repository": {
@@ -68,6 +68,7 @@
   "devDependencies": {
     "angular-mocks": "^1.5.8",
     "chai": "^3.5.0",
+    "concurrently": "^3.1.0",
     "dirty-chai": "^1.2.2",
     "eslint": "^3.7.1",
     "karma": "^1.2.0",
