@@ -4,7 +4,7 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const testHelpers = require('../test-helpers');
 describe('BoxController', function () {
-  this.timeout(20000);
+  this.timeout(30000);
   let agent, otherAgent, noAuthAgent, adminAgent;
   before(async () => {
     agent = await testHelpers.getAgent();
