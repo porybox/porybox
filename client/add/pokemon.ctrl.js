@@ -23,6 +23,10 @@ module.exports = class PokemonAdd {
     this.lines = [];
   }
 
+  hasPublicPokemon () {
+    return this.lines.some((line) => line.visibility === 'public');
+  }
+
   addLine (line) {
     this.lines.push(line);
   }
