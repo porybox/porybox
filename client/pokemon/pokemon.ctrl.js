@@ -213,7 +213,7 @@ module.exports = class Pokemon {
       ? `${ribbon} (${this.data.battleMemoryRibbonCount})`
       : ribbon;
   }
-  edit (event) {
+  edit (boxes, event) {
     const useFullScreen
       = (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
     this.$scope.$watch(() => {
@@ -222,7 +222,7 @@ module.exports = class Pokemon {
       this.$scope.customFullscreen = (wantsFullScreen === true);
     });
     return Promise.resolve(this.$mdDialog.show({
-      locals: {data: this.data},
+      locals: { data: this.data, boxes },
       bindToController: true,
       controller: ['$mdDialog', editCtrl],
       controllerAs: 'dialog',
@@ -232,14 +232,17 @@ module.exports = class Pokemon {
       clickOutsideToClose: true,
       fullscreen: useFullScreen
     }).then((editedData) => {
-      return this.io.socket.patchAsync(`/api/v1/pokemon/${this.id}`, editedData).then(() => {
-        Object.assign(this.data, editedData);
-        this.$mdToast.show(
-          this.$mdToast.simple()
-            .textContent(this.parsedNickname + ' edited successfully')
-            .position('bottom right'));
-        this.$scope.$apply();
-      });
+      return Promise.all([
+        this.move({box: editedData.box}),
+        this.io.socket.patchAsync(`/api/v1/pokemon/${this.id}`, editedData).then(() => {
+          Object.assign(this.data, editedData);
+          this.$mdToast.show(
+            this.$mdToast.simple()
+              .textContent(this.parsedNickname + ' edited successfully')
+              .position('bottom right'));
+          this.$scope.$apply();
+        })
+      ]);
     })).catch(this.errorHandler);
   }
   delete () {

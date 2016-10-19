@@ -20,7 +20,8 @@ ng.module('porybox.pokemon', ['ngRoute'])
   .component('pokemonCard',
   {
     bindings: {
-      data: '='
+      data: '=',
+      boxes: '='
     },
     templateUrl: 'pokemon/pokemon-card.view.html',
     controller: [...controllerDeps, pokemonController],
