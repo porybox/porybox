@@ -32,6 +32,46 @@ describe('UserController', () => {
     expect(res.header.location).to.equal('/api/v1/user/usertester');
   });
 
+  describe('forgotten username', () => {
+    let username, recipientEmailAddress;
+    before(async () => {
+      username = 'usernameForgetter';
+      recipientEmailAddress = 'usernameForgetter@example.com';
+      const tempAgent = await testHelpers.getAgent();
+      const res = await tempAgent.post('/api/v1/auth/local/register').send({
+        name: username,
+        password: 'Obliviate!',
+        email: recipientEmailAddress
+      });
+      expect(res.statusCode).to.equal(200);
+    });
+    describe('when the requested account exists', () => {
+      it('returns a 202 response and sends a username reminder email to the user', async () => {
+        const res = await agent.post(`/api/v1/user/${recipientEmailAddress}/forgotUsername`);
+        expect(res.statusCode).to.equal(202);
+        expect(res.body).to.eql({});
+        const email = await new Promise(resolve => testHelpers.emailEmitter.once('email', resolve));
+        expect(email.sender).to.equal('no-reply@example.org');
+        expect(email.receivers).to.eql({[recipientEmailAddress]: true});
+        expect(email.subject).to.equal('[Porybox] Your username');
+        expect(email.body).to.include(username);
+      });
+    });
+    describe('when the requested account does not exist', () => {
+      it('returns a 202 message but doesn\'t send an email', async () => {
+        // We don't want a user to know if an account exists for a specific email address, as this increases attack vectors
+        const res = await agent.post(`/api/v1/user/${recipientEmailAddress}.au/forgotUsername`);
+        expect(res.statusCode).to.equal(202);
+      });
+    });
+    describe('when the requested account has an encoding error', () => {
+      it('returns a 500', async () => {
+        const res = await agent.post('/api/v1/user/%ZZ/forgotUsername');
+        expect(res.statusCode).to.equal(500);
+      });
+    });
+  });
+
   describe('getting a user profile', () => {
     it('returns full information when a user gets their own profile', async () => {
       const res = await agent.get('/api/v1/user/usertester');

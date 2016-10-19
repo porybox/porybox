@@ -71,7 +71,8 @@ module.exports.policies = {
     deleteAccount: passwordProtected,
     changePassword: passwordProtected,
     changeEmail: passwordProtected,
-    checkUsernameAvailable: anyone
+    checkUsernameAvailable: anyone,
+    forgotUsername: anyone
   },
 
   PasswordResetController: {
