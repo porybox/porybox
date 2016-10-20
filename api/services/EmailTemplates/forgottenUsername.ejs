@@ -1,0 +1,12 @@
+<p>
+  Someone, probably you, requested a reminder of your username for your account at <a href="http://<%= siteUrl %>"><%= siteUrl %></a>.
+</p>
+
+<p>
+  Your Username(s):
+  <ul>
+  <% for (var i = 0; i < names.length; i++) { %>
+    <li><%= names[i] %></li>
+  <% } %>
+  </ul>
+</p>

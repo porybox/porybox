@@ -46,6 +46,10 @@ module.exports.routes = {
   'get /api/v1/passwordReset/:token': 'PasswordResetController.get',
   'delete /api/v1/passwordReset/:token': 'PasswordResetController.delete',
 
+  // Forgotten Username
+
+  'post /api/v1/user/:email/forgotUsername': 'UserController.forgotUsername',
+
   // Pokemon
 
   'post /api/v1/pokemon': 'PokemonController.uploadpk6',

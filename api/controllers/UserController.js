@@ -120,5 +120,22 @@ module.exports = _.mapValues({
     const params = req.allParams();
     Validation.requireParams(params, 'name');
     return res.ok(await Validation.usernameAvailable(params.name));
-  }
+  },
+  async forgotUsername (req, res) {
+    const params = req.allParams();
+    Validation.requireParams(params, 'email');
+    res.send(202);
+    const users = await User.find({email: params.email});
+    if (users.length === 0) return;
+    const names = users.map((user) => user.name);
+    const emailText = await Email.renderTemplate('forgottenUsername', {
+      names
+    });
+    await Email.send({
+      to: params.email,
+      subject: '[Porybox] Your username',
+      body: emailText
+    });
+    sails.log.info(`A forgotten username email was sent for ${names} (requested from IP ${req.headers['x-forwarded-for'] || req.ip})`);
+  },
 }, catchAsyncErrors);
