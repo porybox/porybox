@@ -1,6 +1,6 @@
 <md-card class="pokemon-card-mini" ng-init="pokemon.parseBoxViewProps()">
   <a draggable="false" ng-href="#/pokemon/{{::pokemon.id}}" class="card-link" ng-attr-title="{{::pokemon.data.isEgg ?
-  pokemon.parsedNickname + ' (ESV: ' + pokemon.paddedEsv + ')' : pokemon.parsedNickname}}">
+  pokemon.parsedNickname + ' (ESV: ' + pokemon.paddedEsv + ')' : pokemon.parsedNickname}}" ng-click="pokemon.clickPokemonHeader($event)">
     <md-card-header>
       <md-card-avatar>
         <div class="icon-container">
@@ -10,6 +10,7 @@
       </md-card-avatar>
       <span class="card-headline" style="margin:0;">{{::pokemon.parsedNickname}}</span>
       <span ng-if="::pokemon.data.isEgg" class="esv">{{::pokemon.paddedEsv}}</span>
+      <md-checkbox ng-if="pokemon.bulkEditMode" aria-label="Checkbox 1" ng-checked="pokemon.selectedPokemon.indexOf(pokemon.id) > -1"></md-checkbox>
     </md-card-header>
   </a>
     <md-card-content layout="column" class="pokemon-card-content">

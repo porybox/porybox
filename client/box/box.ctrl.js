@@ -63,6 +63,8 @@ module.exports = class Box {
     this.isDeleted = false;
     this.isLoading = true;
     this.isFinished = false;
+    this.bulkEdit = false;
+    this.selectedPokemon = [];
     const scrollElement = document.getElementById('scroll-container');
     if ($routeParams.boxid) {
       this.onscroll = throttle(() => {
@@ -189,5 +191,65 @@ module.exports = class Box {
   movePkmn (pkmn, index) {
     return this.io.socket.postAsync(`/api/v1/pokemon/${pkmn.id}/move`, {box: this.id, index})
       .catch(this.errorHandler);
+  }
+  select (pkmn) {
+    if (this.selectedPokemon.indexOf(pkmn) > -1) {
+      this.selectedPokemon.splice(this.selectedPokemon.indexOf(pkmn), 1);
+    } else {
+      this.selectedPokemon.push(pkmn);
+    }
+  }
+  selectAll () {
+    this.selectedPokemon = this.data.contents.map((pkmn) => pkmn.id);
+  }
+  selectNone () {
+    this.selectedPokemon = [];
+  }
+  bulkDelete () {
+    if (!this.selectedPokemon) {
+      return;
+    }
+    const selected = this.selectedPokemon.slice(0); // Caching, for async stuff
+    this.selectedPokemon = [];
+    return this.io.socket.deleteAsync(`/api/v1/pokemon/${selected}`).then(() => {
+      const toast = this.$mdToast.simple()
+        .hideDelay(10000)
+        .textContent('Pokémon deleted')
+        .action('Undo')
+        .highlightAction(true)
+        .position('bottom right');
+      this.$mdToast.show(toast).then((response) => {
+        if ( response === 'ok' ) {
+          this.bulkUnDelete(selected);
+        }
+      });
+      this.$scope.$apply();
+    }).then(() => {
+      const indexesToRemove = [];
+      this.data.contents.forEach((pokemon, i) => {
+        if (selected.indexOf(pokemon.id) > -1) {
+          indexesToRemove.push(i);
+        }
+      });
+      indexesToRemove.reverse().forEach((i) => this.data.contents.splice(i, 1));
+    }).catch(this.errorHandler);
+  }
+  bulkUnDelete (selected) {
+    return this.io.socket.postAsync(`/api/v1/pokemon/${selected}/undelete`)
+      .then(this.data.contents.push(...selected))
+      .then(() => {
+        this.$mdToast.show(
+          this.$mdToast.simple()
+            .textContent(this.parsedNickname + ' undeleted.')
+            .position('bottom right'));
+        this.$scope.$apply();
+      })
+      .catch(this.errorHandler);
+  }
+  bulkMove () {
+    // TODO: need a call for multiple move
+  }
+  bulkVisibility () {
+    // TODO: need a call for multiple visibility modification
   }
 };

@@ -21,7 +21,10 @@ ng.module('porybox.pokemon', ['ngRoute'])
   {
     bindings: {
       data: '=',
-      boxes: '='
+      boxes: '=',
+      bulkEditMode: '=',
+      selectedPokemon: '=',
+      selectPokemon: '='
     },
     templateUrl: 'pokemon/pokemon-card.view.html',
     controller: [...controllerDeps, pokemonController],
