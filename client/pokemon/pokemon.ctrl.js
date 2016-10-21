@@ -24,6 +24,12 @@ module.exports = class Pokemon {
     this.errorStatusCode = null;
     this.isDeleted = false;
   }
+  clickPokemonHeader ($event) {
+    if (this.bulkEditMode) {
+      $event.preventDefault();
+      this.selectPokemon(this.id);
+    }
+  }
   fetch () {
     return this.io.socket.getAsync(`/api/v1/pokemon/${this.id}`).then(data => {
       Object.assign(this.data, data);

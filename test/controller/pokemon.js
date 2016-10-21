@@ -707,6 +707,32 @@ describe('PokemonController', () => {
       const res2 = await agent.get(`/api/v1/pokemon/${pkmn.id}`);
       expect(res2.statusCode).to.equal(404);
     });
+    it('allows the owner of a pokemon to delete multiple', async () => {
+      const rescreate = await agent.post('/api/v1/pokemon')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      expect(rescreate.statusCode).to.equal(201);
+      const pkmn2 = rescreate.body;
+      const resdelete = await agent.del(`/api/v1/pokemon/${pkmn.id},${pkmn2.id}`);
+      expect(resdelete.statusCode).to.equal(202);
+      const resget1 = await agent.get(`/api/v1/pokemon/${pkmn.id}`);
+      expect(resget1.statusCode).to.equal(404);
+      const resget2 = await agent.get(`/api/v1/pokemon/${pkmn2.id}`);
+      expect(resget2.statusCode).to.equal(404);
+    });
+    it.only('does not allow delete any pokemon if user doesn\'t own all', async () => {
+      const rescreate = await agent.post('/api/v1/pokemon')
+        .field('box', generalPurposeBox)
+        .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`);
+      expect(rescreate.statusCode).to.equal(201);
+      const pkmn2 = rescreate.body;
+      const resdelete = await otherAgent.del(`/api/v1/pokemon/${pkmn.id},${pkmn2.id}`);
+      expect(resdelete.statusCode).to.equal(403);
+      const resget1 = await agent.get(`/api/v1/pokemon/${pkmn.id}`);
+      expect(resget1.statusCode).to.not.equal(404);
+      const resget2 = await agent.get(`/api/v1/pokemon/${pkmn2.id}`);
+      expect(resget2.statusCode).to.not.equal(404);
+    });
     it("does not allow a third party to delete someone else's pokemon", async () => {
       const res = await otherAgent.del(`/api/v1/pokemon/${pkmn.id}`);
       expect(res.statusCode).to.equal(403);

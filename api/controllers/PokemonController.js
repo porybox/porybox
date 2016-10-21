@@ -143,30 +143,40 @@ module.exports = _.mapValues({
   },
 
   async delete (req, res) {
-    const id = req.param('id');
-    const pokemon = await Pokemon.findOne({id});
-    Validation.verifyUserIsOwner(pokemon, req.user);
-    await pokemon.markForDeletion();
+    const id = req.param('id').split(',');
+    const pokemon = await Pokemon.find().where({id});
+    for (const i in pokemon) {
+      Validation.verifyUserIsOwner(pokemon[i], req.user);
+    }
+    for (const i in pokemon) {
+      await pokemon[i].markForDeletion();
+    }
     res.send(202);
     await Promise.delay(req.param('immediately') ? 0 : Constants.POKEMON_DELETION_DELAY);
-    const updatedPokemon = await Pokemon.findOne({id});
-    if (updatedPokemon && updatedPokemon._markedForDeletion) {
-      await pokemon.destroy();
+    const updatedPokemon = await Pokemon.find().where({id});
+    for (const updatedPkmn in updatedPokemon) {
+      if (updatedPkmn._markedForDeletion) {
+        await updatedPkmn.destroy();
+      }
     }
   },
 
   async undelete (req, res) {
-    const params = req.allParams();
-    const pokemon = await Pokemon.findOne({id: params.id});
-    Validation.verifyUserIsOwner(pokemon, req.user, {allowDeleted: true});
-    const box = await Box.findOne({id: pokemon.box, _markedForDeletion: false});
-    if (!box) {
-      return res.badRequest();
+    const id = req.allParams().id.split(',');
+    const pokemon = await Pokemon.find().where({id});
+    for (const i in pokemon) {
+      Validation.verifyUserIsOwner(pokemon[i], req.user, {allowDeleted: true});
+      const box = await Box.findOne({id: pokemon[i].box, _markedForDeletion: false});
+      if (!box) {
+        return res.badRequest();
+      }
+      if (await PokemonHandler.getBoxSize(pokemon[i].box) >= Constants.MAX_BOX_SIZE) {
+        return res.status(400).json('Cannot add a Pokémon to a maximum-capacity box');
+      }
     }
-    if (await PokemonHandler.getBoxSize(pokemon.box) >= Constants.MAX_BOX_SIZE) {
-      return res.status(400).json('Cannot add a Pokémon to a maximum-capacity box');
+    for (const i in pokemon) {
+      await pokemon[i].unmarkForDeletion();
     }
-    await pokemon.unmarkForDeletion();
     return res.ok();
   },
 

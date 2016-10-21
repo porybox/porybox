@@ -11,14 +11,53 @@
         <i class="material-icons" ng-if="box.data.visibility === 'unlisted'">lock_outline</i>
       </span>
       <span flex></span>
-      <md-button ng-if="!box.draggingEnabled" ng-disabled="!box.data.contents.length" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
+
+      <md-button ng-if="!box.draggingEnabled &#38;&#38; !box.bulkEdit" ng-disabled="!box.data.contents.length" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
         <md-tooltip md-direction="left">Enable dragging to move Pokémon in this box</md-tooltip>
         <i class="material-icons">open_with</i>
       </md-button>
+
+      <md-button ng-if="!box.bulkEdit &#38;&#38; !box.draggingEnabled" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.bulkEdit = true">
+        <md-tooltip md-direction="left">Bulk edit Pokémon</md-tooltip>
+        <i class="material-icons">edit</i>
+      </md-button>
+
+      <!-- Not implemented yet -->
+      <!-- <md-button ng-if="box.bulkEdit" class="md-icon-button" aria-label="Bulk Change Visibility" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.bulkVisibility()">
+        <md-tooltip md-direction="left">Visibility</md-tooltip>
+        <i class="material-icons">visibility</i>
+      </md-button>
+
+      <md-button ng-if="box.bulkEdit" class="md-icon-button" aria-label="Bulk Move Box" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.bulkMove()">
+        <md-tooltip md-direction="left">Move Box</md-tooltip>
+        <i class="material-icons">swap_horiz</i>
+      </md-button> -->
+
+      <md-button ng-if="box.bulkEdit" class="md-icon-button" aria-label="Select all" ng-click="box.selectAll()">
+        <md-tooltip md-direction="left">Select All</md-tooltip>
+        <i class="material-icons">select_all</i>
+      </md-button>
+
+      <md-button ng-if="box.bulkEdit" class="md-icon-button" aria-label="Select none" ng-click="box.selectNone()">
+        <md-tooltip md-direction="left">Select None</md-tooltip>
+        <i class="material-icons">clear</i>
+      </md-button>
+
+      <md-button ng-if="box.bulkEdit" class="md-icon-button" aria-label="Bulk Delete" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.bulkDelete()">
+        <md-tooltip md-direction="left">Delete</md-tooltip>
+        <i class="material-icons">delete</i>
+      </md-button>
+
+      <md-button ng-if="box.bulkEdit" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.bulkEdit = false">
+        <md-tooltip md-direction="left">Done editing Pokémon</md-tooltip>
+        <i class="material-icons">done</i>
+      </md-button>
+
       <md-button ng-if="box.draggingEnabled" class="md-icon-button" aria-label="Done" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = false">
         <md-tooltip md-direction="left">Done moving Pokémon</md-tooltip>
         <i class="material-icons">done</i>
       </md-button>
+
       <md-menu md-position-mode="target-right target" md-offset="0 50">
         <md-button class="md-icon-button" aria-label="Box settings" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="$mdOpenMenu($event)">
           <md-tooltip md-direction="left">{{box.data.name}} settings</md-tooltip>
@@ -62,14 +101,14 @@
     sv-on-sort="box.movePkmn($item, $indexTo)"
   >
     <div flex-xs ng-repeat="pokemon in box.data.contents track by pokemon.id" sv-element>
-      <pokemon-card data="pokemon" ng-class="{'draggable': box.draggingEnabled}"></pokemon-card>
+      <pokemon-card data="pokemon" ng-class="{'draggable': box.draggingEnabled}" bulk-edit-mode="box.bulkEdit" selected-pokemon="box.selectedPokemon" select-pokemon="box.select"></pokemon-card>
     </div>
     <md-progress-circular md-mode="indeterminate" ng-if="box.isLoading" md-diameter="100"></md-progress-circular>
   </div>
   <md-content layout-padding ng-if="!box.data.contents.length" layout="column" layout-align="center center">
     <div class="md-headline">This box is empty.</div>
     <div>
-      <add-pokemon ng-if="!main.serverStatus.readOnly && (box.data.owner === main.user.name || main.user.isAdmin)" boxes="main.boxes" prefs="main.prefs" selected="main.selected" server-status="main.serverStatus"></add-pokemon>
+      <add-pokemon ng-if="!main.serverStatus.readOnly &#38;&#38; (box.data.owner === main.user.name || main.user.isAdmin)" boxes="main.boxes" prefs="main.prefs" selected="main.selected" server-status="main.serverStatus"></add-pokemon>
     </div>
   </md-content>
 </div>
