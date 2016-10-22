@@ -65,9 +65,9 @@ describe('UserController', () => {
       });
     });
     describe('when the requested account has an encoding error', () => {
-      it('returns a 500', async () => {
+      it('returns a 400', async () => {
         const res = await agent.post('/api/v1/user/%ZZ/forgotUsername');
-        expect(res.statusCode).to.equal(500);
+        expect(res.statusCode).to.equal(400);
       });
     });
   });
