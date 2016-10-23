@@ -267,6 +267,7 @@ module.exports = class Pokemon {
   ** index (optional): the index where this pokemon should be inserted in the new box.
   ** (Defaults to the last spot in the box.) */
   move ({box, index}) {
+    if (box === this.data.box && !index) return Promise.resolve();
     return this.io.socket.postAsync(`/api/v1/pokemon/${this.id}/move`, {box, index}).then(() => {
       this.$scope.$apply();
     }).catch(this.errorHandler);
