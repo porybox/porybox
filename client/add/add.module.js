@@ -20,4 +20,17 @@ ng.module('porybox.add', ['porybox.box', 'porybox.pokemon', 'ngMessages', 'ngFil
       '$scope', '$location', 'io', '$mdDialog', '$mdMedia', '$mdToast', 'errorHandler', controller
     ],
     controllerAs: 'add'
+  })
+  .component('addPokemon',
+  {
+    bindings: {
+      boxes: '=',
+      prefs: '=',
+      selected: '='
+    },
+    template: '<md-button class="md-raised md-primary" ng-click="add.pokemon($event)">Add Pokémon</md-button>',
+    controller: [
+      '$scope', '$location', 'io', '$mdDialog', '$mdMedia', '$mdToast', 'errorHandler', controller
+    ],
+    controllerAs: 'add'
   });

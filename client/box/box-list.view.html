@@ -66,5 +66,11 @@
     </div>
     <md-progress-circular md-mode="indeterminate" ng-if="box.isLoading" md-diameter="100"></md-progress-circular>
   </div>
+  <md-content layout-padding ng-if="!box.data.contents.length" layout="column" layout-align="center center">
+    <div class="md-headline">This box is empty.</div>
+    <div>
+      <add-pokemon ng-if="!main.serverStatus.readOnly" boxes="main.boxes" prefs="main.prefs" selected="main.selected" server-status="main.serverStatus"></add-pokemon>
+    </div>
+  </md-content>
 </div>
 <div ng-if="box.errorStatusCode" ng-include="'/errors/' + box.errorStatusCode + '.html'"></div>
