@@ -84,7 +84,7 @@
     "smtp-tester": "^0.6.2",
     "superagent-defaults": "^0.1.14",
     "supertest": "^2.0.0",
-    "supertest-as-promised": "^4.0.0",
+    "supertest-as-promised": "^4.0.1",
     "watchify": "^3.7.0"
   }
 }
