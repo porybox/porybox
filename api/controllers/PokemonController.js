@@ -1,35 +1,44 @@
+async function uploadpk (req, res, gen) {
+  const params = req.allParams();
+  let visibility;
+  if (params.visibility) {
+    visibility = params.visibility;
+    Validation.verifyPokemonParams({visibility});
+  } else {
+    visibility = (await UserPreferences.findOne({
+      user: req.user.name
+    })).defaultPokemonVisibility;
+  }
+  Validation.requireParams(params, 'box');
+  const files = await new Promise((resolve, reject) => {
+    req.file('pk6').upload((err, files) => err ? reject(err) : resolve(files));
+  });
+  if (!files.length) {
+    return res.status(400).json('No files uploaded');
+  }
+  return PokemonHandler.createPokemonFromPk({
+    user: req.user,
+    visibility,
+    boxId: params.box,
+    file: files[0].fd,
+    gen
+  }).tap(async pokemon => {
+    if (await PokemonHandler.getBoxSize(pokemon.box) >= Constants.MAX_BOX_SIZE) {
+      throw {statusCode: 400, message: 'Cannot upload to a maximum-capacity box'};
+    }
+  }).then(parsed => Pokemon.create(parsed))
+    .tap(result => BoxOrdering.addPkmnIdsToBox(result.box, [result.id]))
+    .then(result => PokemonHandler.getSafePokemonForUser(result, req.user, {checkUnique: true}))
+    .then(res.created);
+}
+
 module.exports = _.mapValues({
   async uploadpk6 (req, res) {
-    const params = req.allParams();
-    let visibility;
-    if (params.visibility) {
-      visibility = params.visibility;
-      Validation.verifyPokemonParams({visibility});
-    } else {
-      visibility = (await UserPreferences.findOne({
-        user: req.user.name
-      })).defaultPokemonVisibility;
-    }
-    Validation.requireParams(params, 'box');
-    const files = await new Promise((resolve, reject) => {
-      req.file('pk6').upload((err, files) => err ? reject(err) : resolve(files));
-    });
-    if (!files.length) {
-      return res.status(400).json('No files uploaded');
-    }
-    return PokemonHandler.createPokemonFromPk6({
-      user: req.user,
-      visibility,
-      boxId: params.box,
-      file: files[0].fd
-    }).tap(async pokemon => {
-      if (await PokemonHandler.getBoxSize(pokemon.box) >= Constants.MAX_BOX_SIZE) {
-        throw {statusCode: 400, message: 'Cannot upload to a maximum-capacity box'};
-      }
-    }).then(parsed => Pokemon.create(parsed))
-      .tap(result => BoxOrdering.addPkmnIdsToBox(result.box, [result.id]))
-      .then(result => PokemonHandler.getSafePokemonForUser(result, req.user, {checkUnique: true}))
-      .then(res.created);
+    uploadpk(req, res, 6);
+  },
+
+  async uploadpk7 (req, res) {
+    uploadpk(req, res, 7);
   },
 
   /**
@@ -179,7 +188,7 @@ module.exports = _.mapValues({
       return res.forbidden();
     }
     res.attachment(`${pokemon.nickname}-${pokemon.id}.pk6`);
-    res.status(200).send(Buffer.from(pokemon._rawPk6, 'base64'));
+    res.status(200).send(Buffer.from(pokemon._rawFile, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
       await pokemon.incrementDownloadCount();
     }

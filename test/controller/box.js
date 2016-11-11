@@ -176,7 +176,7 @@ describe('BoxController', function () {
     });
     it('does not allow internal properties of Pokémon to be accessed by the query', async () => {
       const res = await agent.get(`/api/v1/box/${boxId}`)
-        .query({pokemonFields: 'speciesName,_rawPk6'});
+        .query({pokemonFields: 'speciesName,_rawFile'});
       expect(res.statusCode).to.equal(200);
       expect(res.body.id).to.equal(boxId);
       expect(res.body.contents).to.eql([
