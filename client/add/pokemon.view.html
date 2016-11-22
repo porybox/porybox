@@ -13,6 +13,11 @@
       <div class="md-dialog-content" layout="column">
         <div layout="row">
           <span flex></span>
+          <i class="material-icons" style="vertical-align: middle;">help_outline</i> <a href="/#/extracting-pk6-files" target="_blank" rel="noreferrer">How to obtain Pokémon files</a>
+          <span flex></span>
+        </div>
+        <div layout="row">
+          <span flex></span>
           <div ngf-drop ngf-select ng-model="pkmDialog.draggedFiles" class="drop-box"
               ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
               ngf-multiple="true" ngf-allow-dir="true" ngf-capture="'other'"
@@ -64,15 +69,16 @@
               You have selected Public. Public Pokémon can be downloaded and copied by anyone.
           </div>
       </div>
-      <md-dialog-actions layout="row" layout-fill>
-        <i class="material-icons" style="vertical-align: middle;">help_outline</i> <a href="/#/extracting-pk6-files" target="_blank" rel="noreferrer">How to obtain Pokémon files</a>
-        <span flex></span>
-        <md-button ng-click="pkmDialog.cancel()">
-         Cancel
-        </md-button>
-        <md-button ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd() || !pkmDialog.lines.length" type="submit">
-          Upload
-        </md-button>
+      <md-dialog-actions layout="column">
+        <div>
+          <span flex></span>
+          <md-button class="md-primary md-raised" ng-click="pkmDialog.cancel()">
+           Cancel
+          </md-button>
+          <md-button class="md-primary md-raised" ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd() || !pkmDialog.lines.length" type="submit">
+            Upload
+          </md-button>
+        </div>
       </md-dialog-actions>
     </md-dialog-actions>
   </form>
