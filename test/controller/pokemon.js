@@ -887,7 +887,7 @@ describe('PokemonController', () => {
       expect(finalPrivateCount).to.equal(initialPrivateCount);
     });
     it('escapes special characters in nicknames correctly', async () => {
-      await sails.models.pokemon.update({id: publicPkmn.id}, {nickname: `\r\né∫ab;"'`});
+      await sails.models.pokemon.update({id: publicPkmn.id}, {nickname: '\r\né∫ab;"\''});
       const res = await agent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-disposition']).to.equal(
