@@ -494,7 +494,7 @@ describe('PokemonController', () => {
     it('does not leak internal properties of a a pokemon to the client', async () => {
       const pkmn = (await agent.get(`/api/v1/pokemon/${publicId}`)).body;
       expect(pkmn._markedForDeletion).to.not.exist();
-      expect(pkmn._rawPk6).to.not.exist();
+      expect(pkmn._rawFile).to.not.exist();
     });
     it('allows a list of fields to be specified as a query parameter', async () => {
       const res = await agent.get(`/api/v1/pokemon/${viewableId}`).query({
@@ -517,7 +517,7 @@ describe('PokemonController', () => {
     });
     it('does not leak internal properties of a pokemon if specified in the query', async () => {
       const res = await agent.get(`/api/v1/pokemon/${viewableId}`)
-        .query({pokemonFields: '_rawPk6'});
+        .query({pokemonFields: '_rawFile'});
       expect(res.statusCode).to.equal(200);
       expect(res.body).to.eql({});
     });
@@ -769,7 +769,7 @@ describe('PokemonController', () => {
     });
   });
   describe('downloading a pokemon', () => {
-    let publicPkmn, viewablePkmn, privatePkmn, rawPk6;
+    let publicPkmn, viewablePkmn, privatePkmn, rawFile;
     before(async () => {
       const res = await agent.post('/api/v1/pokemon')
         .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
@@ -788,7 +788,7 @@ describe('PokemonController', () => {
         .field('box', generalPurposeBox);
       expect(res3.statusCode).to.equal(201);
       privatePkmn = res3.body;
-      rawPk6 = require('fs').readFileSync(`${__dirname}/pk6/pkmn1.pk6`).toString('utf8');
+      rawFile = require('fs').readFileSync(`${__dirname}/pk6/pkmn1.pk6`).toString('utf8');
     });
     it('allows a user to download their own pokemon, regardless of visibility', async () => {
       const res = await agent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer()
@@ -797,46 +797,46 @@ describe('PokemonController', () => {
           `attachment; filename="${publicPkmn.nickname}-${publicPkmn.id}.pk6"`
         );
       expect(res.statusCode).to.equal(200);
-      expect(res.text).to.equal(rawPk6);
+      expect(res.text).to.equal(rawFile);
       const res2 = await agent.get(`/api/v1/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(200);
-      expect(res2.text).to.equal(rawPk6);
+      expect(res2.text).to.equal(rawFile);
       const res3 = await agent.get(`/api/v1/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(200);
-      expect(res3.text).to.equal(rawPk6);
+      expect(res3.text).to.equal(rawFile);
     });
     it("only allows other users to download someone's public pokemon", async () => {
       const res = await otherAgent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
-      expect(res.text).to.equal(rawPk6);
+      expect(res.text).to.equal(rawFile);
       const res2 = await otherAgent.get(`/api/v1/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(403);
-      expect(res2.text).to.not.equal(rawPk6);
+      expect(res2.text).to.not.equal(rawFile);
       const res3 = await otherAgent.get(`/api/v1/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(403);
-      expect(res3.text).to.not.equal(rawPk6);
+      expect(res3.text).to.not.equal(rawFile);
     });
     it('only allows an unauthenticated user to download a public pokemon', async () => {
       const res = await noAuthAgent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
-      expect(res.text).to.equal(rawPk6);
+      expect(res.text).to.equal(rawFile);
       const res2 = await noAuthAgent.get(`/api/v1/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(403);
-      expect(res2.text).to.not.equal(rawPk6);
+      expect(res2.text).to.not.equal(rawFile);
       const res3 = await noAuthAgent.get(`/api/v1/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(403);
-      expect(res3.text).to.not.equal(rawPk6);
+      expect(res3.text).to.not.equal(rawFile);
     });
     it('allows an admin to download any pokemon, regardless of visibility', async () => {
       const res = await adminAgent.get(`/api/v1/pokemon/${publicPkmn.id}/pk6`).buffer();
       expect(res.statusCode).to.equal(200);
-      expect(res.text).to.equal(rawPk6);
+      expect(res.text).to.equal(rawFile);
       const res2 = await adminAgent.get(`/api/v1/pokemon/${viewablePkmn.id}/pk6`).buffer();
       expect(res2.statusCode).to.equal(200);
-      expect(res2.text).to.equal(rawPk6);
+      expect(res2.text).to.equal(rawFile);
       const res3 = await adminAgent.get(`/api/v1/pokemon/${privatePkmn.id}/pk6`).buffer();
       expect(res3.statusCode).to.equal(200);
-      expect(res3.text).to.equal(rawPk6);
+      expect(res3.text).to.equal(rawFile);
     });
     it('increases the download count with downloads by third parties', async () => {
       const initialCount = (await agent.get(`/api/v1/pokemon/${publicPkmn.id}`)).body.downloadCount;

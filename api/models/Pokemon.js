@@ -107,7 +107,7 @@ const attributes = {
   regionId: {},
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
-  _rawPk6: {type: 'string'},
+  _rawFile: {type: 'string'},
   _cloneHash: {type: 'string', required: false},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},
@@ -118,6 +118,7 @@ const attributes = {
   downloadCount: {defaultsTo: 0},
   publicNotes: {type: 'string', defaultsTo: '', maxLength: Constants.MAX_POKEMON_NOTE_LENGTH},
   privateNotes: {type: 'string', defaultsTo: '', maxLength: Constants.MAX_POKEMON_NOTE_LENGTH},
+  gen: {enum: Constants.GENERATIONS},
   tsv () {
     return (this.tid ^ this.sid) >>> 4;
   },

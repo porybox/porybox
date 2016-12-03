@@ -2,6 +2,7 @@ exports.BOX_VISIBILITIES = ['listed', 'unlisted'];
 exports.DEFAULT_BOX_VISIBILITY_SETTING = 'listed';
 exports.POKEMON_VISIBILITIES = ['private', 'public', 'viewable'];
 exports.DEFAULT_POKEMON_VISIBILITY_SETTING = 'viewable';
+exports.GENERATIONS = [6, 7];
 
 exports.MAX_BOX_SIZE = 3000;
 

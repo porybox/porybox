@@ -51,7 +51,7 @@ module.exports = class PokemonAdd {
   }
 
   fileIsValid(file) {
-    return file.name.endsWith('.pk6') || file.name.endsWith('.pkx') || !file.name.includes('.');
+    return file.name.endsWith('.pk6') || file.name.endsWith('.pk7') || file.name.endsWith('.pkx') || !file.name.includes('.');
   }
 
   cancel () {

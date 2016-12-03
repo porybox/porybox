@@ -134,9 +134,9 @@ exports.getSafeBoxSliceForUser = async ({box, user, afterId, beforeId, sliceSize
     : slicedSafeFilteredResults.concat(nextItems);
 };
 
-exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
+exports.createPokemonFromPk = async ({user, visibility, boxId, file, gen}) => {
   const parseFunc = Buffer.isBuffer(file) ? pk6parse.parseBuffer : pk6parse.parseFile;
-  const parsed = _.attempt(parseFunc, file, {parseNames: true});
+  const parsed = _.attempt(parseFunc, file, {parseNames: true, gen});
   if (_.isError(parsed)) {
     throw {statusCode: 400, message: 'Failed to parse the provided file'};
   }
