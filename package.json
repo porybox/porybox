@@ -38,7 +38,7 @@
     "sails": "0.12.11",
     "sails-hook-winston": "1.1.0",
     "sails-mongo": "0.12.1",
-    "sails.io.js": "0.14.0",
+    "sails.io.js": "1.1.3",
     "socket.io-client": "1.7.1",
     "uglify-js": "2.7.5",
     "validator": "6.2.0"
