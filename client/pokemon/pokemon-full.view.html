@@ -64,10 +64,8 @@
             <md-card class="summary" style="height: 222px;" ng-show="pokemon.hasFullData">
               <md-card-content>
                 <div layout="row" layout-align="none center">
-                <img class="pokeball"
-                     ng-if="pokemon.ballNameUrl"
-                     ng-src="img/icons/items/{{pokemon.ballNameUrl}}.png"
-                     title="{{pokemon.data.ballName}}" /><span class="card-headline" style="margin: 0;">{{pokemon.parsedNickname}}</span>
+                <span class="pokeball spr-ball-{{pokemon.data.ballId}}"
+                     title="{{pokemon.data.ballName}}" /></span><span class="card-headline" style="margin: 0;">{{pokemon.parsedNickname}}</span>
                   <span flex></span>
                   <span class="language-tag" layout-align="end" title="Language">{{pokemon.data.language}}</span>
                 </div>
@@ -90,9 +88,8 @@
                 <div flex><span ng-repeat="iv in pokemon.ivs track by $index"><span ng-class="{'increased-stat': $index === pokemon.natureStats[0],
                             'decreased-stat': $index === pokemon.natureStats[1]}">{{iv}}</span>{{$last ? '' : '.'}}</span></div>
                 <div flex>
-                  <img ng-if="pokemon.data.heldItemName" class="held-item"
-                       ng-src="/img/icons/items/{{pokemon.heldItemUrl}}.png"
-                       title="{{pokemon.data.heldItemName}}" />
+                  <span ng-if="pokemon.data.heldItemId" class="held-item spr-item-{{pokemon.data.heldItemId}}"
+                       title="{{pokemon.data.heldItemName}}"></span>
                   <span>{{pokemon.data.heldItemName || 'No item'}}</span>
                 </div>
                 <div layout="row" layout-align="start center">

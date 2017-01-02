@@ -14,14 +14,10 @@
   </a>
     <md-card-content layout="column" class="pokemon-card-content">
       <div layout="row" layout-align="none center">
-        <img draggable="false" class="pokeball"
-          ng-if="::pokemon.ballNameUrl"
-          ng-src="img/icons/items/{{::pokemon.ballNameUrl}}.png"
-          title="In a {{::pokemon.data.ballName}}" />
-        <img draggable="false" class="held-item"
-          ng-if="::pokemon.heldItemUrl"
-          ng-src="/img/icons/items/{{::pokemon.heldItemUrl}}.png"
-          title="Holding {{::pokemon.data.heldItemName}}" />
+        <span draggable="false" class="pokeball spr-ball-{{::pokemon.data.ballId}}"
+          title="In a {{::pokemon.data.ballName}}">{{::pokemon.data.ballName}}</span>
+        <span ng-if="::pokemon.data.heldItemId" draggable="false" class="held-item spr-item-{{::pokemon.data.heldItemId}}"
+          title="Holding {{::pokemon.data.heldItemName}}">{{::pokemon.data.heldItemName}}</span>
         <span flex></span>
         <span class="language-tag" layout-align="end" title="Language">{{::pokemon.data.language}}</span>
       </div>
