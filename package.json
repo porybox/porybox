@@ -41,7 +41,7 @@
     "sails.io.js": "0.14.0",
     "socket.io-client": "1.7.2",
     "uglify-js": "2.7.5",
-    "validator": "6.2.0"
+    "validator": "6.2.1"
   },
   "scripts": {
     "bundle": "npm run less && browserify client/app.js -o client/bundle.js -t babelify -d",
