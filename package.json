@@ -81,7 +81,7 @@
     "phantomjs-prebuilt": "2.1.14",
     "sails-memory": "0.10.7",
     "sinon": "1.17.7",
-    "smtp-tester": "0.6.2",
+    "smtp-tester": "0.6.3",
     "superagent-defaults": "0.1.14",
     "supertest": "2.0.1",
     "supertest-as-promised": "4.0.2",
