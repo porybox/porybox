@@ -52,7 +52,7 @@ module.exports = _.mapValues({
   *   ...
   * ]
   */
-  async uploadMultiPk6 (req, res) {
+  async uploadMultipleFiles (req, res) {
     const files = req.param('files');
     if (!Array.isArray(files)) {
       return res.status(400).json('Invalid files array');
@@ -77,11 +77,13 @@ module.exports = _.mapValues({
       if (_.isError(fileBuf)) {
         throw {statusCode: 400, message: 'Failed to parse the provided file'};
       }
+
       return PokemonHandler.createPokemonFromPk6({
         user: req.user,
         visibility: file.visibility || defaultVisibility,
         boxId: file.box,
-        file: fileBuf
+        file: fileBuf,
+        gen: file.gen
       });
     }));
 

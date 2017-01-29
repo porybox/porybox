@@ -53,7 +53,7 @@ module.exports.routes = {
   // Pokemon
 
   'post /api/v1/pokemon': 'PokemonController.uploadpk6',
-  'post /api/v1/pokemon/multi': 'PokemonController.uploadMultiPk6',
+  'post /api/v1/pokemon/multi': 'PokemonController.uploadMultipleFiles',
 
   'get /api/v1/pokemon/:id': 'PokemonController.get',
   'get /api/v1/pokemon/:id/pk6': 'PokemonController.download',

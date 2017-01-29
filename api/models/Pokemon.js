@@ -69,6 +69,7 @@ const attributes = {
   notOt: {type: 'string', required: false},
   notOtGender: {type: 'string'},
   currentHandlerIsOt: {type: 'boolean'},
+  gen: {required: false},
   geoLocation1RegionId: {},
   geoLocation1CountryId: {},
   geoLocation2RegionId: {},
