@@ -107,7 +107,11 @@ const attributes = {
   regionId: {},
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
-  _rawPk6: {type: 'string'},
+
+  // TODO: Remove references to _rawPk6 (only used here to avoid needing a migration)
+  _rawFile: {type: 'string', required: false},
+  _rawPk6: {type: 'string', required: false},
+
   _cloneHash: {type: 'string', required: false},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},

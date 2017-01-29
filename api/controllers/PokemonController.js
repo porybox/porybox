@@ -179,7 +179,7 @@ module.exports = _.mapValues({
       return res.forbidden();
     }
     res.attachment(`${pokemon.nickname}-${pokemon.id}.pk6`);
-    res.status(200).send(Buffer.from(pokemon._rawPk6, 'base64'));
+    res.status(200).send(Buffer.from(pokemon._rawFile || pokemon._rawPk6, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
       await pokemon.incrementDownloadCount();
     }

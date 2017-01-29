@@ -152,6 +152,11 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
   parsed._boxVisibility = box.visibility;
   parsed.owner = user.name;
   parsed.visibility = visibility;
+
+  // The next two lines will be a no-op after pk6parse outputs _rawFile instead of _rawPk6.
+  parsed._rawFile = parsed._rawFile || parsed._rawPk6;
+  delete parsed._rawPk6;
+
   return parsed;
 };
 
