@@ -69,6 +69,7 @@ const attributes = {
   notOt: {type: 'string', required: false},
   notOtGender: {type: 'string'},
   currentHandlerIsOt: {type: 'boolean'},
+  gen: {required: false},
   geoLocation1RegionId: {},
   geoLocation1CountryId: {},
   geoLocation2RegionId: {},
@@ -107,7 +108,12 @@ const attributes = {
   regionId: {},
   consoleRegion: {type: 'string'},
   language: {type: 'string'},
-  _rawPk6: {type: 'string'},
+
+  // TODO: Remove references to _rawPk6 (only used here to avoid needing a migration)
+  // https://github.com/porygonco/pk6parse/issues/12
+  _rawFile: {type: 'string', required: false},
+  _rawPk6: {type: 'string', required: false},
+
   _cloneHash: {type: 'string', required: false},
   owner: {model: 'user', type: 'string'},
   box: {model: 'box'},

@@ -134,9 +134,15 @@ exports.getSafeBoxSliceForUser = async ({box, user, afterId, beforeId, sliceSize
     : slicedSafeFilteredResults.concat(nextItems);
 };
 
-exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
+exports.createPokemonFromFile = async ({user, visibility, boxId, file, gen = 6}) => {
   const parseFunc = Buffer.isBuffer(file) ? pk6parse.parseBuffer : pk6parse.parseFile;
-  const parsed = _.attempt(parseFunc, file, {parseNames: true});
+  const SUPPORTED_GENS = pk6parse.SUPPORTED_GENS || [6];
+
+  if (!SUPPORTED_GENS.includes(gen)) {
+    throw {statusCode: 400, message: 'Unsupported generation'};
+  }
+
+  const parsed = _.attempt(parseFunc, file, {parseNames: true, gen});
   if (_.isError(parsed)) {
     throw {statusCode: 400, message: 'Failed to parse the provided file'};
   }
@@ -152,6 +158,12 @@ exports.createPokemonFromPk6 = async ({user, visibility, boxId, file}) => {
   parsed._boxVisibility = box.visibility;
   parsed.owner = user.name;
   parsed.visibility = visibility;
+
+  // The next three lines will be a no-op after pk6parse outputs `gen`, and `_rawFile` instead of `_rawPk6`.
+  parsed.gen = parsed.gen || gen;
+  parsed._rawFile = parsed._rawFile || parsed._rawPk6;
+  delete parsed._rawPk6;
+
   return parsed;
 };
 

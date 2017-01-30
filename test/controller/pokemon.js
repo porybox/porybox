@@ -65,6 +65,7 @@ describe('PokemonController', () => {
       expect(res.body.owner).to.equal('pk6tester');
       expect(res.body.id).to.match(/^[0-9a-f]{32}$/);
       expect(res.body._boxVisibility).to.not.exist();
+      expect(res.body.gen).to.equal(6);
     });
     it('should identify uploaded things as clones', async () => {
       const res1 = await agent.post('/api/v1/pokemon')
@@ -385,6 +386,41 @@ describe('PokemonController', () => {
       expect(res.body[2].success).to.be.false();
       expect(res.body[2].error).to.equal('Cannot upload to a maximum-capacity box');
     });
+    describe('specifying a generation', () => {
+      const pk6parse = require('pk6parse');
+
+      // By default, uploads are only allowed from `pk6parse.SUPPORTED_GENS`,
+      // or [6] if the property doesn't exist. This prevents anyone from uploading to
+      // an unsupported gen, e.g. before validation checks exist for that gen.
+      // To verify that the `gen` functionality works for the tests,
+      // monkeypatch pk6parse.SUPPORTED_GENS to include 7.
+      before(() => {
+        pk6parse.SUPPORTED_GENS = pk6parse.SUPPORTED_GENS || [6, 7];
+      });
+      after(() => {
+        delete pk6parse.SUPPORTED_GENS;
+      });
+
+      it('allows uploads to specify a generation', async () => {
+        const res = await agent.post('/api/v1/pokemon/multi').send({files: [
+          {box: generalPurposeBox, visibility: 'viewable', data: pk6Data, gen: 6},
+          {box: generalPurposeBox, visibility: 'private', data: pk6Data, gen: 7},
+          {box: generalPurposeBox, visibility: 'public', data: pk6Data}
+        ]});
+
+        expect(res.statusCode).to.equal(201);
+        expect(res.body.every(result => result.success)).to.be.true();
+        expect(res.body.map(result => result.created.gen)).to.eql([6, 7, 6]);
+      });
+      it("doesn't allow uploads from gens other than explicitly listed ones", async () => {
+        const res = await agent.post('/api/v1/pokemon/multi').send({files: [
+          {box: generalPurposeBox, visibility: 'viewable', data: pk6Data, gen: 8}
+        ]});
+
+        expect(res.statusCode).to.equal(201);
+        expect(res.body[0].success).to.be.false();
+      });
+    });
   });
   describe('getting a pokemon by ID', () => {
     let publicId, privateId, viewableId, unlistedPublicId,
@@ -495,6 +531,7 @@ describe('PokemonController', () => {
       const pkmn = (await agent.get(`/api/v1/pokemon/${publicId}`)).body;
       expect(pkmn._markedForDeletion).to.not.exist();
       expect(pkmn._rawPk6).to.not.exist();
+      expect(pkmn._rawFile).to.not.exist();
     });
     it('allows a list of fields to be specified as a query parameter', async () => {
       const res = await agent.get(`/api/v1/pokemon/${viewableId}`).query({
@@ -517,7 +554,7 @@ describe('PokemonController', () => {
     });
     it('does not leak internal properties of a pokemon if specified in the query', async () => {
       const res = await agent.get(`/api/v1/pokemon/${viewableId}`)
-        .query({pokemonFields: '_rawPk6'});
+        .query({pokemonFields: '_rawPk6,_rawFile'});
       expect(res.statusCode).to.equal(200);
       expect(res.body).to.eql({});
     });
