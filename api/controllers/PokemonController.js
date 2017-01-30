@@ -17,7 +17,7 @@ module.exports = _.mapValues({
     if (!files.length) {
       return res.status(400).json('No files uploaded');
     }
-    return PokemonHandler.createPokemonFromPk6({
+    return PokemonHandler.createPokemonFromFile({
       user: req.user,
       visibility,
       boxId: params.box,
@@ -52,7 +52,7 @@ module.exports = _.mapValues({
   *   ...
   * ]
   */
-  async uploadMultiPk6 (req, res) {
+  async uploadMultipleFiles (req, res) {
     const files = req.param('files');
     if (!Array.isArray(files)) {
       return res.status(400).json('Invalid files array');
@@ -77,11 +77,13 @@ module.exports = _.mapValues({
       if (_.isError(fileBuf)) {
         throw {statusCode: 400, message: 'Failed to parse the provided file'};
       }
-      return PokemonHandler.createPokemonFromPk6({
+
+      return PokemonHandler.createPokemonFromFile({
         user: req.user,
         visibility: file.visibility || defaultVisibility,
         boxId: file.box,
-        file: fileBuf
+        file: fileBuf,
+        gen: file.gen
       });
     }));
 
@@ -179,7 +181,7 @@ module.exports = _.mapValues({
       return res.forbidden();
     }
     res.attachment(`${pokemon.nickname}-${pokemon.id}.pk6`);
-    res.status(200).send(Buffer.from(pokemon._rawPk6, 'base64'));
+    res.status(200).send(Buffer.from(pokemon._rawFile || pokemon._rawPk6, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
       await pokemon.incrementDownloadCount();
     }
