@@ -158,10 +158,9 @@ exports.createPokemonFromFile = async ({user, visibility, boxId, file, gen = 6})
   parsed._boxVisibility = box.visibility;
   parsed.owner = user.name;
   parsed.visibility = visibility;
-  parsed.gen = parsed.gen === undefined ? gen : parsed.gen;
 
   // The next three lines will be a no-op after pk6parse outputs `gen`, and `_rawFile` instead of `_rawPk6`.
-  parsed.gen = typeof parsed.gen === 'undefined' ? gen : parsed.gen;
+  parsed.gen = parsed.gen || gen;
   parsed._rawFile = parsed._rawFile || parsed._rawPk6;
   delete parsed._rawPk6;
 
