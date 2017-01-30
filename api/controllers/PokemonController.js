@@ -17,7 +17,7 @@ module.exports = _.mapValues({
     if (!files.length) {
       return res.status(400).json('No files uploaded');
     }
-    return PokemonHandler.createPokemonFromPk6({
+    return PokemonHandler.createPokemonFromFile({
       user: req.user,
       visibility,
       boxId: params.box,
@@ -78,7 +78,7 @@ module.exports = _.mapValues({
         throw {statusCode: 400, message: 'Failed to parse the provided file'};
       }
 
-      return PokemonHandler.createPokemonFromPk6({
+      return PokemonHandler.createPokemonFromFile({
         user: req.user,
         visibility: file.visibility || defaultVisibility,
         boxId: file.box,

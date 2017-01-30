@@ -134,7 +134,7 @@ exports.getSafeBoxSliceForUser = async ({box, user, afterId, beforeId, sliceSize
     : slicedSafeFilteredResults.concat(nextItems);
 };
 
-exports.createPokemonFromPk6 = async ({user, visibility, boxId, file, gen = 6}) => {
+exports.createPokemonFromFile = async ({user, visibility, boxId, file, gen = 6}) => {
   const parseFunc = Buffer.isBuffer(file) ? pk6parse.parseBuffer : pk6parse.parseFile;
   const SUPPORTED_GENS = pk6parse.SUPPORTED_GENS || [6];
 
