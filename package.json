@@ -85,7 +85,7 @@
     "superagent-defaults": "0.1.14",
     "supertest": "2.0.1",
     "supertest-as-promised": "4.0.2",
-    "watchify": "3.7.0"
+    "watchify": "3.9.0"
   },
   "greenkeeper": {
     "ignore": [
