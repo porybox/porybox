@@ -68,7 +68,7 @@
   "devDependencies": {
     "angular-mocks": "1.5.8",
     "chai": "3.5.0",
-    "concurrently": "3.1.0",
+    "concurrently": "3.2.0",
     "dirty-chai": "1.2.2",
     "eslint": "3.15.0",
     "karma": "1.4.1",
