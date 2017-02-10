@@ -9,3 +9,6 @@ addons:
     - mongodb-3.0-precise
     packages:
     - mongodb-org-server
+script:
+  - npm test
+  - npm run build
