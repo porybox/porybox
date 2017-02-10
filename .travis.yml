@@ -11,5 +11,4 @@ addons:
     - mongodb-org-server
 script:
   - npm test
-  - npm run bundle
-  - npm run minify
+  - npm run build
