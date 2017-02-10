@@ -23,7 +23,8 @@
     "bcryptjs": "2.4.3",
     "bluebird": "3.4.7",
     "browserify": "14.0.0",
-    "clean-css": "3.4.23",
+    "clean-css": "4.0.6",
+    "clean-css-cli": "4.0.6",
     "connect-mongo": "1.3.2",
     "ejs": "2.5.5",
     "less": "2.7.2",
@@ -44,6 +45,7 @@
     "validator": "6.2.1"
   },
   "scripts": {
+    "build": "npm run bundle && npm run minify",
     "bundle": "npm run less && browserify client/app.js -o client/bundle.js -t babelify -d",
     "bundle:watch": "watchify client/app.js -o client/bundle.js -t babelify -d -v",
     "less": "lessc client/styles/importer.less client/bundle.css",
@@ -51,7 +53,7 @@
     "minify:js": "uglifyjs client/bundle.js -o client/bundle.min.js -m --screw-ie8",
     "minify:css": "cleancss client/bundle.css -o client/bundle.min.css --s1 --advanced",
     "minify": "npm run minify:js && npm run minify:css",
-    "start": "npm run bundle && npm run minify && node app.js",
+    "start": "npm run build && node app.js",
     "start:dev": "concurrently \"npm run less\" \"npm run bundle:watch\" \"node app.js\"",
     "test": "npm run lint && npm run test:server && npm run test:client",
     "test:client": "karma start --single-run",
