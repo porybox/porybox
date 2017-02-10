@@ -46,12 +46,36 @@ module.exports = class PokemonAdd {
       filename: file.name,
       data: filesPromise,
       visibility: this.defaultPokemonVisibility,
-      box: this.defaultBox
+      box: this.defaultBox,
+      gen: this.getGen(file)
     });
   }
 
   fileIsValid(file) {
-    return file.name.endsWith('.pk6') || file.name.endsWith('.pkx') || !file.name.includes('.');
+    return this.isPk6(file) || this.isPk7(file) || this.isPkx(file) || !file.name.includes('.');
+  }
+
+  isPk6(file) {
+    return file.name.endsWith('pk6');
+  }
+
+  isPk7(file) {
+    return file.name.endsWith('pk7');
+  }
+
+  isPkx(file) {
+    return file.name.endsWith('.pkx');
+  }
+
+  getGen(file) {
+    if (this.isPk6(file)) {
+      return 6;
+    } else if (this.isPk7(file)) {
+      return 7;
+    } else {
+      // Default to gen 6 just now
+      return 6;
+    }
   }
 
   cancel () {
