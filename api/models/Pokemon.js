@@ -1,4 +1,4 @@
-const pk6parse = require('pk6parse');
+const pkparse = require('pkparse');
 const attributes = {
   encryptionConstant: {},
   dexNo: {},
@@ -183,7 +183,7 @@ const attributes = {
     });
   },
   assignParsedNames () {
-    return pk6parse.assignReadableNames(this);
+    return pkparse.assignReadableNames(this);
   }
 };
 

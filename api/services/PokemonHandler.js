@@ -1,4 +1,4 @@
-const pk6parse = require('pk6parse');
+const pkparse = require('pkparse');
 exports.computeCloneHash = pkmn => {
   // Computes a hash of this Pokemon's immutable data, for the purposes of detecting clones.
   // Data that can be changed (e.g. current moves, EVs, evolution state) is not included.
@@ -9,7 +9,7 @@ exports.computeCloneHash = pkmn => {
   buf.writeUInt16LE(pkmn.tid, 28); // 2 bytes
   buf.writeUInt16LE(pkmn.sid, 30); // 2 bytes
   buf.writeUInt32LE(pkmn.pid, 32); // 4 bytes
-  buf.writeUInt16LE(pk6parse.getPokemonData(pkmn.dexNo).first_evolution_id, 36); // 2 bytes
+  buf.writeUInt16LE(pkparse.getPokemonData(pkmn.dexNo).first_evolution_id, 36); // 2 bytes
   if (exports.isStaticPidEvent(pkmn)) {
     let compactIvs = 0;
     [pkmn.ivHp, pkmn.ivAtk, pkmn.ivDef, pkmn.ivSpe, pkmn.ivSpAtk, pkmn.ivSpDef].forEach(value => {
@@ -135,8 +135,8 @@ exports.getSafeBoxSliceForUser = async ({box, user, afterId, beforeId, sliceSize
 };
 
 exports.createPokemonFromFile = async ({user, visibility, boxId, file, gen = 6}) => {
-  const parseFunc = Buffer.isBuffer(file) ? pk6parse.parseBuffer : pk6parse.parseFile;
-  const SUPPORTED_GENS = pk6parse.SUPPORTED_GENS || [6];
+  const parseFunc = Buffer.isBuffer(file) ? pkparse.parseBuffer : pkparse.parseFile;
+  const SUPPORTED_GENS = pkparse.SUPPORTED_GENS || [6];
 
   if (!SUPPORTED_GENS.includes(gen)) {
     throw {statusCode: 400, message: 'Unsupported generation'};
@@ -159,7 +159,7 @@ exports.createPokemonFromFile = async ({user, visibility, boxId, file, gen = 6})
   parsed.owner = user.name;
   parsed.visibility = visibility;
 
-  // The next three lines will be a no-op after pk6parse outputs `gen`, and `_rawFile` instead of `_rawPk6`.
+  // The next three lines will be a no-op after pkparse outputs `gen`, and `_rawFile` instead of `_rawPk6`.
   parsed.gen = parsed.gen || gen;
   parsed._rawFile = parsed._rawFile || parsed._rawPk6;
   delete parsed._rawPk6;
