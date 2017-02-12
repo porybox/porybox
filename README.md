@@ -10,7 +10,7 @@ display their collections and make more informed trade decisions.
 Make sure you have Node 6+ installed.
 
 ```bash
-git clone https://github.com/porygonco/porybox.git
+git clone https://github.com/porybox/porybox.git
 cd porybox
 npm install
 ```

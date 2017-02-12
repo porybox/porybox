@@ -63,9 +63,9 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:porygonco/porybox.git"
+    "url": "git@github.com:porybox/porybox.git"
   },
-  "author": "PorygonCo",
+  "author": "Porybox Dev Team",
   "license": "",
   "devDependencies": {
     "angular-mocks": "1.5.8",
