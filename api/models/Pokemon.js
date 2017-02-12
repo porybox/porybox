@@ -110,7 +110,7 @@ const attributes = {
   language: {type: 'string'},
 
   // TODO: Remove references to _rawPk6 (only used here to avoid needing a migration)
-  // https://github.com/porygonco/pk6parse/issues/12
+  // https://github.com/porybox/pkparse/issues/12
   _rawFile: {type: 'string', required: false},
   _rawPk6: {type: 'string', required: false},
 
