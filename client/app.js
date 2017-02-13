@@ -109,6 +109,10 @@ porybox.config(['markedProvider', markedProvider => {
   markedProvider.setOptions({gfm: true, sanitize: true});
 }]);
 
+porybox.config(['$locationProvider', function($locationProvider) {
+  $locationProvider.hashPrefix('');
+}]);
+
 porybox.service('io', function () {
   const socket = require('socket.io-client');
   const io = require('sails.io.js')(socket);
