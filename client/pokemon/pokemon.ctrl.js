@@ -37,15 +37,6 @@ module.exports = class Pokemon {
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
 
-    this.ballNameUrl = this.data.ballName
-      ? this.data.ballName.replace(' ', '-').replace('é', 'e').toLowerCase()
-      : null;
-
-    this.heldItemUrl = this.data.heldItemId >= 328 && this.data.heldItemId <= 445 ?
-      'tm' : (this.data.heldItemName
-      ? this.data.heldItemName.replace(/ /g, '-').replace('é', 'e').replace('\'', '').toLowerCase()
-      : null);
-
     const shinyString = this.data.isShiny ? 'shiny' : 'regular';
     const genderDiff = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
       ? '-f'
