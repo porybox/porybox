@@ -94,12 +94,18 @@
                 </div>
                 <div layout="row" layout-align="start center">
                   <span>
-                    <md-icon md-svg-icon="/img/icons/circle.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasCircleMarking}"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/triangle.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasTriangleMarking}"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/square.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasSquareMarking}" style="width:8px;"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/heart.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasHeartMarking}"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/star.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasStarMarking}" style="width:11px;margin-left:-1px;margin-top:-2px;"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/diamond.svg" class="box-marking" ng-class="{'marked': pokemon.data.hasDiamondMarking}" style="margin-left:-1px;margin-top:-1px;"></md-icon>
+                    <md-icon md-svg-icon="/img/icons/circle.svg" class="box-marking"
+                      ng-class="{'marked': pokemon.data.hasCircleMarking, 'blue': pokemon.data.hasBlueCircleMarking, 'pink': pokemon.data.hasPinkCircleMarking}"></md-icon>
+                    <md-icon md-svg-icon="/img/icons/triangle.svg" class="box-marking"
+                      ng-class="{'marked': pokemon.data.hasTriangleMarking, 'blue': pokemon.data.hasBlueTriangleMarking, 'pink': pokemon.data.hasPinkTriangleMarking}"></md-icon>
+                    <md-icon md-svg-icon="/img/icons/square.svg" class="box-marking"
+                      ng-class="{'marked': pokemon.data.hasSquareMarking, 'blue': pokemon.data.hasBlueSquareMarking, 'pink': pokemon.data.hasPinkSquareMarking}" style="width:8px;"></md-icon>
+                    <md-icon md-svg-icon="/img/icons/heart.svg" class="box-marking"
+                      ng-class="{'marked': pokemon.data.hasHeartMarking, 'blue': pokemon.data.hasBlueHeartMarking, 'pink': pokemon.data.hasPinkHeartMarking}"></md-icon>
+                    <md-icon md-svg-icon="/img/icons/star.svg" class="box-marking"
+                      ng-class="{'marked': pokemon.data.hasStarMarking, 'blue': pokemon.data.hasBlueStarMarking, 'pink': pokemon.data.hasPinkStarMarking}" style="width:11px;margin-left:-1px;margin-top:-2px;"></md-icon>
+                    <md-icon md-svg-icon="/img/icons/diamond.svg" class="box-marking"
+                      ng-class="{'marked': pokemon.data.hasDiamondMarking, 'blue': pokemon.data.hasBlueDiamondMarking, 'pink': pokemon.data.hasPinkDiamondMarking}" style="margin-left:-1px;margin-top:-1px;"></md-icon>
                   </span>
                   <span style="margin-left:10px;">
                     <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
