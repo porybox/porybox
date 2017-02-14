@@ -358,8 +358,18 @@ h1.summary-toolbar {
   width: 9px;
 }
 
+.box-marking.blue, .box-marking.pink,
+.box-marking.blue *, .box-marking.pink *,
 .marked {
   opacity: 1;
+}
+
+.box-marking.blue svg * {
+  fill: blue;
+}
+
+.box-marking.pink svg * {
+  fill: pink;
 }
 
 // Prevent people from overflowing markdown text boxes, e.g. by embedding large images
