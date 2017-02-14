@@ -5,6 +5,7 @@ import {throttle} from 'lodash';
 const POKEMON_FIELDS_USED = [
   'abilityName',
   'abilityNum',
+  'ballId',
   'ballName',
   'decreasedStat',
   'dexNo',

@@ -369,7 +369,10 @@ h1.summary-toolbar {
 .pokeball, .held-item {
   width: 32px;
   height: 32px;
+  display: inline-block;
+  font-size: 0;
   vertical-align: middle;
+  background-image: url('/img/icons/items.png');
 }
 
 .pokeball {
@@ -379,6 +382,8 @@ h1.summary-toolbar {
 .pokemon-ha {
   font-style: italic;
 }
+
+@import (inline) 'items.css';
 
 .language-tag {
   color: #fff;
