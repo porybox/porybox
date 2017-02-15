@@ -7,7 +7,10 @@
   <md-card-content>
     <form role="form" name="loginForm" ng-submit="auth.login()" method="POST">
       <md-input-container class="md-block">
-        <input type="text" name="username" required ng-model="auth.loginName" aria-label="Username">
+        <input
+          type="text" name="username" required ng-model="auth.loginName" aria-label="Username"
+          ng-change="loginForm.password.$setValidity('correct', true)"
+        >
         <label>Username</label>
       </md-input-container>
       <md-input-container class="md-block">
