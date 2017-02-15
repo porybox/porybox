@@ -111,6 +111,7 @@
                     <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
                     <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
                     <md-icon ng-if="pokemon.isAB" md-svg-icon="/img/icons/ab.svg" aria-label="cross" class="pokemon-ab" title="Originated from Gen 7"></md-icon>
+                    <md-icon ng-if="pokemon.isVC" md-svg-icon="/img/icons/vc.svg" aria-label="gb" class="pokemon-vc" title="Originated from Gen 1 VC"></md-icon>
                     <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration > 0" aria-title="Infected with Pokérus" class="pokerus" style="font-size:10px;">PKRS</span>
                     <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration === 0" aria-title="Cured Pokérus">
                       <md-icon md-svg-icon="/img/icons/pkrs_cured.svg" style="width: 9px;"></md-icon>

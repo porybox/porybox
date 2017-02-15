@@ -50,6 +50,7 @@ module.exports = class Pokemon {
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.isAB = this.data.otGameId >= 30 && this.data.otGameId <= 33;
+    this.isVC = this.data.otGameId >= 35 && this.data.otGameId <= 38;
     this.hasHA = this.data.abilityNum === 4;
 
     this.ivs = [
