@@ -69,7 +69,7 @@
   <md-content layout-padding ng-if="!box.data.contents.length" layout="column" layout-align="center center">
     <div class="md-headline">This box is empty.</div>
     <div>
-      <add-pokemon ng-if="!main.serverStatus.readOnly" boxes="main.boxes" prefs="main.prefs" selected="main.selected" server-status="main.serverStatus"></add-pokemon>
+      <add-pokemon ng-if="!main.serverStatus.readOnly && (box.data.owner === main.user.name || main.user.isAdmin)" boxes="main.boxes" prefs="main.prefs" selected="main.selected" server-status="main.serverStatus"></add-pokemon>
     </div>
   </md-content>
 </div>
