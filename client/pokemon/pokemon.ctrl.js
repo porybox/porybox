@@ -49,6 +49,7 @@ module.exports = class Pokemon {
     this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${genderDiff || formSuffix}`;
 
     this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
+    this.isAB = this.data.otGameId >= 30 && this.data.otGameId <= 33;
     this.hasHA = this.data.abilityNum === 4;
 
     this.ivs = [
