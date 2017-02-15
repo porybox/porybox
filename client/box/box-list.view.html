@@ -11,7 +11,7 @@
         <i class="material-icons" ng-if="box.data.visibility === 'unlisted'">lock_outline</i>
       </span>
       <span flex></span>
-      <md-button ng-if="!box.draggingEnabled" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
+      <md-button ng-if="!box.draggingEnabled" ng-disabled="!box.data.contents.length" class="md-icon-button" aria-label="Move" ng-show="box.data.owner === main.user.name || main.user.isAdmin" ng-click="box.draggingEnabled = true">
         <md-tooltip md-direction="left">Enable dragging to move Pokémon in this box</md-tooltip>
         <i class="material-icons">open_with</i>
       </md-button>
@@ -66,5 +66,11 @@
     </div>
     <md-progress-circular md-mode="indeterminate" ng-if="box.isLoading" md-diameter="100"></md-progress-circular>
   </div>
+  <md-content layout-padding ng-if="!box.data.contents.length" layout="column" layout-align="center center">
+    <div class="md-headline">This box is empty.</div>
+    <div>
+      <add-pokemon ng-if="!main.serverStatus.readOnly && (box.data.owner === main.user.name || main.user.isAdmin)" boxes="main.boxes" prefs="main.prefs" selected="main.selected" server-status="main.serverStatus"></add-pokemon>
+    </div>
+  </md-content>
 </div>
 <div ng-if="box.errorStatusCode" ng-include="'/errors/' + box.errorStatusCode + '.html'"></div>
