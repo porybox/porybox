@@ -33,6 +33,7 @@
         <md-icon ng-if="::pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
         <md-icon ng-if="::pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" style="margin-left: 5px;" title="Originated from Gen 6"></md-icon>
         <md-icon ng-if="::pokemon.isAB" md-svg-icon="/img/icons/ab.svg" aria-label="cross" class="pokemon-ab" style="margin-left: 5px;" title="Originated from Gen 7"></md-icon>
+        <md-icon ng-if="::pokemon.isVC" md-svg-icon="/img/icons/vc.svg" aria-label="gb" class="pokemon-vc" style="margin-left: 5px;" title="Originated from Gen 1 VC"></md-icon>
       </div>
       <span ng-if="::pokemon.data.formName" style="font-weight: bold; line-height: 1.1em">{{::pokemon.data.formName}}</span>
       <div layout="row" layout-align="none center">
