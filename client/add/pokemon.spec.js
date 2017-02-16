@@ -1,5 +1,6 @@
 const ctrlTest = require('./pokemon.ctrl');
 const sinon = require('sinon');
+const angular = require('angular');
 
 describe('PokemonCtrl', function() {
   // beforeEach(module('porygon'));
@@ -9,16 +10,21 @@ describe('PokemonCtrl', function() {
     $routeParams = {},
     tested, cancelSpy, hideSpy;
 
-  beforeEach(inject(function(_$controller_){
+  beforeEach(function(){
     $mdDialog = {
       cancel: function () {},
       hide: function () {}
     };
-    $controller = _$controller_;
-    tested = $controller(ctrlTest, {$mdDialog, $routeParams}, {boxes: []});
+    angular.mock.module(function($compileProvider) {
+      $compileProvider.preAssignBindingsEnabled(true);
+    });
+    inject(function (_$controller_) {
+      $controller = _$controller_;
+      tested = $controller(ctrlTest, {$mdDialog, $routeParams}, {boxes: []});
+    });
     cancelSpy = sinon.spy($mdDialog, 'cancel');
     hideSpy = sinon.spy($mdDialog, 'hide');
-  }));
+  });
 
   describe('controller.cancel', function() {
 
