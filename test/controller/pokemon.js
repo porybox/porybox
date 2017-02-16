@@ -387,19 +387,6 @@ describe('PokemonController', () => {
       expect(res.body[2].error).to.equal('Cannot upload to a maximum-capacity box');
     });
     describe('specifying a generation', () => {
-      const pkparse = require('pkparse');
-
-      // By default, uploads are only allowed from `pkparse.SUPPORTED_GENS`,
-      // or [6] if the property doesn't exist. This prevents anyone from uploading to
-      // an unsupported gen, e.g. before validation checks exist for that gen.
-      // To verify that the `gen` functionality works for the tests,
-      // monkeypatch pkparse.SUPPORTED_GENS to include 7.
-      before(() => {
-        pkparse.SUPPORTED_GENS = pkparse.SUPPORTED_GENS || [6, 7];
-      });
-      after(() => {
-        delete pkparse.SUPPORTED_GENS;
-      });
 
       it('allows uploads to specify a generation', async () => {
         const res = await agent.post('/api/v1/pokemon/multi').send({files: [

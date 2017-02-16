@@ -33,7 +33,8 @@ module.exports = class Pokemon {
   }
   parseBoxViewProps () {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
-    this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(5, '0');
+    const tidSize = this.data.gen === 7 ? 6 : 5;
+    this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
 
