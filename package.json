@@ -57,7 +57,7 @@
     "start:dev": "concurrently \"npm run less\" \"npm run bundle:watch\" \"node app.js\"",
     "test": "npm run lint && npm run test:server && npm run test:client",
     "test:client": "karma start --single-run",
-    "test:server": "mocha --timeout 5000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js",
+    "test:server": "mocha --timeout 20000 --compilers js:babel-core/register test/bootstrap.test.js test/controller/**/*.js",
     "test:watch": "concurrently \"mocha -w --compilers js:babel-core/register\" \"karma start\""
   },
   "main": "app.js",
