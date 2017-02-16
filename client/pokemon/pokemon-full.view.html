@@ -171,6 +171,11 @@
                   <span flex>Stat</span>
                   <span flex>Base</span>
                   <span flex>IVs</span>
+                  <span flex
+                    title="Hyper Trained?"
+                    ng-if="pokemon.gen === 7" title="">
+                    H/T
+                  </span>
                   <span flex>EVs</span>
                   <span flex>Total</span>
                 </div>
@@ -179,6 +184,7 @@
                             'decreased-stat': $index === pokemon.natureStats[1], 'stat-total': statName === 'Total'}">{{statName}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.base}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.iv !== undefined ? statData.iv : '-'}}</span>
+                  <span flex ng-class="{'stat-total': statName === 'Total'}" ng-if="pokemon.gen === 7">{{statData.ht ? '✔' : ''}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.ev}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.total !== undefined ? statData.total : '-'}}</span>
                 </div>
