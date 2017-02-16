@@ -74,6 +74,14 @@ describe('PokemonCtrl', function() {
         {data: {tid: 0, sid: 1, esv: 1, tsv: 1}});
       tested6.parseAllProps();
       expect(tested6.paddedTid).to.equal('00000');
+      const tested7 = $controller(ctrlTest, deps,
+        {data: {tid: 5, sid: 1, esv: 1, tsv: 1, gen: 6}});
+      tested7.parseAllProps();
+      expect(tested7.paddedTid).to.equal('00005');
+      const tested8 = $controller(ctrlTest, deps,
+        {data: {tid: 5, sid: 1, esv: 1, tsv: 1, gen: 7}});
+      tested8.parseAllProps();
+      expect(tested8.paddedTid).to.equal('000005');
     });
   });
   it('parses unicode characters correctly', function() {

@@ -159,11 +159,6 @@ exports.createPokemonFromFile = async ({user, visibility, boxId, file, gen = 6})
   parsed.owner = user.name;
   parsed.visibility = visibility;
 
-  // The next three lines will be a no-op after pkparse outputs `gen`, and `_rawFile` instead of `_rawPk6`.
-  parsed.gen = parsed.gen || gen;
-  parsed._rawFile = parsed._rawFile || parsed._rawPk6;
-  delete parsed._rawPk6;
-
   return parsed;
 };
 
