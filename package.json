@@ -85,7 +85,7 @@
     "sinon": "1.17.7",
     "smtp-tester": "0.6.3",
     "superagent-defaults": "0.1.14",
-    "supertest": "2.0.1",
+    "supertest": "3.0.0",
     "supertest-as-promised": "4.0.2",
     "watchify": "3.9.0"
   },
