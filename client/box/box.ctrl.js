@@ -32,6 +32,7 @@ const POKEMON_FIELDS_USED = [
   'ot',
   'otGameId',
   'speciesName',
+  'idNo',
   'tid',
   'visibility'
 ].join(',');
