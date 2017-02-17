@@ -73,6 +73,7 @@ module.exports = class Pokemon {
 
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
     this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
+    this.gen = this.data.gen;
 
     this.parsedNotOt = replace3dsUnicodeChars(this.data.notOt);
 
@@ -83,6 +84,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatHp,
         fullName: 'Hit Points',
         iv: this.data.ivHp,
+        ht: this.data.hyperTrainedHP,
         ev: this.data.evHp,
         total: this.data.statHp
       },
@@ -90,6 +92,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatAtk,
         fullName: 'Attack',
         iv: this.data.ivAtk,
+        ht: this.data.hyperTrainedAtk,
         ev: this.data.evAtk,
         total: this.data.statAtk
       },
@@ -97,6 +100,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatDef,
         fullName: 'Defense',
         iv: this.data.ivDef,
+        ht: this.data.hyperTrainedDef,
         ev: this.data.evDef,
         total: this.data.statDef
       },
@@ -104,6 +108,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatSpAtk,
         fullName: 'Special Attack',
         iv: this.data.ivSpAtk,
+        ht: this.data.hyperTrainedSpAtk,
         ev: this.data.evSpAtk,
         total: this.data.statSpAtk
       },
@@ -111,6 +116,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatSpDef,
         fullName: 'Special Defense',
         iv: this.data.ivSpDef,
+        ht: this.data.hyperTrainedSpDef,
         ev: this.data.evSpDef,
         total: this.data.statSpDef
       },
@@ -118,6 +124,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatSpe,
         fullName: 'Speed',
         iv: this.data.ivSpe,
+        ht: this.data.hyperTrainedSpe,
         ev: this.data.evSpe,
         total: this.data.statSpe
       },
