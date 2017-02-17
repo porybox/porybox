@@ -120,6 +120,7 @@ porybox.config(['$compileProvider', function($compileProvider) {
 porybox.service('io', function () {
   const socket = require('socket.io-client');
   const io = require('sails.io.js')(socket);
+  io.sails.reconnection = true;
   io.sails.headers = {'x-csrf-token': CSRF_TOKEN};
   io.socket.patch = (url, data, cb) => io.socket.request({method: 'PATCH', url, data}, cb);
   // create versions of the io.socket functions that return Promises.
