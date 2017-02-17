@@ -158,7 +158,8 @@
                   <span flex title="Trainer ID Number"><strong>ID No.</strong> {{pokemon.paddedTid}}</span>
                   <span flex ng-if="pokemon.isKB || pokemon.isAB" title="Trainer Shiny Value"><strong>TSV</strong> {{pokemon.paddedTsv}}</span>
                 </div>
-                <div title="Secret ID"><strong>SID</strong> {{pokemon.paddedSid}}</div>
+                <div title="Secret ID" ng-if="!(pokemon.isAB || pokemon.isVC)"><strong>SID</strong> {{pokemon.paddedSid}}</div>
+                <div title="Full Trainer ID" ng-if="pokemon.isAB"><strong>Full TID</strong> {{pokemon.tidFull}}</div>
               </md-card-content>
             </md-card>
           </div>
@@ -173,7 +174,7 @@
                   <span flex>IVs</span>
                   <span flex
                     title="Hyper Trained?"
-                    ng-if="pokemon.gen === 7" title="">
+                    ng-if="pokemon.uploadGen === 7" title="">
                     H/T
                   </span>
                   <span flex>EVs</span>
@@ -184,7 +185,7 @@
                             'decreased-stat': $index === pokemon.natureStats[1], 'stat-total': statName === 'Total'}">{{statName}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.base}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.iv !== undefined ? statData.iv : '-'}}</span>
-                  <span flex ng-class="{'stat-total': statName === 'Total'}" ng-if="pokemon.gen === 7">{{statData.ht ? '✔' : ''}}</span>
+                  <span flex ng-class="{'stat-total': statName === 'Total'}" ng-if="pokemon.uploadGen === 7">{{statData.ht ? '✔' : ''}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.ev}}</span>
                   <span flex ng-class="{'stat-total': statName === 'Total'}">{{statData.total !== undefined ? statData.total : '-'}}</span>
                 </div>

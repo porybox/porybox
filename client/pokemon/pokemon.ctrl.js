@@ -33,7 +33,12 @@ module.exports = class Pokemon {
   }
   parseBoxViewProps () {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
-    const tidSize = this.data.gen === 7 ? 6 : 5;
+
+    this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
+    this.isAB = this.data.otGameId >= 30 && this.data.otGameId <= 33;
+    this.isVC = this.data.otGameId >= 35 && this.data.otGameId <= 38;
+
+    const tidSize = this.isAB ? 6 : 5;
     this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
@@ -49,9 +54,6 @@ module.exports = class Pokemon {
     this.spriteUrl = `pokemon/${shinyString}/${this.data.dexNo}${genderDiff || formSuffix}`;
     this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${genderDiff || formSuffix}`;
 
-    this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
-    this.isAB = this.data.otGameId >= 30 && this.data.otGameId <= 33;
-    this.isVC = this.data.otGameId >= 35 && this.data.otGameId <= 38;
     this.hasHA = this.data.abilityNum === 4;
 
     this.ivs = [
@@ -69,11 +71,12 @@ module.exports = class Pokemon {
       `${this.data.formName ? '-' + this.data.formName : ''}`;
   }
   parseAllProps () {
+    this.uploadGen = this.data.gen;
     this.parseBoxViewProps();
 
+    this.tidFull = this.data.tidFull;
     this.paddedSid = this.data.sid.toString().padStart(5, '0');
     this.paddedTsv = this.data.tsv.toString().padStart(4, '0');
-    this.gen = this.data.gen;
 
     this.parsedNotOt = replace3dsUnicodeChars(this.data.notOt);
 
