@@ -31,7 +31,7 @@ module.exports = class Pokemon {
       this.errorStatusCode = err.statusCode;
     }).then(() => this.$scope.$apply());
   }
-  parseBoxViewProps () {
+  parseCardViewProps () {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
 
     this.hasPentagon = this.data.otGameId >= 24 && this.data.otGameId <= 29;
@@ -53,6 +53,14 @@ module.exports = class Pokemon {
 
     this.spriteUrl = `pokemon/${shinyString}/${this.data.dexNo}${genderDiff || formSuffix}`;
     this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${genderDiff || formSuffix}`;
+  }
+  parseBoxViewProps () {
+    this.parseCardViewProps();
+    this.parsedOt = replace3dsUnicodeChars(this.data.ot);
+    const tidSize = this.data.gen === 7 ? 6 : 5;
+    this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
+    this.paddedEsv = this.data.esv.toString().padStart(4, '0');
+    this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
 
     this.hasHA = this.data.abilityNum === 4;
 

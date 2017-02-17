@@ -266,7 +266,17 @@ md-tooltip {
 
 .box-card {
   max-height: 150px;
-  overflow: auto;
+  overflow: hidden;
+}
+
+box-card a {
+  height: 100%;
+}
+
+box-card md-card-content {
+  height: ~"calc(100% - 42px)";
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
  /*******************************
