@@ -35,7 +35,7 @@
     "passport": "0.3.2",
     "passport-http-bearer": "1.0.1",
     "passport-local": "1.0.0",
-    "pkparse": "1.0.0",
+    "pkparse": "1.1.0",
     "sails": "0.12.11",
     "sails-hook-winston": "1.1.0",
     "sails-mongo": "0.12.2",
