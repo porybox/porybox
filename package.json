@@ -73,7 +73,7 @@
     "concurrently": "3.3.0",
     "dirty-chai": "1.2.2",
     "eslint": "3.15.0",
-    "karma": "1.4.1",
+    "karma": "1.5.0",
     "karma-browserify": "5.1.1",
     "karma-chai": "0.1.0",
     "karma-dirty-chai": "1.0.2",
