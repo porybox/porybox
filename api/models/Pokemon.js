@@ -46,7 +46,7 @@ const attributes = {
   hasPinkHeartMarking: {type: 'boolean', required: false},
   hasPinkStarMarking: {type: 'boolean', required: false},
   hasPinkDiamondMarking: {type: 'boolean', required: false},
-  hyperTrainedHP: {type: 'boolean', required: false},
+  hyperTrainedHp: {type: 'boolean', required: false},
   hyperTrainedAtk: {type: 'boolean', required: false},
   hyperTrainedDef: {type: 'boolean', required: false},
   hyperTrainedSpAtk: {type: 'boolean', required: false},
