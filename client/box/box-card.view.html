@@ -10,7 +10,6 @@
       </span>
     </md-card-header>
     <md-card-content ng-init="box.fetchIcons()">
-      <span class="md-body-1">{{box.data.description}}</span>
       <div flex class="sprite-list">
         <pokemon-icon ng-repeat="pokemon in box.data.contents" data="pokemon" flex></pokemon-icon>
       </div>

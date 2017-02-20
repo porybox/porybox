@@ -4,6 +4,7 @@ const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
 import {MAX_MULTI_UPLOAD_SIZE, BOX_PAGE_SIZE} from '../../api/services/Constants.js';
 import {chunk, flatten} from 'lodash/fp';
+import {keyBy, mapValues, noop} from 'lodash';
 
 /**
  * A small controller to explain the syntax we will be using
@@ -18,6 +19,7 @@ module.exports = class Add {
     this.$mdMedia = $mdMedia;
     this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
+    this.boxesById = keyBy(this.boxes, 'id');
   }
 
   useFullScreen() {
@@ -87,13 +89,16 @@ module.exports = class Add {
       .tap(box => {
         this.addedToast(`Box '${box.name}' created successfully`, 'View', `/box/${box.id}`);
       })
-      .then(res => this.$scope.$apply(this.boxes.push(res)))
+      .tap(box => this.$scope.$apply(this.boxes.push(box)))
+      .then(box => this.$scope.$apply(this.boxesById[box.id].push(box)))
       .catch(this.errorHandler);
   }
 
   pokemon (event) {
     this.watchFullScreen();
     const box = this.selected.selectedBox;
+    const boxCounts = mapValues(this.boxesById, (value) => value.contents.length);
+    const that = this;
     const locals = {
       boxes: this.boxes,
       defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
@@ -125,26 +130,14 @@ module.exports = class Add {
       })
       .filter(line => line.success)
       .map(line => line.created)
-      .reduce((overall, line) => {
-        if (overall[line.box]) {
-          overall[line.box].push(line);
-        } else {
-          overall[line.box] = [line];
+      .filter(line => boxCounts[line.box]++ < BOX_PAGE_SIZE)
+      .each(line => {
+        that.boxesById[line.box].contents.push(line);
+        if (box && line.box === box.id) {
+          box.data.contents.push(line);
         }
-        return overall;
-      }, {})
-      .then(lines => {
-        Object.keys(lines).forEach(
-          (line) => line.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE))
-        );
-        return lines;
       })
-      .then(lines => this.boxes.forEach((box) => {
-        if (lines[box.id]) {
-          box.contents.push(...lines[box.id]);
-        }
-      }))
-      .tap(box.onscroll)
+      .tap(box ? box.onscroll : noop)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
   }

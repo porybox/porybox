@@ -4,31 +4,38 @@ const sinon = require('sinon');
 const Promise = require('bluebird');
 const utils = require('../test/utils.js');
 const MdToast = require('../test/mdtoast');
+const angular = require('angular');
 Promise.config({warnings: false});
 
 describe('AddCtrl', () => {
   const errorHandler = (err) => err && console.log(err);
-  const BOX_ID = 123;
-  const BOX_ID2 = 1234;
+  const BOX_ID = '123';
+  const BOX_ID2 = '1234';
   let $scope, io, tested, boxes, $mdToast, $mdDialog, $mdMedia, $location, box;
-  beforeEach(inject(($controller) => {
-    box = { data: { contents: [], id: BOX_ID} };
-    $mdMedia = () => {};
-    $mdToast = new MdToast();
-    $location = { path: sinon.stub()};
-    $mdDialog = { show: sinon.stub() };
-    boxes = [box.data, { contents: [], id: BOX_ID2} ];
-    $scope = {
-      $apply: () => {},
-      $watch: () => {}
-    };
-    io = require('../test/io')();
-    tested = $controller(ctrlTest, {
-      $location, $scope, io, $mdDialog, $mdMedia, $mdToast, errorHandler
-    }, {boxes, selected: {selectedBox: box, onscroll: () => ({})}});
-    tested.prefs = {defaultBoxVisibility: 'listed', defaultPokemonVisibility: 'private'};
-    io.socket.postAsync = sinon.stub();
-  }));
+  beforeEach(() => {
+    angular.mock.module(function($compileProvider) {
+      $compileProvider.preAssignBindingsEnabled(true);
+    });
+
+    inject(($controller) => {
+      box = { data: { contents: [], id: BOX_ID} };
+      $mdMedia = () => {};
+      $mdToast = new MdToast();
+      $location = { path: sinon.stub()};
+      $mdDialog = { show: sinon.stub() };
+      boxes = [box.data, { contents: [], id: BOX_ID2} ];
+      $scope = {
+        $apply: () => {},
+        $watch: () => {}
+      };
+      io = require('../test/io')();
+      tested = $controller(ctrlTest, {
+        $location, $scope, io, $mdDialog, $mdMedia, $mdToast, errorHandler
+      }, {boxes, selected: {selectedBox: box, onscroll: () => ({})}});
+      tested.prefs = {defaultBoxVisibility: 'listed', defaultPokemonVisibility: 'private'};
+      io.socket.postAsync = sinon.stub();
+    });
+  });
 
   describe('controller.addBox', () => {
     it('calls io.socket.postAsync', () => {

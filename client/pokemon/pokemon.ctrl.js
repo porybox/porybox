@@ -31,18 +31,7 @@ module.exports = class Pokemon {
       this.errorStatusCode = err.statusCode;
     }).then(() => this.$scope.$apply());
   }
-  parseCardViewProps () {
-    this.parsedOt = replace3dsUnicodeChars(this.data.ot);
-
-    this.hasPentagon = this.data.otGameId >= 24 && this.data.otGameId <= 29;
-    this.hasClover = this.data.otGameId >= 30 && this.data.otGameId <= 33;
-    this.hasGameBoy = this.data.otGameId >= 35 && this.data.otGameId <= 38;
-
-    const tidSize = this.hasClover ? 6 : 5;
-    this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
-    this.paddedEsv = this.data.esv.toString().padStart(4, '0');
-    this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
-
+  parseIconViewProps () {
     const shinyString = this.data.isShiny ? 'shiny' : 'regular';
     const genderDiff = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
       ? '-f'
@@ -55,9 +44,12 @@ module.exports = class Pokemon {
     this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${genderDiff || formSuffix}`;
   }
   parseBoxViewProps () {
-    this.parseCardViewProps();
+    this.parseIconViewProps();
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
-    const tidSize = this.data.gen === 7 ? 6 : 5;
+    this.hasPentagon = this.data.otGameId >= 24 && this.data.otGameId <= 29;
+    this.hasClover = this.data.otGameId >= 30 && this.data.otGameId <= 33;
+    this.hasGameBoy = this.data.otGameId >= 35 && this.data.otGameId <= 38;
+    const tidSize = this.hasClover ? 6 : 5;
     this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);

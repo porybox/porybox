@@ -5,6 +5,7 @@ import {throttle} from 'lodash';
 const POKEMON_FIELDS_FOR_CARD = [
   'dexNo',
   'formId',
+  'isEgg',
   'gender'
 ];
 const POKEMON_FIELDS_USED = [
@@ -53,7 +54,9 @@ module.exports = class Box {
     this.data = this.data || {contents: []};
     this.id = $routeParams.boxid || this.data.id;
     this.selected = this.selected || ($scope.$parent.main ? $scope.$parent.main.selected : {});
-    this.selected.selectedBox = this;
+    if ($routeParams.boxid) {
+      this.selected.selectedBox = this;
+    }
     this.errorStatusCode = null;
     this.indexInMain = null;
     this.isDeleted = false;
@@ -89,8 +92,6 @@ module.exports = class Box {
       `/api/v1/box/${this.id}?pokemonFields=${POKEMON_FIELDS_FOR_CARD}`
     ).then(data => {
       Object.assign(this.data, data);
-    }).catch(err => {
-      this.errorStatusCode = err.statusCode;
     }).then(() => this.$scope.$apply());
   }
   fetchMore () {
