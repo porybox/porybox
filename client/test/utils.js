@@ -1,3 +1,5 @@
 module.exports = {
-  promise: (data) => Promise.resolve().then(() => (data))
+  promise: (data) => Promise.resolve().then(() => (data)),
+
+  blankPromise: () => new Promise(() => {})
 };

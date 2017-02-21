@@ -19,85 +19,111 @@ module.exports = class Add {
     this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
   }
-  box (event) {
-    const useFullScreen
-      = (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
+
+  useFullScreen() {
+    return (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
+  }
+
+  watchFullScreen() {
     this.$scope.$watch(() => {
       return this.$mdMedia('xs') || this.$mdMedia('sm');
     }, wantsFullScreen => {
       this.$scope.customFullscreen = (wantsFullScreen === true);
     });
+  }
+
+  dialog(controller, view, locals, event) {
     return Promise.resolve(this.$mdDialog.show({
-      controller: ['$mdDialog', boxCtrl],
+      controller: controller,
       controllerAs: 'dialog',
-      templateUrl: 'add/box.view.html',
+      templateUrl: view,
       parent: angular.element(document.body),
       targetEvent: event,
       clickOutsideToClose: true,
-      fullscreen: useFullScreen,
+      fullscreen: this.useFullScreen(),
       bindToController: true,
-      locals: {
-        defaultBoxVisibility: this.prefs.defaultBoxVisibility
-      }
-    })).then((boxInfo) => this.io.socket.postAsync('/api/v1/box', boxInfo))
+      locals
+    }));
+  }
+
+  toast(message, action) {
+    const toast = this.$mdToast
+      .simple()
+      .position('bottom right')
+      .hideDelay(4000)
+      .textContent(message)
+      .action(action);
+    return this.$mdToast.show(toast);
+  }
+
+  toastNoHide(message, action) {
+    return this.$mdToast
+      .simple()
+      .position('bottom right')
+      .hideDelay(false)
+      .textContent(message)
+      .action(action);
+  }
+
+  addedToast(message, action, location) {
+    this.toast(message, action)
+      .then(checkOk)
+      .then(() => this.$location.path(location))
+      .catch(this.errorHandler);
+  }
+
+  box (event) {
+    this.watchFullScreen();
+    const locals = {
+      defaultBoxVisibility: this.prefs.defaultBoxVisibility
+    };
+    return this.dialog(['$mdDialog', boxCtrl], 'add/box.view.html', locals, event)
+      .then(boxInfo => {
+        const toast = this.toastNoHide('Creating box');
+        return Promise.any([
+          this.$mdToast.show(toast),
+          this.io.socket.postAsync('/api/v1/box', boxInfo)
+        ]).tap(() => this.$mdToast.hide(toast));
+      })
       .tap(box => {
-        const toast = this.$mdToast
-          .simple()
-          .position('bottom right')
-          .hideDelay(4000)
-          .textContent(`Box '${box.name}' created successfully`)
-          .action('View');
-        this.$mdToast.show(toast).then(response => {
-          if (response === 'ok') this.$location.path(`box/${box.id}`);
-        });
+        this.addedToast(`Box '${box.name}' created successfully`, 'View', `box/${box.id}`);
       })
       .then(res => this.$scope.$apply(this.boxes.push(res)))
       .catch(this.errorHandler);
   }
+
   pokemon (event) {
-    const useFullScreen
-      = (this.$mdMedia('sm') || this.$mdMedia('xs')) && this.$scope.customFullscreen;
+    this.watchFullScreen();
     const box = this.selected.selectedBox;
-    return Promise.resolve(this.$mdDialog.show({
-      controller: ['$mdDialog', '$routeParams', pokemonCtrl],
-      controllerAs: 'pkmDialog',
-      templateUrl: 'add/pokemon.view.html',
-      parent: angular.element(document.body),
-      targetEvent: event,
-      clickOutsideToClose: true,
-      fullscreen: useFullScreen,
-      bindToController: true,
-      locals: {
-        boxes: this.boxes,
-        defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
-      }
-    })).map(Promise.props)
+    const locals = {
+      boxes: this.boxes,
+      defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
+    };
+    return this
+      .dialog(['$mdDialog', '$routeParams', pokemonCtrl], 'add/pokemon.view.html', locals, event)
+      .map(Promise.props)
       .map(line => ({data: line.data, box: line.box, visibility: line.visibility, gen: line.gen}))
-      .map(line => line.data.map(data => ({data, box: line.box, visibility: line.visibility, gen: line.gen})))
+      .map(line => line.data.map(data => (
+        {data, box: line.box, visibility: line.visibility, gen: line.gen}
+      )))
       .then(flatten)
       .then(chunk(MAX_MULTI_UPLOAD_SIZE))
-      .mapSeries(files => this.io.socket.postAsync('/api/v1/pokemon/multi', {files}))
+      .mapSeries(files => {
+        const toast = this.toastNoHide('Uploading Pokémon');
+        return Promise.any([
+          this.$mdToast.show(toast),
+          this.io.socket.postAsync('/api/v1/pokemon/multi', {files})
+        ]).tap(() => this.$mdToast.hide(toast));
+      })
       .then(flatten)
       .tap(lines => {
         const successfulUploads = lines.filter(line => line.success);
-        const successfulUploadCount = successfulUploads.length;
-        const failedUploadCount = lines.length - successfulUploads.length;
-        const toast = this.$mdToast.simple().position('bottom right').hideDelay(4000);
-        if (successfulUploadCount === lines.length) {
-          toast.textContent(`${successfulUploads.length} Pokémon uploaded successfully`);
-        } else if (successfulUploadCount === 0) {
-          toast.textContent('Upload failed; no Pokémon uploaded');
-        } else {
-          toast.textContent(
-            `${successfulUploadCount} Pokémon uploaded successfully (${failedUploadCount} failed)`
-          );
-        }
-        if (successfulUploadCount === 1) {
-          toast.action('View');
-        }
-        this.$mdToast.show(toast).then(response => {
-          if (response === 'ok') this.$location.path(`pokemon/${successfulUploads[0].created.id}`);
-        });
+        const toastMessage = getPokemonMessage(lines, successfulUploads);
+        const toastAction = successfulUploads.length === 1 ? 'View' : undefined;
+        this.addedToast(
+          toastMessage,
+           toastAction,
+           toastAction ? `pokemon/${successfulUploads[0].created.id}` : undefined);
       })
       .filter(line => line.success && line.created.box === box.data.id)
       .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE)))
@@ -106,5 +132,23 @@ module.exports = class Add {
       .tap(box.onscroll)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
+  }
+};
+
+const getPokemonMessage = (lines, successfulUploads) => {
+  const failedUploadCount = lines.length - successfulUploads.length;
+  const successfulUploadCount = successfulUploads.length;
+  if (successfulUploadCount === lines.length) {
+    return `${successfulUploads.length} Pokémon uploaded successfully`;
+  } else if (successfulUploadCount === 0) {
+    return 'Upload failed; no Pokémon uploaded';
+  } else {
+    return `${successfulUploadCount} Pokémon uploaded successfully (${failedUploadCount} failed)`;
+  }
+};
+
+const checkOk = (response) => {
+  if (response !== 'ok') {
+    return Promise.reject();
   }
 };
