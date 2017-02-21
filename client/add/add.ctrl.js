@@ -39,7 +39,7 @@ module.exports = class Add {
       locals: {
         defaultBoxVisibility: this.prefs.defaultBoxVisibility
       }
-    }).then((boxInfo) => this.io.socket.postAsync('/api/v1/box', boxInfo)))
+    })).then((boxInfo) => this.io.socket.postAsync('/api/v1/box', boxInfo))
       .tap(box => {
         const toast = this.$mdToast
           .simple()
