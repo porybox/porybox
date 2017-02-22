@@ -123,10 +123,27 @@ module.exports = class Add {
            toastAction,
            toastAction ? `/pokemon/${successfulUploads[0].created.id}` : undefined);
       })
-      .filter(line => line.success && line.created.box === box.data.id)
-      .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE)))
+      .filter(line => line.success)
       .map(line => line.created)
-      .then(lines => box.data.contents.push(...lines))
+      .reduce((overall, line) => {
+        if (overall[line.box]) {
+          overall[line.box].push(line);
+        } else {
+          overall[line.box] = [line];
+        }
+        return overall;
+      }, {})
+      .then(lines => {
+        Object.keys(lines).forEach(
+          (line) => line.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE))
+        );
+        return lines;
+      })
+      .then(lines => this.boxes.forEach((box) => {
+        if (lines[box.id]) {
+          box.contents.push(...lines[box.id]);
+        }
+      }))
       .tap(box.onscroll)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());

@@ -9,6 +9,7 @@ Promise.config({warnings: false});
 describe('AddCtrl', () => {
   const errorHandler = (err) => err && console.log(err);
   const BOX_ID = 123;
+  const BOX_ID2 = 1234;
   let $scope, io, tested, boxes, $mdToast, $mdDialog, $mdMedia, $location, box;
   beforeEach(inject(($controller) => {
     box = { data: { contents: [], id: BOX_ID} };
@@ -16,7 +17,7 @@ describe('AddCtrl', () => {
     $mdToast = new MdToast();
     $location = { path: sinon.stub()};
     $mdDialog = { show: sinon.stub() };
-    boxes = [];
+    boxes = [box.data, { contents: [], id: BOX_ID2} ];
     $scope = {
       $apply: () => {},
       $watch: () => {}
@@ -94,10 +95,10 @@ describe('AddCtrl', () => {
     });
 
     it('adds box to list of boxes', () => {
-      boxes.push({});
+      expect(boxes.length).to.equal(2);
       $mdDialog.show.returns(utils.promise({name: 'name', description: 'description'}));
       io.socket.postAsync.returns(utils.promise({}));
-      return tested.box().then(() => expect(boxes.length).to.equal(2));
+      return tested.box().then(() => expect(boxes.length).to.equal(3));
     });
   });
 
@@ -210,6 +211,14 @@ describe('AddCtrl', () => {
       io.socket.postAsync.returns(utils.promise([{success: true, created: {box: BOX_ID + 1}}]));
       return tested.pokemon().then(() => {
         expect(box.data.contents.length).to.equal(0);
+      });
+    });
+
+    it('adds pokemon to correct box if uploaded to different box', () => {
+      $mdDialog.show.returns(utils.promise([{data: [{}]}]));
+      io.socket.postAsync.returns(utils.promise([{success: true, created: {box: BOX_ID2}}]));
+      return tested.pokemon().then(() => {
+        expect(boxes[1].contents.length).to.equal(1);
       });
     });
 
