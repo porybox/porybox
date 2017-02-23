@@ -3,8 +3,6 @@ const sails = require('sails');
 
 before(function(done) {
 
-  // Increase the Mocha timeout so that Sails has enough time to lift.
-  this.timeout(10000);
   require('babel-register')();
 
   sails.lift({
