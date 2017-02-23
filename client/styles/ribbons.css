@@ -197,3 +197,19 @@
 .ribbon.toughness-master-ribbon {
     background-position: -280px -200px;
 }
+
+.ribbon.alola-champion-ribbon {
+    background-position: 0 -240px;
+}
+
+.ribbon.battle-royal-master-ribbon {
+    background-position: -40px -240px;
+}
+
+.ribbon.battle-tree-great-ribbon {
+    background-position: -80px -240px;
+}
+
+.ribbon.battle-tree-master-ribbon {
+    background-position: -120px -240px;
+}
