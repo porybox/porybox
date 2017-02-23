@@ -80,13 +80,12 @@ module.exports = class Add {
     return this.dialog(['$mdDialog', boxCtrl], 'add/box.view.html', locals, event)
       .then(boxInfo => {
         const toast = this.toastNoHide('Creating box');
-        return Promise.any([
-          this.$mdToast.show(toast),
-          this.io.socket.postAsync('/api/v1/box', boxInfo)
-        ]).tap(() => this.$mdToast.hide(toast));
+        this.$mdToast.show(toast);
+        return this.io.socket.postAsync('/api/v1/box', boxInfo)
+          .finally(() => this.$mdToast.hide(toast));
       })
       .tap(box => {
-        this.addedToast(`Box '${box.name}' created successfully`, 'View', `box/${box.id}`);
+        this.addedToast(`Box '${box.name}' created successfully`, 'View', `/box/${box.id}`);
       })
       .then(res => this.$scope.$apply(this.boxes.push(res)))
       .catch(this.errorHandler);
@@ -110,10 +109,9 @@ module.exports = class Add {
       .then(chunk(MAX_MULTI_UPLOAD_SIZE))
       .mapSeries(files => {
         const toast = this.toastNoHide('Uploading Pokémon');
-        return Promise.any([
-          this.$mdToast.show(toast),
-          this.io.socket.postAsync('/api/v1/pokemon/multi', {files})
-        ]).tap(() => this.$mdToast.hide(toast));
+        this.$mdToast.show(toast);
+        return this.io.socket.postAsync('/api/v1/pokemon/multi', {files})
+          .finally(() => this.$mdToast.hide(toast));
       })
       .then(flatten)
       .tap(lines => {
@@ -123,7 +121,7 @@ module.exports = class Add {
         this.addedToast(
           toastMessage,
            toastAction,
-           toastAction ? `pokemon/${successfulUploads[0].created.id}` : undefined);
+           toastAction ? `/pokemon/${successfulUploads[0].created.id}` : undefined);
       })
       .filter(line => line.success && line.created.box === box.data.id)
       .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE)))
