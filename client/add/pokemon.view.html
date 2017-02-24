@@ -1,10 +1,10 @@
-<md-dialog aria-label="Add new box" ng-cloak>
+<md-dialog aria-label="Add new box">
   <form name="addPK6">
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>Upload Pokémon</h2>
         <span flex></span>
-        <md-button class="md-icon-button" ng-click="pkmDialog.cancel()">
+        <md-button class="md-icon-button" ng-click="dialog.cancel()">
           <i class="material-icons">close</i>
         </md-button>
       </div>
@@ -18,11 +18,11 @@
         </div>
         <div layout="row">
           <span flex></span>
-          <div ngf-drop ngf-select ng-model="pkmDialog.draggedFiles" class="drop-box"
+          <div ngf-drop ngf-select ng-model="dialog.draggedFiles" class="drop-box"
               ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
               ngf-multiple="true" ngf-allow-dir="true" ngf-capture="'other'"
-              ngf-change="pkmDialog.addFiles(pkmDialog.draggedFiles)"
-              ngf-validate-fn="pkmDialog.fileIsValid($file)"
+              ngf-change="dialog.addFiles(dialog.draggedFiles)"
+              ngf-validate-fn="dialog.fileIsValid($file)"
               ngf-pattern="'.pk6,.pk7,.pkx,main'">Drop file/directory here</div>
           <span flex></span>
         </div>
@@ -31,22 +31,22 @@
           <span flex></span>
           <div flex="50">
             Or select a .pk6, .pk7 or decrypted save file:
-            <input type="file" ngf-select ng-model="pkmDialog.manualFiles" name="file"
-                ngf-max-size="2MB" ng-change="pkmDialog.addFiles(pkmDialog.manualFiles)" multiple
-                ngf-validate-fn="pkmDialog.fileIsValid($file)">
+            <input type="file" ngf-select ng-model="dialog.manualFiles" name="file"
+                ngf-max-size="2MB" ng-change="dialog.addFiles(dialog.manualFiles)" multiple
+                ngf-validate-fn="dialog.fileIsValid($file)">
           </div>
           <span flex></span>
         </div>
         <span flex></span>
         <md-divider></md-divider>
-        <div layout="row" ng-repeat="line in pkmDialog.lines">
+        <div layout="row" ng-repeat="line in dialog.lines">
           <md-input-container class="md-block">
             <input type="text" ng-model="line.filename" aria-label="File name" disabled> </input>
           </md-input-container>
           <md-input-container class="md-block">
             <label>Visibility</label>
             <md-select ng-model="line.visibility" name="visibility">
-              <md-option ng-value="visibility" ng-repeat="visibility in pkmDialog.visibilities">
+              <md-option ng-value="visibility" ng-repeat="visibility in dialog.visibilities">
                     <i ng-if="visibility === 'private'" class="material-icons small" title="Private">lock</i>
                     <i ng-if="visibility === 'viewable'" class="material-icons small" title="Viewable">visibility</i>
                     <i ng-if="visibility === 'public'" class="material-icons small" title="Public">public</i>
@@ -57,14 +57,14 @@
           <md-input-container class="md-block">
             <label>Box</label>
             <md-select ng-model="line.box" name="box">
-              <md-option ng-value="box.id" ng-repeat="box in pkmDialog.boxes">{{ box.name }}</md-option>
+              <md-option ng-value="box.id" ng-repeat="box in dialog.boxes">{{ box.name }}</md-option>
             </md-select>
           </md-input-container>
         </div>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="column">
-      <div layout="row" layout-padding layout-wrap ng-if="pkmDialog.hasPublicPokemon()">
+      <div layout="row" layout-padding layout-wrap ng-if="dialog.hasPublicPokemon()">
           <div md-whiteframe="1" class="padded warning">
               You have selected Public. Public Pokémon can be downloaded and copied by anyone.
           </div>
@@ -72,10 +72,10 @@
       <md-dialog-actions layout="column">
         <div>
           <span flex></span>
-          <md-button class="md-primary md-raised" ng-click="pkmDialog.cancel()">
+          <md-button class="md-primary md-raised" ng-click="dialog.cancel()">
            Cancel
           </md-button>
-          <md-button class="md-primary md-raised" ng-click="pkmDialog.answer()" ng-disabled="!pkmDialog.canAdd() || !pkmDialog.lines.length" type="submit">
+          <md-button class="md-primary md-raised" ng-click="dialog.answer()" ng-disabled="!dialog.canAdd() || !dialog.lines.length" type="submit">
             Upload
           </md-button>
         </div>
