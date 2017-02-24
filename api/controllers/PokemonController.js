@@ -33,7 +33,7 @@ module.exports = _.mapValues({
   },
 
   /**
-  * POST /pk6/multi
+  * POST /pokemon/multi
   * @param {Array} files
   * `files` must be an array of up to 50 elements, in the following format:
   * [
@@ -180,7 +180,8 @@ module.exports = _.mapValues({
     if (pokemon.visibility !== 'public' && !userIsOwner && !userIsAdmin) {
       return res.forbidden();
     }
-    res.attachment(`${pokemon.nickname}-${pokemon.id}.pk6`);
+    const extension = pokemon.gen === 7 ? 'pk7' : 'pk6';
+    res.attachment(`${pokemon.nickname}-${pokemon.id}.${extension}`);
     res.status(200).send(Buffer.from(pokemon._rawFile || pokemon._rawPk6, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
       await pokemon.incrementDownloadCount();
