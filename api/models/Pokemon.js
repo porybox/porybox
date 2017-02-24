@@ -202,7 +202,7 @@ const attributes = {
     });
   },
   assignParsedNames () {
-    return pkparse.assignReadableNames(this, this.language, {gen: this.gen});
+    return pkparse.assignReadableNames(this, null, {gen: this.gen});
   }
 };
 
