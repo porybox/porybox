@@ -42,7 +42,7 @@
     "sails.io.js": "1.1.5",
     "socket.io-client": "1.7.3",
     "uglify-js": "2.7.5",
-    "validator": "6.2.1"
+    "validator": "7.0.0"
   },
   "scripts": {
     "build": "npm run bundle && npm run minify",
