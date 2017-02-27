@@ -9,7 +9,7 @@
     "angular-animate": "1.6.2",
     "angular-aria": "1.6.2",
     "angular-marked": "1.2.2",
-    "angular-material": "1.1.3",
+    "angular-material": "1.1.2",
     "angular-messages": "1.6.2",
     "angular-route": "1.6.2",
     "angular-sortable-views": "0.1.0",
@@ -35,14 +35,14 @@
     "passport": "0.3.2",
     "passport-http-bearer": "1.0.1",
     "passport-local": "1.0.0",
-    "pkparse": "1.1.0",
+    "pkparse": "1.1.1",
     "sails": "0.12.11",
     "sails-hook-winston": "1.1.0",
     "sails-mongo": "0.12.2",
     "sails.io.js": "1.1.5",
     "socket.io-client": "1.7.3",
     "uglify-js": "2.7.5",
-    "validator": "6.2.1"
+    "validator": "7.0.0"
   },
   "scripts": {
     "build": "npm run bundle && npm run minify",
