@@ -4,6 +4,7 @@ const attributes = {
   dexNo: {},
   heldItemId: {},
   tid: {},
+  tidFull: {},
   idNo: {},
   sid: {},
   exp: {},
