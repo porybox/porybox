@@ -108,10 +108,10 @@
                       ng-class="{'marked': pokemon.data.hasDiamondMarking, 'blue': pokemon.data.hasBlueDiamondMarking, 'pink': pokemon.data.hasPinkDiamondMarking}" style="margin-left:-1px;margin-top:-1px;"></md-icon>
                   </span>
                   <span style="margin-left:10px;">
-                    <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="pokemon-shiny" title="Shiny"></md-icon>
-                    <md-icon ng-if="pokemon.isKB" md-svg-icon="/img/icons/kb.svg" aria-label="pentagon" class="pokemon-kb" title="Originated from Gen 6"></md-icon>
-                    <md-icon ng-if="pokemon.isAB" md-svg-icon="/img/icons/ab.svg" aria-label="cross" class="pokemon-ab" title="Originated from Gen 7"></md-icon>
-                    <md-icon ng-if="pokemon.isVC" md-svg-icon="/img/icons/vc.svg" aria-label="gb" class="pokemon-vc" title="Originated from Gen 1 VC"></md-icon>
+                    <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="icon-shiny" title="Shiny"></md-icon>
+                    <md-icon ng-if="pokemon.hasPentagon" md-svg-icon="/img/icons/pentagon.svg" aria-label="pentagon" class="icon-pentagon" title="Originated from Gen 6"></md-icon>
+                    <md-icon ng-if="pokemon.hasClover" md-svg-icon="/img/icons/clover.svg" aria-label="clover" class="icon-clover" title="Originated from Gen 7"></md-icon>
+                    <md-icon ng-if="pokemon.hasGameBoy" md-svg-icon="/img/icons/gameboy.svg" aria-label="gameboy" class="icon-gameboy" title="Originated from Gen 1 VC"></md-icon>
                     <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration > 0" aria-title="Infected with Pokérus" class="pokerus" style="font-size:10px;">PKRS</span>
                     <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration === 0" aria-title="Cured Pokérus">
                       <md-icon md-svg-icon="/img/icons/pkrs_cured.svg" style="width: 9px;"></md-icon>
@@ -156,10 +156,10 @@
                 </div>
                 <div layout="row" layout-align="center">
                   <span flex title="Trainer ID Number"><strong>ID No.</strong> {{pokemon.paddedTid}}</span>
-                  <span flex ng-if="pokemon.isKB || pokemon.isAB" title="Trainer Shiny Value"><strong>TSV</strong> {{pokemon.paddedTsv}}</span>
+                  <span flex ng-if="pokemon.hasPentagon || pokemon.hasClover" title="Trainer Shiny Value"><strong>TSV</strong> {{pokemon.paddedTsv}}</span>
                 </div>
-                <div title="Secret ID" ng-if="!(pokemon.isAB || pokemon.isVC)"><strong>SID</strong> {{pokemon.paddedSid}}</div>
-                <div title="Full Trainer ID" ng-if="pokemon.isAB"><strong>Full TID</strong> {{pokemon.tidFull}}</div>
+                <div title="Secret ID" ng-if="!(pokemon.hasClover || pokemon.hasGameBoy)"><strong>SID</strong> {{pokemon.paddedSid}}</div>
+                <div title="Full Trainer ID" ng-if="pokemon.hasClover"><strong>Full TID</strong> {{pokemon.tidFull}}</div>
               </md-card-content>
             </md-card>
           </div>

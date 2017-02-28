@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   id="svg3122"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="vc.svg">
+  <defs
+     id="defs3124" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.197802"
+     inkscape:cx="-5.289604"
+     inkscape:cy="15.207921"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3127">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,8)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       d="m 2.4,-8 0,24 19.200001,0 0,-24 L 2.4,-8 Z m 2.325,2.4000002 14.4,0 0,9.6750003 -14.4,0 0,-9.6750003 z M 18.075001,6.1000007 c 0.73992,0 1.349999,0.6670325 1.349999,1.4250013 0,0.7579664 -0.610079,1.3499975 -1.349999,1.3499975 -0.739919,0 -1.274998,-0.5920311 -1.274998,-1.3499975 0,-0.7579688 0.535079,-1.4250013 1.274998,-1.4250013 z M 4.8,6.4750006 l 4.8750003,0 0,4.7999994 -4.8750003,0 0,-4.7999994 z m 10.725,2.0999998 c 0.776016,0 1.350002,0.6670316 1.350002,1.4249995 0,0.7579661 -0.573986,1.3500001 -1.350002,1.3500001 -0.776014,0 -1.424999,-0.592034 -1.424999,-1.3500001 0,-0.7579679 0.648985,-1.4249995 1.424999,-1.4249995 z"
+       id="rect3001" />
+  </g>
+</svg>
