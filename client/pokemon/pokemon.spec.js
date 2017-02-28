@@ -43,67 +43,67 @@ describe('PokemonCtrl', function() {
 
     it('are correctly instantiated when not provided at construction', function() {
       $routeParams.pokemonid = 'routeParamId';
-      tested = $controller(ctrlTest, deps, {data: {tid: 1, sid: 1, esv: 1, tsv: 1}});
+      tested = $controller(ctrlTest, deps, {data: {tid: 1, sid: 1, esv: 1, tsv: 1, dexNo: 1}});
       tested.parseAllProps();
       expect(tested.id).to.equal('routeParamId');
-      expect(Object.keys(tested.data).length).to.equal(4);
+      expect(Object.keys(tested.data).length).to.equal(5);
     });
 
     it("pads a Pokémon's TID correctly", function() {
       const tested1 = $controller(ctrlTest, deps,
-        {data: {tid: 12345, sid: 1, esv: 1, tsv: 1}});
+        {data: {dexNo: 1, tid: 12345, sid: 1, esv: 1, tsv: 1}});
       tested1.parseAllProps();
       expect(tested1.paddedTid).to.equal('12345');
       const tested2 = $controller(ctrlTest, deps,
-        {data: {tid: 1234, sid: 1, esv: 1, tsv: 1}});
+        {data: {dexNo: 1, tid: 1234, sid: 1, esv: 1, tsv: 1}});
       tested2.parseAllProps();
       expect(tested2.paddedTid).to.equal('01234');
       const tested3 = $controller(ctrlTest, deps,
-        {data: {tid: 123, sid: 1, esv: 1, tsv: 1}});
+        {data: {dexNo: 1, tid: 123, sid: 1, esv: 1, tsv: 1}});
       tested3.parseAllProps();
       expect(tested3.paddedTid).to.equal('00123');
       const tested4 = $controller(ctrlTest, deps,
-        {data: {tid: 12, sid: 1, esv: 1, tsv: 1}});
+        {data: {dexNo: 1, tid: 12, sid: 1, esv: 1, tsv: 1}});
       tested4.parseAllProps();
       expect(tested4.paddedTid).to.equal('00012');
       const tested5 = $controller(ctrlTest, deps,
-        {data: {tid: 1, sid: 1, esv: 1, tsv: 1}});
+        {data: {dexNo: 1, tid: 1, sid: 1, esv: 1, tsv: 1}});
       tested5.parseAllProps();
       expect(tested5.paddedTid).to.equal('00001');
       const tested6 = $controller(ctrlTest, deps,
-        {data: {tid: 0, sid: 1, esv: 1, tsv: 1}});
+        {data: {dexNo: 1, tid: 0, sid: 1, esv: 1, tsv: 1}});
       tested6.parseAllProps();
       expect(tested6.paddedTid).to.equal('00000');
       const tested7 = $controller(ctrlTest, deps,
-        {data: {tid: 5, sid: 1, esv: 1, tsv: 1, gen: 6}});
+        {data: {dexNo: 1, tid: 5, sid: 1, esv: 1, tsv: 1, gen: 6}});
       tested7.parseAllProps();
       expect(tested7.paddedTid).to.equal('00005');
       const tested8 = $controller(ctrlTest, deps,
-        {data: {tid: 5, sid: 1, esv: 1, tsv: 1, gen: 7, otGameId: 30}});
+        {data: {dexNo: 1, tid: 5, sid: 1, esv: 1, tsv: 1, gen: 7, otGameId: 30}});
       tested8.parseAllProps();
       expect(tested8.paddedTid).to.equal('000005');
       const tested9 = $controller(ctrlTest, deps,
-        {data: {tid: 5, sid: 1, esv: 1, tsv: 1, gen: 7, otGameId: 24}});
+        {data: {dexNo: 1, tid: 5, sid: 1, esv: 1, tsv: 1, gen: 7, otGameId: 24}});
       tested9.parseAllProps();
       expect(tested9.paddedTid).to.equal('00005');
     });
   });
   it('parses unicode characters correctly', function() {
     const dangerbug = $controller(ctrlTest, deps,
-      {data: {tid: 12345, sid: 1, esv: 1, tsv: 1, ot: 'Filthy'}});
+      {data: {dexNo: 1, tid: 12345, sid: 1, esv: 1, tsv: 1, ot: 'Filthy'}});
     dangerbug.parseAllProps();
     expect(dangerbug.parsedOt).to.equal('♥︎Filthy♥︎');
   });
   describe('appends form names and gender differences correctly', () => {
     it('with form names', () => {
       const pkmn = $controller(ctrlTest, deps, {data: {
+        dexNo: 1,
         tid: 1,
         sid: 1,
         esv: 1,
         tsv: 1,
         formId: 1,
         isShiny: false,
-        dexNo: 1
       }});
       pkmn.parseBoxViewProps();
       expect(pkmn.spriteUrl).to.equal('pokemon/regular/1-1');
@@ -123,7 +123,8 @@ describe('PokemonCtrl', function() {
       expect(pkmn.spriteUrl).to.equal('pokemon/regular/3-f');
       expect(pkmn.spriteClass).to.equal('spr-regular spr-box-3-f');
     });
-    it('with form names and gender differences', () => {
+    it('parses a Pokémon by solely its form when each form is exclusive to a given gender' +
+       '(e.g. Meowstic)', () => {
       const pkmn = $controller(ctrlTest, deps, {data: {
         tid: 1,
         sid: 1,
@@ -135,8 +136,36 @@ describe('PokemonCtrl', function() {
         formId: 1
       }});
       pkmn.parseBoxViewProps();
-      expect(pkmn.spriteUrl).to.equal('pokemon/regular/678-f');
-      expect(pkmn.spriteClass).to.equal('spr-regular spr-box-678-f');
+      expect(pkmn.spriteUrl).to.equal('pokemon/regular/678-1');
+      expect(pkmn.spriteClass).to.equal('spr-regular spr-box-678-1');
+    });
+    it('with multiple forms, only some of which have gender differences (e.g. Raichu)', () => {
+      const tested1 = $controller(ctrlTest, deps, {data: {
+        tid: 1,
+        sid: 1,
+        esv: 1,
+        tsv: 1,
+        isShiny: false,
+        dexNo: 26,
+        gender: 'F',
+        formId: 0
+      }});
+      tested1.parseBoxViewProps();
+      expect(tested1.spriteUrl).to.equal('pokemon/regular/26-f');
+      expect(tested1.spriteClass).to.equal('spr-regular spr-box-26-f');
+      const tested2 = $controller(ctrlTest, deps, {data: {
+        tid: 1,
+        sid: 1,
+        esv: 1,
+        tsv: 1,
+        isShiny: false,
+        dexNo: 26,
+        gender: 'F',
+        formId: 1
+      }});
+      tested2.parseBoxViewProps();
+      expect(tested2.spriteUrl).to.equal('pokemon/regular/26-1');
+      expect(tested2.spriteClass).to.equal('spr-regular spr-box-26-1');
     });
   });
 });
