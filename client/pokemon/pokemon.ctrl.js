@@ -34,11 +34,11 @@ module.exports = class Pokemon {
   parseBoxViewProps () {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
 
-    this.isKB = this.data.otGameId >= 24 && this.data.otGameId <= 29;
-    this.isAB = this.data.otGameId >= 30 && this.data.otGameId <= 33;
-    this.isVC = this.data.otGameId >= 35 && this.data.otGameId <= 38;
+    this.hasPentagon = this.data.otGameId >= 24 && this.data.otGameId <= 29;
+    this.hasClover = this.data.otGameId >= 30 && this.data.otGameId <= 33;
+    this.hasGameBoy = this.data.otGameId >= 35 && this.data.otGameId <= 38;
 
-    const tidSize = this.isAB ? 6 : 5;
+    const tidSize = this.hasClover ? 6 : 5;
     this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
