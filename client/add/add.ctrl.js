@@ -4,7 +4,7 @@ const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
 import {MAX_MULTI_UPLOAD_SIZE, BOX_PAGE_SIZE} from '../../api/services/Constants.js';
 import {chunk, flatten} from 'lodash/fp';
-import {keyBy, mapValues, noop} from 'lodash';
+import {keyBy, noop} from 'lodash';
 
 /**
  * A small controller to explain the syntax we will be using
@@ -89,16 +89,15 @@ module.exports = class Add {
       .tap(box => {
         this.addedToast(`Box '${box.name}' created successfully`, 'View', `/box/${box.id}`);
       })
-      .tap(box => this.$scope.$apply(this.boxes.push(box)))
-      .then(box => this.$scope.$apply(this.boxesById[box.id].push(box)))
-      .catch(this.errorHandler);
+      .tap(box => this.boxes.push(box))
+      .then(box => this.boxesById[box.id] = box)
+      .catch(this.errorHandler)
+      .then(() => this.$scope.$apply());
   }
 
   pokemon (event) {
     this.watchFullScreen();
-    const box = this.selected.selectedBox;
-    const boxCounts = mapValues(this.boxesById, (value) => value.contents.length);
-    const that = this;
+    const selectedBox = this.selected.selectedBox;
     const locals = {
       boxes: this.boxes,
       defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
@@ -130,14 +129,16 @@ module.exports = class Add {
       })
       .filter(line => line.success)
       .map(line => line.created)
-      .filter(line => boxCounts[line.box]++ < BOX_PAGE_SIZE)
       .each(line => {
-        that.boxesById[line.box].contents.push(line);
-        if (box && line.box === box.id) {
-          box.data.contents.push(line);
+        if (this.boxesById[line.box].contents.length % BOX_PAGE_SIZE) {
+          this.boxesById[line.box].contents.push(line);
+        }
+        if (selectedBox && line.box === selectedBox.id
+          && selectedBox.data.contents.length % BOX_PAGE_SIZE) {
+          selectedBox.data.contents.push(line);
         }
       })
-      .tap(box ? box.onscroll : noop)
+      .tap(selectedBox ? selectedBox.onscroll : noop)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
   }
