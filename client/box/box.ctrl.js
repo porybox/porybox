@@ -2,6 +2,12 @@ const editCtrl = require('./box-edit.ctrl.js');
 const angular = require('angular');
 import {throttle} from 'lodash';
 
+const POKEMON_FIELDS_FOR_CARD = [
+  'dexNo',
+  'formId',
+  'isEgg',
+  'gender'
+];
 const POKEMON_FIELDS_USED = [
   'abilityName',
   'abilityNum',
@@ -48,7 +54,9 @@ module.exports = class Box {
     this.data = this.data || {contents: []};
     this.id = $routeParams.boxid || this.data.id;
     this.selected = this.selected || ($scope.$parent.main ? $scope.$parent.main.selected : {});
-    this.selected.selectedBox = this;
+    if ($routeParams.boxid) {
+      this.selected.selectedBox = this;
+    }
     this.errorStatusCode = null;
     this.indexInMain = null;
     this.isDeleted = false;
@@ -78,6 +86,13 @@ module.exports = class Box {
     }).tap(() => this.isLoading = false)
       .tap(() => this.onscroll())
       .then(() => this.$scope.$apply());
+  }
+  fetchIcons () {
+    return this.io.socket.getAsync(
+      `/api/v1/box/${this.id}?pokemonFields=${POKEMON_FIELDS_FOR_CARD}`
+    ).then(data => {
+      Object.assign(this.data, data);
+    }).then(() => this.$scope.$apply());
   }
   fetchMore () {
     if (!this.data.contents.length) return Promise.resolve();

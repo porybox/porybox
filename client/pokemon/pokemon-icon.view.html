@@ -1,0 +1,4 @@
+<div class="icon-container" ng-init="pokemon.parseIconViewProps()" flex>
+  <span ng-if="::pokemon.data.isEgg" class="spr-box spr-box-egg"></span>
+  <span class="spr-box" ng-class="['spr-box', pokemon.spriteClass, {'pokemon-egg': pokemon.data.isEgg}]" ></span>
+</div>

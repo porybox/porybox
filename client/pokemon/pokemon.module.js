@@ -26,6 +26,15 @@ ng.module('porybox.pokemon', ['ngRoute'])
     templateUrl: 'pokemon/pokemon-card.view.html',
     controller: [...controllerDeps, pokemonController],
     controllerAs: 'pokemon'
+  }).component('pokemonIcon',
+  {
+    bindings: {
+      data: '=',
+      boxes: '='
+    },
+    templateUrl: 'pokemon/pokemon-icon.view.html',
+    controller: [...controllerDeps, pokemonController],
+    controllerAs: 'pokemon'
   }).config(['$routeProvider', function($routeProvider) {
     $routeProvider.
       when('/pokemon/:pokemonid', {
