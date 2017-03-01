@@ -4,11 +4,15 @@ import angular from 'angular';
 import editCtrl from './pokemon-edit.ctrl';
 const statIndex = {'Hp': 0, 'Atk': 1, 'Def': 2, 'SpAtk': 3, 'SpDef': 4, 'Spe': 5};
 const genderDifferences = new Set([
-  3, 12, 19, 20, 25, 26, 41, 42, 44, 45, 64, 65, 85, 97, 111, 112, 118, 119, 123, 129, 130, 154,
-  165, 166, 185, 186, 190, 194, 198, 202, 203, 207, 208, 212, 214, 215, 221, 224, 229, 232, 255,
-  256, 257, 267, 269, 272, 274, 275, 307, 308, 315, 316, 317, 322, 323, 332, 350, 369, 396, 397,
-  398, 399, 400, 401, 402, 405, 407, 415, 417, 419, 424, 443, 444, 445, 449, 450, 453, 454, 456,
-  457, 459, 460, 461, 464, 465, 473, 521, 592, 593, 668, 678
+  '3',   '12',  '19',  '20',  '25',  '26',  '41',  '42',  '44',  '45',
+  '64',  '65',  '85',  '97',  '111', '112', '118', '119', '123', '129',
+  '130', '154', '165', '166', '185', '186', '190', '194', '198', '202',
+  '203', '207', '208', '212', '214', '215', '221', '224', '229', '232',
+  '255', '256', '257', '267', '269', '272', '274', '275', '307', '308',
+  '315', '316', '317', '322', '323', '332', '350', '369', '396', '397',
+  '398', '399', '400', '401', '402', '405', '407', '415', '417', '419',
+  '424', '443', '444', '445', '449', '450', '453', '454', '456', '457',
+  '459', '460', '461', '464', '465', '473', '521', '592', '593', '668'
 ]);
 
 module.exports = class Pokemon {
@@ -33,15 +37,16 @@ module.exports = class Pokemon {
   }
   parseIconViewProps () {
     const shinyString = this.data.isShiny ? 'shiny' : 'regular';
-    const genderDiff = this.data.gender === 'F' && genderDifferences.has(this.data.dexNo)
-      ? '-f'
-      : '';
-    const formSuffix = this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1
-      ? '-' + this.data.formId
-      : '';
+    let spriteId = this.data.dexNo.toString(10);
+    if (this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1) {
+      spriteId += '-' + this.data.formId;
+    }
+    if (this.data.gender === 'F' && genderDifferences.has(spriteId)) {
+      spriteId += '-f';
+    }
 
-    this.spriteUrl = `pokemon/${shinyString}/${this.data.dexNo}${genderDiff || formSuffix}`;
-    this.spriteClass = `spr-${shinyString} spr-box-${this.data.dexNo}${genderDiff || formSuffix}`;
+    this.spriteUrl = `pokemon/${shinyString}/${spriteId}`;
+    this.spriteClass = `spr-${shinyString} spr-box-${spriteId}`;
   }
   parseBoxViewProps () {
     this.parseIconViewProps();
@@ -49,6 +54,7 @@ module.exports = class Pokemon {
     this.hasPentagon = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasClover = this.data.otGameId >= 30 && this.data.otGameId <= 33;
     this.hasGameBoy = this.data.otGameId >= 35 && this.data.otGameId <= 38;
+
     const tidSize = this.hasClover ? 6 : 5;
     this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
