@@ -260,13 +260,34 @@ md-tooltip {
 @media (min-width: 600px) {
   .box-card {
     width: 250px;
-    height: 150px;
+    height: 140px;
   }
 }
 
 .box-card {
-  max-height: 150px;
-  overflow: auto;
+  max-height: 140px;
+  overflow: hidden;
+}
+
+box-card a {
+  height: 100%;
+}
+
+box-card md-card-content {
+  height: ~"calc(100% - 42px)";
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+pokemon-icon, pokemon-icon .icon-container {
+  width: 40px;
+  height: 30px;
+  float: left;
+}
+
+
+md-card.box-card md-card-content {
+  padding: 4px 5px;
 }
 
  /*******************************

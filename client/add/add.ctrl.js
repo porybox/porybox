@@ -4,6 +4,7 @@ const boxCtrl = require('./box.ctrl.js');
 const pokemonCtrl = require('./pokemon.ctrl.js');
 import {MAX_MULTI_UPLOAD_SIZE, BOX_PAGE_SIZE} from '../../api/services/Constants.js';
 import {chunk, flatten} from 'lodash/fp';
+import {keyBy, noop} from 'lodash';
 
 /**
  * A small controller to explain the syntax we will be using
@@ -18,6 +19,7 @@ module.exports = class Add {
     this.$mdMedia = $mdMedia;
     this.$mdToast = $mdToast;
     this.errorHandler = errorHandler;
+    this.boxesById = keyBy(this.boxes, 'id');
   }
 
   useFullScreen() {
@@ -87,13 +89,15 @@ module.exports = class Add {
       .tap(box => {
         this.addedToast(`Box '${box.name}' created successfully`, 'View', `/box/${box.id}`);
       })
-      .then(res => this.$scope.$apply(this.boxes.push(res)))
-      .catch(this.errorHandler);
+      .tap(box => this.boxes.push(box))
+      .then(box => this.boxesById[box.id] = box)
+      .catch(this.errorHandler)
+      .then(() => this.$scope.$apply());
   }
 
   pokemon (event) {
     this.watchFullScreen();
-    const box = this.selected.selectedBox;
+    const selectedBox = this.selected.selectedBox;
     const locals = {
       boxes: this.boxes,
       defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
@@ -123,11 +127,19 @@ module.exports = class Add {
            toastAction,
            toastAction ? `/pokemon/${successfulUploads[0].created.id}` : undefined);
       })
-      .filter(line => line.success && line.created.box === box.data.id)
-      .then(lines => lines.slice(0, BOX_PAGE_SIZE - (box.data.contents.length % BOX_PAGE_SIZE)))
+      .filter(line => line.success)
       .map(line => line.created)
-      .then(lines => box.data.contents.push(...lines))
-      .tap(box.onscroll)
+      .each(line => {
+        if (this.boxesById[line.box].contents.length === 0 ||
+          this.boxesById[line.box].contents.length % BOX_PAGE_SIZE) {
+          this.boxesById[line.box].contents.push(line);
+        }
+        if (selectedBox && line.box === selectedBox.id
+          && selectedBox.data.contents.length % BOX_PAGE_SIZE) {
+          selectedBox.data.contents.push(line);
+        }
+      })
+      .tap(selectedBox ? selectedBox.onscroll : noop)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
   }
