@@ -41,7 +41,7 @@
     "sails-mongo": "0.12.2",
     "sails.io.js": "1.1.5",
     "socket.io-client": "1.7.3",
-    "uglify-js": "2.8.0",
+    "uglify-js": "2.8.2",
     "validator": "7.0.0"
   },
   "scripts": {
