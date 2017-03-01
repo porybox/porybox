@@ -5,6 +5,7 @@ const Promise = require('bluebird');
 const utils = require('../test/utils.js');
 const MdToast = require('../test/mdtoast');
 const angular = require('angular');
+import {BOX_PAGE_SIZE} from '../../api/services/Constants.js';
 Promise.config({warnings: false});
 
 describe('AddCtrl', () => {
@@ -234,6 +235,49 @@ describe('AddCtrl', () => {
       io.socket.postAsync.returns(utils.promise([{success: false, created: {box: BOX_ID}}]));
       return tested.pokemon().then(() => {
         expect(box.data.contents.length).to.equal(0);
+      });
+    });
+
+    it('doesn\'t add pokemon to box if box is equal to a factor of box size', () => {
+      box.data.contents = new Array(BOX_PAGE_SIZE);
+      $mdDialog.show.returns(utils.promise([{data: [{}]}]));
+      io.socket.postAsync.returns(utils.promise([{success: true, created: {box: BOX_ID}}]));
+      return tested.pokemon().then(() => {
+        expect(box.data.contents.length).to.equal(BOX_PAGE_SIZE);
+      });
+    });
+
+    it('adds pokemon to box up to BOX_PAGE_SIZE', () => {
+      box.data.contents = new Array(BOX_PAGE_SIZE - 2);
+      $mdDialog.show.returns(utils.promise([
+        {data: [{}]},
+        {data: [{}]},
+        {data: [{}]}
+      ]));
+      io.socket.postAsync.returns(utils.promise([
+        {success: true, created: {box: BOX_ID}},
+        {success: true, created: {box: BOX_ID}},
+        {success: true, created: {box: BOX_ID}}
+      ]));
+      return tested.pokemon().then(() => {
+        expect(box.data.contents.length).to.equal(BOX_PAGE_SIZE);
+      });
+    });
+
+    it('adds pokemon to box up to factor of BOX_PAGE_SIZE', () => {
+      box.data.contents = new Array((BOX_PAGE_SIZE * 3) - 2);
+      $mdDialog.show.returns(utils.promise([
+        {data: [{}]},
+        {data: [{}]},
+        {data: [{}]}
+      ]));
+      io.socket.postAsync.returns(utils.promise([
+        {success: true, created: {box: BOX_ID}},
+        {success: true, created: {box: BOX_ID}},
+        {success: true, created: {box: BOX_ID}}
+      ]));
+      return tested.pokemon().then(() => {
+        expect(box.data.contents.length).to.equal(BOX_PAGE_SIZE * 3);
       });
     });
   });

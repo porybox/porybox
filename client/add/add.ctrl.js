@@ -130,7 +130,8 @@ module.exports = class Add {
       .filter(line => line.success)
       .map(line => line.created)
       .each(line => {
-        if (this.boxesById[line.box].contents.length % BOX_PAGE_SIZE) {
+        if (this.boxesById[line.box].contents.length === 0 ||
+          this.boxesById[line.box].contents.length % BOX_PAGE_SIZE) {
           this.boxesById[line.box].contents.push(line);
         }
         if (selectedBox && line.box === selectedBox.id
