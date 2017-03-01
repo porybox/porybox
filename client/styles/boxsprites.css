@@ -890,7 +890,7 @@
 .spr-box-676-9 { background-position: -480px -780px; }
 .spr-box-677 { background-position: -520px -780px; }
 .spr-box-678 { background-position: -560px -780px; }
-.spr-box-678-f { background-position: -600px -780px; }
+.spr-box-678-1 { background-position: -600px -780px; }
 .spr-box-679 { background-position: -640px -780px; }
 .spr-box-680 { background-position: -680px -780px; }
 .spr-box-681 { background-position: -720px -780px; }
@@ -932,8 +932,8 @@
 .spr-box-716 { background-position: -840px -810px; }
 .spr-box-716-1 { background-position: -880px -810px; }
 .spr-box-717 { background-position: -920px -810px; }
-.spr-box-718 { background-position: -960px -810px; }
-.spr-box-718-1 { background-position: -1000px -810px; }
+.spr-box-718, .spr-box-718-3 { background-position: -960px -810px; }
+.spr-box-718-1, .spr-box-718-2 { background-position: -1000px -810px; }
 .spr-box-718-4 { background-position: -1040px -810px; }
 .spr-box-719 { background-position: -1080px -810px; }
 .spr-box-719-1 { background-position: -1120px -810px; }
