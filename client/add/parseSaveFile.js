@@ -17,6 +17,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 'use strict';
+const smOffset = 0x4e00;
 const orasOffset = 0x33000;
 const xyOffset = 0x22600;
 const xyRamsavOffset = 0x1EF38;
@@ -25,6 +26,9 @@ class SaveReaderDecrypted {
   constructor(sav, type) {
     this.sav = sav;
     switch (type) {
+    case 'SM':
+      this.offset = smOffset;
+      break;
     case 'XY':
       this.offset = xyOffset;
       break;
@@ -154,6 +158,7 @@ function copy(src, off1, dest, off2, length) {
 }
 
 const FILE_SIZES = {
+  441856: 'SM',
   483328: 'ORAS',
   415232: 'XY',
   [232 * 30 * 32]: 'YABD',
