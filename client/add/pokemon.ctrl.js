@@ -38,16 +38,17 @@ module.exports = class PokemonAdd {
   }
 
   addFile (file) {
-    const filesPromise = fileToBuffer(file).then(buffer => {
+    const bufferPromise = fileToBuffer(file);
+    const filesPromise = bufferPromise.then(buffer => {
       if (buffer.length === 232 || buffer.length === 260) return [bufferToBase64(buffer)];
-      return parseSaveFile(buffer).map(bufferToBase64);
+      return parseSaveFile.getPokemon(buffer).map(bufferToBase64);
     });
     this.addLine({
       filename: file.name,
       data: filesPromise,
       visibility: this.defaultPokemonVisibility,
       box: this.defaultBox,
-      gen: this.getGen(file)
+      gen: this.getGen(file) || bufferPromise.then(parseSaveFile.getGen)
     });
   }
 
@@ -68,13 +69,10 @@ module.exports = class PokemonAdd {
   }
 
   getGen(file) {
-    if (this.isPk6(file)) {
+    if (this.isPk6(file) || this.isPkx(file)) {
       return 6;
     } else if (this.isPk7(file)) {
       return 7;
-    } else {
-      // Default to gen 6 just now
-      return 6;
     }
   }
 
