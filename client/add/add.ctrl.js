@@ -102,6 +102,16 @@ module.exports = class Add {
       boxes: this.boxes,
       defaultPokemonVisibility: this.prefs.defaultPokemonVisibility
     };
+    const uploadingToast = this.toastNoHide('Uploading Pokémon...');
+    let totalUploadCount;
+
+    const updateToastText = uploadsSoFar => {
+      this.$mdToast.updateTextContent(
+        `Uploading Pokémon... ${uploadsSoFar}/${totalUploadCount} uploads processed`
+      );
+      this.$scope.$apply();
+    };
+
     return this
       .dialog(['$mdDialog', '$routeParams', pokemonCtrl], 'add/pokemon.view.html', locals, event)
       .map(Promise.props)
@@ -110,12 +120,16 @@ module.exports = class Add {
         {data, box: line.box, visibility: line.visibility, gen: line.gen}
       )))
       .then(flatten)
+      .tap(lines => {
+        totalUploadCount = lines.length;
+        updateToastText(0);
+        this.$mdToast.show(uploadingToast);
+      })
       .then(chunk(MAX_MULTI_UPLOAD_SIZE))
-      .mapSeries(files => {
-        const toast = this.toastNoHide('Uploading Pokémon');
-        this.$mdToast.show(toast);
-        return this.io.socket.postAsync('/api/v1/pokemon/multi', {files})
-          .finally(() => this.$mdToast.hide(toast));
+      .mapSeries((files, chunkIndex) => {
+        return this.io.socket.postAsync('/api/v1/pokemon/multi', {files}).tap(() => {
+          updateToastText(Math.min((chunkIndex + 1) * MAX_MULTI_UPLOAD_SIZE, totalUploadCount));
+        });
       })
       .then(flatten)
       .tap(lines => {
@@ -140,6 +154,7 @@ module.exports = class Add {
           }
         }
       })
+      .finally(() => this.$mdToast.hide(uploadingToast))
       .tap(selectedBox ? selectedBox.onscroll : noop)
       .catch(this.errorHandler)
       .then(() => this.$scope.$apply());
