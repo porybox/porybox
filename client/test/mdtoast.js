@@ -29,6 +29,8 @@ const toast = class toast{
   }
 
   hide () {}
+
+  updateTextContent () {}
 };
 
 module.exports = toast;

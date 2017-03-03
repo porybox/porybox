@@ -130,7 +130,7 @@ describe('AddCtrl', () => {
         expect(positionSpy.calledTwice).to.equal(true);
         expect(hideSpy.calledTwice).to.equal(true);
         expect(textContentSpy.calledTwice).to.equal(true);
-        expect(textContentSpy.args[0][0]).to.equal('Uploading Pokémon');
+        expect(textContentSpy.args[0][0]).to.equal('Uploading Pokémon...');
         expect(showSpy.calledTwice).to.equal(true);
       });
     });
