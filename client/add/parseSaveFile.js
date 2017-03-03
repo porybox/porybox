@@ -17,6 +17,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 'use strict';
+const smOffset = 0x4e00;
 const orasOffset = 0x33000;
 const xyOffset = 0x22600;
 const xyRamsavOffset = 0x1EF38;
@@ -25,6 +26,9 @@ class SaveReaderDecrypted {
   constructor(sav, type) {
     this.sav = sav;
     switch (type) {
+    case 'SM':
+      this.offset = smOffset;
+      break;
     case 'XY':
       this.offset = xyOffset;
       break;
@@ -154,6 +158,7 @@ function copy(src, off1, dest, off2, length) {
 }
 
 const FILE_SIZES = {
+  441856: 'SM',
   483328: 'ORAS',
   415232: 'XY',
   [232 * 30 * 32]: 'YABD',
@@ -161,11 +166,37 @@ const FILE_SIZES = {
   458752: 'ORASRAM'
 };
 
-module.exports = saveFile => {
+const GENS = {
+  'SM': 7,
+  'ORAS': 6,
+  'XY': 6,
+  'YABD': 6,
+  'PCDATA': 6,
+  'ORASRAM': 6
+};
+
+const getGame = saveFile => {
   if (saveFile.length === 2 ** 20 + 156 || saveFile.length === 2 ** 20 + 410) {
     saveFile = saveFile.subarray(-(2 ** 20));
   }
-  const fileType = FILE_SIZES[saveFile.length];
-  if (fileType) return new SaveReaderDecrypted(saveFile, fileType).getAllPkx().map(pkx => pkx.data);
+  return FILE_SIZES[saveFile.length];
+};
+
+const getPokemon = saveFile => {
+  const fileType = getGame(saveFile);
+  if (fileType) {
+    return new SaveReaderDecrypted(saveFile, fileType).getAllPkx().map(pkx => pkx.data);
+  }
   return [];
+};
+
+const getGen = saveFile => {
+  const fileType = getGame(saveFile);
+  return GENS[fileType];
+};
+
+module.exports = {
+  getGame: getGame,
+  getPokemon: getPokemon,
+  getGen: getGen
 };
