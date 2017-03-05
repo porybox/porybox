@@ -124,7 +124,7 @@ class Pkx {
   static verifyChk(pkx) {
     let chk = 0;
     const pkx16 = new Uint16Array(pkx.buffer, pkx.byteOffset, pkx.byteLength >> 1);
-    if (pkx16[4] > 750 || pkx16[0x48] !== 0) return false;
+    if (pkx16[0x48]) return false;
     for (let i = 4; i < 116; i++) {
       chk += pkx16[i];
     }
