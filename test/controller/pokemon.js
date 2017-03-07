@@ -939,7 +939,7 @@ describe('PokemonController', () => {
   });
   describe('moving a pokemon', () => {
     let pkmn, pkmn2, pkmn3, pkmn4, pkmn5, pkmn6, someoneElsesPkmn, box1, box2, someoneElsesBox,
-      adminPkmn, adminBox, initialMaxBoxSize;
+      unlistedBox, adminPkmn, adminBox, initialMaxBoxSize;
     // pkmn, pkmn2, and pkmn3 start out in box1
     // pkmn4, pkmn5, and pkmn6 start out in box2
     before(() => {
@@ -951,6 +951,10 @@ describe('PokemonController', () => {
     beforeEach(async () => {
       box1 = (await agent.post('/api/v1/box').send({name: 'Shoebox'})).body;
       box2 = (await agent.post('/api/v1/box').send({name: 'Lunchbox'})).body;
+      unlistedBox = (await agent.post('/api/v1/box').send({
+        name: 'Breadbox',
+        visibility: 'unlisted'
+      })).body;
       pkmn = (await agent.post('/api/v1/pokemon')
         .attach('pk6', `${__dirname}/pk6/pkmn1.pk6`)
         .field('box', box1.id)).body;
@@ -1160,6 +1164,16 @@ describe('PokemonController', () => {
       const res = await agent.post(`/api/v1/pokemon/${pkmn4.id}/move`).send({box: box1.id});
       expect(res.statusCode).to.equal(400);
       expect(res.body).to.equal('Cannot move a Pokémon to a maximum-capacity box');
+    });
+    it("stops showing a pokemon's box if it is moved to an unlisted box", async () => {
+      const initialResponse = await otherAgent.get(`/api/v1/pokemon/${pkmn.id}`);
+      expect(initialResponse.statusCode).to.equal(200);
+      expect(initialResponse.body.box).to.equal(box1.id);
+      const res = await agent.post(`/api/v1/pokemon/${pkmn.id}/move`).send({box: unlistedBox.id});
+      expect(res.statusCode).to.equal(200);
+      const finalResponse = await otherAgent.get(`/api/v1/pokemon/${pkmn.id}`);
+      expect(finalResponse.statusCode).to.equal(200);
+      expect(finalResponse.body.box).to.not.exist();
     });
   });
   describe("editing a pokemon's visibility and notes", () => {

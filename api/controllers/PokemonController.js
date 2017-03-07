@@ -242,7 +242,7 @@ module.exports = _.mapValues({
     pokemon.box = newBox.id;
     const promises = [
       BoxOrdering.addPkmnIdsToBox(newBox.id, [pokemon.id], adjIndex),
-      Pokemon.update({id: pokemon.id}, {box: newBox.id})
+      Pokemon.update({id: pokemon.id}, {box: newBox.id, _boxVisibility: newBox.visibility})
     ];
     await Promise.all(promises);
     return res.ok();
