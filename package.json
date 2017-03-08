@@ -69,7 +69,7 @@
   "author": "Porybox Dev Team",
   "license": "",
   "devDependencies": {
-    "angular-mocks": "1.6.2",
+    "angular-mocks": "1.6.3",
     "chai": "3.5.0",
     "concurrently": "3.4.0",
     "dirty-chai": "1.2.2",
