@@ -6,7 +6,7 @@
   "keywords": [],
   "dependencies": {
     "angular": "1.6.2",
-    "angular-animate": "1.6.2",
+    "angular-animate": "1.6.3",
     "angular-aria": "1.6.2",
     "angular-marked": "1.2.2",
     "angular-material": "1.1.2",
