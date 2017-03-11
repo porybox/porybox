@@ -3,6 +3,15 @@ import moment from 'moment';
 import angular from 'angular';
 import editCtrl from './pokemon-edit.ctrl';
 const statIndex = {'Hp': 0, 'Atk': 1, 'Def': 2, 'SpAtk': 3, 'SpDef': 4, 'Spe': 5};
+
+/*
+ * The following array contains a list of Pokémon having gender differences that result solely
+ * in them using a different sprite for each gender. Alternate forms may be included as well if
+ * any meet this criteria.
+ *
+ * Note however that Meowstic does NOT since each of its forms have a 100% gender ratio (male and
+ * female respectively).
+ */
 const genderDifferences = new Set([
   '3',   '12',  '19',  '20',  '25',  '26',  '41',  '42',  '44',  '45',
   '64',  '65',  '85',  '97',  '111', '112', '118', '119', '123', '129',
@@ -38,6 +47,13 @@ module.exports = class Pokemon {
   parseIconViewProps () {
     const shinyString = this.data.isShiny ? 'shiny' : 'regular';
     let spriteId = this.data.dexNo.toString(10);
+
+    /*
+     * Scatterbug (#664) and Spewpa (#665) each have a formId to denote which Vivillon they will
+     * evolve into. However, both use a default sprite regardless of this formId.
+     *
+     * We also use the default male/female sprites for every Pikachu (#25) at the moment.
+     */
     if (this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1) {
       spriteId += '-' + this.data.formId;
     }
@@ -59,6 +75,9 @@ module.exports = class Pokemon {
     this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
     this.paddedEsv = this.data.esv.toString().padStart(4, '0');
     this.parsedNickname = replace3dsUnicodeChars(this.data.nickname);
+
+    //Nidoran have their genders in their species name, so don't display the symbol a second time.
+    this.dispGender = this.data.dexNo !== 29 && this.data.dexNo !== 32 ? this.data.gender : '';
 
     this.hasHA = this.data.abilityNum === 4;
 

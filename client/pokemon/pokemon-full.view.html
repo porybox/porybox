@@ -75,8 +75,8 @@
                 </div>
                 <div layout="row" layout-align="none center">
                   <div flex title="Species">{{pokemon.speciesWithForme}}
-                    <span class="gender-male" ng-if="pokemon.data.gender == 'M'">&#9794;</span>
-                    <span class="gender-female" ng-if="pokemon.data.gender == 'F'">&#9792;</span>
+                    <span class="gender-male" ng-if="pokemon.dispGender == 'M'">&#9794;</span>
+                    <span class="gender-female" ng-if="pokemon.dispGender == 'F'">&#9792;</span>
                     <span ng-if="pokemon.data.isEgg"> (Egg)</span></div>
                 </div>
                 <div layout="row" layout-align="none center">
