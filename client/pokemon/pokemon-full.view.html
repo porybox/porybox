@@ -25,8 +25,8 @@
       </div>
       <span flex></span>
       <a ng-href="/api/v1/pokemon/{{pokemon.id}}/raw">
-        <md-button class="md-icon-button" aria-label="Download .pk{{pokemon.data.gen || '6'}}" ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin || pokemon.data.visibility === 'public'">
-          <md-tooltip md-direction="left">Download .pk{{pokemon.data.gen || '6'}}</md-tooltip>
+        <md-button class="md-icon-button" aria-label="Download .pk{{pokemon.data.gen || '6'}} file" ng-show="pokemon.data.owner === main.user.name || main.user.isAdmin || pokemon.data.visibility === 'public'">
+          <md-tooltip md-direction="left">Download .pk{{pokemon.data.gen || '6'}} file</md-tooltip>
           <i class="material-icons">file_download</i>
         </md-button>
       </a>
