@@ -27,8 +27,8 @@
             {{::pokemon.data.speciesName}}
             <span ng-if="::pokemon.data.isEgg"> (Egg)</span>
           </span>
-          <span class="gender-male" ng-if="::pokemon.data.gender == 'M'">&#9794;</span>
-          <span class="gender-female" ng-if="::pokemon.data.gender == 'F'">&#9792;</span>
+          <span class="gender-male" ng-if="::pokemon.dispGender == 'M'">&#9794;</span>
+          <span class="gender-female" ng-if="::pokemon.dispGender == 'F'">&#9792;</span>
         </div>
         <md-icon ng-if="::pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="icon-shiny" title="Shiny"></md-icon>
         <md-icon ng-if="::pokemon.hasPentagon" md-svg-icon="/img/icons/pentagon.svg" aria-label="pentagon" class="icon-pentagon" style="margin-left: 5px;" title="Originated from Gen 6"></md-icon>
