@@ -19,4 +19,6 @@ ng.module('porybox.static', ['ngRoute']).config(['$routeProvider', $routeProvide
   ].forEach(pageName => {
     $routeProvider.when(`/${pageName}`, {templateUrl: `/static/${pageName}.html`});
   });
+
+  $routeProvider.when('/extracting-pk6-files', {redirectTo: '/extracting-pokemon-files'});
 }]);
