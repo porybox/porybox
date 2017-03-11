@@ -1,0 +1,47 @@
+<md-content layout-padding>
+  <div class="md-body-1">
+    <h1 class="md-display-2">Method 4: CFW and TEA checking</h1>
+
+    <p>CFW (Custom FirmWare) takes longer to setup, but is future proof and generally less buggy. Using NTR and KeySAVe’s TEA checking feature, you can dump the content of all your boxes at once.</p>
+    
+    <h2>Requirements</h2>
+    
+    <p>Unlike homebrew, a slightly older firmware version is required for CFW access. You will need:</p>
+    
+    <ul>
+    <li>A console with a firmware version from 9.0.0 through 11.2.0.</li>
+    <li>For other versions, refer to <a class="md-body-2" href="https://3ds.guide/" target="_blank" rel="noreferrer">Plailect’s guide</a> for possible solutions.</li>
+    <li>/u/Cu3PO42’s <a class="md-body-2" href="https://github.com/Cu3PO42/KeySAVe/releases" target="_blank" rel="noreferrer">KeySAVe</a>.</li>
+    <li>NTR CFW, installed in the next section.</li>
+    </ul>
+    
+    <p>Use <a class="md-body-2" href="https://3ds.guide/" target="_blank" rel="noreferrer">Plailect’s guide</a> to install CFW. Once your have access to a CFW, move on to the next step.</p>
+    
+    <h2>Installing NTR</h2>
+    
+    <p>NTR CFW is a custom firmware that runs on top of another patched firmware. It needs to be ran at every boot to enable KeySAVe’s TEA checking feature.</p>
+    
+    <ul>
+    <li>Download <a class="md-body-2" href="https://github.com/Nanquitas/BootNTR/releases" target="_blank" rel="noreferrer">BootNTR</a>. If you own an O3DS or a 2DS, make sure to grab the Mode3 CIA as well.</li>
+    <li>Install the CIA(s) using FBI.</li>
+    <li>Run BootNTR choosing the default configuration, and ideally version 3.4.</li>
+    </ul>
+    
+    <h2>TEA checking</h2>
+    
+    <p>You will need to run NTR and connect KeySAVe to your console.</p>
+    
+    <ul>
+    <li>Launch BootNTR.</li>
+    <li>BootNTR will autoexit if you own a N3DS. Launch the game.</li>
+    <li>If you have an O3DS/2DS, run the Mode3 version instead: press the <code>Home</code> button on your console, and run your generation 7 game from the main menu, exiting BootNTR.</li>
+    <li>Once your game is loaded, hit <code>X</code> + <code>Y</code> to bring up NTR’s main menu. Ensure that the debugger is enabled.</li>
+    <li>Press the <code>Home</code> button to temporarily return to the main menu. Wait for your console to automatically connect to your network.</li>
+    <li>Open KeySAVe, click on the TEA button in the “Open File” section. It looks like a coffee cup.</li>
+    <li>Input your console’s IP address and click on <code>Connect</code>.</li>
+    <li>Click on <code>Dump boxes</code>.</li>
+    </ul>
+
+  </div>
+
+</md-content>
