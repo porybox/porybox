@@ -94,27 +94,27 @@
                 </div>
                 <div layout="row" layout-align="start center">
                   <span>
-                    <md-icon md-svg-icon="/img/icons/circle.svg" class="box-marking"
+                    <md-icon md-svg-icon="/img/svg/circle.svg" class="box-marking"
                       ng-class="{'marked': pokemon.data.hasCircleMarking, 'blue': pokemon.data.hasBlueCircleMarking, 'pink': pokemon.data.hasPinkCircleMarking}"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/triangle.svg" class="box-marking"
+                    <md-icon md-svg-icon="/img/svg/triangle.svg" class="box-marking"
                       ng-class="{'marked': pokemon.data.hasTriangleMarking, 'blue': pokemon.data.hasBlueTriangleMarking, 'pink': pokemon.data.hasPinkTriangleMarking}"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/square.svg" class="box-marking"
+                    <md-icon md-svg-icon="/img/svg/square.svg" class="box-marking"
                       ng-class="{'marked': pokemon.data.hasSquareMarking, 'blue': pokemon.data.hasBlueSquareMarking, 'pink': pokemon.data.hasPinkSquareMarking}" style="width:8px;"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/heart.svg" class="box-marking"
+                    <md-icon md-svg-icon="/img/svg/heart.svg" class="box-marking"
                       ng-class="{'marked': pokemon.data.hasHeartMarking, 'blue': pokemon.data.hasBlueHeartMarking, 'pink': pokemon.data.hasPinkHeartMarking}"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/star.svg" class="box-marking"
+                    <md-icon md-svg-icon="/img/svg/star.svg" class="box-marking"
                       ng-class="{'marked': pokemon.data.hasStarMarking, 'blue': pokemon.data.hasBlueStarMarking, 'pink': pokemon.data.hasPinkStarMarking}" style="width:11px;margin-left:-1px;margin-top:-2px;"></md-icon>
-                    <md-icon md-svg-icon="/img/icons/diamond.svg" class="box-marking"
+                    <md-icon md-svg-icon="/img/svg/diamond.svg" class="box-marking"
                       ng-class="{'marked': pokemon.data.hasDiamondMarking, 'blue': pokemon.data.hasBlueDiamondMarking, 'pink': pokemon.data.hasPinkDiamondMarking}" style="margin-left:-1px;margin-top:-1px;"></md-icon>
                   </span>
                   <span style="margin-left:10px;">
-                    <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/icons/star.svg" aria-label="shiny" class="icon-shiny" title="Shiny"></md-icon>
-                    <md-icon ng-if="pokemon.hasPentagon" md-svg-icon="/img/icons/pentagon.svg" aria-label="pentagon" class="icon-pentagon" title="Originated from Gen 6"></md-icon>
-                    <md-icon ng-if="pokemon.hasClover" md-svg-icon="/img/icons/clover.svg" aria-label="clover" class="icon-clover" title="Originated from Gen 7"></md-icon>
-                    <md-icon ng-if="pokemon.hasGameBoy" md-svg-icon="/img/icons/gameboy.svg" aria-label="gameboy" class="icon-gameboy" title="Originated from Gen 1 VC"></md-icon>
+                    <md-icon ng-if="pokemon.data.isShiny" md-svg-icon="/img/svg/star.svg" aria-label="shiny" class="icon-shiny" title="Shiny"></md-icon>
+                    <md-icon ng-if="pokemon.hasPentagon" md-svg-icon="/img/svg/pentagon.svg" aria-label="pentagon" class="icon-pentagon" title="Originated from Gen 6"></md-icon>
+                    <md-icon ng-if="pokemon.hasClover" md-svg-icon="/img/svg/clover.svg" aria-label="clover" class="icon-clover" title="Originated from Gen 7"></md-icon>
+                    <md-icon ng-if="pokemon.hasGameBoy" md-svg-icon="/img/svg/gameboy.svg" aria-label="gameboy" class="icon-gameboy" title="Originated from Gen 1 VC"></md-icon>
                     <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration > 0" aria-title="Infected with Pokérus" class="pokerus" style="font-size:10px;">PKRS</span>
                     <span ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration === 0" aria-title="Cured Pokérus">
-                      <md-icon md-svg-icon="/img/icons/pkrs_cured.svg" style="width: 9px;"></md-icon>
+                      <md-icon md-svg-icon="/img/svg/pkrs_cured.svg" style="width: 9px;"></md-icon>
                     </span>
                   </span>
                   <span flex></span>
@@ -358,7 +358,7 @@
                 <div><strong>Days remaining</strong> {{pokemon.data.pokerusDuration}}</div>
               </div>
               <div ng-if="pokemon.data.pokerusStrain > 0 && pokemon.data.pokerusDuration === 0">
-                <div class="pokerus"><md-icon md-svg-icon="/img/icons/pkrs_cured.svg" style="width: 9px;"></md-icon> <strong>Cured Pokérus</strong></div>
+                <div class="pokerus"><md-icon md-svg-icon="/img/svg/pkrs_cured.svg" style="width: 9px;"></md-icon> <strong>Cured Pokérus</strong></div>
                 <div><strong>Strain</strong> {{pokemon.data.pokerusStrain}}</div>
               </div>
               <div ng-if="pokemon.data.pokerusStrain === 0 && pokemon.data.pokerusDuration === 0">
