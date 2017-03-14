@@ -41,6 +41,7 @@
     "sails-mongo": "0.12.2",
     "sails.io.js": "1.1.5",
     "socket.io-client": "1.7.3",
+    "svgo": "0.7.2",
     "uglify-js": "2.8.5",
     "validator": "7.0.0"
   },
@@ -53,7 +54,8 @@
     "lint": "eslint ./",
     "minify:js": "uglifyjs client/bundle.js -o client/bundle.min.js -m --screw-ie8",
     "minify:css": "cleancss client/bundle.css -o client/bundle.min.css --s1 --advanced",
-    "minify": "npm run minify:js && npm run minify:css",
+    "minify:svg": "svgo -q -f client/svg -o client/img/svg",
+    "minify": "npm run minify:js && npm run minify:css && npm run minify:svg",
     "start": "npm run build && node app.js",
     "start:dev": "concurrently \"npm run less:dev\" \"npm run bundle:watch\" \"node app.js\"",
     "test": "npm run lint && npm run test:server && npm run test:client",
