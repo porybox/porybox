@@ -6,6 +6,7 @@ const POKEMON_FIELDS_FOR_CARD = [
   'dexNo',
   'formId',
   'isEgg',
+  'isShiny',
   'gender'
 ];
 const POKEMON_FIELDS_USED = [
