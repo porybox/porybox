@@ -86,7 +86,7 @@
     "mongo-in-memory": "0.0.5",
     "phantomjs-prebuilt": "2.1.14",
     "sails-memory": "0.10.7",
-    "sinon": "1.17.7",
+    "sinon": "2.0.0",
     "smtp-tester": "0.6.3",
     "superagent-defaults": "0.1.14",
     "supertest": "3.0.0",
