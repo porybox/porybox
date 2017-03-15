@@ -1,3 +1,5 @@
+@cache-version: `process.env.npm_package_version` ;
+
 /*******************************
  * Import angular-csp.css to prevent angular from trying to use inline scripts/styles
  *******************************/
@@ -13,9 +15,9 @@
  *
  ******************************/
 
-@import (inline) 'boxsprites.css';
+@import 'boxsprites';
 
-@import (inline) 'ribbons.css';
+@import 'ribbons';
 
 .add-button {
   bottom: 40px;
@@ -408,7 +410,7 @@ h1.summary-toolbar {
   display: inline-block;
   font-size: 0;
   vertical-align: middle;
-  background-image: url('/img/icons/items.png');
+  background-image: url('/img/icons/items.png?v=@{cache-version}');
 }
 
 .pokeball {
