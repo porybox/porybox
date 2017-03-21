@@ -1,5 +1,7 @@
 # porybox
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/porybox/porybox.svg)](https://greenkeeper.io/)
+
 Porybox is a platform that allows users to manage their Pokémon to easily
 display their collections and make more informed trade decisions.
 
