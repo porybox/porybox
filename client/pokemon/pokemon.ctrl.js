@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 import moment from 'moment';
 import angular from 'angular';
 import editCtrl from './pokemon-edit.ctrl';
@@ -112,7 +112,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatHp,
         fullName: 'Hit Points',
         iv: this.data.ivHp,
-        ht: this.data.hyperTrainedHP,
+        ht: this.data.hyperTrainedHp,
         ev: this.data.evHp,
         total: this.data.statHp
       },
