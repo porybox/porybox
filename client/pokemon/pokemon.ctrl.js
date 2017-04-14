@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 import moment from 'moment';
 import angular from 'angular';
 import editCtrl from './pokemon-edit.ctrl';
