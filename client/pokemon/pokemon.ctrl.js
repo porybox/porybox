@@ -112,7 +112,7 @@ module.exports = class Pokemon {
         base: this.data.baseStatHp,
         fullName: 'Hit Points',
         iv: this.data.ivHp,
-        ht: this.data.hyperTrainedHP,
+        ht: this.data.hyperTrainedHp,
         ev: this.data.evHp,
         total: this.data.statHp
       },
