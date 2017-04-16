@@ -51,12 +51,16 @@ module.exports = class Pokemon {
     /*
      * Scatterbug (#664) and Spewpa (#665) each have a formId to denote which Vivillon they will
      * evolve into. However, both use a default sprite regardless of this formId.
-     *
-     * We also use the default male/female sprites for every Pikachu (#25) at the moment.
      */
-    if (this.data.formId > 0 && [25, 664, 665].indexOf(this.data.dexNo) === -1) {
+    if (this.data.formId > 0 && [664, 665].indexOf(this.data.dexNo) === -1) {
       spriteId += '-' + this.data.formId;
     }
+
+	// Special handling for Cosplay Pikachu, which is Gen 6-exclusive
+    if (this.data.dexNo === 25 && this.data.formId > 0 && this.data.gen === 6) {
+      spriteId += '-g6';
+    }
+
     if (this.data.gender === 'F' && genderDifferences.has(spriteId)) {
       spriteId += '-f';
     }

@@ -5,9 +5,10 @@ import {throttle} from 'lodash';
 const POKEMON_FIELDS_FOR_CARD = [
   'dexNo',
   'formId',
+  'gen',
+  'gender',
   'isEgg',
-  'isShiny',
-  'gender'
+  'isShiny'
 ];
 const POKEMON_FIELDS_USED = [
   'abilityName',
@@ -19,6 +20,7 @@ const POKEMON_FIELDS_USED = [
   'esv',
   'formId',
   'formName',
+  'gen',
   'gender',
   'heldItemId',
   'heldItemName',
