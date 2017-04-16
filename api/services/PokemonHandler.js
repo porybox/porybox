@@ -28,6 +28,8 @@ exports.checkProhibited = pkmn => {
   return matchedProps ? matchedProps.reason : null;
 };
 
+exports.isStaticPidEvent = () => false; // TODO: Implement this
+
 exports.getSafePokemonForUser = async (
     pkmn, user, {checkUnique = false, parse = true, omitBox = false, knownBoxVisibility} = {}
 ) => {
