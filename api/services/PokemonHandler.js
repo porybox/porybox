@@ -37,6 +37,9 @@ exports.getSafePokemonForUser = async (
   if (!pkmn) {
     throw {statusCode: 404};
   }
+  if (!pkmn.gen) {
+    pkmn.gen = 6;
+  }
   if (checkUnique) {
     pkmn.isUnique = await pkmn.checkIfUnique();
   }

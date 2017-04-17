@@ -175,13 +175,15 @@ module.exports = _.mapValues({
     if (!pokemon) {
       return res.notFound();
     }
+    if (!pokemon.gen) {
+      pokemon.gen = 6;
+    }
     const userIsOwner = !!req.user && req.user.name === pokemon.owner;
     const userIsAdmin = !!req.user && req.user.isAdmin;
     if (pokemon.visibility !== 'public' && !userIsOwner && !userIsAdmin) {
       return res.forbidden();
     }
-    const extension = pokemon.gen === 7 ? 'pk7' : 'pk6';
-    res.attachment(`${pokemon.nickname}-${pokemon.id}.${extension}`);
+    res.attachment(`${pokemon.nickname}-${pokemon.id}.pk${pokemon.gen}`);
     res.status(200).send(Buffer.from(pokemon._rawFile || pokemon._rawPk6, 'base64'));
     if (!userIsOwner && pokemon.visibility === 'public') {
       await pokemon.incrementDownloadCount();
