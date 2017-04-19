@@ -10,11 +10,30 @@
     <p>Requirements for current exploits allow for homebrew on most firmware versions. You will need:</p>
 
     <ul>
-    <li>A console with a firmware version from 9.0.0 through 11.3.0.</li>
+    <li>A console with a firmware version from 9.0.0 through 11.3.0 (or 11.4.0 if using a New 3DS).</li>
     <li>For other versions, refer to <a class="md-body-2" href="https://3ds.guide/" target="_blank" rel="noreferrer">Plailect’s guide</a> for possible solutions.</li>
     </ul>
 
-    <p>Use the <a class="md-body-2" href="https://3ds.guide/homebrew-launcher-(soundhax)" target="_blank" rel="noreferrer">SoundHax section of Plailect’s guide</a> to install homebrew. Once your have access to the Homebrew Launcher using SoundHax, you can move on to the next step of this guide. Alternatively, if you are on 11.2.0 or lower and wish to install CFW to help ensure you retain homebrew access after future updates, proceed with the remaining sections of Plailect's guide and return here afterward.</p>
+    <p>If you are on 11.3.0 or lower, use the <a class="md-body-2" href="https://3ds.guide/homebrew-launcher-(soundhax)" target="_blank" rel="noreferrer">SoundHax section of Plailect’s guide</a> to install homebrew. Once your have access to the Homebrew Launcher using SoundHax, you can move on to the next step of this guide. Alternatively, if you wish to install CFW to help ensure you retain homebrew access after future updates, proceed with the remaining sections of Plailect's guide and return here afterward.</p>
+	
+	<p>If you are using a New 3DS on 11.4.0, you will not be able to install CFW, but you may be able to gain homebrew access by using one of the following exploits if you have the required game:</p>
+	
+	<table>
+		<tr>
+			<th>Exploit</th><th>Required Game</th>
+		</tr>
+		<tr>
+			<td><a class="md-body-2" href="https://mrnbayoh.github.io/doodlebomb/" target="_blank" rel="noreferrer">doodlebomb</a></td><td>Swapdoodle (free on Nintendo eShop)</td>
+		</tr>
+		<tr>
+			<td><a class="md-body-2" href="https://smealum.github.io/ninjhax2/" target="_blank" rel="noreferrer">ninjhax</a></td><td>Cubic Ninja</td>
+		</tr>
+		<tr>
+			<td><a class="md-body-2" href="https://plutooo.github.io/freakyhax/" target="_blank" rel="noreferrer">freakyhax</a></td><td>Freakyforms Deluxe</td>
+		</tr>
+	</table>
+	
+	<p>As of this writing on 2017/04/19, homebrew is not useable on old 3DS consoles running 11.4.0.</p>
 
     <h2 class="md-headline">JKSM</h2>
 
@@ -25,7 +44,7 @@
     <li>If you have a CFW, you can install the CIA with <a class="md-body-2" href="https://github.com/Steveice10/FBI/releases" target="_blank" rel="noreferrer">FBI</a>.</li>
     </ul>
 
-    <p>Run JKSM. Pick <code>Cartridge</code> or <code>SD/CIA</code> depending on your game version, select the game, then export the save. Type in a name for the save, and validate. The file can be found in <code>\JSKV\Saves[game][name]</code>.</p>
+    <p>Run JKSM. Pick <code>Cartridge</code> or <code>SD/CIA</code> depending on your game version, select the game, then export the save. Type in a name for the save, and validate. The file can be found in <code>\JSKV\Saves\[game]\[name]</code>.</p>
 
     <p>If you have multiple saves backed up via JKSM for the same game, you need to be careful during the export process as the <code>New</code> option is not at the top by default. Pressing <code>A</code> one too many times could potentially overwrite a different save.</p>
 
