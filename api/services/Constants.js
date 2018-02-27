@@ -39,7 +39,10 @@ exports.TSV_REGEX = /^([0-3]\d{3}|40([0-8]\d|9[0-5]))$/; // (matches any 4-digit
 
 exports.PROHIBITED_UPLOADS = [
   {props: {dexNo: 646, formId: 1}, reason: 'Kyurem-White may not be uploaded'},
-  {props: {dexNo: 646, formId: 2}, reason: 'Kyurem-Black may not be uploaded'}
+  {props: {dexNo: 646, formId: 2}, reason: 'Kyurem-Black may not be uploaded'},
+  {props: {dexNo: 800, formId: 1}, reason: 'Dusk Mane Necrozma may not be uploaded'},
+  {props: {dexNo: 800, formId: 2}, reason: 'Dawn Wings Necrozma may not be uploaded'},
+  {props: {dexNo: 800, formId: 3}, reason: 'Ultra Necrozma may not be uploaded'}
 ];
 
 exports.FIRST_BOX_NAME = 'Box 1';

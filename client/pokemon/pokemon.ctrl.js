@@ -73,7 +73,7 @@ module.exports = class Pokemon {
     this.parsedOt = replace3dsUnicodeChars(this.data.ot);
     this.hasPentagon = this.data.otGameId >= 24 && this.data.otGameId <= 29;
     this.hasClover = this.data.otGameId >= 30 && this.data.otGameId <= 33;
-    this.hasGameBoy = this.data.otGameId >= 35 && this.data.otGameId <= 38;
+    this.hasGameBoy = this.data.otGameId >= 35 && this.data.otGameId <= 41;
 
     const tidSize = this.hasClover ? 6 : 5;
     this.paddedTid = (this.data.idNo || this.data.tid).toString().padStart(tidSize, '0');
