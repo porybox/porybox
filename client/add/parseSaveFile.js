@@ -172,6 +172,7 @@ const FILE_SIZES = {
 };
 
 const GENS = {
+  'USUM': 7,
   'SM': 7,
   'ORAS': 6,
   'XY': 6,
