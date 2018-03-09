@@ -400,19 +400,6 @@
 
     </md-tab>
 
-    <md-tab label="Analysis">
-      <md-card class="summary" ng-show="pokemon.hasFullData">
-        <md-card-header><span class="card-headline">Porybox clone status</span></md-card-header>
-        <md-card-content>
-          <div><strong>Unique in Porybox database?</strong>
-            <span ng-if="pokemon.data.isUnique">Yes</span>
-            <span ng-if="!pokemon.data.isUnique">No (<a href="/#/pokemon/{{pokemon.id}}/duplicates">view duplicates</a>)</span>
-          </div>
-          <div><strong>Download count</strong> {{pokemon.data.downloadCount}}</div>
-        </md-card-content>
-      </md-card>
-    </md-tab>
-
     <md-tab label="Upload Info">
       <md-card ng-show="pokemon.hasFullData">
         <md-card-header><span class="card-headline">Upload Info</span></md-card-header>
@@ -420,6 +407,17 @@
           <div><strong>Owner </strong><a class="md-body-1" href="/#/user/{{pokemon.data.owner}}">{{pokemon.data.owner}}</a></div>
           <div><strong>Upload date </strong> {{pokemon.formattedUploadDate}}</div>
           <div><strong>Generation </strong> {{pokemon.data.gen}}</div>
+        </md-card-content>
+      </md-card>
+
+      <md-card ng-show="pokemon.hasFullData">
+        <md-card-header><span class="card-headline">Porybox clone status</span></md-card-header>
+        <md-card-content>
+          <div><strong>Unique in Porybox database?</strong>
+            <span ng-if="pokemon.data.isUnique">Yes</span>
+            <span ng-if="!pokemon.data.isUnique">No (<a href="/#/pokemon/{{pokemon.id}}/duplicates">view duplicates</a>)</span>
+          </div>
+          <div><strong>Download count</strong> {{pokemon.data.downloadCount}}</div>
         </md-card-content>
       </md-card>
 
