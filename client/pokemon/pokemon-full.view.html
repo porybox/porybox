@@ -59,8 +59,8 @@
   <md-tabs md-border-bottom ng-init="pokemon.fetch()" md-dynamic-height>
     <md-tab label="Main Summary">
       <md-tab-body>
-        <div layout="row" layout-xs="column" layout-wrap>
-          <div layout-gt-xs="column">
+        <div class="fake-masonry-container">
+          <div class="fake-masonry-column">
             <md-card class="summary" style="height: 222px;" ng-show="pokemon.hasFullData">
               <md-card-content>
                 <div layout="row" layout-align="none center">
@@ -164,7 +164,7 @@
             </md-card>
           </div>
 
-          <div layout-gt-xs="column">
+          <div class="fake-masonry-column">
             <md-card class="summary" ng-show="pokemon.hasFullData">
               <md-card-header><span class="card-headline">Stats</span></md-card-header>
               <md-card-content>
@@ -224,7 +224,7 @@
             </md-card>
           </div>
 
-          <div layout-gt-xs="column">
+          <div class="fake-masonry-column">
             <md-card class="summary" ng-show="pokemon.hasFullData">
               <md-card-header><span class="card-headline">Encounter Info</span></md-card-header>
               <md-card-content>
@@ -264,8 +264,8 @@
     </md-tab>
     <md-tab label="Other Info">
       <md-tab-body>
-        <div layout="row" layout-xs="column" layout-wrap>
-          <div layout-gt-xs="column">
+        <div class="fake-masonry-container">
+          <div class="fake-masonry-column">
 
             <md-card class="summary" ng-show="pokemon.hasFullData">
               <md-card-header><span class="card-headline">Contest Info</span></md-card-header>
@@ -296,7 +296,7 @@
             </md-card>
           </div>
 
-          <div layout-gt-xs="column">
+          <div class="fake-masonry-column">
           <md-card class="summary" ng-show="pokemon.hasFullData">
             <md-card-header><span class="card-headline">Memories</span></md-card-header>
             <md-card-content>
@@ -368,7 +368,7 @@
           </md-card>
           </div>
 
-          <div layout-gt-xs="column">
+          <div class="fake-masonry-column">
             <md-card class="summary" ng-show="pokemon.hasFullData">
               <md-card-header><span class="card-headline">Super Training</span></md-card-header>
               <md-card-content>
