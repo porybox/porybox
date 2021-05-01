@@ -666,3 +666,50 @@ span[class^='gender-'] {
 .dragover {
     border: 5px dashed rgb(2,119,189);
 }
+
+/*******************************
+ * Fake Masonry Effect For Pokemon View
+ *******************************/
+
+.fake-masonry-container {
+  display: grid;
+  grid-template-columns: repeat(3, 360px);
+  grid-column-gap: 0;
+  grid-row-gap: 0;
+}
+
+@media (max-width: 1079.98px) and (min-width: 720px) {
+  // columns are 360px * 3
+  .fake-masonry-column:nth-child(1) {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+  }
+
+  .fake-masonry-column:nth-child(3) {
+    margin-top: -8px; // close gap between columns caused by cards
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+  }
+
+  .fake-masonry-column:nth-child(2) {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 4;
+  }
+}
+
+@media (max-width: 719.98px) {
+  .fake-masonry-container {
+    grid-template-columns: 1fr;
+  }
+
+  .fake-masonry-column + .fake-masonry-column {
+    margin-top: -8px;
+  }
+}
